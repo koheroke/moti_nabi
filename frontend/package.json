@@ -1,0 +1,33 @@
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@mdi/font": "^7.4.47",
+    "axios": "^1.15.1",
+    "pinia": "^3.0.4",
+    "query": "^0.2.0",
+    "router": "^2.2.0",
+    "tanstack": "^2.0.3",
+    "use": "^3.1.1",
+    "vee-validate": "^4.15.1",
+    "Vite": "npm:vite@^8.0.9",
+    "vue": "^3.5.32",
+    "vue-router": "^5.0.4",
+    "vuetify": "^4.0.5"
+  },
+  "devDependencies": {
+    "@types/node": "^24.12.2",
+    "@vitejs/plugin-vue": "^6.0.5",
+    "@vue/tsconfig": "^0.9.1",
+    "typescript": "~6.0.2",
+    "vite": "^8.0.4",
+    "vue-tsc": "^3.2.6"
+  }
+}
