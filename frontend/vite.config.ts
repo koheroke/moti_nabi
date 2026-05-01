@@ -5,6 +5,9 @@ import path from 'path'
 export default defineConfig({
   plugins: [vue()],
   envDir: '../',
+  build: {
+    outDir: '../backend/frontendDist', 
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
