@@ -4,13 +4,15 @@ import type { RouteRecordRaw } from 'vue-router'
 import { authRoutes } from './routers/auth'
 import { createRoutes } from "./routers/create"
 import { userRoutes } from './routers/user'
+import { homeRoutes } from './routers/home'
 // import { billingRoutes } from './routes/billing'
 // import { systemRoutes } from './routes/system'
 
 const routes: RouteRecordRaw[] = [
   ...authRoutes,
   ...createRoutes,
-  ...userRoutes
+  ...userRoutes,
+  ...homeRoutes
 ]
 
 export const router = createRouter({
