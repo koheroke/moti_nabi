@@ -5,6 +5,8 @@ import { authRoutes } from './routers/auth'
 import { createRoutes } from "./routers/create"
 import { userRoutes } from './routers/user'
 import { homeRoutes } from './routers/home'
+import { galleryRoutes } from './routers/gallery'
+import {detailRoutes} from "./routers/workDetail"
 // import { billingRoutes } from './routes/billing'
 // import { systemRoutes } from './routes/system'
 
@@ -12,7 +14,10 @@ const routes: RouteRecordRaw[] = [
   ...authRoutes,
   ...createRoutes,
   ...userRoutes,
-  ...homeRoutes
+  ...homeRoutes,
+  ...galleryRoutes,
+  ...detailRoutes
+  
 ]
 
 export const router = createRouter({

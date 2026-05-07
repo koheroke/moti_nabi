@@ -24,7 +24,7 @@ defineProps<{
   margin-top: 20px;
   display: inline-grid;
   max-width: 100%;
-  justify-content: center;
+  justify-content: left;
   margin-bottom: 20px;
 }
 

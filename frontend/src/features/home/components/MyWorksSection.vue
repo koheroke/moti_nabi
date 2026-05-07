@@ -8,7 +8,8 @@
 <script setup lang="ts">
 import HomeWorksSection from "./HomeWorksSection.vue";
 import { useMyWorks } from "../composables/MyWorks";
-const { visibleWorks, more } = useMyWorks();
+const step = 5;
+const { visibleWorks, more } = useMyWorks(step);
 const onMoreClick = () => {
   more();
 };

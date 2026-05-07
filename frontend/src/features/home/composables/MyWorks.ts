@@ -1,27 +1,18 @@
-import { fetchWorks } from "@/features/work/composables/work"
+import { fetchUserWorks } from "@/features/work/composables/work"
 import type { Work } from "@/features/work/types/work";
-import { onMounted, ref, computed } from "vue"
+import { useIncrementalList } from "@/composables/array/useIncrementalList";
+import { onMounted, ref } from "vue"
 
-export const useMyWorks = () => {
+export const useMyWorks = (step:number) => {
   const works = ref<Work[]>([])
-  const moreNum = 5
-  const sliceNum = ref(moreNum)
-
   onMounted(async () => {
-    works.value = await fetchWorks()
+    works.value = await fetchUserWorks()
   })
-
-  const visibleWorks = computed(() => {
-    return works.value.slice(0, sliceNum.value)
-  })
-
-  const more = () => {
-    sliceNum.value += moreNum
-  }
-
+  const { visibleItems ,more} = useIncrementalList(works, step)
+  
   return {
     works,
-    visibleWorks,
-    more
-  }
+    more,
+    visibleWorks:visibleItems,
+  }  
 }

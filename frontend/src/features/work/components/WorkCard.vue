@@ -1,5 +1,5 @@
 <template>
-  <article class="work-card">
+  <article class="work-card" @click="emit('onWorkCard')">
     <img class="thumbnail" :src="work.thumbnailUrl" :alt="work.title" />
 
     <div class="body">
@@ -7,8 +7,10 @@
 
       <div class="meta">
         <span>{{ work.createdAt }}</span>
-        <span v-if="work.isPublished">公開中</span>
-        <span v-else>非公開</span>
+        <span
+          ><ThumbsUp :size="16" color="green" fill="yellowgreen"></ThumbsUp
+          >{{ " " + work.likeCount }}</span
+        >
       </div>
     </div>
   </article>
@@ -16,6 +18,10 @@
 
 <script setup lang="ts">
 import type { Work } from "@/features/work/types/work";
+import { ThumbsUp } from "lucide-vue-next";
+const emit = defineEmits<{
+  (e: "onWorkCard"): void;
+}>();
 
 defineProps<{
   work: Work;
@@ -29,6 +35,13 @@ defineProps<{
   background: #fff;
   padding: 0px 5px;
   flex: 0 0 auto;
+  width: 300px;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+.work-card:hover {
+  transform: translateY(-3.5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .thumbnail {
