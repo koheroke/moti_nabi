@@ -14,7 +14,7 @@ const loginWithGoogle = () => {};
 
 <template>
   <form class="form">
-    <FormField label="名前" :error="error" required>
+    <FormField label="名前またはメール" :error="error" required>
       <BaseInput v-model="name" type="name" />
     </FormField>
     <FormField label="パスワード" :error="error" required>

@@ -2,6 +2,7 @@
   <div class="page">
     <header class="top">
       <h1>motinabi</h1>
+      <UserIcon :userid="testUserId"></UserIcon>
     </header>
     <body class="body">
       <section class="container">
@@ -31,7 +32,9 @@ import GalleryWorksSection from "@features/home/components/GalleryWorksSection.v
 import MyWorksSection from "@/features/home/components/MyWorksSection.vue";
 import BaseButton from "@/components/ui/form/BaseButton/BaseButton.vue";
 import { useRouter } from "vue-router";
+import UserIcon from "@/features/user/components/UserIcon.vue";
 const router = useRouter();
+const testUserId = 1;
 const goCreate = () => {
   router.push("/create");
 };

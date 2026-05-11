@@ -14,6 +14,7 @@ import GalleryTags from "./GalleryTags.vue";
 import { Search } from "lucide-vue-next";
 const emit = defineEmits(["update:modelValue"]);
 const modelValue = ref("");
+
 const onUpdateSearch = (newSearch: string) => {
   modelValue.value += newSearch;
 };

@@ -25,7 +25,7 @@ import type { Work } from "@/features/work/types/work";
 import { useRouter } from "vuetify/lib/composables/router.mjs";
 const router = useRouter();
 const onWorkCard = (cardId: string) => {
-  router?.push({ path: "/view", query: { cardId: cardId } });
+  router?.push({ path: "/detail", query: { cardId: cardId } });
 };
 
 withDefaults(
