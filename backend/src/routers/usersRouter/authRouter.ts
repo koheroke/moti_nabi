@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 const authRouter = new Hono();
 
 authRouter.get('/singup', (c) => {
-  
+  //DB保存
   return c.text('users');
 });
 

@@ -1,9 +1,35 @@
 <script setup lang="ts">
 import SignupForm from "@/features/auth/components/signup/SignUp.vue";
+import { onMounted, onBeforeUnmount, ref } from "vue";
+import * as THREE from "three";
+import WAVES from "vanta/src/vanta.waves";
+const vantaRef = ref<HTMLElement | null>(null);
+
+let vantaEffect: any = null;
+
+onMounted(() => {
+  vantaEffect = WAVES({
+    el: vantaRef.value,
+    THREE: THREE,
+    mouseControls: true,
+    touchControls: true,
+    gyroControls: false,
+    minHeight: 200.0,
+    minWidth: 200.0,
+    scale: 1.0,
+    scaleMobile: 1.0,
+  });
+});
+
+onBeforeUnmount(() => {
+  if (vantaEffect) {
+    vantaEffect.destroy();
+  }
+});
 </script>
 
 <template>
-  <div class="page">
+  <div class="page" ref="vantaRef">
     <div class="auth-card">
       <h1 class="title">アカウント作成</h1>
 
@@ -23,8 +49,7 @@ import SignupForm from "@/features/auth/components/signup/SignUp.vue";
   max-width: 420px;
   padding: 32px;
   border-radius: 12px;
-  background: #fff;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  background-color: rgb(255, 255, 255);
 }
 
 .title {

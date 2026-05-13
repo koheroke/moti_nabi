@@ -2,7 +2,7 @@
   <div class="page">
     <header class="top">
       <h1>motinabi</h1>
-      <UserIcon :userid="testUserId"></UserIcon>
+      <UserIcon :userid="testUserId" size="large"></UserIcon>
     </header>
     <body class="body">
       <section class="container">
@@ -72,6 +72,7 @@ const goCreate = () => {
   background: #fafafa;
   border-bottom: 1px solid #eee;
   display: flex;
+  align-items: center;
 }
 .top h1 {
   font-size: 50px;

@@ -10,4 +10,14 @@ export const authRoutes: RouteRecordRaw[] = [
     name: 'signup',
     component: () => import('@/page/auth/SignUpPage.vue'),
   },
+  {
+    path: '/2fa',
+    name: '2fa',
+    component: () => import('@/page/auth/2faPage.vue'),
+  },
+  {
+    path: '/forgotPassward',
+    name: 'forgotPassward',
+    component: () => import('@/page/auth/2faPage.vue'),
+  },
 ]

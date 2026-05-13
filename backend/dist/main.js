@@ -11,7 +11,7 @@ const node_server_1 = require("@hono/node-server");
 const app = new hono_1.Hono();
 app.route('/auth', route_1.default);
 app.use('/*', static_1.staticMiddleware);
-app.get('*', (0, serve_static_1.serveStatic)({ path: '/backend/frontendDist/index.html' }));
+app.get('*', (0, serve_static_1.serveStatic)({ path: './frontendDist/index.html' }));
 const server = (0, node_server_1.serve)({
     fetch: app.fetch,
     port: 3000,

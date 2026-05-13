@@ -1,0 +1,1 @@
+import{_ as e}from"./runtime-core.esm-bundler-1sKwKTmq.js";import{n as t}from"./index-B3TDTa9m.js";var n=e({__name:`EntryPage`,setup(e){return t().push(`/login`),(e,t)=>null}});export{n as default};

@@ -1,11 +1,12 @@
 <template>
-  <img :src="testThumbnailUrl" class="icon" @click="onUserIcon" />
+  <img :src="testThumbnailUrl" class="icon" @click="onUserIcon" :class="size" />
 </template>
 <script setup lang="ts">
 import { useRouter } from "vue-router";
 const router = useRouter();
 const props = defineProps<{
   userid: number;
+  size: "small" | "medium" | "large";
 }>();
 const testThumbnailUrl = "https://picsum.photos/400/300";
 const onUserIcon = () => {
@@ -22,8 +23,19 @@ const onUserIcon = () => {
 </script>
 <style scoped>
 .icon {
+  border-radius: 100%;
+  background-color: aliceblue;
+}
+.small {
   width: 24px;
   height: 24px;
-  border-radius: 100%;
+}
+.medium {
+  width: 34px;
+  height: 34px;
+}
+.large {
+  width: 45px;
+  height: 45px;
 }
 </style>

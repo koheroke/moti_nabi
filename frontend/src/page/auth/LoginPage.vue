@@ -17,6 +17,10 @@ import { BaseLabel } from "@/components/ui/form/BaseLabel";
         <RouterLink to="/signup">新規登録</RouterLink>
         はこちら
       </p>
+      <p class="login-link">
+        <RouterLink to="/signup">パスワードを</RouterLink>
+        忘れました
+      </p>
     </div>
   </div>
 </template>

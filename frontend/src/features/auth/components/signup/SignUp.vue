@@ -1,33 +1,73 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useSignup } from "../../composables/useSignUp";
 import { FormField } from "@components/ui/form/FormField";
 import { BaseInput } from "@components/ui/form/BaseInput";
+import { useRouter } from "vue-router";
+import { onMounted } from "vue";
+import { useAlertStore } from "@/store/feedback/alertStore";
+import { useDialogStore } from "@/store/feedback/dialogStore";
+
+const router = useRouter();
+const dialogStore = useDialogStore();
+const alertStore = useAlertStore();
 
 const name = ref("");
 const email = ref("");
 const password = ref("");
 const passwordConfirm = ref("");
 
-const { signup, loading, error } = useSignup();
+const isEmailValid = computed(() => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value);
+});
+
+const isPasswordValid = computed(() => {
+  return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(password.value);
+});
+
+const { signup, loading } = useSignup();
 
 const onSubmit = async () => {
   if (password.value !== passwordConfirm.value) {
-    alert("パスワードが一致しません");
+    alertStore.showAlert("パスワードが一致しません", true);
     return;
   }
-
+  if (!isEmailValid.value) {
+    alertStore.showAlert("メールアドレスが正しくありません", true);
+    return;
+  }
+  if (!isPasswordValid.value) {
+    alertStore.showAlert("パスワードが正しくありません", true);
+    return;
+  }
   grecaptcha.enterprise.ready(async () => {
     const token = await grecaptcha.enterprise.execute(
       "6LerNccsAAAAABAI5TvYl4D2gN4ByCej9jbXavs1",
       { action: "SIGNUP" },
     );
-    await signup({
+    const { error, loading } = await signup({
       email: email.value,
       password: password.value,
       name: name.value,
       recaptchaToken: token,
     });
+    if (error) {
+      alertStore.showAlert("登録に失敗しました", true); //errorBool
+    }
+    if (error == null && !loading) {
+      onMounted(() => {
+        alertStore.showAlert("アカウントが作成されました");
+      });
+
+      dialogStore.showDialog(
+        "続けて2段階認証を行いますか",
+        "機能の使用には2段階認証が必要です",
+        () => {
+          router.push("/");
+        },
+      );
+      router.push("/home"); //onboardingに後でかえる
+    }
   });
 };
 </script>
@@ -55,8 +95,6 @@ const onSubmit = async () => {
     <button :disabled="loading">
       {{ loading ? "作成中..." : "アカウントを作成" }}
     </button>
-
-    <p v-if="error" class="error">{{ error }}</p>
   </form>
 </template>
 
@@ -87,10 +125,5 @@ button {
 button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-}
-
-.error {
-  color: red;
-  font-size: 14px;
 }
 </style>
