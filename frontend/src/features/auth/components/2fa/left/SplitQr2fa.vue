@@ -1,6 +1,6 @@
 <template>
   <div class="left">
-    <QrcodeVue :value="otpauthUrl" :size="400" level="H" />
+    <QrcodeVue :value="otpauthUrl" :size="350" level="H" />
   </div>
 </template>
 <script setup lang="ts">
@@ -19,10 +19,10 @@ onMounted(() => {
 .left {
   margin-right: auto;
   height: 100%;
-  width: 100%;
+  width: 60%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  padding-top: 10%;
 }
 </style>

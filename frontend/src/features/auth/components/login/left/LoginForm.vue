@@ -4,18 +4,22 @@ import { BaseInput } from "@components/ui/form/BaseInput";
 import { FormField } from "@/components/ui/form/FormField";
 import { BaseButton } from "@/components/ui/form/BaseButton";
 import { BaseLabel } from "@/components/ui/form/BaseLabel";
+import { useLogin } from "@/features/auth/composables/useLogin";
 import GoogleButton from "./GoogleButton.vue";
-const name = ref("");
+const email = ref("");
 const passward = ref("");
 const error = ref("");
-const onLogin = () => {};
+const Login = useLogin();
+const onLogin = () => {
+  const res = Login.login({ email: email.value, password: passward.value });
+};
 const loginWithGoogle = () => {};
 </script>
 
 <template>
   <form class="form">
-    <FormField label="名前またはメール" :error="error" required>
-      <BaseInput v-model="name" type="name" />
+    <FormField label="メールアドレスでログイン" :error="error" required>
+      <BaseInput v-model="email" type="name" />
     </FormField>
     <FormField label="パスワード" :error="error" required>
       <BaseInput

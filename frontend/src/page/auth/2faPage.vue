@@ -10,26 +10,29 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import {
-  use2fa,
-  verification2fa,
-  type Setup2FAResponse,
-} from "@/features/auth/composables/2fa";
+import { use2fa, type Setup2FAResponse } from "@/features/auth/composables/2fa";
 import { useUserStore } from "@/store/user/userStore";
 import SplitQr2fa from "@/features/auth/components/2fa/left/SplitQr2fa.vue";
 import AuthProcedureScreen from "@/features/auth/components/2fa/right/AuthProcedureScreen.vue";
 import { onMounted } from "vue";
 import { useAlertStore } from "@/store/feedback/alertStore";
 import { useRouter } from "vue-router";
+
 const router = useRouter();
 const alertStore = useAlertStore();
 const use2faResponse = ref<Setup2FAResponse | null>(null);
 const otp = ref("");
+const this_2fa = use2fa();
+const redirect = router.options.history.state.back;
+
 const sendOtp = async (otp: string) => {
-  const verificationBool = await verification2fa(otp);
+  const verificationBool = await this_2fa.verification2fa(otp);
   if (verificationBool) {
     alertStore.showAlert("2段階認証に成功しました");
-    router.push("/home");
+    if (redirect == undefined) {
+      router.push("/");
+    }
+    router.push(`${redirect}`);
   } else {
     alertStore.showAlert("2段階認証に失敗しました", true);
   }
@@ -39,7 +42,7 @@ onMounted(async () => {
   if (!userStore.isAuthenticated || userStore.isTempAuthenticated) {
     return;
   }
-  use2faResponse.value = await use2fa();
+  use2faResponse.value = await this_2fa.setup();
 });
 const userStore = useUserStore();
 </script>

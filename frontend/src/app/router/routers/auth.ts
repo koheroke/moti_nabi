@@ -20,4 +20,9 @@ export const authRoutes: RouteRecordRaw[] = [
     name: 'forgotPassward',
     component: () => import('@/page/auth/2faPage.vue'),
   },
+  {
+    path: 'session',
+    name: 'session',
+    component: () => import('@/page/auth/sessionPage.vue'),
+  }
 ]

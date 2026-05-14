@@ -5,20 +5,22 @@
       <li>
         <p>
           <a target="_blank" :href="href">Google Authenticator</a
-          >を使ってQRコードをよみとる
+          >を使ってQRコードを読み取る
         </p>
       </li>
+
+      <li><p>表示された6桁のコードを入力する</p></li>
+      <h3 style="margin-top: 30px">Authenticator DL用QRコード</h3>
       <section class="qrcode-section">
-        <div class="qrcode">
+        <div class="qrcode" style="margin-right: auto">
           <img src="/images/qr/authenticator-google.png" class="qr-image" />
-          {{ "GoogleStore_URL" }}
+          <div>{{ "Andoroid用" }}</div>
         </div>
-        <div class="qrcode">
+        <div class="qrcode" style="margin-left: auto">
           <img src="/images/qr/authenticator-apple.png" class="qr-image" />
-          {{ "AppleStore_URL" }}
+          {{ "IOS/Apple用" }}
         </div>
       </section>
-      <li><p>表示された表示された6桁のコードを入力する</p></li>
     </div>
     <div class="bottom">
       <v-otp-input
@@ -60,8 +62,7 @@ onMounted(() => {
 .right {
   margin-left: auto;
   height: 100%;
-  width: auto;
-  padding: 50px 120px;
+  width: 40%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -77,7 +78,7 @@ onMounted(() => {
 }
 .right p {
   padding-left: 20px;
-  padding-bottom: 10px;
+  padding-bottom: 30px;
   font-weight: 400;
 }
 .custom-otp :deep(.v-otp-input__content) {
@@ -98,8 +99,9 @@ onMounted(() => {
   margin-bottom: auto;
 }
 .qr-image {
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
+  padding: 5px;
 }
 .qrcode {
   display: flex;
@@ -111,9 +113,9 @@ onMounted(() => {
 .qrcode-section {
   display: flex;
   align-items: center;
-  gap: 20px;
   justify-content: center;
   padding-bottom: 20px;
+  padding: 0px 30px;
 }
 .button {
   transition: Scale 0.5s ease-in;
