@@ -1,1 +1,77 @@
-<template></template>
+<template>
+  <div class="page">
+    <SplitQr2fa :otpauthUrl="use2faResponse?.otpauthUrl"></SplitQr2fa>
+    <AuthProcedureScreen
+      v-model="otp"
+      @completion:model-value="sendOtp"
+    ></AuthProcedureScreen>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from "vue";
+import {
+  use2fa,
+  verification2fa,
+  type Setup2FAResponse,
+} from "@/features/auth/composables/2fa";
+import { useUserStore } from "@/store/user/userStore";
+import SplitQr2fa from "@/features/auth/components/2fa/left/SplitQr2fa.vue";
+import AuthProcedureScreen from "@/features/auth/components/2fa/right/AuthProcedureScreen.vue";
+import { onMounted } from "vue";
+import { useAlertStore } from "@/store/feedback/alertStore";
+import { useRouter } from "vue-router";
+const router = useRouter();
+const alertStore = useAlertStore();
+const use2faResponse = ref<Setup2FAResponse | null>(null);
+const otp = ref("");
+const sendOtp = async (otp: string) => {
+  const verificationBool = await verification2fa(otp);
+  if (verificationBool) {
+    alertStore.showAlert("2段階認証に成功しました");
+    router.push("/home");
+  } else {
+    alertStore.showAlert("2段階認証に失敗しました", true);
+  }
+};
+
+onMounted(async () => {
+  if (!userStore.isAuthenticated || userStore.isTempAuthenticated) {
+    return;
+  }
+  use2faResponse.value = await use2fa();
+});
+const userStore = useUserStore();
+</script>
+<style lang="css" scoped>
+.page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+}
+
+.custom-otp {
+  width: 100%;
+  padding: 24px;
+}
+
+.custom-otp :deep(.v-otp-input__content) {
+  width: 100%;
+}
+
+.custom-otp :deep(.v-field:nth-child(4)) {
+  margin-left: 16px;
+}
+
+.custom-otp :deep(.v-field) {
+  flex: 1;
+  height: 146px;
+}
+
+.custom-otp :deep(input) {
+  font-size: 24px;
+  text-align: center;
+}
+</style>

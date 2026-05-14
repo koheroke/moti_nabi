@@ -4,7 +4,7 @@ export const useLogin = () => {
   const loading = ref(false)
   const error = ref<string | null>(null)
 
-  const login = async (loginInput:LoginInput) => {
+  const login = async (loginInput: LoginInput) => {
     loading.value = true
     error.value = null
     console.log(loginInput)

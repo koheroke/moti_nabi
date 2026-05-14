@@ -15,12 +15,6 @@ import { watch } from "vue";
 const step = 10;
 const { visibleWorks, more, GalleryWorksSearch, GalleryWorksSort } =
   useGalleryWorks(step);
-
-import { onMounted } from "vue";
-onMounted(() => {
-  console.log("visibleWorks", visibleWorks.value);
-});
-
 const props = defineProps<{
   search: ParseSearchQuery;
   sortType: SortType;

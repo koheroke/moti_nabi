@@ -1,6 +1,6 @@
 // src/stores/user.ts
 import { defineStore } from 'pinia'
-const testUser ={
+const testUser = {
   id: 1,
   name: "あずまこうへい",
   email: "@aaa"
@@ -15,7 +15,9 @@ export type User = {
 type UserState = {
   user: User | null
   token: string | null
-  isLoading: boolean
+  isLoading: boolean,
+  isAuthenticated: boolean,
+  isTempAuthenticated: boolean
 }
 
 export const useUserStore = defineStore('user', {
@@ -23,6 +25,8 @@ export const useUserStore = defineStore('user', {
     user: testUser,
     token: localStorage.getItem('token'),
     isLoading: false,
+    isAuthenticated: false,
+    isTempAuthenticated: false
   }),
 
   getters: {
@@ -42,15 +46,27 @@ export const useUserStore = defineStore('user', {
       localStorage.setItem('token', token)
     },
 
+    set(token: string) {
+      this.token = token
+      localStorage.setItem('token', token)
+    },
+
     login(user: User, token: string) {
       this.setUser(user)
       this.setToken(token)
+      this.isAuthenticated = true
+    },
+
+    set2fa() {
+      this.isTempAuthenticated = true
     },
 
     logout() {
       this.user = null
       this.token = null
       localStorage.removeItem('token')
+      this.isAuthenticated = false
+      this.isTempAuthenticated = false
     },
 
     async fetchUser() {

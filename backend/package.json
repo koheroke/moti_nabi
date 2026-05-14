@@ -15,7 +15,12 @@
   "type": "commonjs",
   "dependencies": {
     "@hono/node-server": "^1.19.14",
-    "hono": "^4.12.14"
+    "@otplib/preset-default": "^12.0.1",
+    "hono": "^4.12.14",
+    "otplib": "^13.4.0",
+    "qrcode": "^1.5.4",
+    "speakeasy": "^2.0.0",
+    "uuid": "^14.0.0"
   },
   "devDependencies": {
     "@types/node": "^25.6.0",
@@ -23,4 +28,3 @@
     "typescript": "^6.0.3"
   }
 }
-

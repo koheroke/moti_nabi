@@ -42,6 +42,9 @@ watch(
     show.value = true;
     setTimeout(() => {
       popup.value = false;
+      setTimeout(() => {
+        show.value = false;
+      }, 500);
     }, 3000);
   },
 );

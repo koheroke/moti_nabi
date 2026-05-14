@@ -6,8 +6,8 @@
     </section>
     <section class="bottom-area">
       <section style="margin-left: auto; display: flex; gap: 5px">
-        <BaseButton @click="onClickOK">はい</BaseButton>
-        <BaseButton @click="onClickNo" variant="ghost">いいえ</BaseButton>
+        <BaseButton @click="handleOK">はい</BaseButton>
+        <BaseButton @click="close" variant="ghost">いいえ</BaseButton>
       </section>
     </section>
   </div>
@@ -19,9 +19,17 @@ import { BaseButton } from "@/components/ui/form/BaseButton";
 const title = ref<string>("");
 const text = ref<string>("");
 const onClickOK = ref<(() => void) | null>(null);
-const onClickNo = () => {
+const close = () => {
   popup.value = false;
+  setTimeout(() => {
+    show.value = false;
+  }, 1000);
 };
+const handleOK = () => {
+  onClickOK.value?.();
+  close();
+};
+
 const popup = ref(false);
 const dialogStore = useDialogStore();
 const show = ref(false);
@@ -45,14 +53,15 @@ watch(
   z-index: 30;
   display: flex;
   flex-direction: column;
-  position: absolute;
+  position: fixed;
   background-color: rgb(255, 255, 255);
   left: 50%;
-  bottom: 0vh;
   transform: translateX(-50%);
   gap: 10px;
   width: 90%;
+  bottom: 0vh;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(0, 136, 255, 0.207);
   border-radius: 10px;
   padding: 5px 5px;
 }

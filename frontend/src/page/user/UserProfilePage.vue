@@ -10,7 +10,6 @@
   </div>
 </template>
 <script setup lang="ts">
-console.log("test");
 import ProfileSection from "@features/user/components/ProfileSection.vue";
 import UserWorksPanel from "@/features/user/components/UserWorksPanel.vue";
 import ProfileEdit from "@/features/user/components/ProfileEdit.vue";
@@ -26,7 +25,6 @@ const userId = Array.isArray(route.params.userId)
   ? route.params.userId[0]
   : route.params.userId;
 const edit = ref(userId == userstore.userId ? editbool : false);
-console.log(userId, edit.value);
 </script>
 <style lang="css" scoped>
 .page {
