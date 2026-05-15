@@ -7,6 +7,8 @@ import { useRouter } from "vue-router";
 import { onMounted } from "vue";
 import { useAlertStore } from "@/store/feedback/alertStore";
 import { useDialogStore } from "@/store/feedback/dialogStore";
+import { useRecaptchaToken } from "../../composables/recaptcha";
+const recaptchaToken = useRecaptchaToken();
 
 const router = useRouter();
 const dialogStore = useDialogStore();
@@ -40,35 +42,33 @@ const onSubmit = async () => {
     alertStore.showAlert("パスワードが正しくありません", true);
     return;
   }
-  grecaptcha.enterprise.ready(async () => {
-    const token = await grecaptcha.enterprise.execute(
-      "6LerNccsAAAAABAI5TvYl4D2gN4ByCej9jbXavs1",
-      { action: "SIGNUP" },
-    );
-    const { error, loading } = await signup({
+  const token = await recaptchaToken.get("SIGNUP");
+  const { error, loading } = await signup(
+    {
       email: email.value,
       password: password.value,
       name: name.value,
-      recaptchaToken: token,
-    });
-    if (error) {
-      alertStore.showAlert("登録に失敗しました", true); //errorBool
-    }
-    if (error == null && !loading) {
-      onMounted(() => {
-        alertStore.showAlert("アカウントが作成されました");
-      });
+    },
+    token,
+  );
 
-      dialogStore.showDialog(
-        "続けて2段階認証を行いますか",
-        "機能の使用には2段階認証が必要です",
-        () => {
-          router.push("/2fa");
-        },
-      );
-      router.push("/home"); //onboardingに後でかえる
-    }
-  });
+  if (error) {
+    alertStore.showAlert("登録に失敗しました", true); //errorBool
+  }
+  if (error == null && !loading) {
+    onMounted(() => {
+      alertStore.showAlert("アカウントが作成されました");
+    });
+
+    dialogStore.showDialog(
+      "続けて2段階認証を行いますか",
+      "機能の使用には2段階認証が必要です",
+      () => {
+        router.push("/2fa");
+      },
+    );
+    router.push("/home"); //onboardingに後でかえる
+  }
 };
 </script>
 

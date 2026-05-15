@@ -1,7 +1,7 @@
+import { env } from "@/constants/env/env"
 import { Hono } from 'hono'
-import auth from '@/features/auth/route'
 import { staticMiddleware } from "@/shared/middlewares/static"
-import { serveStatic } from '@hono/node-server/serve-static' 
+import { serveStatic } from '@hono/node-server/serve-static'
 import { serve } from '@hono/node-server'
 import { routers } from '@/routers/router'
 const app = new Hono()
@@ -14,4 +14,4 @@ const server = serve({
 })
 export default app
 
- 
+

@@ -1,9 +1,11 @@
 import { Hono } from 'hono';
-import { use2fa } from '@/features/users/2fa';
-import { usesignup } from '@/features/users/signup';
-import { useLogin } from '@/features/users/login';
-import { useSession } from '@/features/users/session';
+import { use2fa } from '@/features/auth/2fa';
+import { usesignup } from '@/features/auth/signup';
+import { useLogin } from '@/features/auth/login';
+import { useSession } from '@/features/auth/session';
+import { useGoogleLogin } from '@/features/auth/login';
 const authRouter = new Hono();
+const googleLogin = useGoogleLogin()
 const this_login = useLogin()
 const this_2fa = use2fa()
 const this_signup = usesignup()
@@ -11,14 +13,14 @@ const this_session = useSession()
 
 authRouter.post('/signup', async (c) => {
   const body = await c.req.json();
-  const res = await this_signup.singup(body)
-  return c.json(res)
+  const user = await this_signup.singup(body)
+  return c.json(user)
 });
 
 authRouter.post('/login', async (c) => {
   const body = await c.req.json();
-  const res = await this_login.login(body, c)
-  return c.json(res)
+  const user = await this_login.login(body, c)
+  return c.json(user)
 });
 
 authRouter.post('/2fa/setup', async (c) => {
@@ -45,5 +47,27 @@ authRouter.post('/session/login', async (c) => {
   return c.json(session);
 });
 
+
+
+
+authRouter.get("/googleLogin", googleLogin.login);
+authRouter.get("/google/callback", googleLogin.callback);
+
+import { verifyRecaptcha } from '@/shared/security/recaptcha'
+authRouter.post('/recaptcha', async (c) => {
+  const body = await c.req.json()
+  const recaptchaToken = body
+  const result = await verifyRecaptcha(recaptchaToken)
+  if (!result.success) {
+    return c.json({ message: 'reCAPTCHA failed' }, 400)
+  }
+  if (result.score < 0.5) {
+    return c.json({ message: 'Bot suspected' }, 403)
+  }
+  if (result.action !== 'SIGNUP') {
+    return c.json({ message: 'Invalid action' }, 400)
+  }
+  return c.json({ message: 'ok' })
+})
 
 export { authRouter };

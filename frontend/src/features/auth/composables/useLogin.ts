@@ -1,21 +1,23 @@
 import { ref } from "vue"
-import { type LoginInput } from "../type/LoingType"
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
-const url = `${apiUrl}/auth/login`;
+const url = `${apiUrl}/auth`;
+import { useUserStore } from "@/store/user/userStore"
+const userStore = useUserStore()
+
 interface loginInput {
   email: string
   password: string
 }
-export const useLogin = () => {
+const useLogin = () => {
   const loading = ref(false)
   const error = ref<string | null>(null)
-  const login = async (loginInput: loginInput) => {
+  const login = async (loginInput: loginInput, token: string) => {
     loading.value = true
     error.value = null
     console.log(loginInput)
     try {
       const singup_res = await fetch(
-        url,
+        `${url}/login`,
         {
           method: 'POST',
           headers: {
@@ -24,7 +26,9 @@ export const useLogin = () => {
           body: JSON.stringify(loginInput)
         }
       )
-      const res = await singup_res.json()
+      const user = await singup_res.json()
+      userStore.login(user, token)
+      return user
     } catch (e) {
       error.value = '登録失敗'
     } finally {
@@ -33,3 +37,9 @@ export const useLogin = () => {
   }
   return { login, loading, error }
 }
+
+
+export { useLogin }
+export type { loginInput }
+export type { User } from "@/store/user/userStore"
+

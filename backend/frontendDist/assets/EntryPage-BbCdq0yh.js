@@ -1,0 +1,1 @@
+import{v as e}from"./runtime-core.esm-bundler-BxSeyN28.js";import{n as t}from"./index-q_Zzk9SE.js";var n=e({__name:`EntryPage`,setup(e){return t().push(`/session`),(e,t)=>null}});export{n as default};

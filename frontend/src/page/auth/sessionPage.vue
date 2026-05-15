@@ -9,7 +9,10 @@ const session = useSession();
 const userStore = useUserStore();
 onMounted(async () => {
   const token = await session.login();
-  if (!token) router.push("/login");
+  if (!token.email) {
+    router.push("/login");
+    return;
+  }
   userStore.login(token, "");
   router.push("/home");
 });

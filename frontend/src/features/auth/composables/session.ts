@@ -1,5 +1,4 @@
 import { ref } from "vue"
-import { type LoginInput } from "../type/LoingType"
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 const url = `${apiUrl}/auth`;
 

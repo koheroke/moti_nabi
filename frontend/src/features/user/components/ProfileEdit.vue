@@ -9,7 +9,7 @@
           </div>
         </div>
         <div class="user-info">
-          <div class="name">{{ userProfile.name }}</div>
+          <BaseInput v-model="name" class="name"></BaseInput>
           <div class="user-id">@{{ userProfile.id }}</div>
         </div>
       </section>
@@ -18,9 +18,8 @@
         <div class="profile-description">
           {{ "自己紹介 :" }}
           <div class="bio">
-            {{ userProfile.bio }}
+            <BaseTextArea v-model="bio"> </BaseTextArea>
           </div>
-
           <div class="sns">
             <a
               v-for="sns in userProfile.snsLinks"
@@ -49,13 +48,20 @@
 import { ref, onMounted } from "vue";
 import { fetchUserProfile } from "@/features/user/composables/user";
 import type { UserProfile } from "@/features/user/types/profile";
+import { BaseTextArea } from "@/components/ui/form/BaseTextArea/index.ts";
+import { BaseInput } from "@/components/ui/form/BaseInput";
 import { Camera } from "lucide-vue-next";
+const bio = ref("");
+const name = ref("");
 const userProfile = ref<UserProfile | null>(null);
 const props = defineProps<{
   userId: string;
 }>();
+
 onMounted(async () => {
   userProfile.value = await fetchUserProfile(props.userId);
+  bio.value = userProfile.value?.bio || "";
+  name.value = userProfile.value?.name || "";
 });
 </script>
 <style lang="css" scoped>
@@ -75,6 +81,9 @@ onMounted(async () => {
   transition:
     opacity 0.2s ease,
     background-color 0.2s ease;
+}
+.name {
+  text-align: center;
 }
 .icon_image {
   border-radius: 100%;

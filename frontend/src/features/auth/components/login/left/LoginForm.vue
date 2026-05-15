@@ -6,14 +6,21 @@ import { BaseButton } from "@/components/ui/form/BaseButton";
 import { BaseLabel } from "@/components/ui/form/BaseLabel";
 import { useLogin } from "@/features/auth/composables/useLogin";
 import GoogleButton from "./GoogleButton.vue";
+import { useRecaptchaToken } from "@/features/auth/composables/recaptcha";
+const recaptchaToken = useRecaptchaToken();
+const Login = useLogin();
+
 const email = ref("");
 const passward = ref("");
 const error = ref("");
-const Login = useLogin();
-const onLogin = () => {
-  const res = Login.login({ email: email.value, password: passward.value });
+
+const onLogin = async () => {
+  const token = await recaptchaToken.get("SIGNUP");
+  Login.login({ email: email.value, password: passward.value }, token);
 };
-const loginWithGoogle = () => {};
+const loginWithGoogle = async () => {
+  window.location.href = "/auth/googleLogin";
+};
 </script>
 
 <template>
