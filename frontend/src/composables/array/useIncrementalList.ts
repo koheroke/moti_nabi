@@ -1,4 +1,4 @@
-import { ref ,computed, type Ref} from "vue"
+import { ref, computed, type Ref } from "vue"
 export const useIncrementalList = <T>(items: Ref<T[]>, step: number) => {
   const count = ref(step)
 
