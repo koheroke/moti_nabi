@@ -6,9 +6,9 @@
 
     <main class="main">
       <div class="sidebar-area">
-        <sideBar />
+        <sideBar :itemListDatas="getUserLuggageData?.itemListDatas" />
       </div>
-      <Preview type="hard" project="" />
+      <Preview type="hard" :previewDatas="getUserLuggageData?.previewDatas" />
     </main>
   </div>
 </template>
@@ -16,6 +16,15 @@
 import sideBar from "@/features/create/components/sideBar/sideBar.vue";
 import TopBar from "@/features/create/components/TopBar.vue";
 import Preview from "@/features/create/components/Preview.vue";
+import { UseCreateWork } from "@/features/create/composables/useCreate";
+import { ref, onMounted } from "vue";
+import { type UserLuggage_SaveDBData } from "@/features/create/type/itemType";
+const getUserLuggageData = ref<UserLuggage_SaveDBData | null>(null);
+const createWork = UseCreateWork();
+
+onMounted(async () => {
+  getUserLuggageData.value = await createWork.getSaveData();
+});
 </script>
 <style lang="css" scoped>
 .page {

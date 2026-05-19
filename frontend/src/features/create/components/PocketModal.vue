@@ -7,15 +7,17 @@
   >
     <div class="modal">
       <header class="header">
-        <h2 style="color: white; font-weight: 800; text-align: center">
+        <div @click="$emit('close')" class="close-button">
+          <X :size="25" fill="#686868"></X>
+        </div>
+        <h2 style="color: black; font-weight: 00">
           {{ pocket.name }}
         </h2>
-        <button style="margin-left: auto" @click="$emit('close')">×</button>
       </header>
       <div class="drop-area">
         <p
           v-if="pocket.items.length === 0"
-          style="color: blue; font-size: 12px; text-align: center"
+          style="font-size: 12px; text-align: center"
         >
           ここに持ち物をドラッグ
         </p>
@@ -29,6 +31,8 @@
 
 <script setup lang="ts">
 import { useItemListWork } from "../composables/itemList";
+import { X } from "lucide-vue-next";
+
 const ttemListWork = useItemListWork();
 const onDrop = (event: DragEvent) => {
   const draggedId = event.dataTransfer?.getData("itemId");
@@ -56,21 +60,34 @@ defineEmits<{
   border-radius: 10px;
 }
 .overlay {
-  border: 1px solid rgba(0, 0, 0, 0.151);
+  border: 3px dotted #94a3b8;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
   height: 200px;
-  width: 200px;
+  width: 400px;
   text-wrap: unset;
   background-color: rgb(255, 255, 255);
   overflow-y: auto;
 }
 .header {
   display: flex;
-  background-color: #3b82f6;
+  flex-direction: column;
   align-items: center;
   border-radius: 10px;
-  padding: 7px;
+}
+.close-button {
+  margin-left: auto;
+  padding-right: 5px;
+}
+
+.item-card {
+  background-color: rgb(22, 100, 152);
+  color: white;
+  text-align: center;
+  margin: 10px;
+  padding: 8px 5px;
+  border-radius: 10px;
+  font-weight: 600;
 }
 </style>

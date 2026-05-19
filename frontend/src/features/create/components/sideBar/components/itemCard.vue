@@ -6,17 +6,12 @@
     draggable="true"
     @dragstart="onDragStart"
   >
-    <div class="icon" :style="{ color: categoryColor }">
+    <div class="item-icon" :style="{ color: categoryColor }">
       {{ icon }}
     </div>
-
     <div class="info">
       <div class="name">{{ item.name }}</div>
-      <div class="meta">
-        <span>{{ item.isStorage }}</span>
-      </div>
     </div>
-
     <div v-if="item.isStorage" class="storage-badge">
       {{ item.innerItems?.length || 0 }} items
     </div>
@@ -55,6 +50,7 @@ function onDragStart(event: DragEvent) {
 .item-card {
   display: flex;
   align-items: center;
+  text-wrap: nowrap;
   gap: 10px;
   padding: 10px 12px;
   border-radius: 12px;
@@ -72,7 +68,7 @@ function onDragStart(event: DragEvent) {
   cursor: grabbing;
 }
 
-.icon {
+.item-icon {
   font-size: 24px;
 }
 

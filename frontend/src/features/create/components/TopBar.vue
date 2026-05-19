@@ -29,7 +29,6 @@
 <script setup lang="ts">
 import BaseButton from "@/components/ui/form/BaseButton/BaseButton.vue";
 import { CornerUpLeft, CornerUpRight } from "lucide-vue-next";
-import { MessageSquare } from "lucide-vue-next";
 import UserIcon from "@/features/user/components/UserIcon.vue";
 
 const props = defineProps<{

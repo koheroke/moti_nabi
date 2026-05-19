@@ -2,7 +2,7 @@
   <div class="preview-area">
     <component
       :is="currentSuitcaseComponent"
-      :project="project"
+      :project="previewDatas"
       v-model:selectedPocket="selectedPocket"
     />
     <section class="pocketModal">
@@ -19,13 +19,14 @@
 import { computed } from "vue";
 import PocketModal from "./PocketModal.vue";
 import { ref } from "vue";
+
 const selectedPocket = ref();
 
 import HardSuitcase from "./svgUi/suitcase/HardSuitcase.vue";
 
 const props = defineProps<{
   type: string;
-  project: unknown;
+  previewDatas: unknown;
 }>();
 
 const componentMap = {

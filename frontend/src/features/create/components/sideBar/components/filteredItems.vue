@@ -28,13 +28,13 @@
   </div>
 </template>
 <script setup lang="ts">
-import type { itemCategory } from "@/features/create/type/itemType";
+import type { Category, CategoryId } from "@/features/create/type/itemType";
 
 const props = defineProps<{
-  categorys: itemCategory[];
+  categorys: Category[];
   index: number;
 }>();
-const onCategory = (categoryId: string) => {
+const onCategory = (categoryId: CategoryId) => {
   const ids = props.categorys.map((item) => item.id);
   const index = ids.indexOf(categoryId);
   emit("update:index", index);

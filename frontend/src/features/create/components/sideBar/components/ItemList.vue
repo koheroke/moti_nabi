@@ -7,3 +7,10 @@
 import ItemCard from "./itemCard.vue";
 import { filteredItems } from "../../../driver/itemListDriver";
 </script>
+<style scoped>
+.itemList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+</style>

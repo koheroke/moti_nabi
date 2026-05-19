@@ -6,19 +6,19 @@ export const useAlertStore = defineStore('alert', {
     error: false,
     count: 0
   }),
-  getters:{
+  getters: {
     getAlert: (state) => ({
-      title:state.title,
-      error:state.error,
+      title: state.title,
+      error: state.error,
       count: state.count
     }),
   },
-  actions:{
-    showAlert(newTitle:string, error:boolean = false){
-     this.title = newTitle 
-     this.error = error
-     this.count++
+  actions: {
+    showAlert(newTitle: string, error: boolean = false) {
+      this.title = newTitle
+      this.error = error
+      this.count++
     }
   },
-  
+
 })
