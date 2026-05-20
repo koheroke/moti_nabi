@@ -37,7 +37,6 @@ authRouter.post('/2fa/setup', async (c) => {
 authRouter.post('/2fa/verification', async (c) => {
   const body = await c.req.json();
   const verificationRes = await this_2fa.verification2fa(body);
-  console.log("verificationRes:" + verificationRes)
   return c.json(verificationRes);
 });
 

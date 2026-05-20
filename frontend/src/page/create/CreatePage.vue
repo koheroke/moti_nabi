@@ -16,14 +16,33 @@
 import sideBar from "@/features/create/components/sideBar/sideBar.vue";
 import TopBar from "@/features/create/components/TopBar.vue";
 import Preview from "@/features/create/components/Preview.vue";
-import { UseCreateWork } from "@/features/create/composables/useCreate";
+import { UseCreateWork } from "@/features/create/composables/useCreateWork";
 import { ref, onMounted } from "vue";
 import { type UserLuggage_SaveDBData } from "@/features/create/type/itemType";
+import { useAlertStore } from "@/store/feedback/alertStore";
+const alertStore = useAlertStore();
 const getUserLuggageData = ref<UserLuggage_SaveDBData | null>(null);
-const createWork = UseCreateWork();
 
+const createWork = UseCreateWork();
 onMounted(async () => {
-  getUserLuggageData.value = await createWork.getSaveData();
+  const res = await createWork.load();
+
+  switch (res) {
+    case "noneNameorWorkId":
+      alertStore.showAlert("ユーザー情報の取得に失敗しました", true);
+      break;
+    case "fallLoadData":
+      alertStore.showAlert("データの取得に失敗しました", true);
+      break;
+    case "damagedData":
+      alertStore.showAlert("データが破損しています", true);
+      break;
+    case "none":
+      alertStore.showAlert("読み込み完了", false);
+      break;
+    default:
+      break;
+  }
 });
 </script>
 <style lang="css" scoped>

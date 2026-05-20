@@ -12,9 +12,6 @@
     <div class="info">
       <div class="name">{{ item.name }}</div>
     </div>
-    <div v-if="item.isStorage" class="storage-badge">
-      {{ item.innerItems?.length || 0 }} items
-    </div>
   </div>
 </template>
 

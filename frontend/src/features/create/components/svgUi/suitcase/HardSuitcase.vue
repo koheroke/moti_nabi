@@ -47,7 +47,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import { storeToRefs } from "pinia";
+import { useCreateStore } from "../../../store/createStore";
+const createStore = useCreateStore();
+const { previewItem } = storeToRefs(createStore);
 
 type Pocket = {
   id: string;
@@ -59,7 +63,7 @@ type Pocket = {
   items: unknown[];
 };
 
-const pockets = ref<Pocket[]>([
+const pocketInfo = ref<Pocket[]>([
   {
     id: "mesh",
     name: "メッシュ",
@@ -97,6 +101,16 @@ const pockets = ref<Pocket[]>([
     items: [],
   },
 ]);
+
+const pockets = computed(() => {
+  return pocketInfo.value.map((pocket) => {
+    if (previewItem.value)
+      pocket.items = previewItem.value[pocket.id]
+        ? previewItem.value[pocket.id]
+        : [];
+    return pocket;
+  });
+});
 
 const emit = defineEmits<{
   (e: "update:selectedPocket", pocket: Pocket): void;

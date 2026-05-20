@@ -6,6 +6,16 @@ interface itemCard {
   bookmark: boolean;
   isStorage: boolean;
 }
+
+interface previewItem {
+  id: string;
+  name: string;
+  iconId: string;
+  category: string;
+  isStorage: boolean;
+  innerItems?: unknown[];
+  count: number;
+}
 type CategoryId =
   | 'all'
   | 'clothes'
@@ -29,13 +39,19 @@ type Bookmarks = string[];
 type CaseType = 'HardSuitcase' | 'SoftSuitcase';
 
 
+
+interface innerItems {
+  id: string,
+  count: number;
+}
 interface saveDBpreviewData {
   id: string,
-  innerItems?: unknown[];
+  innerItems?: innerItems[];
   count: number;
 }
 
-interface saveDBaddedItems {
+
+interface saveDBaddedItem {
   id: string,
   name: string,
   category: CategoryId
@@ -51,7 +67,7 @@ interface addItemType {
 
 interface UserLuggage_SaveDBData {
   itemListDatas: {
-    addedItems: saveDBaddedItems[]
+    addedItems: Record<string, saveDBaddedItem>
     bookmarks: Bookmarks
   },
   previewDatas: {
@@ -60,4 +76,4 @@ interface UserLuggage_SaveDBData {
   }
 };
 
-export type { itemCard, UserLuggage_SaveDBData, addItemType, CategoryId, Category, saveDBaddedItems }
+export type { itemCard, UserLuggage_SaveDBData, addItemType, CategoryId, Category, saveDBaddedItem, previewItem, saveDBpreviewData, innerItems }

@@ -24,7 +24,7 @@
       v-model:add-item="returnAddItem"
     ></addItem>
 
-    <ItemList></ItemList>
+    <ItemList :items="listItem"></ItemList>
   </div>
 </template>
 <script setup lang="ts">
@@ -32,23 +32,25 @@ import ItemList from "./components/ItemList.vue";
 import itemSearch from "./components/itemSearch.vue";
 import filteredItems from "./components/filteredItems.vue";
 import { ref, watch, onMounted } from "vue";
-import { useItemListWork } from "../../composables/itemList";
+// import { useItemListWork } from "../../composables/itemList";
 import { categories } from "../../driver/itemListDriver";
-
 import addItem from "./components/addItem.vue";
-import { type itemCard } from "../../type/itemType";
 import { type addItemType } from "../../type/itemType";
-const itemListWork = useItemListWork();
-const itemList = ref<itemCard[] | null>(null);
+import { useCreateStore } from "../../store/createStore";
+import { storeToRefs } from "pinia";
+
+const createStore = useCreateStore();
+const { listItem } = storeToRefs(createStore);
+
+// const itemListWork = useItemListWork();
 const returnAddItem = ref<addItemType | null>(null);
 const index = ref(1);
 onMounted(async () => {
-  itemList.value = itemListWork.get();
   watch(
     () => returnAddItem.value?.id,
     () => {
       if (!returnAddItem.value) return;
-      itemListWork.addItem(returnAddItem.value);
+      // itemListWork.addItem(returnAddItem.value);
       returnAddItem.value = null;
     },
   );

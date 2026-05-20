@@ -30,15 +30,19 @@
 </template>
 
 <script setup lang="ts">
-import { useItemListWork } from "../composables/itemList";
 import { X } from "lucide-vue-next";
+import { UseCreateWork, type addItemToken } from "../composables/useCreateWork";
 
-const ttemListWork = useItemListWork();
+const createWork = UseCreateWork();
+
 const onDrop = (event: DragEvent) => {
   const draggedId = event.dataTransfer?.getData("itemId");
   if (!draggedId) return;
-  const item = ttemListWork.searchId(draggedId);
-  props.pocket.items.push(item[0]);
+  const addItemToken: addItemToken = {
+    itemId: draggedId,
+    poketId: props.pocket.id,
+  };
+  createWork.addItemToPreview(addItemToken);
 };
 const handleDrop = () => {};
 

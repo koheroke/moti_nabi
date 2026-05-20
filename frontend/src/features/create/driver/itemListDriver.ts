@@ -1,6 +1,6 @@
-import type { saveDBaddedItems } from "@/features/create/type/itemType";
+import type { saveDBaddedItem } from "@/features/create/type/itemType";
 
-const filteredItems: Record<string, saveDBaddedItems> = {
+const filteredItems: Record<string, saveDBaddedItem> = {
   item_1: {
     id: 'item_1',
     name: 'Tシャツ',
@@ -33,7 +33,7 @@ const filteredItems: Record<string, saveDBaddedItems> = {
     isStorage: true,
   },
 
-  item_5: {
+  inner_1: {
     id: 'item_5',
     name: 'ポーチ',
     iconId: 'pouch',
@@ -89,7 +89,7 @@ const filteredItems: Record<string, saveDBaddedItems> = {
     isStorage: false,
   },
 
-  item_12: {
+  inner_2: {
     id: 'item_12',
     name: '洗面ポーチ',
     iconId: 'bag',
@@ -212,15 +212,15 @@ import { type UserLuggage_SaveDBData } from "../type/itemType"
 
 const userLuggage_SaveDBData: UserLuggage_SaveDBData = {
   itemListDatas: {
-    addedItems: [
-      {
+    addedItems: {
+      item_19: {
         id: "item_1",
         name: "Tシャッツ",
         category: 'gadget',
         iconId: 'charger',
         isStorage: false,
       },
-    ],
+    },
     bookmarks: [
       'item_1', 'item_2', 'item_3', 'item_4',
     ],
@@ -228,8 +228,27 @@ const userLuggage_SaveDBData: UserLuggage_SaveDBData = {
   previewDatas: {
     mainLuggage: {
       pokets: {
-        poket_1: [
-
+        mesh: [
+          {
+            id: 'item_1',
+            count: 3,
+          },
+          {
+            id: 'item_4',
+            count: 1,
+            innerItems: [
+              {
+                id: 'inner_1',
+                count: 2,
+              },
+              {
+                id: 'inner_2',
+                count: 1,
+              },
+            ],
+          },
+        ],
+        main: [
           {
             id: 'item_1',
             count: 3,
