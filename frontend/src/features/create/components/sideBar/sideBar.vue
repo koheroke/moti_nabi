@@ -1,30 +1,33 @@
 <template>
   <div class="sideBar">
-    <section class="top">
-      <div
-        style="
-          color: white;
-          font-size: 20px;
-          padding-bottom: 12px;
-          font-weight: 700;
-        "
-      >
-        {{ "持ち物を検索" }}
-      </div>
-      <itemSearch></itemSearch>
+    <section class="list left">
+      <section class="top">
+        <div
+          style="
+            color: white;
+            font-size: 20px;
+            padding-bottom: 12px;
+            font-weight: 500;
+          "
+        >
+          {{ "持ち物を検索" }}
+        </div>
+        <itemSearch class="search"></itemSearch>
+      </section>
+      <filteredItems
+        v-model:index="index"
+        :categorys="categories"
+      ></filteredItems>
     </section>
-    <filteredItems
-      v-model:index="index"
-      :categorys="categories"
-    ></filteredItems>
+    <section class="list right">
+      <div class="title">{{ "持ち物一覧" }}</div>
+      <addItem
+        :categories="categories"
+        v-model:add-item="returnAddItem"
+      ></addItem>
 
-    <div class="title">{{ "一覧" }}</div>
-    <addItem
-      :categories="categories"
-      v-model:add-item="returnAddItem"
-    ></addItem>
-
-    <ItemList :items="listItem"></ItemList>
+      <ItemList></ItemList>
+    </section>
   </div>
 </template>
 <script setup lang="ts">
@@ -36,15 +39,10 @@ import { ref, watch, onMounted } from "vue";
 import { categories } from "../../driver/itemListDriver";
 import addItem from "./components/addItem.vue";
 import { type addItemType } from "../../type/itemType";
-import { useCreateStore } from "../../store/createStore";
-import { storeToRefs } from "pinia";
-
-const createStore = useCreateStore();
-const { listItem } = storeToRefs(createStore);
 
 // const itemListWork = useItemListWork();
 const returnAddItem = ref<addItemType | null>(null);
-const index = ref(1);
+const index = ref(0);
 onMounted(async () => {
   watch(
     () => returnAddItem.value?.id,
@@ -59,26 +57,46 @@ onMounted(async () => {
 <style lang="css" scoped>
 .sideBar {
   display: flex;
-  flex-direction: column;
   width: 100%;
   height: 100%;
-  gap: 20px;
-  padding: 5px;
 }
 .title {
-  font-weight: 900;
-  font-size: 30px;
+  padding-top: 5px;
+  font-size: 20px;
+  font-weight: 500;
 }
 .top {
   background: #3b82f6;
-  padding: 10px;
+  border: 1px solid #e0e0e067;
+  padding: 5px;
   border-radius: 10px;
 }
+
 .create-button {
   transition: transform box-shadow 0.1s ease-out;
 }
 .create-button:hover {
   transform: translateY(-2%);
   box-shadow: 0 4px 12px rgba(172, 194, 201, 0.904);
+}
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 5px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.right {
+  width: 50%;
+  padding-left: 15px;
+}
+.left {
+  border-right: 1px solid rgba(0, 0, 0, 0.097);
+  border-radius: 10px;
+  width: 50%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 </style>

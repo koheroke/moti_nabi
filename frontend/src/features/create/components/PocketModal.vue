@@ -3,16 +3,17 @@
     class="overlay"
     @click.self="$emit('close')"
     @drop="onDrop"
+    @drop.stop
     @dragover.prevent="handleDrop"
   >
     <div class="modal">
       <header class="header">
-        <div @click="$emit('close')" class="close-button">
-          <X :size="25" fill="#686868"></X>
-        </div>
-        <h2 style="color: black; font-weight: 00">
-          {{ pocket.name }}
+        <h2 class="name">
+          {{ "ポケット: " + pocket.name }}
         </h2>
+        <div @click="$emit('close')" class="close-button">
+          <X :size="20" color="black" stroke-width="2.5"></X>
+        </div>
       </header>
       <div class="drop-area">
         <p
@@ -21,8 +22,12 @@
         >
           ここに持ち物をドラッグ
         </p>
-        <div v-for="item in pocket.items" :key="item.id" class="item-card">
-          {{ item.icon }} {{ item.name }} ×{{ item.count }}
+        <div
+          v-for="item in pocket.items"
+          :key="item.originalId"
+          class="item-card"
+        >
+          <PreviewItem :item="item" :pocketId="pocket.id" />
         </div>
       </div>
     </div>
@@ -31,18 +36,23 @@
 
 <script setup lang="ts">
 import { X } from "lucide-vue-next";
-import { UseCreateWork, type addItemToken } from "../composables/useCreateWork";
+import {
+  UseCreateWork,
+  type addPreviewItemToken,
+} from "../composables/useCreateWork";
+import PreviewItem from "./PreviewItem.vue";
+import type { previewItem } from "../type/itemType";
 
 const createWork = UseCreateWork();
 
 const onDrop = (event: DragEvent) => {
   const draggedId = event.dataTransfer?.getData("itemId");
   if (!draggedId) return;
-  const addItemToken: addItemToken = {
+  const addPreviewItemToken: addPreviewItemToken = {
     itemId: draggedId,
-    poketId: props.pocket.id,
+    pocketId: props.pocket.id,
   };
-  createWork.addItemToPreview(addItemToken);
+  createWork.addItemToPreview(addPreviewItemToken);
 };
 const handleDrop = () => {};
 
@@ -50,7 +60,7 @@ const props = defineProps<{
   pocket: {
     id: string;
     name: string;
-    items: any[];
+    items: previewItem[];
   };
 }>();
 
@@ -62,36 +72,54 @@ defineEmits<{
 .drop-area {
   padding-top: 10px;
   border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  width: 300px;
+  flex: 1;
+}
+.modal {
+  height: 100%;
 }
 .overlay {
-  border: 3px dotted #94a3b8;
+  border: 3px dotted rgba(29, 29, 29, 0.376);
   border-radius: 10px;
-  display: flex;
   flex-direction: column;
-  height: 200px;
-  width: 400px;
+  height: 60%;
+  width: 100%;
   text-wrap: unset;
-  background-color: rgb(255, 255, 255);
+  background-color: rgba(255, 255, 255, 0.546);
   overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  min-height: 0;
 }
 .header {
+  padding: 10px;
   display: flex;
-  flex-direction: column;
+  height: 40px;
+  background-color: rgba(237, 237, 237, 0.64);
+
   align-items: center;
+  justify-content: center;
   border-radius: 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.142);
 }
 .close-button {
+  border: 2px solid rgba(0, 0, 0, 0.459);
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  border-radius: 10px;
   margin-left: auto;
-  padding-right: 5px;
+  padding: 2px 7px;
 }
 
-.item-card {
-  background-color: rgb(22, 100, 152);
-  color: white;
-  text-align: center;
-  margin: 10px;
-  padding: 8px 5px;
-  border-radius: 10px;
+.name {
   font-weight: 600;
+  color: rgb(62, 61, 61);
+  font-size: 20px;
+  text-align: center;
 }
 </style>

@@ -1,5 +1,12 @@
 import type { UserLuggage_SaveDBData, previewItem, saveDBpreviewData } from "../type/itemType";
 import { filteredItems } from "../driver/itemListDriver";
+import type { addPreviewItemToken, addItemCountToken } from "./useCreateWork";
+
+export type previewAlterationType = "delete" | "push" | "addCount"
+export interface previewToken {
+  alterationType: previewAlterationType
+  token: addPreviewItemToken | addItemCountToken//| deteleItemToken | ...
+}
 
 const useApplyCreateAction = () => {
   const hydrateCreateState = (data: UserLuggage_SaveDBData) => {
@@ -22,25 +29,30 @@ const useApplyCreateAction = () => {
             ...itemData,
             innerItems: item.innerItems ? getItemDatra(item.innerItems) : [],
             count: item.count,
+            originalId: item.originalId
           }
         } else {
           return {
             ...itemData,
             count: item.count,
+            originalId: item.originalId
           }
         }
       })
     }
-
     const vuepreviewData: Record<string, previewItem[]> =
       Object.fromEntries(
-        Object.entries(previewDatas.mainLuggage.pokets).map(
+        Object.entries(previewDatas.mainLuggage.pockets).map(
           ([key, poket]) => [key, getItemDatra(poket)]
         )
       )
-    return { vuepreviewData: vuepreviewData, vueItemList: vueItemList }
+    console.log(" previewDatas.addItemCounter", previewDatas.addItemCounter)
+    return { vuepreviewData: vuepreviewData, vueItemList: vueItemList, addItemCounter: previewDatas.addItemCounter }
   }
-  return { hydrateCreateState }
+  const alterationPreviewData = (token: previewToken) => {
+
+  }
+  return { hydrateCreateState, alterationPreviewData }
 }
 export { useApplyCreateAction }
 

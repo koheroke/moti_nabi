@@ -1,14 +1,15 @@
 <template>
   <div class="itemList">
-    <ItemCard v-for="item in items" :key="item.id" :item="item" />
+    <ItemCard v-for="item in filteredListItem" :key="item.id" :item="item" />
   </div>
 </template>
 <script setup lang="ts">
 import ItemCard from "./itemCard.vue";
-import type { itemCard } from "@/features/create/type/itemType";
-defineProps<{
-  items: Record<string, itemCard> | null;
-}>();
+import { useCreateStore } from "../../../store/createStore";
+import { storeToRefs } from "pinia";
+const createStore = useCreateStore();
+
+const { filteredListItem } = storeToRefs(createStore);
 </script>
 <style scoped>
 .itemList {

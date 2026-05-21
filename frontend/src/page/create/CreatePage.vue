@@ -61,12 +61,8 @@ onMounted(async () => {
 
 .sidebar-area {
   border-right: 1px solid rgba(0, 0, 0, 0.101);
-  width: 300px;
-  overflow-y: auto;
-  overflow-x: hidden;
+  width: 800px;
   height: 100%;
   box-sizing: border-box;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
 }
 </style>

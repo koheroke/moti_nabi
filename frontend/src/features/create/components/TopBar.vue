@@ -39,11 +39,12 @@ const props = defineProps<{
 .topBar {
   box-sizing: border-box;
   height: 40px;
-  padding: 10px;
+  padding: 30px;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  border-bottom: 1px solid rgb(212, 210, 210);
 }
 .right {
   margin-right: auto;

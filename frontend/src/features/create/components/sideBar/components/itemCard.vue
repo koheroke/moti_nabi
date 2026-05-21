@@ -6,8 +6,24 @@
     draggable="true"
     @dragstart="onDragStart"
   >
+    <div class="on-bookmark-area">
+      <Star
+        :size="20"
+        @click="onBookMark"
+        :stroke-width="1.5"
+        v-if="item.bookmark"
+        fill="black"
+      ></Star>
+
+      <Star
+        :size="20"
+        @click="onBookMark"
+        :stroke-width="1.5"
+        v-if="!item.bookmark"
+      ></Star>
+    </div>
     <div class="item-icon" :style="{ color: categoryColor }">
-      {{ icon }}
+      {{ icon.src }}
     </div>
     <div class="info">
       <div class="name">{{ item.name }}</div>
@@ -17,30 +33,28 @@
 
 <script setup lang="ts">
 import type { itemCard } from "@/features/create/type/itemType";
+import { Star } from "lucide-vue-next";
+import { UseCreateWork } from "@/features/create/composables/useCreateWork";
+import type { addBookmarkToken } from "@/features/create/composables/useCreateWork";
+const createWork = UseCreateWork();
 const props = defineProps<{ item: itemCard }>();
-
-const iconMap: Record<string, string> = {
-  shirt: "👕",
-  charger: "🔌",
-  medicine: "💊",
-  ziplock: "🟦",
-  pouch: "👝",
-};
-
-const categoryColorMap: Record<string, string> = {
-  clothes: "#3b82f6",
-  gadget: "#8b5cf6",
-  medicine: "#ef4444",
-  toiletry: "#22c55e",
-  storage: "#64748b",
-};
+import {
+  iconMap,
+  categoryColorMap,
+} from "@/features/create/driver/itemListDriver";
 
 const icon = iconMap[props.item.iconId] ?? "📦";
-const categoryColor = categoryColorMap[props.item.category] ?? "#64748b";
+const categoryColor = categoryColorMap[props.item.category[0]] ?? "#64748b";
 
 function onDragStart(event: DragEvent) {
   event.dataTransfer?.setData("itemId", props.item.id);
 }
+const onBookMark = () => {
+  const token: addBookmarkToken = {
+    itemId: props.item.id,
+  };
+  createWork.addBookmark(token);
+};
 </script>
 
 <style scoped>
@@ -66,7 +80,7 @@ function onDragStart(event: DragEvent) {
 }
 
 .item-icon {
-  font-size: 24px;
+  font-size: 25px;
 }
 
 .info {
@@ -76,13 +90,6 @@ function onDragStart(event: DragEvent) {
 .name {
   font-size: 14px;
   font-weight: 600;
-}
-
-.meta {
-  display: flex;
-  gap: 6px;
-  font-size: 12px;
-  color: #6b7280;
 }
 
 .storage {
@@ -96,5 +103,11 @@ function onDragStart(event: DragEvent) {
   background: #e2e8f0;
   padding: 3px 6px;
   border-radius: 999px;
+}
+.on-bookmark-area {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

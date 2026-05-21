@@ -19,7 +19,6 @@
 import { computed } from "vue";
 import PocketModal from "./PocketModal.vue";
 import { ref } from "vue";
-
 const selectedPocket = ref();
 
 import HardSuitcase from "./svgUi/suitcase/HardSuitcase.vue";
@@ -42,9 +41,12 @@ const currentSuitcaseComponent = computed(() => {
 </script>
 <style lang="css" scoped>
 .pocketModal {
-  bottom: 0px;
   position: fixed;
+  align-items: center;
+  justify-content: center;
+  display: flex;
   width: auto;
+  height: 100%;
 }
 .preview-area {
   display: flex;
@@ -52,6 +54,9 @@ const currentSuitcaseComponent = computed(() => {
   align-items: center;
   justify-content: center;
   width: 100%;
-  background-color: rgba(244, 244, 244, 0.763);
+  background-color: rgb(68, 68, 68);
+  background-repeat: repeat;
+  background-image: radial-gradient(circle, #dfdddd 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 </style>

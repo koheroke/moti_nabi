@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <Search color="white" />
+    <Search color="white" :size="25" />
     <BaseInput v-model="modelValue" class="gallery-search" />
   </div>
 </template>
@@ -8,19 +8,18 @@
 import BaseInput from "@/components/ui/form/BaseInput/BaseInput.vue";
 import { ref, watch } from "vue";
 import { Search } from "lucide-vue-next";
-const emit = defineEmits(["update:modelValue"]);
+import { useCreateStore } from "../../../store/createStore";
+const createStore = useCreateStore();
 const modelValue = ref("");
-const onUpdateSearch = (newSearch: string) => {
-  modelValue.value += newSearch;
-};
+
 watch(modelValue, (newValue) => {
-  emit("update:modelValue", newValue);
+  createStore.setSearchText(newValue);
 });
 </script>
 <style lang="css" scoped>
 .gallery-search {
-  min-height: 40px;
-  width: 80%;
+  height: 30px;
+  width: 100%;
 }
 .container {
   min-height: 40px;
@@ -28,6 +27,7 @@ watch(modelValue, (newValue) => {
   display: flex;
   gap: 5px;
   align-items: center;
+  padding: 0px 10px;
 }
 .tags {
   display: flex;

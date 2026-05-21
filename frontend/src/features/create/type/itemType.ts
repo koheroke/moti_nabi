@@ -2,18 +2,21 @@ interface itemCard {
   id: string;
   name: string;
   iconId: string;
-  category: string;
+  category: CategoryId[];
   bookmark: boolean;
   isStorage: boolean;
+  createType: createdType
 }
 
+
 interface previewItem {
-  id: string;
+  originalId: string;
+  id: string
   name: string;
   iconId: string;
-  category: string;
+  category: CategoryId[];
   isStorage: boolean;
-  innerItems?: unknown[];
+  innerItems?: previewItem[];
   count: number;
 }
 type CategoryId =
@@ -43,20 +46,23 @@ type CaseType = 'HardSuitcase' | 'SoftSuitcase';
 interface innerItems {
   id: string,
   count: number;
+  originalId: string;
 }
 interface saveDBpreviewData {
   id: string,
   innerItems?: innerItems[];
   count: number;
+  originalId: string;
 }
 
 
 interface saveDBaddedItem {
   id: string,
   name: string,
-  category: CategoryId
+  category: CategoryId[]
   isStorage: boolean
   iconId: string
+  createType: createdType
 }
 
 interface addItemType {
@@ -65,15 +71,22 @@ interface addItemType {
   icon: string;
 }
 
+
+import { type createdType } from "../composables/useCreateWork"
 interface UserLuggage_SaveDBData {
   itemListDatas: {
     addedItems: Record<string, saveDBaddedItem>
     bookmarks: Bookmarks
+
   },
   previewDatas: {
-    mainLuggage: { pokets: { [key: string]: saveDBpreviewData[] } }
+    mainLuggage: { pockets: { [key: string]: saveDBpreviewData[] } }
     caseType: CaseType
+    addItemCounter: number
   }
 };
+interface iconInfomation { src: string, category: CategoryId, }
 
-export type { itemCard, UserLuggage_SaveDBData, addItemType, CategoryId, Category, saveDBaddedItem, previewItem, saveDBpreviewData, innerItems }
+
+
+export type { iconInfomation, itemCard, UserLuggage_SaveDBData, addItemType, CategoryId, Category, saveDBaddedItem, previewItem, saveDBpreviewData, innerItems }

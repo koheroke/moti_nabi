@@ -7,21 +7,53 @@ import { useCreateStore } from "../store/createStore";
 import { useUserStore } from "@/store/user/userStore";
 
 
+
 const createStore = useCreateStore()
 const userStore = useUserStore()
 const createApi = useCreateApi()
 const applyCreateAction = useApplyCreateAction()
-type loadError = "noneNameorWorkId" | "fallLoadData" | "damagedData" | "none"
 
-export interface addItemToken {
-  itemId: string
-  poketId: string
-  parentItemId?: string
+type loadResponse = "noneNameorWorkId" | "fallLoadData" | "damagedData" | "none"
+type addItemToPreviewResponse = "nonePreview" | "addPreview" | "noneItem" | "isRegulatedAction"
+export type createdType = "default" | "userCreated" | "othersUserCreated"
+
+export interface addListItemToken {
+  name: string
+  category: string[],
+  isStorage: boolean,
+  iconId: string
+  createType: createdType
 }
+
+export interface addPreviewItemToken {
+  pocketId: string
+  parentItemId?: string
+  itemId: string
+}
+export interface addItemCountToken {
+  originalId: string
+  pocketId: string
+  parentItemId: string | undefined
+  pulse: number;
+}
+
+export interface DeletePreviewItemToken {
+  originalId: string
+  pocketId: string
+  parentItemId: string | undefined
+}
+
+export interface addBookmarkToken {
+  itemId: string
+}
+
+
+
+
 
 export const UseCreateWork = () => {
 
-  const load = async (): Promise<loadError> => {
+  const load = async (): Promise<loadResponse> => {
     // const userId = userStore.userId
     // const theWorkId = createStore.workIdGetter
 
@@ -33,6 +65,8 @@ export const UseCreateWork = () => {
     let data = null as UserLuggage_SaveDBData | null
     let vuepreviewData = null as Record<string, previewItem[]> | null
     let vueItemList = null as Record<string, itemCard> | null
+    let addItemCounter = null as number | null
+
     try {
       data = await createApi.load(userId, theWorkId)
     } catch (e) {
@@ -42,9 +76,11 @@ export const UseCreateWork = () => {
       const response = applyCreateAction.hydrateCreateState(data)
       vuepreviewData = response.vuepreviewData
       vueItemList = response.vueItemList
+      addItemCounter = response.addItemCounter
     } catch (e) {
       return "damagedData"
     }
+    createStore.setAddItemCounter(addItemCounter)
     createStore.setSaveDBData(data)
     createStore.setlistItem(vueItemList)
     createStore.setpreviewItem(vuepreviewData)
@@ -54,10 +90,44 @@ export const UseCreateWork = () => {
   const addItemToItemList = async (data: Category) => {
 
   }
-  const addItemToPreview = async (token: addItemToken) => {
+  const addItemToPreview = async (token: addPreviewItemToken): Promise<addItemToPreviewResponse> => {
+    const { itemId } = token
+    const items = createStore?.listItemGetter
+    if (!items) return "nonePreview"
+    const item = items[itemId]
+    if (!item) return "noneItem"
+    if (item.isStorage == true && token.parentItemId != undefined) return "isRegulatedAction"
 
+    createStore.pushpreviewItem(token)
+    applyCreateAction.alterationPreviewData({
+      alterationType: "push",
+      token: token,
+    })
+    return "addPreview"
   }
-  return { load, addItemToItemList, addItemToPreview }
+
+  const addItemCount = (token: addItemCountToken) => {
+    createStore.addCount(token)
+
+    applyCreateAction.alterationPreviewData({
+      alterationType: "addCount",
+      token: token,
+    })
+  }
+
+  const addBookmark = (token: addBookmarkToken) => {
+    createStore.addBookmark(token)
+  }
+
+  const deletePreviewItem = (token: DeletePreviewItemToken) => {
+    createStore.deletepreviewItem(token)
+    // applyCreateAction.alterationPreviewData({
+    //   alterationType: "delete",
+    //   token: token,
+    // })
+  }
+
+
+  return { load, addItemToItemList, addItemToPreview, addItemCount, addBookmark, deletePreviewItem }
 }
 
-export { applyCreateAction }

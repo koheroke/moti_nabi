@@ -32,7 +32,25 @@
               <v-list-item v-bind="props"> </v-list-item>
             </template>
           </v-select>
+          <BaseButton
+            class="icon-select-button"
+            @click="iconSelectToggle"
+            variant="ghost"
+          >
+            {{ selectedIcoSrc }} アイコンを選択</BaseButton
+          >
+          <iconSelect
+            :selectedCategory="selectedCategory"
+            @close="closeIconSelect"
+            v-show="iconSelectShow"
+            v-model:iconId="selectedIcon"
+            :class="{
+              popup: iconSelectOpen,
+              popdown: !iconSelectOpen,
+            }"
+          ></iconSelect>
         </section>
+
         <section class="setting-section">
           <label
             style="font-size: 15px; text-align: left; color: rgb(108, 106, 106)"
@@ -49,23 +67,56 @@
 <script setup lang="ts">
 import BaseButton from "@/components/ui/form/BaseButton/BaseButton.vue";
 import BaseInput from "@/components/ui/form/BaseInput/BaseInput.vue";
-import { ref } from "vue";
+import { ref, watch } from "vue";
+import { iconMap } from "@/features/create/driver/itemListDriver";
 import type { CategoryId, Category } from "../../../type/itemType";
+import type { addListItemToken } from "@/features/create/composables/useCreateWork";
+import iconSelect from "./iconSelect.vue";
 const emit = defineEmits(["update:add-item"]);
 const props = defineProps<{ categories: Category[] }>();
 const open = ref<boolean>(false);
 const selectedCategory = ref<CategoryId>();
 const caseBool = ref<boolean>(false);
 const show = ref<boolean>(false);
+const selectedIcon = ref<string>();
+const selectedIcoSrc = ref<string>();
+const closeIconSelect = () => {
+  iconSelectToggle();
+};
+
+watch(
+  () => selectedIcon.value,
+  (newValue) => {
+    if (newValue) selectedIcoSrc.value = iconMap[newValue].src;
+  },
+);
+
 const onAddItem = () => {
   if (!name.value) return;
   if (!selectedCategory.value) return;
-  emit("update:add-item", {
+  if (!selectedIcon.value) return;
+  const token: addListItemToken = {
     name: name.value,
-    id: `user_created_item_${10}`,
-    category: selectedCategory.value,
+    category: [selectedCategory.value],
+    createType: "userCreated",
     isStorage: caseBool.value,
-  });
+    iconId: selectedIcon.value,
+  };
+};
+const iconSelectOpen = ref(false);
+const iconSelectShow = ref(false);
+
+const iconSelectToggle = () => {
+  if (!iconSelectOpen.value) {
+    iconSelectShow.value = true;
+    iconSelectOpen.value = true;
+  } else {
+    iconSelectOpen.value = false;
+
+    setTimeout(() => {
+      iconSelectShow.value = false;
+    }, 200);
+  }
 };
 
 const toggle = () => {
@@ -126,5 +177,12 @@ const name = ref<string>("");
     opacity: 0;
     transform: translateY(-8px) scale(0.96);
   }
+}
+.icon-select-button {
+  transition: transform 0.2s ease;
+}
+
+.icon-select-button:hover {
+  transform: scale(1.03);
 }
 </style>

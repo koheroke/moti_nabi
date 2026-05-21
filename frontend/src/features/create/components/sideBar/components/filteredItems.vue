@@ -29,6 +29,8 @@
 </template>
 <script setup lang="ts">
 import type { Category, CategoryId } from "@/features/create/type/itemType";
+import { useCreateStore } from "../../../store/createStore";
+const createStore = useCreateStore();
 
 const props = defineProps<{
   categorys: Category[];
@@ -36,9 +38,11 @@ const props = defineProps<{
 }>();
 const onCategory = (categoryId: CategoryId) => {
   const ids = props.categorys.map((item) => item.id);
+  createStore.setCategory(categoryId);
   const index = ids.indexOf(categoryId);
   emit("update:index", index);
 };
+
 const emit = defineEmits(["update:index"]);
 import BaseButton from "@/components/ui/form/BaseButton/BaseButton.vue";
 </script>
@@ -59,7 +63,6 @@ import BaseButton from "@/components/ui/form/BaseButton/BaseButton.vue";
 }
 .category-open {
   display: flex;
-
   align-items: center;
   text-align: center;
   gap: 5px;
@@ -73,7 +76,7 @@ import BaseButton from "@/components/ui/form/BaseButton/BaseButton.vue";
 .category-list {
   display: flex;
   flex-direction: column;
-  width: 90%;
+  width: 100%;
   gap: 5px;
 }
 .filteredItems {
