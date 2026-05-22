@@ -1,35 +1,22 @@
-
-import type { UserLuggage_SaveDBData, previewItem, itemCard } from "../type/itemType";
-import { type Category } from "../type/itemType";
+import type { UserLuggage_SaveDBData, previewItem, itemCard, CategoryId } from "../type/itemType";
 import { useApplyCreateAction } from "./applyCreateAction";
 import { useCreateApi } from "../api/createApi";
-import { useCreateStore } from "../store/createStore";
 import { useUserStore } from "@/store/user/userStore";
+import { useCreateStore } from "../store/createStore";
+
+import type { alterationToken } from "./applyCreateAction";
+
+import { useAlterationLogStore } from "../store/useAlterationLogStore"
 
 
-
-const createStore = useCreateStore()
-const userStore = useUserStore()
-const createApi = useCreateApi()
-const applyCreateAction = useApplyCreateAction()
 
 type loadResponse = "noneNameorWorkId" | "fallLoadData" | "damagedData" | "none"
 type addItemToPreviewResponse = "nonePreview" | "addPreview" | "noneItem" | "isRegulatedAction"
 export type createdType = "default" | "userCreated" | "othersUserCreated"
 
-export interface addListItemToken {
-  name: string
-  category: string[],
-  isStorage: boolean,
-  iconId: string
-  createType: createdType
-}
 
-export interface addPreviewItemToken {
-  pocketId: string
-  parentItemId?: string
-  itemId: string
-}
+
+
 export interface addItemCountToken {
   originalId: string
   pocketId: string
@@ -37,11 +24,27 @@ export interface addItemCountToken {
   pulse: number;
 }
 
-export interface DeletePreviewItemToken {
+export interface deletePreviewItemToken {
   originalId: string
   pocketId: string
   parentItemId: string | undefined
+  itemId: string
 }
+
+export interface addPreviewItemToken {
+  pocketId: string
+  parentItemId?: string
+  itemId: string
+}
+
+export interface addListItemToken {
+  name: string
+  category: CategoryId[],
+  isStorage: boolean,
+  iconId: string
+  createType: createdType
+}
+
 
 export interface addBookmarkToken {
   itemId: string
@@ -52,6 +55,12 @@ export interface addBookmarkToken {
 
 
 export const UseCreateWork = () => {
+  const createStore = useCreateStore()
+  const userStore = useUserStore()
+  const alterationLog = useAlterationLogStore()
+  const createApi = useCreateApi()
+
+  const applyCreateAction = useApplyCreateAction()
 
   const load = async (): Promise<loadResponse> => {
     // const userId = userStore.userId
@@ -86,10 +95,6 @@ export const UseCreateWork = () => {
     createStore.setpreviewItem(vuepreviewData)
     return "none"
   }
-
-  const addItemToItemList = async (data: Category) => {
-
-  }
   const addItemToPreview = async (token: addPreviewItemToken): Promise<addItemToPreviewResponse> => {
     const { itemId } = token
     const items = createStore?.listItemGetter
@@ -98,36 +103,83 @@ export const UseCreateWork = () => {
     if (!item) return "noneItem"
     if (item.isStorage == true && token.parentItemId != undefined) return "isRegulatedAction"
 
-    createStore.pushpreviewItem(token)
-    applyCreateAction.alterationPreviewData({
-      alterationType: "push",
+
+    const newToken: alterationToken = {
+      alterationType: "previewItems_additem",
       token: token,
-    })
+      user: userStore.userName
+    }
+
+    const reverseToken: alterationToken = {
+      alterationType: "previewItems_delete",
+      token: token,
+      user: userStore.userName
+    }
+    alterationLog.saveState({ forwardToken: newToken, reverseToken: reverseToken })
+    applyCreateAction.alterationData(newToken)
     return "addPreview"
   }
 
   const addItemCount = (token: addItemCountToken) => {
-    createStore.addCount(token)
-
-    applyCreateAction.alterationPreviewData({
-      alterationType: "addCount",
+    const newToken: alterationToken = {
+      alterationType: "previewItems_addcount",
       token: token,
-    })
+      user: userStore.userName
+    }
+
+    const reversePulse = { ...token, pulse: token.pulse * -1 }
+
+    const reverseToken: alterationToken = {
+      alterationType: "previewItems_addcount",
+      token: reversePulse,
+      user: userStore.userName
+    }
+    alterationLog.saveState({ forwardToken: newToken, reverseToken: reverseToken })
+
+    applyCreateAction.alterationData(newToken)
   }
 
   const addBookmark = (token: addBookmarkToken) => {
-    createStore.addBookmark(token)
+    const newToken: alterationToken = {
+      alterationType: "itemlistItems_bookmark",
+      token: token,
+      user: userStore.userName
+    }
+    applyCreateAction.alterationData(newToken)
   }
 
-  const deletePreviewItem = (token: DeletePreviewItemToken) => {
-    createStore.deletepreviewItem(token)
-    // applyCreateAction.alterationPreviewData({
-    //   alterationType: "delete",
-    //   token: token,
-    // })
+  const deletePreviewItem = (token: deletePreviewItemToken) => {
+    const newToken: alterationToken = {
+      alterationType: "previewItems_delete",
+      token: token,
+      user: userStore.userName
+    }
+
+    const addToken = {
+      ...token,
+      itemId: token.itemId
+    }
+    const reverseToken: alterationToken = {
+      alterationType: "previewItems_additem",
+      token: addToken,
+      user: userStore.userName
+    }
+
+    applyCreateAction.alterationData(newToken)
+    alterationLog.saveState({ forwardToken: newToken, reverseToken: reverseToken })
+  }
+  const addListItem = (token: addListItemToken) => {
+    const newToken: alterationToken = {
+      alterationType: "itemlistItems_additem",
+      token: token,
+      user: userStore.userName
+    }
+    applyCreateAction.alterationData(newToken)
   }
 
 
-  return { load, addItemToItemList, addItemToPreview, addItemCount, addBookmark, deletePreviewItem }
+
+
+  return { load, addItemToPreview, addItemCount, addBookmark, deletePreviewItem, addListItem }
 }
 

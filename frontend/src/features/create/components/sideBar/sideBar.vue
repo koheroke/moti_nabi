@@ -1,102 +1,126 @@
 <template>
-  <div class="sideBar">
-    <section class="list left">
-      <section class="top">
-        <div
-          style="
-            color: white;
-            font-size: 20px;
-            padding-bottom: 12px;
-            font-weight: 500;
-          "
-        >
-          {{ "持ち物を検索" }}
-        </div>
-        <itemSearch class="search"></itemSearch>
-      </section>
-      <filteredItems
-        v-model:index="index"
-        :categorys="categories"
-      ></filteredItems>
-    </section>
-    <section class="list right">
-      <div class="title">{{ "持ち物一覧" }}</div>
-      <addItem
-        :categories="categories"
-        v-model:add-item="returnAddItem"
-      ></addItem>
-
-      <ItemList></ItemList>
-    </section>
+  <div class="sideArea">
+    <div class="sideBar list">
+      <div v-for="item in sidebar" :key="item.id">
+        <section class="flexCanter">
+          <div
+            class="iconArea flexCanter"
+            @click="
+              onSelect(item.id);
+              selectItemId = item.id;
+            "
+            style="flex-direction: column"
+          >
+            <div
+              class="flexCanter icon"
+              :class="{ shadow: selectItemId == item.id }"
+            >
+              <component
+                :is="item.icon"
+                v-if="selectItemId == item.id"
+                :fill="item.onColor"
+                :stroke-width="1.5"
+                color="white"
+                :size="26"
+              />
+              <component
+                :is="item.icon"
+                v-if="selectItemId != item.id"
+                :stroke-width="1.5"
+                :size="26"
+              />
+            </div>
+            <p>
+              {{ item.name }}
+            </p>
+          </div>
+        </section>
+      </div>
+    </div>
+    <div class="selectContent">
+      <itemBar v-if="selectItemId == 'item'"></itemBar>
+    </div>
   </div>
+  <!-- <itemBar /> -->
 </template>
+
 <script setup lang="ts">
-import ItemList from "./components/ItemList.vue";
-import itemSearch from "./components/itemSearch.vue";
-import filteredItems from "./components/filteredItems.vue";
-import { ref, watch, onMounted } from "vue";
-// import { useItemListWork } from "../../composables/itemList";
-import { categories } from "../../driver/itemListDriver";
-import addItem from "./components/addItem.vue";
-import { type addItemType } from "../../type/itemType";
+import { LayoutTemplate, Luggage, Boxes } from "lucide-vue-next";
+import itemBar from "@/features/create/components/sideBar/itemBar/itemBar.vue";
+import { ref, type Component } from "vue";
+const selectItemId = ref<string>("template");
+const onSelect = (id: string) => {};
 
-// const itemListWork = useItemListWork();
-const returnAddItem = ref<addItemType | null>(null);
-const index = ref(0);
-onMounted(async () => {
-  watch(
-    () => returnAddItem.value?.id,
-    () => {
-      if (!returnAddItem.value) return;
-      // itemListWork.addItem(returnAddItem.value);
-      returnAddItem.value = null;
-    },
-  );
-});
+type conponentId = "item";
+interface SideBar {
+  id: string;
+  name: string;
+  onColor: string;
+  icon: Component;
+}
+
+const sidebar = ref<SideBar[]>([
+  {
+    id: "template",
+    name: "テンプレート",
+    onColor: "blue",
+    icon: LayoutTemplate,
+  },
+  {
+    id: "item",
+    name: "持ち物",
+    onColor: "orange",
+    icon: Boxes,
+  },
+  {
+    id: "case",
+    name: "ケース",
+    onColor: "green",
+    icon: Luggage,
+  },
+]);
 </script>
-<style lang="css" scoped>
-.sideBar {
-  display: flex;
-  width: 100%;
-  height: 100%;
-}
-.title {
-  padding-top: 5px;
-  font-size: 20px;
-  font-weight: 500;
-}
-.top {
-  background: #3b82f6;
-  border: 1px solid #e0e0e067;
-  padding: 5px;
-  border-radius: 10px;
-}
 
-.create-button {
-  transition: transform box-shadow 0.1s ease-out;
-}
-.create-button:hover {
-  transform: translateY(-2%);
-  box-shadow: 0 4px 12px rgba(172, 194, 201, 0.904);
-}
-.list {
+<style lang="css" scoped>
+.sideArea {
+  width: auto;
+  height: 100%;
   display: flex;
-  flex-direction: column;
+}
+.selectContent {
+  display: flex;
+  width: auto;
+}
+.sideBar {
+  width: 70px;
+  align-items: center;
   gap: 20px;
-  padding: 5px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  padding-top: 20px;
 }
-.right {
-  width: 50%;
-  padding-left: 15px;
+.iconArea {
+  height: 50px;
+  aspect-ratio: 1/1;
+  border-radius: 8px;
 }
-.left {
-  border-right: 1px solid rgba(0, 0, 0, 0.097);
+p {
+  font-size: 9px;
+  font-weight: bold;
+  text-align: center;
+  text-wrap: nowrap;
+}
+.icon {
+  border: 10px;
+  height: 40px;
+  padding: 3px;
   border-radius: 10px;
-  width: 50%;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  aspect-ratio: 1/1;
+  transition: background-color 0.3s;
+}
+.iconArea:hover .icon {
+  background-color: rgb(246, 246, 246);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+}
+.shadow {
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
 }
 </style>

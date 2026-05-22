@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import './style.css'
+import './styles/base/layout.css'
 import App from './App.vue'
 import { createPinia } from 'pinia' // 1. インポート
 import { vuetify } from './lib/vuetify'

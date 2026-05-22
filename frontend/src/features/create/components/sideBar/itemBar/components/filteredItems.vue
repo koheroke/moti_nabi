@@ -29,7 +29,7 @@
 </template>
 <script setup lang="ts">
 import type { Category, CategoryId } from "@/features/create/type/itemType";
-import { useCreateStore } from "../../../store/createStore";
+import { useCreateStore } from "../../../../store/createStore";
 const createStore = useCreateStore();
 
 const props = defineProps<{

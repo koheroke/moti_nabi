@@ -8,7 +8,7 @@
 import BaseInput from "@/components/ui/form/BaseInput/BaseInput.vue";
 import { ref, watch } from "vue";
 import { Search } from "lucide-vue-next";
-import { useCreateStore } from "../../../store/createStore";
+import { useCreateStore } from "../../../../store/createStore";
 const createStore = useCreateStore();
 const modelValue = ref("");
 

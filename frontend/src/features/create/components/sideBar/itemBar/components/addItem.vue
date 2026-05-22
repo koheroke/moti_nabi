@@ -69,8 +69,9 @@ import BaseButton from "@/components/ui/form/BaseButton/BaseButton.vue";
 import BaseInput from "@/components/ui/form/BaseInput/BaseInput.vue";
 import { ref, watch } from "vue";
 import { iconMap } from "@/features/create/driver/itemListDriver";
-import type { CategoryId, Category } from "../../../type/itemType";
+import type { CategoryId, Category } from "../../../../type/itemType";
 import type { addListItemToken } from "@/features/create/composables/useCreateWork";
+import { UseCreateWork } from "@/features/create/composables/useCreateWork";
 import iconSelect from "./iconSelect.vue";
 const emit = defineEmits(["update:add-item"]);
 const props = defineProps<{ categories: Category[] }>();
@@ -80,6 +81,7 @@ const caseBool = ref<boolean>(false);
 const show = ref<boolean>(false);
 const selectedIcon = ref<string>();
 const selectedIcoSrc = ref<string>();
+const createWork = UseCreateWork();
 const closeIconSelect = () => {
   iconSelectToggle();
 };
@@ -102,6 +104,12 @@ const onAddItem = () => {
     isStorage: caseBool.value,
     iconId: selectedIcon.value,
   };
+  createWork.addListItem(token);
+  name.value = "";
+  selectedCategory.value = undefined;
+  selectedIcon.value = undefined;
+  caseBool.value = false;
+  toggle();
 };
 const iconSelectOpen = ref(false);
 const iconSelectShow = ref(false);

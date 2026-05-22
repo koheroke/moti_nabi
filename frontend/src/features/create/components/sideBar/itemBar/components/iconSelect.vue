@@ -19,7 +19,7 @@
 import { iconMap } from "@/features/create/driver/itemListDriver";
 import type { CategoryId } from "@/features/create/type/itemType";
 import { computed } from "vue";
-import { categories } from "../../../driver/itemListDriver";
+import { categories } from "../../../../driver/itemListDriver";
 import type { Category } from "@/features/create/type/itemType";
 const props = defineProps<{ selectedCategory?: CategoryId }>();
 const categoryName = computed(() => {

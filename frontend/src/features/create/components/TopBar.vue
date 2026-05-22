@@ -5,8 +5,8 @@
         {{ props.title }}
       </div>
       <div style="gap: 10px; display: flex; margin-left: auto">
-        <CornerUpLeft />
-        <CornerUpRight />
+        <CornerUpLeft @click="back" />
+        <CornerUpRight @click="forward" />
       </div>
     </div>
     <div class="left">
@@ -30,7 +30,16 @@
 import BaseButton from "@/components/ui/form/BaseButton/BaseButton.vue";
 import { CornerUpLeft, CornerUpRight } from "lucide-vue-next";
 import UserIcon from "@/features/user/components/UserIcon.vue";
+import { useAlterationLogStore } from "../store/useAlterationLogStore";
 
+const alterationLog = useAlterationLogStore();
+
+const forward = () => {
+  alterationLog.redo();
+};
+const back = () => {
+  alterationLog.undo();
+};
 const props = defineProps<{
   title: string;
 }>();

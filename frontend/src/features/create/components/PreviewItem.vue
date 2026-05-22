@@ -27,7 +27,9 @@
           :parentItem="props.item.originalId"
         />
       </div>
-      <p>{{ "ここにドロップ" }}</p>
+      <p v-if="props.item.innerItems?.length === 0" class="drop-text">
+        {{ "ここにドロップ" }}
+      </p>
     </section>
   </div>
 </template>
@@ -42,7 +44,7 @@ import { CirclePlus, CircleMinus } from "lucide-vue-next";
 import { iconMap } from "@/features/create/driver/itemListDriver";
 import { UseCreateWork } from "../composables/useCreateWork";
 import { BaseButton } from "@/components/ui/form/BaseButton";
-import type { DeletePreviewItemToken } from "../composables/useCreateWork";
+import type { deletePreviewItemToken } from "../composables/useCreateWork";
 import type { addPreviewItemToken } from "../composables/useCreateWork";
 
 const createWork = UseCreateWork();
@@ -59,7 +61,7 @@ const onDrop = (event: DragEvent) => {
 };
 
 const onPlue = (plue: number) => {
-  if (props.item.count + plue >= 99 || props.item.count + plue <= 1) return;
+  if (props.item.count + plue >= 99 || props.item.count + plue <= 0) return;
   createWork.addItemCount({
     originalId: props.item.originalId,
     pulse: plue,
@@ -69,10 +71,11 @@ const onPlue = (plue: number) => {
 };
 
 const onDelete = () => {
-  const token: DeletePreviewItemToken = {
+  const token: deletePreviewItemToken = {
     originalId: props.item.originalId,
     pocketId: props.pocketId,
     parentItemId: props.parentItem ? props.parentItem : undefined,
+    itemId: props.item.id,
   };
   createWork.deletePreviewItem(token);
 };
@@ -136,5 +139,11 @@ const icon = iconMap[props.item.iconId] ?? "📦";
 .storage p {
   color: #3b82f6;
   font-size: 12px;
+}
+.drop-text {
+  transition: scale 0.2s ease;
+}
+.drop-text:hover {
+  transform: scale(1.02);
 }
 </style>

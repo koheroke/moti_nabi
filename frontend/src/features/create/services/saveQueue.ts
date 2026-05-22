@@ -1,16 +1,15 @@
-import type { addPreviewItemToken } from "../composables/useCreateWork"
+import type { alterationToken } from "../composables/applyCreateAction"
 
-export type queueTokens = addPreviewItemToken
+
 export const useSaveQueue = () => {
-  const queue: queueTokens[] = []
-  const push = (token: queueTokens) => {
+  const queue: alterationToken[] = []
+  const push = (token: alterationToken) => {
     if (queue.length == 0) {
       setTimer()
     }
     queue.push(token)
   }
   const pop = () => {
-
     queue.length = 0;
   }
   const setTimer = () => {

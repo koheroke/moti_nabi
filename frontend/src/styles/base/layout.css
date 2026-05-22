@@ -1,0 +1,10 @@
+.list{
+  gap: 10px;
+  display: flex;
+  flex-direction: column;
+}
+.flexCanter{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

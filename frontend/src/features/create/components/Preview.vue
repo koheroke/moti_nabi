@@ -2,9 +2,9 @@
   <div class="preview-area">
     <component
       :is="currentSuitcaseComponent"
-      :project="previewDatas"
       v-model:selectedPocket="selectedPocket"
     />
+
     <section class="pocketModal">
       <PocketModal
         v-if="selectedPocket"
@@ -25,7 +25,6 @@ import HardSuitcase from "./svgUi/suitcase/HardSuitcase.vue";
 
 const props = defineProps<{
   type: string;
-  previewDatas: unknown;
 }>();
 
 const componentMap = {
@@ -50,10 +49,12 @@ const currentSuitcaseComponent = computed(() => {
 }
 .preview-area {
   display: flex;
-  flex-direction: column;
+
   align-items: center;
   justify-content: center;
   width: 100%;
+  height: 100%;
+  overflow: auto;
   background-color: rgb(68, 68, 68);
   background-repeat: repeat;
   background-image: radial-gradient(circle, #dfdddd 1px, transparent 1px);

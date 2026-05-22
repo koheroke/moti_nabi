@@ -5,7 +5,7 @@
 </template>
 <script setup lang="ts">
 import ItemCard from "./itemCard.vue";
-import { useCreateStore } from "../../../store/createStore";
+import { useCreateStore } from "../../../../store/createStore";
 import { storeToRefs } from "pinia";
 const createStore = useCreateStore();
 

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import type { UserLuggage_SaveDBData, itemCard, previewItem, CategoryId } from "../type/itemType";
-import type { addPreviewItemToken, addItemCountToken, addBookmarkToken, DeletePreviewItemToken, } from '../composables/useCreateWork';
+import type { addPreviewItemToken, addItemCountToken, addBookmarkToken, deletePreviewItemToken, addListItemToken } from '../composables/useCreateWork';
 
 
 
@@ -83,8 +83,6 @@ export const useCreateStore = defineStore("create", {
     pushpreviewItem(token: addPreviewItemToken) {
       if (!this.previewItem || !this.listItem || !this.addItemCounter) return
       this.addItemCounter++
-
-      console.log(`item_${this.addItemCounter}`)
       const cardItem: previewItem = {
         ...this.listItem[token.itemId], ...{ count: 1, originalId: `item_${this.addItemCounter}`, innerItems: [] }
       }
@@ -102,7 +100,17 @@ export const useCreateStore = defineStore("create", {
       this.listItem[token.itemId].bookmark = !this.listItem[token.itemId].bookmark
     },
 
-    deletepreviewItem(token: DeletePreviewItemToken) {
+    addListItem(token: addListItemToken) {
+      if (!this.previewItem || !this.listItem || !this.addItemCounter) return
+      const keys = Object.keys(this.listItem)
+      const id = `item_${keys.length + 1}`
+      const listItem: itemCard = {
+        ...token, ...{ bookmark: false, id: id }
+      }
+      this.listItem[id] = listItem
+    },
+
+    deletepreviewItem(token: deletePreviewItemToken) {
       if (!this.previewItem || !this.listItem) return
       if (!this.previewItem[token.pocketId]) return
       const findId = token.parentItemId ? token.parentItemId : token.originalId
