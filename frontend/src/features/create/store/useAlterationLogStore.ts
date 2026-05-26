@@ -15,12 +15,10 @@ export const useAlterationLogStore = defineStore("alterationLog", () => {
 
   const saveState = (newState: HistoryToken) => {
     undoStack.push(newState)
-    console.log("undo", undoStack)
     redoStack.length = 0
   }
 
   const undo = () => {
-    console.log("undo", undoStack)
 
     if (undoStack.length === 0) return
 
@@ -40,6 +38,8 @@ export const useAlterationLogStore = defineStore("alterationLog", () => {
     undoStack.push(next)
     applyCreateAction.alterationData(next.forwardToken)
   }
+
+
 
   return {
     undoStack,

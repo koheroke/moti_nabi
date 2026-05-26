@@ -1,8 +1,12 @@
 import { defineStore } from 'pinia'
-import type { UserLuggage_SaveDBData, itemCard, previewItem, CategoryId } from "../type/itemType";
+import type { Pocket, UserLuggage_SaveDBData, itemCard, previewItem, CategoryId, Case } from "../type/itemType";
+import type { iconInfomation } from "@/features/create/type/itemType";
+import { type Category } from "@/features/create/type/itemType";
 import type { addPreviewItemToken, addItemCountToken, addBookmarkToken, deletePreviewItemToken, addListItemToken } from '../composables/useCreateWork';
-
-
+export interface caseArray {
+  id: string;
+  data: Case
+}
 
 
 
@@ -13,13 +17,34 @@ export const useCreateStore = defineStore("create", {
     listItem: null as Record<string, itemCard> | null,
     previewItem: null as Record<string, previewItem[]> | null,
     searchText: "",
+    staticItemData: {} as Record<string, itemCard>,
     category: null as CategoryId | null,
     addItemCounter: null as number | null,
+    previewCases: {} as Record<string, Case>,
+    staticCases: {} as Record<string, Case>,
+    iconMap: {} as Record<string, iconInfomation>,
+    categoryColor: {} as Record<string, string>,
+    categories: [] as Category[],
+    isStaticLoaded: false,
   }),
   getters: {
+    staticCasesGetter: (state) => state.staticCases,
+    categorys: (state) => state.categories,
+    iconMapGetter: (state) => state.iconMap,
+    categoryColorGetter: (state) => state.categoryColor,
     listItemGetter: (state) => state.listItem,
     previewItemGetter: (state) => state.previewItem,
     workIdGetter: (state) => state.workId,
+    getAllCasesArray: (state): caseArray[] =>
+      Object.entries(state.staticCases).map(([key, value]) => ({
+        id: key,
+        data: value,
+      })),
+    getPreviewCasesArray: (state): caseArray[] =>
+      Object.entries(state.previewCases).map(([key, value]) => ({
+        id: key,
+        data: value,
+      })),
 
 
     filteredListItem: (state) => {
@@ -46,6 +71,18 @@ export const useCreateStore = defineStore("create", {
     }
   },
   actions: {
+    setIconMap(icons: Record<string, iconInfomation>) {
+      this.iconMap = icons
+    },
+    setStaticCases(cases: Record<string, Case>) {
+      this.staticCases = cases
+    },
+    setCategoryColor(colorList: Record<string, string>) {
+      this.categoryColor = colorList
+    },
+    setCategories(categories: Category[]) {
+      this.categories = categories
+    },
     setSearchText(text: string) {
       this.searchText = text
     },
@@ -54,6 +91,9 @@ export const useCreateStore = defineStore("create", {
     },
     setAddItemCounter(count: number) {
       this.addItemCounter = count
+    },
+    setStaticItemData(data: Record<string, itemCard>) {
+      this.staticItemData = data
     },
     setSaveDBData(data: UserLuggage_SaveDBData) {
       this.userLuggage_SaveDBData = data
@@ -66,6 +106,9 @@ export const useCreateStore = defineStore("create", {
     },
     setWorkId(id: number) {
       this.workId = id
+    },
+    setStaticLoaded(state: boolean) {
+      this.isStaticLoaded = state
     },
     addCount(token: addItemCountToken) {
       if (!this.previewItem || !this.listItem) return
@@ -125,6 +168,20 @@ export const useCreateStore = defineStore("create", {
       }
 
     },
+
+    addPreviewCase(data: Case) {
+      const id = `caseID_${Object.keys(this.previewCases).length}`
+      this.previewCases[id] = data
+    },
+    deleteCase(id: string) {
+
+    },
+    editSelectCase(id: string, data: Pocket[]) {
+
+    },
+    reSizeCase(id: string, data: Pocket[]) {
+
+    }
   }
 })
 

@@ -41,13 +41,14 @@ const props = defineProps<{
   parentItem?: string;
 }>();
 import { CirclePlus, CircleMinus } from "lucide-vue-next";
-import { iconMap } from "@/features/create/driver/itemListDriver";
 import { UseCreateWork } from "../composables/useCreateWork";
 import { BaseButton } from "@/components/ui/form/BaseButton";
 import type { deletePreviewItemToken } from "../composables/useCreateWork";
 import type { addPreviewItemToken } from "../composables/useCreateWork";
-
+import { useCreateStore } from "../store/createStore";
+const createStore = useCreateStore();
 const createWork = UseCreateWork();
+const iconMap = createStore.iconMap;
 
 const onDrop = (event: DragEvent) => {
   const draggedId = event.dataTransfer?.getData("itemId");

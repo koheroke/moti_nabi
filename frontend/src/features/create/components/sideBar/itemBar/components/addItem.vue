@@ -68,13 +68,15 @@
 import BaseButton from "@/components/ui/form/BaseButton/BaseButton.vue";
 import BaseInput from "@/components/ui/form/BaseInput/BaseInput.vue";
 import { ref, watch } from "vue";
-import { iconMap } from "@/features/create/driver/itemListDriver";
 import type { CategoryId, Category } from "../../../../type/itemType";
 import type { addListItemToken } from "@/features/create/composables/useCreateWork";
 import { UseCreateWork } from "@/features/create/composables/useCreateWork";
 import iconSelect from "./iconSelect.vue";
+import { useCreateStore } from "../../../../store/createStore";
+const createStore = useCreateStore();
+const iconMap = createStore.iconMap;
 const emit = defineEmits(["update:add-item"]);
-const props = defineProps<{ categories: Category[] }>();
+const props = defineProps<{ categories: Category[] | undefined }>();
 const open = ref<boolean>(false);
 const selectedCategory = ref<CategoryId>();
 const caseBool = ref<boolean>(false);

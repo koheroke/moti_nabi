@@ -1,9 +1,9 @@
-import type { UserLuggage_SaveDBData, previewItem, itemCard, CategoryId } from "../type/itemType";
+import type { UserLuggage_SaveDBData, previewItem, itemCard, CategoryId, Pocket } from "../type/itemType";
 import { useApplyCreateAction } from "./applyCreateAction";
 import { useCreateApi } from "../api/createApi";
 import { useUserStore } from "@/store/user/userStore";
 import { useCreateStore } from "../store/createStore";
-
+import type { CaseType } from "../type/itemType";
 import type { alterationToken } from "./applyCreateAction";
 
 import { useAlterationLogStore } from "../store/useAlterationLogStore"
@@ -72,16 +72,19 @@ export const UseCreateWork = () => {
 
     if (!userId || !theWorkId) return "noneNameorWorkId"
     let data = null as UserLuggage_SaveDBData | null
-    let vuepreviewData = null as Record<string, previewItem[]> | null
-    let vueItemList = null as Record<string, itemCard> | null
-    let addItemCounter = null as number | null
+    let vuepreviewData = {} as Record<string, previewItem[]>
+    let vueItemList = {} as Record<string, itemCard>
+    let addItemCounter = 0 as number
 
     try {
       data = await createApi.load(userId, theWorkId)
     } catch (e) {
       return "fallLoadData"
     }
+
     try {
+      const createAction = useApplyCreateAction()
+      await createAction.initCreateStaticData()
       const response = applyCreateAction.hydrateCreateState(data)
       vuepreviewData = response.vuepreviewData
       vueItemList = response.vueItemList
@@ -176,10 +179,19 @@ export const UseCreateWork = () => {
     }
     applyCreateAction.alterationData(newToken)
   }
+  const addCase = (caseId: CaseType) => {
+    createStore.addPreviewCase(createStore.staticCases[caseId])
+  }
+  const deleteCase = (id: string) => {
 
+  }
+  const editSelectCase = (id: string) => {
 
+  }
+  const reSizePoket = (id: string, data: Pocket[]) => {
 
+  }
 
-  return { load, addItemToPreview, addItemCount, addBookmark, deletePreviewItem, addListItem }
+  return { load, addItemToPreview, addItemCount, addBookmark, deletePreviewItem, addListItem, addCase, deleteCase, editSelectCase, reSizePoket }
 }
 

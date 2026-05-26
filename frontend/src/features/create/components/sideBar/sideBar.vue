@@ -39,6 +39,7 @@
     </div>
     <div class="selectContent">
       <itemBar v-if="selectItemId == 'item'"></itemBar>
+      <caseSelectBar v-if="selectItemId == 'case'"></caseSelectBar>
     </div>
   </div>
   <!-- <itemBar /> -->
@@ -47,11 +48,12 @@
 <script setup lang="ts">
 import { LayoutTemplate, Luggage, Boxes } from "lucide-vue-next";
 import itemBar from "@/features/create/components/sideBar/itemBar/itemBar.vue";
+import caseSelectBar from "@/features/create/components/sideBar/caseBar/caseSelectBar.vue";
+
 import { ref, type Component } from "vue";
 const selectItemId = ref<string>("template");
 const onSelect = (id: string) => {};
 
-type conponentId = "item";
 interface SideBar {
   id: string;
   name: string;
@@ -83,9 +85,10 @@ const sidebar = ref<SideBar[]>([
 
 <style lang="css" scoped>
 .sideArea {
-  width: auto;
+  width: 100%;
   height: 100%;
   display: flex;
+  box-sizing: border-box;
 }
 .selectContent {
   display: flex;

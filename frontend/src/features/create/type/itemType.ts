@@ -9,6 +9,32 @@ interface itemCard {
 }
 
 
+type Pocket = {
+  id: string;
+  name: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  items: unknown[];
+}
+
+interface part {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  radius: number;
+}
+
+interface Case {
+  pockets: Pocket[];
+  case: part;
+  handle: part;
+  name: string;
+  id: string
+}
+
 interface previewItem {
   originalId: string;
   id: string
@@ -39,7 +65,7 @@ type Category = {
 
 
 type Bookmarks = string[];
-type CaseType = 'HardSuitcase' | 'SoftSuitcase';
+export type CaseType = 'HardSuitcase' | 'SoftSuitcase';
 
 
 
@@ -89,4 +115,4 @@ interface iconInfomation { src: string, category: CategoryId, }
 
 
 
-export type { iconInfomation, itemCard, UserLuggage_SaveDBData, addItemType, CategoryId, Category, saveDBaddedItem, previewItem, saveDBpreviewData, innerItems }
+export type { Case, Pocket, iconInfomation, itemCard, UserLuggage_SaveDBData, addItemType, CategoryId, Category, saveDBaddedItem, previewItem, saveDBpreviewData, innerItems }

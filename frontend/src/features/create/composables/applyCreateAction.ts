@@ -1,9 +1,10 @@
-import type { UserLuggage_SaveDBData, previewItem, saveDBpreviewData } from "../type/itemType";
-import { filteredItems } from "../driver/itemListDriver";
+
 import type { addPreviewItemToken, addItemCountToken, addBookmarkToken, addListItemToken, deletePreviewItemToken } from "./useCreateWork";
 import { useCreateStore } from "../store/createStore";
+
 import { useSaveQueue } from "../services/saveQueue";
 
+import type { UserLuggage_SaveDBData, saveDBpreviewData, previewItem } from "@/features/create/type/itemType";
 
 export type alterationType = "previewItems_additem"
   | "previewItems_addcount"
@@ -21,13 +22,34 @@ export interface alterationToken {
 
 
 
+
+
 const useApplyCreateAction = () => {
   const saveQueue = useSaveQueue()
   const createStore = useCreateStore()
+  const initCreateStaticData = async () => {
+    if (createStore.isStaticLoaded) return
+    const [itemListRes, categoryRes, casesRes] = await Promise.all([
+      fetch("/json/create/itemList.json"),
+      fetch("/json/create/category.json"),
+      fetch("/json/create/case.json"),
+    ])
+    const staticItemData = await itemListRes.json()
+    const categoryData = await categoryRes.json()
+    const casesData = await casesRes.json()
+    console.log(casesData)
+    createStore.setStaticItemData(staticItemData)
+    createStore.setIconMap(categoryData.iconMap)
+    createStore.setCategoryColor(categoryData.color)
+    createStore.setCategories(categoryData.categoryData)
+    createStore.setStaticCases(casesData)
+    createStore.setStaticLoaded(true)
+  }
 
   const hydrateCreateState = (data: UserLuggage_SaveDBData) => {
+    const staticItemData = createStore.staticItemData
     const { previewDatas, itemListDatas } = data
-    const synthesis = Object.assign(itemListDatas.addedItems, filteredItems)
+    const synthesis = Object.assign(itemListDatas.addedItems, staticItemData)
     const vueItemList = Object.fromEntries(
       Object.entries(synthesis).map(([key, item]) => [
         key,
@@ -62,7 +84,6 @@ const useApplyCreateAction = () => {
           ([key, poket]) => [key, getItemDatra(poket)]
         )
       )
-    console.log(" previewDatas.addItemCounter", previewDatas.addItemCounter)
     return { vuepreviewData: vuepreviewData, vueItemList: vueItemList, addItemCounter: previewDatas.addItemCounter }
   }
   const alterationData = (token: alterationToken) => {
@@ -94,7 +115,7 @@ const useApplyCreateAction = () => {
     }
 
   }
-  return { hydrateCreateState, alterationData }
+  return { hydrateCreateState, alterationData, initCreateStaticData }
 }
 export { useApplyCreateAction }
 

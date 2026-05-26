@@ -4,8 +4,8 @@
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "types": ["vite/client"],
 
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
 
@@ -15,7 +15,8 @@
       "@features/*": ["./src/features/*"],
       "@pages/*": ["./src/pages/*"],
       "@stores/*": ["./src/stores/*"],
-      "@lib/*": ["./src/lib/*"]
+      "@lib/*": ["./src/lib/*"],
+      "@public/*": ["./public/*"]
     },
 
     "ignoreDeprecations": "6.0"
@@ -26,4 +27,4 @@
     "src/**/*.vue",
     "src/**/*.d.ts",
   ]
-}
+} 

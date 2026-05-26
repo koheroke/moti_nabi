@@ -36,9 +36,15 @@ import itemSearch from "./components/itemSearch.vue";
 import filteredItems from "./components/filteredItems.vue";
 import { ref, watch, onMounted } from "vue";
 // import { useItemListWork } from "../../composables/itemList";
-import { categories } from "../../../driver/itemListDriver";
 import addItem from "./components/addItem.vue";
 import { type addItemType } from "../../../type/itemType";
+
+import type { Category } from "../../../type/itemType";
+
+import { useCreateStore } from "../../../store/createStore";
+const createStore = useCreateStore();
+
+const categories: Category[] = createStore.categories;
 
 // const itemListWork = useItemListWork();
 const returnAddItem = ref<addItemType | null>(null);

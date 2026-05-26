@@ -1,0 +1,56 @@
+{
+"heard":{
+  "case": {
+    "x": 40,
+    "y": 40,
+    "width": 320,
+    "height": 480,
+    "radius": 28
+  },
+  "handle": {
+    "x": 145,
+    "y": 15,
+    "width": 110,
+    "height": 35,
+    "radius": 12
+  },
+  "pockets": [
+    {
+      "id": "mesh",
+      "name": "メッシュ",
+      "x": 70,
+      "y": 80,
+      "width": 260,
+      "height": 95,
+      "items": []
+    },
+    {
+      "id": "main",
+      "name": "メイン収納",
+      "x": 70,
+      "y": 195,
+      "width": 170,
+      "height": 230,
+      "items": []
+    },
+    {
+      "id": "side",
+      "name": "小物",
+      "x": 255,
+      "y": 195,
+      "width": 75,
+      "height": 230,
+      "items": []
+    },
+    {
+      "id": "bottom",
+      "name": "下部収納",
+      "x": 70,
+      "y": 445,
+      "width": 260,
+      "height": 55,
+      "items": []
+    }
+  ]
+}
+}

@@ -4,10 +4,15 @@
       <section class="category-info">
         {{ "カテゴリーで絞り込む" }}
       </section>
-      <BaseButton @click="onCategory(props.categorys[props.index].id)">
+      <BaseButton
+        @click="
+          props.categorys?.[props.index]?.id &&
+          onCategory(props.categorys[props.index].id)
+        "
+      >
         <section class="category-open-button">
-          <div>{{ props.categorys[props.index].name }}</div>
-          <div>{{ props.categorys[props.index].icon }}</div>
+          <div>{{ currentCategory?.name }}</div>
+          <div>{{ currentCategory?.icon }}</div>
         </section>
       </BaseButton>
     </section>
@@ -30,16 +35,21 @@
 <script setup lang="ts">
 import type { Category, CategoryId } from "@/features/create/type/itemType";
 import { useCreateStore } from "../../../../store/createStore";
+import { computed } from "vue";
 const createStore = useCreateStore();
 
 const props = defineProps<{
-  categorys: Category[];
+  categorys: Category[] | undefined;
   index: number;
 }>();
+
+const currentCategory = computed(() => {
+  return props.categorys?.[props.index];
+});
 const onCategory = (categoryId: CategoryId) => {
-  const ids = props.categorys.map((item) => item.id);
+  const ids = props.categorys?.map((item) => item.id);
   createStore.setCategory(categoryId);
-  const index = ids.indexOf(categoryId);
+  const index = ids?.indexOf(categoryId);
   emit("update:index", index);
 };
 

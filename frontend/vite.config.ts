@@ -6,11 +6,12 @@ export default defineConfig({
   plugins: [vue()],
   envDir: '../',
   build: {
-    outDir: '../backend/frontendDist', 
+    outDir: '../backend/frontendDist',
   },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
+      'public': path.resolve(__dirname, 'public'),
       '@components': path.resolve(__dirname, 'src/components'),
       '@features': path.resolve(__dirname, 'src/features'),
       '@pages': path.resolve(__dirname, 'src/pages'),

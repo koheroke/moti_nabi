@@ -1,0 +1,89 @@
+{
+"categoryData":[
+  {
+    "id": "all",
+    "name": "すべて",
+    "icon": "📦"
+  },
+  {
+    "id": "clothes",
+    "name": "衣類",
+    "icon": "👕"
+  },
+  {
+    "id": "gadget",
+    "name": "ガジェット",
+    "icon": "🔌"
+  },
+  {
+    "id": "toiletry",
+    "name": "洗面用品",
+    "icon": "🧴"
+  },
+  {
+    "id": "medicine",
+    "name": "薬・健康",
+    "icon": "💊"
+  },
+  {
+    "id": "document",
+    "name": "書類",
+    "icon": "📄"
+  },
+  {
+    "id": "food",
+    "name": "食品",
+    "icon": "🍪"
+  },
+  {
+    "id": "storage",
+    "name": "小収納",
+    "icon": "📦"
+  },
+  {
+    "id": "bookmark",
+    "name": "ブックマーク中",
+    "icon": "🔖"
+  },
+  {
+    "id": "create",
+    "name": "自分の持ち物",
+    "icon": "👜"
+  }
+],
+
+"color":{
+  "clothes": "#3b82f6",
+  "gadget": "#8b5cf6",
+  "medicine": "#ef4444",
+  "toiletry": "#22c55e",
+  "storage": "#64748b"
+},
+
+"iconMap":{
+    "shirt": {
+    "src": "👕",
+    "category": "clothes"
+  },
+
+  "charger": {
+    "src": "🔌",
+    "category": "gadget"
+  },
+
+  "medicine": {
+    "src": "💊",
+    "category": "medicine"
+  },
+
+  "ziplock": {
+    "src": "🟦",
+    "category": "storage"
+  },
+
+  "pouch": {
+    "src": "👝",
+    "category": "storage"
+  }
+}
+}

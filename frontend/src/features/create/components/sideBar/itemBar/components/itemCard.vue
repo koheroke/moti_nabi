@@ -36,12 +36,16 @@ import type { itemCard } from "@/features/create/type/itemType";
 import { Star } from "lucide-vue-next";
 import { UseCreateWork } from "@/features/create/composables/useCreateWork";
 import type { addBookmarkToken } from "@/features/create/composables/useCreateWork";
+
 const createWork = UseCreateWork();
 const props = defineProps<{ item: itemCard }>();
-import {
-  iconMap,
-  categoryColorMap,
-} from "@/features/create/driver/itemListDriver";
+import type { iconInfomation } from "@/features/create/type/itemType";
+
+type iconColorType = Record<string, string>;
+import { useCreateStore } from "../../../../store/createStore";
+const createStore = useCreateStore();
+const iconMap: Record<string, iconInfomation> = createStore.iconMap;
+const categoryColorMap: iconColorType = createStore.categoryColor;
 
 const icon = iconMap[props.item.iconId] ?? "📦";
 const categoryColor = categoryColorMap[props.item.category[0]] ?? "#64748b";

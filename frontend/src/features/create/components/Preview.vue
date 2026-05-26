@@ -1,9 +1,15 @@
 <template>
   <div class="preview-area">
-    <component
-      :is="currentSuitcaseComponent"
-      v-model:selectedPocket="selectedPocket"
-    />
+    <div class="preview" v-for="caseItem in cases" :key="caseItem.id">
+      <Case
+        :pockets="caseItem.data.pockets"
+        :case="caseItem.data.case"
+        :name="caseItem.data.name"
+        :handle="caseItem.data.handle"
+        :id="caseItem.data.id"
+        v-model:selectedPocket="cases"
+      />
+    </div>
 
     <section class="pocketModal">
       <PocketModal
@@ -16,27 +22,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
 import PocketModal from "./PocketModal.vue";
 import { ref } from "vue";
+import type { caseArray } from "../store/createStore";
 const selectedPocket = ref();
-
-import HardSuitcase from "./svgUi/suitcase/HardSuitcase.vue";
+import Case from "./svgUi/case.vue";
+import { useCreateStore } from "../store/createStore";
+const createStore = useCreateStore();
+const cases: caseArray[] = createStore.getPreviewCasesArray;
 
 const props = defineProps<{
   type: string;
 }>();
-
-const componentMap = {
-  hard: HardSuitcase,
-};
-type ComponentType = keyof typeof componentMap;
-
-const component = componentMap[props.type as ComponentType];
-
-const currentSuitcaseComponent = computed(() => {
-  return component || HardSuitcase;
-});
 </script>
 <style lang="css" scoped>
 .pocketModal {
@@ -48,10 +45,6 @@ const currentSuitcaseComponent = computed(() => {
   height: 100%;
 }
 .preview-area {
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
   width: 100%;
   height: 100%;
   overflow: auto;
@@ -59,5 +52,11 @@ const currentSuitcaseComponent = computed(() => {
   background-repeat: repeat;
   background-image: radial-gradient(circle, #dfdddd 1px, transparent 1px);
   background-size: 20px 20px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.preview {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
 }
 </style>

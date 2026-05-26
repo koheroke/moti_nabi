@@ -16,12 +16,17 @@
   </div>
 </template>
 <script setup lang="ts">
-import { iconMap } from "@/features/create/driver/itemListDriver";
 import type { CategoryId } from "@/features/create/type/itemType";
-import { computed } from "vue";
-import { categories } from "../../../../driver/itemListDriver";
 import type { Category } from "@/features/create/type/itemType";
+import { computed } from "vue";
+import type { iconInfomation } from "@/features/create/type/itemType";
+import { useCreateStore } from "../../../../store/createStore";
+const createStore = useCreateStore();
+const iconMap: Record<string, iconInfomation> = createStore.iconMapGetter;
+const categories: Category[] = createStore.categories;
+
 const props = defineProps<{ selectedCategory?: CategoryId }>();
+
 const categoryName = computed(() => {
   return categories.find(
     (categorie: Category) => categorie.id == props.selectedCategory,
