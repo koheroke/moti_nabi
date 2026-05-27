@@ -62,31 +62,36 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { storeToRefs } from "pinia";
-import { useCreateStore } from "../../store/createStore";
-import type { Pocket } from "@/features/create/type/itemType";
-import type { Case } from "@/features/create/type/itemType";
-const createStore = useCreateStore();
-const { previewItem } = storeToRefs(createStore);
-
+import type { Pocket, previewItem, Case } from "../../type/casetype";
 const props = defineProps<Case>();
-
 const pockets = computed(() => {
-  return props.pockets.map((pocket) => {
-    if (previewItem.value)
-      pocket.items = previewItem.value[pocket.id]
-        ? previewItem.value[pocket.id]
-        : [];
-    return pocket;
+  return Object.values(props.pockets).map((pocket) => {
+    if (pocket.items) return pocket;
+    return {
+      ...pocket,
+      items: [],
+    };
   });
 });
-
 const emit = defineEmits<{
-  (e: "update:selectedPocket", pocket: Pocket): void;
+  (
+    e: "update:selectedPocket",
+    payload: {
+      items: previewItem[];
+      id: string;
+      name: string;
+      caseId: string;
+    },
+  ): void;
 }>();
 
 function openPocket(pocket: Pocket) {
-  emit("update:selectedPocket", pocket);
+  emit("update:selectedPocket", {
+    items: pocket.items,
+    id: pocket.id,
+    name: pocket.name,
+    caseId: props.id,
+  });
 }
 </script>
 

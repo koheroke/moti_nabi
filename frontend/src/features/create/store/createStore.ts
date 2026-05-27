@@ -1,26 +1,26 @@
 import { defineStore } from 'pinia'
-import type { Pocket, UserLuggage_SaveDBData, itemCard, previewItem, CategoryId, Case } from "../type/itemType";
-import type { iconInfomation } from "@/features/create/type/itemType";
-import { type Category } from "@/features/create/type/itemType";
-import type { addPreviewItemToken, addItemCountToken, addBookmarkToken, deletePreviewItemToken, addListItemToken } from '../composables/useCreateWork';
+import type { Pocket, Case, previewItem } from '../type/casetype';
+import type { itemCard } from '../type/itemType';
+import type { CategoryId } from "@/features/create/type/categoryType";
+import type { iconInfomation, UserLuggage_SaveDBData } from "@/features/create/type/apiType";
+import { type Category, } from "@/features/create/type/categoryType";
+import type { CaseType } from "@/features/create/type/itemType";
+import type { addPreviewCaseToken, deletePreviewCaseToken, addPreviewItemToken, addItemCountToken, addBookmarkToken, deletePreviewItemToken, addListItemToken } from '../composables/useCreateWork';
 export interface caseArray {
   id: string;
   data: Case
 }
-
-
 
 export const useCreateStore = defineStore("create", {
   state: () => ({
     workId: null as number | null,
     userLuggage_SaveDBData: null as UserLuggage_SaveDBData | null,
     listItem: null as Record<string, itemCard> | null,
-    previewItem: null as Record<string, previewItem[]> | null,
+    previewCase: {} as Record<string, Case>,
     searchText: "",
     staticItemData: {} as Record<string, itemCard>,
     category: null as CategoryId | null,
     addItemCounter: null as number | null,
-    previewCases: {} as Record<string, Case>,
     staticCases: {} as Record<string, Case>,
     iconMap: {} as Record<string, iconInfomation>,
     categoryColor: {} as Record<string, string>,
@@ -33,15 +33,16 @@ export const useCreateStore = defineStore("create", {
     iconMapGetter: (state) => state.iconMap,
     categoryColorGetter: (state) => state.categoryColor,
     listItemGetter: (state) => state.listItem,
-    previewItemGetter: (state) => state.previewItem,
+    previewItemGetter: (state) => state.previewCase,
     workIdGetter: (state) => state.workId,
     getAllCasesArray: (state): caseArray[] =>
       Object.entries(state.staticCases).map(([key, value]) => ({
         id: key,
         data: value,
       })),
+
     getPreviewCasesArray: (state): caseArray[] =>
-      Object.entries(state.previewCases).map(([key, value]) => ({
+      Object.entries(state.previewCase).map(([key, value]) => ({
         id: key,
         data: value,
       })),
@@ -101,8 +102,8 @@ export const useCreateStore = defineStore("create", {
     setlistItem(data: Record<string, itemCard>) {
       this.listItem = data
     },
-    setpreviewItem(data: Record<string, previewItem[]>) {
-      this.previewItem = data
+    setpreviewData(data: Record<string, Case>) {
+      this.previewCase = data
     },
     setWorkId(id: number) {
       this.workId = id
@@ -111,42 +112,49 @@ export const useCreateStore = defineStore("create", {
       this.isStaticLoaded = state
     },
     addCount(token: addItemCountToken) {
-      if (!this.previewItem || !this.listItem) return
-      const findId = token.parentItemId ? token.parentItemId : token.originalId
-      const index = findIndex(findId, this.previewItem[token.pocketId])
-      if (index != -1) {
-        if (token.parentItemId == undefined)
-          this.previewItem[token.pocketId][index].count += token.pulse
-        if (token.parentItemId != undefined) {
-          const innnerItemindex = findIndex(token.originalId, this.previewItem[token.pocketId][index].innerItems!)
-          this.previewItem[token.pocketId][index].innerItems![innnerItemindex].count += token.pulse
-        }
+      if (!this.previewCase || !this.listItem) return
+      const pocket = this.previewCase[token.caseId].pockets[token.pocketId]
+      const targetId = token.parentItemId ?? token.originalId
+      const itemIndex = findIndex(targetId, pocket.items)
+      if (itemIndex === -1) return
+      const item = pocket.items[itemIndex]
+      if (!token.parentItemId) {
+        item.count += token.pulse
+        return
       }
+      const innerItemIndex = findIndex(
+        token.originalId,
+        item.innerItems!
+      )
+      item.innerItems![innerItemIndex].count += token.pulse
     },
     pushpreviewItem(token: addPreviewItemToken) {
-      if (!this.previewItem || !this.listItem || !this.addItemCounter) return
+      if (!this.previewCase || !this.listItem || !this.addItemCounter) return
+      const pocket = this.previewCase[token.caseId].pockets[token.pocketId]
+      const originalId = token.originalId ? token.originalId : `item_${this.addItemCounter}`
       this.addItemCounter++
       const cardItem: previewItem = {
-        ...this.listItem[token.itemId], ...{ count: 1, originalId: `item_${this.addItemCounter}`, innerItems: [] }
+        ...this.listItem[token.itemId], ...{ count: 1, originalId: originalId, innerItems: [] }
       }
       if (token.parentItemId == undefined) {
-        this.previewItem[token.pocketId].push(cardItem)
+        pocket.items.push(cardItem)
       } else {
-        const innnerItemIndex = findIndex(token.parentItemId, this.previewItem[token.pocketId])
+        const innnerItemIndex = findIndex(token.parentItemId, pocket.items)
         if (innnerItemIndex == -1) return
-        this.previewItem[token.pocketId][innnerItemIndex].innerItems!.push(cardItem)
+        pocket.items[innnerItemIndex].innerItems!.push(cardItem)
       }
     },
 
     addBookmark(token: addBookmarkToken) {
-      if (!this.previewItem || !this.listItem) return
+      if (!this.previewCase || !this.listItem) return
       this.listItem[token.itemId].bookmark = !this.listItem[token.itemId].bookmark
     },
 
     addListItem(token: addListItemToken) {
-      if (!this.previewItem || !this.listItem || !this.addItemCounter) return
+      if (!this.previewCase || !this.listItem || !this.addItemCounter) return
       const keys = Object.keys(this.listItem)
       const id = `item_${keys.length + 1}`
+
       const listItem: itemCard = {
         ...token, ...{ bookmark: false, id: id }
       }
@@ -154,27 +162,32 @@ export const useCreateStore = defineStore("create", {
     },
 
     deletepreviewItem(token: deletePreviewItemToken) {
-      if (!this.previewItem || !this.listItem) return
-      if (!this.previewItem[token.pocketId]) return
+      if (!this.previewCase || !this.listItem) return
+      if (!this.previewCase[token.caseId]) return
+      const pocket = this.previewCase[token.caseId].pockets[token.pocketId]
       const findId = token.parentItemId ? token.parentItemId : token.originalId
-      console.log(findId, this.previewItem[token.pocketId], token)
-      const index = findIndex(findId, this.previewItem[token.pocketId])
+      const index = findIndex(findId, pocket.items)
       if (token.parentItemId == undefined) {
-        this.previewItem[token.pocketId].splice(index, 1);
+        pocket.items.splice(index, 1);
       }
       if (token.parentItemId != undefined) {
-        const innnerItemindex = findIndex(token.originalId, this.previewItem[token.pocketId][index].innerItems!)
-        this.previewItem[token.pocketId][index].innerItems!.splice(innnerItemindex, 1);
+        const innnerItemindex = findIndex(token.originalId, pocket.items[index].innerItems!)
+        pocket.items[index].innerItems!.splice(innnerItemindex, 1);
       }
-
     },
 
-    addPreviewCase(data: Case) {
-      const id = `caseID_${Object.keys(this.previewCases).length}`
-      this.previewCases[id] = data
+    addPreviewCase(token: addPreviewCaseToken) {
+      if (token.reverse) {
+        const this_case = token.case as Case
+        if (!this_case.case) return
+        this.previewCase[this_case.id] = this_case
+      } else {
+        const this_case = token.case as { caseId: string, caseType: CaseType }
+        this.previewCase[this_case.caseId] = this.staticCasesGetter[this_case.caseType]
+      }
     },
-    deleteCase(id: string) {
-
+    deleteCase(token: deletePreviewCaseToken) {
+      delete this.previewItemGetter[token.id]
     },
     editSelectCase(id: string, data: Pocket[]) {
 

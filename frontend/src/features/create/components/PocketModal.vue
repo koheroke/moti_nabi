@@ -1,17 +1,17 @@
 <template>
   <div
     class="overlay"
-    @click.self="$emit('close')"
+    :class="['overlay', { close: isClose }]"
     @drop="onDrop"
     @drop.stop
     @dragover.prevent="handleDrop"
   >
     <div class="modal">
       <header class="header">
-        <h2 class="name">
-          {{ "ポケット: " + pocket.name }}
-        </h2>
-        <div @click="$emit('close')" class="close-button">
+        <div class="name">
+          {{ "#" + pocket.name }}
+        </div>
+        <div @click="close" class="close-button">
           <X :size="20" color="black" stroke-width="2.5"></X>
         </div>
       </header>
@@ -27,7 +27,11 @@
           :key="item.originalId"
           class="item-card"
         >
-          <PreviewItem :item="item" :pocketId="pocket.id" />
+          <PreviewItem
+            :caseId="pocket.caseId"
+            :item="item"
+            :pocketId="pocket.id"
+          />
         </div>
       </div>
     </div>
@@ -36,21 +40,32 @@
 
 <script setup lang="ts">
 import { X } from "lucide-vue-next";
+import { ref } from "vue";
 import {
   UseCreateWork,
   type addPreviewItemToken,
 } from "../composables/useCreateWork";
 import PreviewItem from "./PreviewItem.vue";
-import type { previewItem } from "../type/itemType";
-
+import type { previewItem } from "../type/casetype.ts";
+const isClose = ref(false);
 const createWork = UseCreateWork();
 
+const emit = defineEmits<{
+  (e: "close"): void;
+}>();
+const close = () => {
+  isClose.value = true;
+  setTimeout(() => {
+    emit("close");
+  }, 300);
+};
 const onDrop = (event: DragEvent) => {
   const draggedId = event.dataTransfer?.getData("itemId");
   if (!draggedId) return;
   const addPreviewItemToken: addPreviewItemToken = {
     itemId: draggedId,
     pocketId: props.pocket.id,
+    caseId: props.pocket.caseId,
   };
   createWork.addItemToPreview(addPreviewItemToken);
 };
@@ -61,16 +76,12 @@ const props = defineProps<{
     id: string;
     name: string;
     items: previewItem[];
+    caseId: string;
   };
-}>();
-
-defineEmits<{
-  (e: "close"): void;
 }>();
 </script>
 <style lang="css" scoped>
 .drop-area {
-  padding-top: 10px;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -78,33 +89,60 @@ defineEmits<{
   padding: 10px;
   width: 300px;
   flex: 1;
+  min-height: 200px;
+  max-height: 400px;
 }
 .modal {
+  position: relative;
   height: 100%;
 }
 .overlay {
   border: 3px dotted rgba(29, 29, 29, 0.376);
   border-radius: 10px;
-  flex-direction: column;
-  height: 60%;
   width: 100%;
-  text-wrap: unset;
-  background-color: rgba(255, 255, 255, 0.546);
-  overflow-y: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  min-height: 0;
+  background-color: rgb(255, 255, 255);
+  overflow: hidden;
+  animation: modalOpen 0.25s ease-out forwards;
+}
+
+@keyframes modalOpen {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+
+  to {
+    opacity: 1;
+    max-height: 500px;
+  }
+}
+
+@keyframes modalClose {
+  from {
+    opacity: 1;
+    max-height: 500px;
+  }
+
+  to {
+    opacity: 0;
+    max-height: 0px;
+  }
+}
+
+.close {
+  animation: modalClose 0.25s ease-out forwards;
 }
 .header {
+  position: sticky;
   padding: 10px;
-  display: flex;
+  width: 300px;
   height: 40px;
-  background-color: rgba(237, 237, 237, 0.64);
-
+  background-color: rgba(241, 238, 238, 0.458);
+  display: flex;
   align-items: center;
+  text-align: center;
   justify-content: center;
-  border-radius: 10px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.142);
+  border-radius: 10px 10px 0 0;
 }
 .close-button {
   border: 2px solid rgba(0, 0, 0, 0.459);
@@ -113,12 +151,15 @@ defineEmits<{
   display: flex;
   border-radius: 10px;
   margin-left: auto;
-  padding: 2px 7px;
+  padding: 2px 3px;
+}
+.close-button:hover {
+  background-color: rgba(229, 227, 227, 0.38);
 }
 
 .name {
   font-weight: 600;
-  color: rgb(62, 61, 61);
+  color: rgb(79, 79, 79);
   font-size: 20px;
   text-align: center;
 }

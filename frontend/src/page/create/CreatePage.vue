@@ -8,11 +8,7 @@
       <div class="sidebar-area">
         <sideBar />
       </div>
-
-      <div class="preview-area">
-        <Preview type="hard" />
-        <dropCaseArea class="drop-area"></dropCaseArea>
-      </div>
+      <Preview type="hard" />
     </main>
   </div>
 </template>
@@ -23,10 +19,7 @@ import sideBar from "@/features/create/components/sideBar/sideBar.vue";
 import { UseCreateWork } from "@/features/create/composables/useCreateWork";
 import { onMounted } from "vue";
 import { useAlertStore } from "@/store/feedback/alertStore";
-import dropCaseArea from "@/features/create/components/sideBar/caseBar/components/dropCaseArea.vue";
-
 const alertStore = useAlertStore();
-
 const createWork = UseCreateWork();
 onMounted(async () => {
   const res = await createWork.load();
@@ -63,16 +56,9 @@ onMounted(async () => {
 }
 
 .sidebar-area {
-  border-right: 1px solid rgba(0, 0, 0, 0.101);
+  border-right: 1px solid rgba(4, 3, 3, 0.101);
   width: auto;
   height: 100%;
   box-sizing: border-box;
-}
-
-.preview-area {
-  position: relative;
-  display: flex;
-  flex: 1;
-  overflow: hidden;
 }
 </style>

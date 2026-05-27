@@ -1,8 +1,5 @@
 <template>
   <div class="page">
-    <header class="header">
-      <DetailTopbar :title="workDetail?.title"></DetailTopbar>
-    </header>
     <section class="container">
       <div class="right">
         <viewTopBar
@@ -11,7 +8,7 @@
           :commits="workDetail?.commits"
           style="margin-bottom: 10px"
         ></viewTopBar>
-        <viewWork></viewWork>
+        <Preview class="work-preview"></Preview>
       </div>
       <div class="left">
         <About :about="workDetail?.about"></About>
@@ -27,8 +24,14 @@ import viewTopBar from "@/features/workDetail/components/ViewTopBar.vue";
 import { fetchWorkDetail } from "./workDetail";
 import { onMounted, ref } from "vue";
 import { type WorkDetail } from "./workDetailType";
+import { UseCreateWork } from "@/features/create/composables/useCreateWork";
+import Preview from "@/features/create/components/Preview.vue";
+const createWork = UseCreateWork();
+
 const workDetail = ref<WorkDetail | null>(null);
+
 onMounted(async () => {
+  await createWork.load();
   workDetail.value = await fetchWorkDetail();
 });
 </script>
@@ -57,5 +60,8 @@ onMounted(async () => {
 }
 .header {
   width: 100%;
+}
+.work-preview {
+  border-radius: 15px;
 }
 </style>

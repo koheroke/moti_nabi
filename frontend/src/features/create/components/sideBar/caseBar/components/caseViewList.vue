@@ -18,14 +18,11 @@
 <script setup lang="ts">
 import Casecard from "./Casecard.vue";
 import { ref, onMounted } from "vue";
-import type { Pocket } from "@/features/create/type/itemType";
+import type { Pocket } from "@/features/create/type/casetype";
 import { useCreateStore } from "@/features/create/store/createStore";
 const createStore = useCreateStore();
 const allcase = createStore.getAllCasesArray;
 const cases = ref<Pocket[]>();
-onMounted(() => {
-  console.log("allcase" + allcase);
-});
 </script>
 <style lang="css" scoped>
 .caseView {

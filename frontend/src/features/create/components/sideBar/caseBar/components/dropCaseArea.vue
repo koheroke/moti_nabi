@@ -32,12 +32,15 @@ h1 {
 </style>
 <script setup lang="ts">
 import { useCaseDragStore } from "../store/onDrag.ts";
-const casecardDragStore = useCaseDragStore();
 import { storeToRefs } from "pinia";
+import { UseCreateWork } from "@/features/create/composables/useCreateWork.ts";
+const createWork = UseCreateWork();
+const casecardDragStore = useCaseDragStore();
 const { isDrag } = storeToRefs(casecardDragStore);
 const handleDrop = () => {};
 const onDrop = (event: DragEvent) => {
   const caseId = event.dataTransfer?.getData("caseId");
   if (!caseId) return;
+  createWork.addCase(caseId);
 };
 </script>

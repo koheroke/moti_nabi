@@ -6,6 +6,5 @@ import { getMockUserProfile } from "../drivers/userMockDriver"
 //テスト用
 // import { getUserProfile, getWorks } from "./drivers/userApiDriver"
 export const fetchUserProfile = async (userId: string): Promise<UserProfile> => {
-  console.log(userId)
   return await getMockUserProfile()
 }

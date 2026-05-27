@@ -1,5 +1,5 @@
-import { type UserLuggage_SaveDBData } from "../type/itemType";
-import { userLuggage_SaveDBData } from "../driver/itemListDriver";
+import { type UserLuggage_SaveDBData } from "../type/apiType";
+import userLuggage_SaveDBData from "../driver/itemListDriver";
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 const url = `${apiUrl}/create`;

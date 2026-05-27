@@ -61,7 +61,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import type { Case } from "@/features/create/type/itemType";
+import type { Case } from "@/features/create/type/casetype";
 const props = defineProps<Case>();
 import { useCaseDragStore } from "../store/onDrag.ts";
 const caseDragStore = useCaseDragStore();

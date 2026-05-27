@@ -1,13 +1,14 @@
 <template>
   <div class="preview-area">
+    <dropCaseArea class="drop-area"></dropCaseArea>
     <div class="preview" v-for="caseItem in cases" :key="caseItem.id">
       <Case
         :pockets="caseItem.data.pockets"
         :case="caseItem.data.case"
         :name="caseItem.data.name"
         :handle="caseItem.data.handle"
-        :id="caseItem.data.id"
-        v-model:selectedPocket="cases"
+        :id="caseItem.id"
+        v-model:selectedPocket="selectedPocket"
       />
     </div>
 
@@ -23,26 +24,23 @@
 
 <script setup lang="ts">
 import PocketModal from "./PocketModal.vue";
-import { ref } from "vue";
-import type { caseArray } from "../store/createStore";
+import dropCaseArea from "./sideBar/caseBar/components/dropCaseArea.vue";
+
+import { ref, watch } from "vue";
+import { storeToRefs } from "pinia";
 const selectedPocket = ref();
 import Case from "./svgUi/case.vue";
 import { useCreateStore } from "../store/createStore";
-const createStore = useCreateStore();
-const cases: caseArray[] = createStore.getPreviewCasesArray;
 
-const props = defineProps<{
-  type: string;
-}>();
+const createStore = useCreateStore();
+
+const { getPreviewCasesArray: cases } = storeToRefs(createStore);
 </script>
 <style lang="css" scoped>
 .pocketModal {
   position: fixed;
-  align-items: center;
-  justify-content: center;
-  display: flex;
-  width: auto;
-  height: 100%;
+  right: 0%;
+  bottom: 0;
 }
 .preview-area {
   width: 100%;
@@ -54,9 +52,8 @@ const props = defineProps<{
   background-size: 20px 20px;
   scrollbar-width: none;
   -ms-overflow-style: none;
-}
-.preview {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, 4fr);
+  position: relative;
 }
 </style>

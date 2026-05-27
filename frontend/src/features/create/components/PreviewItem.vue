@@ -25,6 +25,7 @@
           :item="item"
           :pocketId="props.pocketId"
           :parentItem="props.item.originalId"
+          :caseId="props.caseId"
         />
       </div>
       <p v-if="props.item.innerItems?.length === 0" class="drop-text">
@@ -34,11 +35,12 @@
   </div>
 </template>
 <script setup lang="ts">
-import type { previewItem } from "../type/itemType";
+import type { previewItem } from "../type/casetype";
 const props = defineProps<{
   item: previewItem;
   pocketId: string;
   parentItem?: string;
+  caseId: string;
 }>();
 import { CirclePlus, CircleMinus } from "lucide-vue-next";
 import { UseCreateWork } from "../composables/useCreateWork";
@@ -57,6 +59,7 @@ const onDrop = (event: DragEvent) => {
     itemId: draggedId,
     pocketId: props.pocketId,
     parentItemId: props.item.originalId,
+    caseId: props.caseId,
   };
   createWork.addItemToPreview(addPreviewItemToken);
 };
@@ -68,15 +71,27 @@ const onPlue = (plue: number) => {
     pulse: plue,
     pocketId: props.pocketId,
     parentItemId: props.parentItem ? props.parentItem : undefined,
+    caseId: props.caseId,
   });
 };
 
 const onDelete = () => {
+  const innerItemsToken: addPreviewItemToken[] | undefined =
+    props.item.innerItems?.map((item) => {
+      return {
+        pocketId: props.pocketId,
+        caseId: props.caseId,
+        parentItemId: props.item.originalId,
+        itemId: item.id,
+      };
+    });
   const token: deletePreviewItemToken = {
     originalId: props.item.originalId,
     pocketId: props.pocketId,
     parentItemId: props.parentItem ? props.parentItem : undefined,
     itemId: props.item.id,
+    caseId: props.caseId,
+    innnerItemToken: innerItemsToken,
   };
   createWork.deletePreviewItem(token);
 };
