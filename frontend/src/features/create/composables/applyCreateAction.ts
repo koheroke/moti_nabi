@@ -1,5 +1,5 @@
 
-import type { deletePreviewCaseToken, addPreviewCaseToken, addPreviewItemToken, addItemCountToken, addBookmarkToken, addListItemToken, deletePreviewItemToken } from "./useCreateWork";
+import type { confirmedResizePocketToken, deletePreviewCaseToken, addPreviewCaseToken, addPreviewItemToken, addItemCountToken, addBookmarkToken, addListItemToken, deletePreviewItemToken } from "./useCreateWork";
 import { useCreateStore } from "../store/createStore";
 
 import { useSaveQueue } from "../services/saveQueue";
@@ -16,8 +16,9 @@ export type alterationType = "previewItems_additem"
   | "itemlistItems_additem"
   | "previewCases_addCase"
   | "previewCases_deleteCase"
+  | "confirmed-resizePocket"
 
-type allToken = deletePreviewCaseToken | addPreviewCaseToken | addPreviewItemToken | addItemCountToken | addBookmarkToken | addListItemToken | deletePreviewItemToken
+type allToken = confirmedResizePocketToken | deletePreviewCaseToken | addPreviewCaseToken | addPreviewItemToken | addItemCountToken | addBookmarkToken | addListItemToken | deletePreviewItemToken
 
 export interface alterationToken {
   token: allToken

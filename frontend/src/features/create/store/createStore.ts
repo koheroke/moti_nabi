@@ -5,7 +5,7 @@ import type { CategoryId } from "@/features/create/type/categoryType";
 import type { iconInfomation, UserLuggage_SaveDBData } from "@/features/create/type/apiType";
 import { type Category, } from "@/features/create/type/categoryType";
 import type { CaseType } from "@/features/create/type/itemType";
-import type { addPreviewCaseToken, deletePreviewCaseToken, addPreviewItemToken, addItemCountToken, addBookmarkToken, deletePreviewItemToken, addListItemToken } from '../composables/useCreateWork';
+import type { provisionalRemovePocket, provisionalResizePocket, addPreviewCaseToken, deletePreviewCaseToken, addPreviewItemToken, addItemCountToken, addBookmarkToken, deletePreviewItemToken, addListItemToken } from '../composables/useCreateWork';
 export interface caseArray {
   id: string;
   data: Case
@@ -194,6 +194,19 @@ export const useCreateStore = defineStore("create", {
     },
     reSizeCase(id: string, data: Pocket[]) {
 
+    },
+    provisionalResizePocket(token: provisionalResizePocket) {
+      const pocket = this.previewCase[token.caseId].pockets[token.pocketId]
+      pocket.height = token.resizeData.height
+      pocket.width = token.resizeData.width
+      pocket.x = token.resizeData.x
+      pocket.y = token.resizeData.y
+    },
+
+    provisionalRemovePocket(token: provisionalRemovePocket) {
+      const pocket = this.previewCase[token.caseId].pockets[token.pocketId]
+      pocket.x = token.resizeData.x
+      pocket.y = token.resizeData.y
     }
   }
 })

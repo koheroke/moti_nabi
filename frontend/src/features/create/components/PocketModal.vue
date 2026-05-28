@@ -44,9 +44,11 @@ import { ref } from "vue";
 import {
   UseCreateWork,
   type addPreviewItemToken,
+  type positionChangePreviewItemToken,
 } from "../composables/useCreateWork";
 import PreviewItem from "./PreviewItem.vue";
 import type { previewItem } from "../type/casetype.ts";
+import { el } from "vuetify/locale";
 const isClose = ref(false);
 const createWork = UseCreateWork();
 
@@ -60,14 +62,28 @@ const close = () => {
   }, 300);
 };
 const onDrop = (event: DragEvent) => {
-  const draggedId = event.dataTransfer?.getData("itemId");
-  if (!draggedId) return;
-  const addPreviewItemToken: addPreviewItemToken = {
-    itemId: draggedId,
-    pocketId: props.pocket.id,
-    caseId: props.pocket.caseId,
-  };
-  createWork.addItemToPreview(addPreviewItemToken);
+  const dragged_itemId = event.dataTransfer?.getData("itemId");
+  const dragged_originalId = event.dataTransfer?.getData("positionChangeData");
+  if (!dragged_itemId && !dragged_originalId) return;
+  if (dragged_itemId) {
+    const addPreviewItemToken: addPreviewItemToken = {
+      itemId: dragged_itemId,
+      pocketId: props.pocket.id,
+      caseId: props.pocket.caseId,
+    };
+    createWork.addItemToPreview(addPreviewItemToken);
+  }
+  // if (dragged_originalId) {
+  //   const data = JSON.parse(dragged_originalId);
+  //   const positionChange: positionChangePreviewItemToken = {
+  //     originalId: data.originalId,
+  //     pushPocketId: props.pocket.id,
+  //     pushCaseId: props.pocket.caseId,
+  //     popPocketId: data.id,
+  //     popCaseId: data.caseId,
+  //   };
+  //   createWork.positionChangeItemToPreview(positionChange);
+  // }
 };
 const handleDrop = () => {};
 
@@ -101,7 +117,7 @@ const props = defineProps<{
   border-radius: 10px;
   width: 100%;
   background-color: rgb(255, 255, 255);
-  overflow: hidden;
+  overflow-y: auto;
   animation: modalOpen 0.25s ease-out forwards;
 }
 

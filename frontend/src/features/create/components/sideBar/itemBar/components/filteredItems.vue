@@ -33,7 +33,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import type { Category, CategoryId } from "@/features/create/type/itemType";
+import type { Category, CategoryId } from "@/features/create/type/categoryType";
 import { useCreateStore } from "../../../../store/createStore";
 import { computed } from "vue";
 const createStore = useCreateStore();

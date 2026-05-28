@@ -34,12 +34,13 @@ h1 {
 import { useCaseDragStore } from "../store/onDrag.ts";
 import { storeToRefs } from "pinia";
 import { UseCreateWork } from "@/features/create/composables/useCreateWork.ts";
+import { type CaseType } from "@/features/create/type/itemType.ts";
 const createWork = UseCreateWork();
 const casecardDragStore = useCaseDragStore();
 const { isDrag } = storeToRefs(casecardDragStore);
 const handleDrop = () => {};
 const onDrop = (event: DragEvent) => {
-  const caseId = event.dataTransfer?.getData("caseId");
+  const caseId = event.dataTransfer?.getData("caseId") as CaseType;
   if (!caseId) return;
   createWork.addCase(caseId);
 };

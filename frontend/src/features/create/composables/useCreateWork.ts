@@ -43,6 +43,14 @@ export interface addPreviewItemToken {
   originalId?: string
 }
 
+export interface positionChangePreviewItemToken {
+  popPocketId: string
+  popCaseId: string
+  pushPocketId: string,
+  pushCaseId: string
+  originalId: string
+}
+
 export interface addPreviewCaseToken {
   case: Case | {
     caseId: string,
@@ -53,6 +61,20 @@ export interface addPreviewCaseToken {
 export interface deletePreviewCaseToken {
   deletecase: Case,
   id: string
+}
+export interface confirmedResizePocketToken {
+  caseId: string,
+  pocketId: string
+}
+export interface provisionalResizePocket {
+  caseId: string,
+  pocketId: string,
+  resizeData: { x: number, y: number, width: number, height: number }
+}
+export interface provisionalRemovePocket {
+  caseId: string,
+  pocketId: string,
+  resizeData: { x: number, y: number }
 }
 
 
@@ -267,18 +289,45 @@ export const UseCreateWork = () => {
       token: addToken,
       user: userStore.userName
     }
-
-
     createStore.addPreviewCase(addToken)
     alterationLog.saveState({ forwardToken: forwardToken, reverseToken: reverseToken })
-
-  }
-  const editSelectCase = (id: string) => {
-
-  }
-  const reSizePoket = (id: string, data: Pocket[]) => {
-
   }
 
-  return { load, addItemToPreview, addItemCount, addBookmark, deletePreviewItem, addListItem, addCase, deleteCase, editSelectCase, reSizePoket }
+  const provisionalResizePocket = (resizeData: { x: number, y: number, width: number, height: number }, pocketId: string, caseId: string) => {
+    const token: provisionalResizePocket = {
+      caseId: caseId,
+      pocketId: pocketId,
+      resizeData: resizeData,
+    };
+    createStore.provisionalResizePocket(token)
+  }
+  const confirmedResizePocket = (caseid: string, pocketId: string) => {
+    const confirmedToken: confirmedResizePocketToken = {
+      caseId: caseid,
+      pocketId: pocketId
+    }
+    const token: alterationToken = {
+      token: confirmedToken,
+      alterationType: "confirmed-resizePocket",
+      user: userStore.userName
+    }
+    applyCreateAction.alterationData(token)
+  }
+
+  const provisionalReMovePocket = (resizeData: { x: number, y: number }, pocketId: string, caseId: string) => {
+    const token: provisionalRemovePocket = {
+      caseId: caseId,
+      pocketId: pocketId,
+      resizeData: resizeData,
+    };
+    createStore.provisionalRemovePocket(token)
+  }
+  const positionChangeItemToPreview = (token: positionChangePreviewItemToken) => {
+    const target_item = createStore.previewCase[token.popCaseId].pockets[token.popPocketId].items.find((item) => item.originalId === token.originalId)
+    if (!target_item) return
+    const push_target = createStore.previewCase[token.pushCaseId].pockets[token.pushCaseId].items
+    push_target.push(target_item)
+  }
+
+  return { positionChangeItemToPreview, provisionalReMovePocket, provisionalResizePocket, confirmedResizePocket, load, addItemToPreview, addItemCount, addBookmark, deletePreviewItem, addListItem, addCase, deleteCase }
 }

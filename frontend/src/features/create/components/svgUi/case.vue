@@ -22,11 +22,12 @@
       />
 
       <!-- ポケット -->
+
       <g
         v-for="pocket in pockets"
         :key="pocket.id"
         class="pocket-group"
-        @click="openPocket(pocket)"
+        @dblclick="openPocket(pocket)"
       >
         <rect
           :x="pocket.x"
@@ -47,6 +48,13 @@
           {{ pocket.name }}
         </text>
 
+        <SvgRemoveHandle
+          class="svg-removehandle"
+          :pocket="pocket"
+          :caseId="id"
+          :pocketId="pocket.id"
+        ></SvgRemoveHandle>
+
         <text
           :x="pocket.x + pocket.width - 12"
           :y="pocket.y + 22"
@@ -55,14 +63,21 @@
         >
           {{ pocket.items.length }}
         </text>
+        <SvgResizeHandle
+          :pocket="pocket"
+          :caseId="id"
+          :pocketId="pocket.id"
+          class="svg-resizehandle"
+        />
       </g>
     </svg>
   </div>
 </template>
-
 <script setup lang="ts">
 import { computed } from "vue";
 import type { Pocket, previewItem, Case } from "../../type/casetype";
+import SvgResizeHandle from "./svgResizeHandle.vue";
+import SvgRemoveHandle from "./SvgRemoveHandle.vue";
 const props = defineProps<Case>();
 const pockets = computed(() => {
   return Object.values(props.pockets).map((pocket) => {
@@ -118,6 +133,11 @@ function openPocket(pocket: Pocket) {
 
 .pocket-group {
   cursor: pointer;
+  position: relative;
+}
+.pocket-group:hover .svg-resizehandle,
+.pocket-group:hover .svg-removehandle {
+  display: block;
 }
 
 .pocket {
@@ -143,5 +163,12 @@ function openPocket(pocket: Pocket) {
   font-weight: bold;
   fill: #0f172a;
   pointer-events: none;
+}
+.svg-resizehandle {
+  display: none;
+}
+
+.svg-removehandle {
+  display: none;
 }
 </style>

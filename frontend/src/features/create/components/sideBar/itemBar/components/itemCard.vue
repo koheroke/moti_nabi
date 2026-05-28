@@ -39,7 +39,7 @@ import type { addBookmarkToken } from "@/features/create/composables/useCreateWo
 
 const createWork = UseCreateWork();
 const props = defineProps<{ item: itemCard }>();
-import type { iconInfomation } from "@/features/create/type/itemType";
+import type { iconInfomation } from "@/features/create/type/apiType";
 
 type iconColorType = Record<string, string>;
 import { useCreateStore } from "../../../../store/createStore";

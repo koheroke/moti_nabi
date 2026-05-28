@@ -16,10 +16,10 @@
   </div>
 </template>
 <script setup lang="ts">
-import type { CategoryId } from "@/features/create/type/itemType";
-import type { Category } from "@/features/create/type/itemType";
+import type { CategoryId } from "@/features/create/type/categoryType";
+import type { Category } from "@/features/create/type/categoryType";
 import { computed } from "vue";
-import type { iconInfomation } from "@/features/create/type/itemType";
+import type { iconInfomation } from "@/features/create/type/apiType";
 import { useCreateStore } from "../../../../store/createStore";
 const createStore = useCreateStore();
 const iconMap: Record<string, iconInfomation> = createStore.iconMapGetter;

@@ -68,7 +68,8 @@
 import BaseButton from "@/components/ui/form/BaseButton/BaseButton.vue";
 import BaseInput from "@/components/ui/form/BaseInput/BaseInput.vue";
 import { ref, watch } from "vue";
-import type { CategoryId, Category } from "../../../../type/itemType";
+import type { Category } from "@/features/create/type/casetype.ts";
+import type { CategoryId } from "@/features/create/type/categoryType.ts";
 import type { addListItemToken } from "@/features/create/composables/useCreateWork";
 import { UseCreateWork } from "@/features/create/composables/useCreateWork";
 import iconSelect from "./iconSelect.vue";

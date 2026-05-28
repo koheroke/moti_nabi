@@ -52,6 +52,14 @@ const createStore = useCreateStore();
 const createWork = UseCreateWork();
 const iconMap = createStore.iconMap;
 
+function onDragStart(event: DragEvent) {
+  const token = {
+    originalId: props.item.originalId,
+    popCaseId: props.caseId,
+    popPocketId: props.pocketId,
+  };
+  event.dataTransfer?.setData("originalId", JSON.stringify(token));
+}
 const onDrop = (event: DragEvent) => {
   const draggedId = event.dataTransfer?.getData("itemId");
   if (!draggedId) return;
