@@ -16,8 +16,6 @@ type addItemToPreviewResponse = "nonePreview" | "addPreview" | "noneItem" | "isR
 export type createdType = "default" | "userCreated" | "othersUserCreated"
 
 
-
-
 export interface addItemCountToken {
   originalId: string
   caseId: string

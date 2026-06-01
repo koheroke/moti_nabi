@@ -1,35 +1,69 @@
 const socket = new WebSocket('ws://localhost:3080');
 import type { alterationToken } from "../composables/applyCreateAction";
-import { useUserStore } from "@/store/user/userStore";
 import { useApplyCreateAction } from "../composables/applyCreateAction";
 const applyCreateAction = useApplyCreateAction()
 
+export type server_alterationTokenType = "set" | "delete" | "arrayPush" | "arrayRemove";
+export type server_alterationToken = {
+  id: string;
+  workId: string;
+  userId: string;
+  type: server_alterationTokenType;
+  path: string[];
+  beforeValue?: unknown;
+  value: any
+  createdAt: number;
+};
+export interface editWorkToken {
+  workId: string,
+  tokens: server_alterationToken[]
+}
 
+export const useSocketApi = () => { //DB保存
 
-const userStore = useUserStore()
-type soketType = "alteration"
-type data = alterationToken
-interface socketToken { data: data, type: soketType }
-export const useSocketApi = () => {
-  const sendAlteration = (alterationQueue: alterationToken) => {
-    const data = { data: alterationQueue, type: "alteration" }
-    socket.send(JSON.stringify(data));
+  const sendDb = (token: { id: string, data: editWorkToken }) => {
+    socket.send(
+      JSON.stringify({
+        event: "work:save",
+        payload: {
+          ...token
+        },
+      })
+    );
   };
-  return { sendAlteration }
+
+  const sendAlteration = (token: server_alterationToken) => { //共同編集
+    socket.send(
+      JSON.stringify({
+        event: "work:alteration",
+        payload: JSON.stringify(token),
+      })
+    );
+  };
+  return { sendAlteration, sendDb }
 }
+//共同編集はトークンを送って DB保存は差分を送る
 
+socket.onmessage = (message) => {
+  const data = JSON.parse(message.data);
 
-socket.onmessage = (event) => {
-  const parsedData = JSON.parse(event.data) as socketToken
-  switch (parsedData.type) {
-    case "alteration":
-      onAlterationToken(parsedData)
+  switch (data.event) {
+    case "work:alteration":
+      const token = JSON.parse(data.payload) as alterationToken
+      applyCreateAction.alterationData(
+        token
+      );
       break;
-  }
-}
 
-const onAlterationToken = (parsedData: socketToken) => {
-  if (parsedData.data.user != userStore.userId) {
-    applyCreateAction.alterationData(parsedData.data)
+    case "work:userJoin":
+      console.log("join");
+      break;
+
+    case "work:userLeave":
+      console.log("leave");
+      break;
+
+    default:
+      console.warn("unknown event", data.event);
   }
-}
+};

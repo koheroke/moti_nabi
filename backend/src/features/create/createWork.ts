@@ -1,25 +1,10 @@
 import { prisma } from "@/lib/prisma/prisma"
-import { Work, SiteMember } from "@/generated/prisma/client"
-import { RequireAtLeastOne } from "@/types/atLeastOne"
+import { Work } from "@/generated/prisma/client"
+import { createApi, editWorkPackageApi, editWorkToken } from "@/features/create/types"
 
 
+const workData = new Map()
 
-type editWorkPackageApi = RequireAtLeastOne<{
-  name?: String,
-  thumbnailUrl?: String,
-  data?: String,
-  public?: Boolean,
-  likes?: number,
-  tags?: String[],
-  copies?: number,
-  members?: SiteMember[]
-}>
-
-
-interface createApi {
-  name: string
-  userId: string
-}
 const useCreateWork = () => {
   const createNewWork = async (createApi: createApi) => {
     const work = await prisma.work.create({
@@ -39,8 +24,10 @@ const useCreateWork = () => {
         },
       }
     })
+    workData.set(work.id, work)
     return work.id
   }
+
 
   const getWork = async (workId: string) => {
     const work = await prisma.work.findUnique({
@@ -62,13 +49,44 @@ const useCreateWork = () => {
     });
     return work
   }
-  const editWork = async (workId: string, data: string) => {
+
+
+
+  const editWork = async (workId: string, token: editWorkToken) => {
+    let this_work = workData.get(workId)
+    if (!this_work) {
+      const work = await getWork(workId)
+      if (!work) return
+      workData.set(work.id, work)
+      this_work = work
+    }
+
+    token.tokens.forEach((token) => {
+      let data: any = this_work.data;
+      for (let i = 0; i < token.path.length - 1; i++) {
+        data = data[token.path[i]];
+      }
+      const lastKey = token.path[token.path.length - 1];
+      if (token.type === "set") {
+        data[lastKey] = token.value;
+      } else if (token.type === "delete") {
+        delete data[lastKey];
+      } else if (token.type === "arrayPush") {
+        if (!Array.isArray(data[lastKey])) return;
+        data[lastKey].push(token.value);
+      } else if (token.type === "arrayRemove") {
+        if (!Array.isArray(data[lastKey])) return;
+        data[lastKey] = data[lastKey].filter(
+          (item: any) => item.id !== (token.value as any).id
+        );
+      }
+    });
     const work = await prisma.work.update({
       where: {
         id: workId,
       },
       data: {
-        data,
+        data: this_work.data,
       },
     });
     return work

@@ -13,7 +13,7 @@ export interface caseArray {
 
 export const useCreateStore = defineStore("create", {
   state: () => ({
-    workId: null as number | null,
+    workId: null as string | null,
     userLuggage_SaveDBData: null as UserLuggage_SaveDBData | null,
     listItem: null as Record<string, itemCard> | null,
     previewCase: {} as Record<string, Case>,
@@ -105,7 +105,7 @@ export const useCreateStore = defineStore("create", {
     setpreviewData(data: Record<string, Case>) {
       this.previewCase = data
     },
-    setWorkId(id: number) {
+    setWorkId(id: string) {
       this.workId = id
     },
     setStaticLoaded(state: boolean) {
@@ -127,6 +127,8 @@ export const useCreateStore = defineStore("create", {
         item.innerItems!
       )
       item.innerItems![innerItemIndex].count += token.pulse
+
+      return pocket.items
     },
     pushpreviewItem(token: addPreviewItemToken) {
       if (!this.previewCase || !this.listItem || !this.addItemCounter) return
@@ -143,11 +145,14 @@ export const useCreateStore = defineStore("create", {
         if (innnerItemIndex == -1) return
         pocket.items[innnerItemIndex].innerItems!.push(cardItem)
       }
+      return pocket.items
     },
 
     addBookmark(token: addBookmarkToken) {
       if (!this.previewCase || !this.listItem) return
       this.listItem[token.itemId].bookmark = !this.listItem[token.itemId].bookmark
+
+      return token.itemId
     },
 
     addListItem(token: addListItemToken) {
@@ -159,6 +164,8 @@ export const useCreateStore = defineStore("create", {
         ...token, ...{ bookmark: false, id: id }
       }
       this.listItem[id] = listItem
+
+      return listItem
     },
 
     deletepreviewItem(token: deletePreviewItemToken) {
@@ -174,6 +181,7 @@ export const useCreateStore = defineStore("create", {
         const innnerItemindex = findIndex(token.originalId, pocket.items[index].innerItems!)
         pocket.items[index].innerItems!.splice(innnerItemindex, 1);
       }
+      return pocket.items
     },
 
     addPreviewCase(token: addPreviewCaseToken) {
@@ -181,13 +189,17 @@ export const useCreateStore = defineStore("create", {
         const this_case = token.case as Case
         if (!this_case.case) return
         this.previewCase[this_case.id] = this_case
+        return this_case
       } else {
         const this_case = token.case as { caseId: string, caseType: CaseType }
         this.previewCase[this_case.caseId] = this.staticCasesGetter[this_case.caseType]
+        return this_case
       }
+
     },
     deleteCase(token: deletePreviewCaseToken) {
       delete this.previewItemGetter[token.id]
+      return token.id
     },
     editSelectCase(id: string, data: Pocket[]) {
 
@@ -218,4 +230,3 @@ const findIndex = (findId: string, data: previewItem[]) => {
 }
 
 
-// features / create / composables / useCreateWork.ts // 外部から呼ぶ窓口 store/ createStore.ts // state本体 domain/ applyCreateAction.ts // 実際に値を変更する処理 services/ saveQueue.ts // 5秒キュー createApi.ts // API通信

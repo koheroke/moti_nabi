@@ -6,7 +6,8 @@ import { useSaveQueue } from "../services/saveQueue";
 import type { Case } from "@/features/create/type/casetype";
 import type { UserLuggage_SaveDBData, saveDBpreviewData, saveDBpreviePockets } from "@/features/create/type/apiType";
 import type { previewItem } from "@/features/create/type/casetype";
-
+import { useSocketApi } from "../api/createSocketApi";
+const socketApi = useSocketApi()
 
 
 export type alterationType = "previewItems_additem"
@@ -155,38 +156,38 @@ const useApplyCreateAction = () => {
   }
 
   const alterationData = (token: alterationToken) => {
-    saveQueue.push(token)
-
+    if (!createStore || !saveQueue) return
+    let res = null
     switch (token.alterationType) {
       case 'previewItems_additem':
-        createStore.pushpreviewItem(token.token as addPreviewItemToken)
+        res = createStore.pushpreviewItem(token.token as addPreviewItemToken)
         break
 
       case 'previewItems_addcount':
-        createStore.addCount(token.token as addItemCountToken)
+        res = createStore.addCount(token.token as addItemCountToken)
         break
 
       case 'itemlistItems_bookmark':
-        createStore.addBookmark(token.token as addBookmarkToken)
+        res = createStore.addBookmark(token.token as addBookmarkToken)
         break
 
       case 'previewItems_delete':
-        createStore.deletepreviewItem(token.token as deletePreviewItemToken)
+        res = createStore.deletepreviewItem(token.token as deletePreviewItemToken)
         break
 
       case 'itemlistItems_additem':
-        createStore.addListItem(token.token as addListItemToken)
+        res = createStore.addListItem(token.token as addListItemToken)
         break
 
       case 'previewCases_addCase':
-        createStore.addPreviewCase(token.token as addPreviewCaseToken)
+        res = createStore.addPreviewCase(token.token as addPreviewCaseToken)
         break
       case 'previewCases_deleteCase':
-        createStore.deleteCase(token.token as deletePreviewCaseToken)
+        res = createStore.deleteCase(token.token as deletePreviewCaseToken)
         break
 
     }
-
+    saveQueue.push({ user: token.user, alterationType: token.alterationType, token: res })
   }
   return { hydrateCreateState, alterationData, initCreateStaticData }
 }
