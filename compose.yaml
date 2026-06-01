@@ -1,0 +1,18 @@
+services:
+  postgres:
+    image: postgres:18-alpine
+    container_name: prisma-tutorial-postgres
+    restart: unless-stopped
+    build: .
+    ports:
+      - "5432:5432" 
+    environment:
+      POSTGRES_USER: 'koheroke' 
+      POSTGRES_PASSWORD: 'azumax1000' 
+      POSTGRES_DB: 'my-motinabi-db' 
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+volumes:
+  postgres_data:
+
+
