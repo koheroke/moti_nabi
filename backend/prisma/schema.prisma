@@ -11,3 +11,60 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+
+model User {
+  id               String   @id @default(cuid())
+  email            String   @unique
+  iconUrl          String?
+  passwordHash     String
+  name             String
+  followUserIds    String[]
+  bookmarkWorkIds  String[]
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  memberships      SiteMember[]
+  twoFactorSecret  String?
+  accounts Account[]
+  @@map("users")
+}
+
+model Work {
+  id            String   @id @default(cuid())
+  name          String
+  thumbnailUrl  String?
+  data          String
+  public        Boolean
+  likes         Int      @default(0)
+  tags          String[]
+  copies        Int      @default(0)
+  members       SiteMember[]
+  @@map("works")
+}
+
+enum SiteRole {
+  owner
+  editor
+  viewer
+}
+
+model SiteMember {
+  id        String   @id @default(cuid())
+  workId    String
+  userId    String
+  role      SiteRole
+  addedAt   DateTime @default(now())
+  work      Work     @relation(fields: [workId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([workId, userId])
+  @@map("site_members")
+}
+
+model Account {
+  id                  String @id @default(cuid())
+  userId              String
+  provider            String
+  providerAccountId   String
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([provider, providerAccountId])
+}

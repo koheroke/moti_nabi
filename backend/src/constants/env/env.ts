@@ -7,6 +7,10 @@ if (!process.env.JWT_SECRET) {
   throw new Error("JWT_SECRET is not set")
 }
 
+if (!process.env.NODE_ENV) {
+  throw new Error("JWT_SECRET is not set")
+}
+
 if (!process.env.DATABASE_URL) {
   throw new Error("JWT_SECRET is not set")
 }
@@ -28,6 +32,7 @@ if (!process.env.GOOGLE_CECRET) {
 }
 export const env = {
   JWT_SECRET: process.env.JWT_SECRET,
+  NODE_ENV: process.env.NODE_ENV,
   RECAPTCHA_SECRET_KEY: process.env.VITE_RECAPTCHA_SECRET_KEY,
   VITE_API_BASE_URL: process.env.VITE_API_BASE_URL,
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,

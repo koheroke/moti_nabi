@@ -5,6 +5,7 @@ const static_1 = require("@/shared/middlewares/static");
 const serve_static_1 = require("@hono/node-server/serve-static");
 const node_server_1 = require("@hono/node-server");
 const router_1 = require("@/routers/router");
+const index_1 = require("@/lib/socket/index");
 const app = new hono_1.Hono();
 app.route("/", router_1.routers);
 app.use('/*', static_1.staticMiddleware);
@@ -13,4 +14,5 @@ const server = (0, node_server_1.serve)({
     fetch: app.fetch,
     port: 3000,
 });
+(0, index_1.useSocket)(server);
 exports.default = app;

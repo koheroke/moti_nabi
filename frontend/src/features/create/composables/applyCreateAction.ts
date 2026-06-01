@@ -3,7 +3,7 @@ import type { confirmedResizePocketToken, deletePreviewCaseToken, addPreviewCase
 import { useCreateStore } from "../store/createStore";
 
 import { useSaveQueue } from "../services/saveQueue";
-import type { Case, Pocket } from "@/features/create/type/casetype";
+import type { Case } from "@/features/create/type/casetype";
 import type { UserLuggage_SaveDBData, saveDBpreviewData, saveDBpreviePockets } from "@/features/create/type/apiType";
 import type { previewItem } from "@/features/create/type/casetype";
 

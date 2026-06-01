@@ -31,7 +31,7 @@ const userLuggage_SaveDBData: UserLuggage_SaveDBData = {
         // pocketAdd: [{
         //   id: "side", width: 200, height: 300, name: "サイド", x: 0,
         //   y: 0,
-        //   items: []
+        //   items: [],
         //   originalId: "mesh",
         // }],
         // poketDelete: ["mesh"],

@@ -2,16 +2,11 @@ import { setCookie } from "hono/cookie"
 import type { Context } from "hono"
 import { sign } from "hono/jwt"
 import { env } from "@/constants/env/env"
-import { DBdriver } from "../drivers/DBdriver"
 import { jwtDecode } from "jwt-decode";
+import { prisma } from "@/lib/prisma/prisma"
+import { User } from "@/lib/prisma/prismaType"
 
 
-export type User = {
-  id: number
-  name: string
-  email: string
-  role?: string
-}
 
 
 if (!env.JWT_SECRET) {
@@ -24,19 +19,16 @@ export type LoginInput = {
 }
 
 export const useLogin = () => {
-  const login = async (user: LoginInput, c: Context): Promise<User | null> => {
-    // TODO: emailを使ってDBを検索
-    // TODO: passwordを照合
-    const this_user = DBdriver.getUserToDB(user.email)
-    const loginBool = true
-    //テスト用
-
-    const userId = 1
-
-    if (!loginBool) {
-      return null
-    }
-
+  const login = async (user: LoginInput, c: Context): Promise<User | string> => {
+    const userResponse = await prisma.user.findFirst({
+      where: {
+        email: user.email
+      }
+    });
+    if (!userResponse) return "notfoundUser"
+    const this_user = userResponse.passwordHash == user.password ? userResponse : null
+    if (!this_user) return "notdifferentPassward"
+    const userId = this_user.id
     const token = await sign(
       {
         userId,
@@ -47,7 +39,7 @@ export const useLogin = () => {
 
     setCookie(c, "auth_token", token, {
       httpOnly: true,
-      secure: true,
+      secure: env.NODE_ENV === "production",
       sameSite: "Lax",
       maxAge: 60 * 60 * 24,
       path: "/",
@@ -106,26 +98,60 @@ export const useGoogleLogin = () => {
         }),
       }
     );
+    if (!tokenRes.ok) {
+      const error = await tokenRes.text();
+      return c.json({ error: "token exchange failed", detail: error }, 400);
+    }
 
     const tokenData = await tokenRes.json();
+
     const payload = jwtDecode<{
       email: string;
+      sub: string
     }>(tokenData.id_token);
 
-    //テスト用
-    const this_user = await DBdriver.getUserToDB(payload.email)
-    const loginBool = true
-    //用
+    const email = payload.email;
+    const sub = payload.sub
+
+
+    let account = await prisma.account.findUnique({
+      where: {
+        provider_providerAccountId: {
+          provider: "google",
+          providerAccountId: sub,
+        },
+      },
+    })
+
+    if (!account) {
+      const userResponse = await prisma.user.findFirst({
+        where: {
+          email: email
+        }
+      });
+      if (!userResponse) return c.json({ error: "token exchange failed", detail: "userNotFound" }, 400);
+
+      account = await prisma.account.create({
+        data: {
+          userId: userResponse?.id,
+          provider: "google",
+          providerAccountId: sub,
+        },
+      })
+    }
+
+
     const token = await sign(
       {
-        id: this_user.id,
-        email: this_user.email,
+        id: account.userId,
+        email: email,
       },
       env.JWT_SECRET
     )
+
     setCookie(c, "auth_token", token, {
       httpOnly: true,
-      secure: true,
+      secure: env.NODE_ENV === "production",
       sameSite: "Lax",
       maxAge: 60 * 60 * 24,
       path: "/",

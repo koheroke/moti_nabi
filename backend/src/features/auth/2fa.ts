@@ -1,6 +1,6 @@
 import speakeasy from "speakeasy";
 import qrcode from "qrcode";
-import { DBdriver } from "../drivers/DBdriver";
+import { prisma } from "@/lib/prisma/prisma"
 import { authenticator } from '@otplib/preset-default';
 interface User {
   userId: string
@@ -15,7 +15,11 @@ export const use2fa = () => {
     const secret = speakeasy.generateSecret({
       name: `YourAppName:${user.email}`,
     });
-    await DBdriver.saveSecretToDB(user.userId, secret.base32);
+    await prisma.user.update({
+      where: { id: user.userId },
+      data: { twoFactorSecret: secret.base32 }
+    });
+
     const qrCodeUrl = await qrcode.toDataURL(secret.otpauth_url);
     return {
       secretBase32: secret.base32,
@@ -24,8 +28,15 @@ export const use2fa = () => {
     };
   }
   const verification2fa = async (user: verification): Promise<boolean> => {
-    const secretBase32 = await DBdriver.getSecretToDB(user.userId)
-    const isValid = await authenticator.check(user.code, secretBase32);
+    const userResponse = await prisma.user.findFirst({
+      where: {
+        id: user.userId
+      }
+    });
+    if (!userResponse) return false
+    const secretBase32 = userResponse.twoFactorSecret
+    if (!secretBase32) return false
+    const isValid = authenticator.check(user.code, secretBase32);
     return isValid
   }
   return { setUp, verification2fa }

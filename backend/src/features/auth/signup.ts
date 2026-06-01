@@ -1,4 +1,5 @@
-import { v7 as uuidv7 } from "uuid";
+import { prisma } from "@/lib/prisma/prisma"
+
 export type SignupInput = {
   name: string
   email: string
@@ -7,10 +8,21 @@ export type SignupInput = {
 }
 export const usesignup = () => {
   const singup = async (user: SignupInput) => {
-    const userId = uuidv7();
-    // await DBdriver.saveSecretToDB(userId, user);
-    return { userId: userId, res: "users", }
+    const users = await prisma.user.create({
+      data: {
+        email: user.email,
+        passwordHash: user.password,
+        name: user.name,
+        followUserIds: [],
+        bookmarkWorkIds: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        twoFactorSecret: null,
+        iconUrl: null,
+      }
+    })
+    return { userId: users.id, res: "users", }
   }
   return { singup }
-
 }
+
