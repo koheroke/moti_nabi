@@ -12,8 +12,8 @@ export const getMockUserProfile = async (): Promise<UserProfile> => {
     iconUrl: testThumbnailUrl,
     bio: "持ち物リストや作品を作っています。",
     snsLinks: [
-      {url: "https://x.com/example",type:"x",icon:testIcon},
-      {url: "https://github.com/example",type:"github",icon:testIcon}
+      { url: "https://x.com/example", type: "x", icon: testIcon },
+      { url: "https://github.com/example", type: "github", icon: testIcon }
     ],
     createdAt: "2026-05-01",
     postCount: 3

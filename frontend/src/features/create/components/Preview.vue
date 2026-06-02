@@ -26,7 +26,7 @@
 import PocketModal from "./PocketModal.vue";
 import dropCaseArea from "./sideBar/caseBar/components/dropCaseArea.vue";
 
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import { storeToRefs } from "pinia";
 const selectedPocket = ref();
 import Case from "./svgUi/case.vue";

@@ -61,7 +61,7 @@
           text-anchor="end"
           class="pocket-count"
         >
-          {{ pocket.items.length }}
+          {{ pocket.items?.size }}
         </text>
         <SvgResizeHandle
           :pocket="pocket"
@@ -84,7 +84,7 @@ const pockets = computed(() => {
     if (pocket.items) return pocket;
     return {
       ...pocket,
-      items: [],
+      items: new Map(),
     };
   });
 });
@@ -92,7 +92,7 @@ const emit = defineEmits<{
   (
     e: "update:selectedPocket",
     payload: {
-      items: previewItem[];
+      items: Map<string, previewItem>;
       id: string;
       name: string;
       caseId: string;

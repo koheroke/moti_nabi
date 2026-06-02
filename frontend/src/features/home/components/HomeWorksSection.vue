@@ -11,10 +11,10 @@
 
 <script setup lang="ts">
 import WorksSection from "@features/work/components/WorksSection.vue";
-import type { Work } from "@/features/work/types/work";
+import type { workPackage } from "@/features/work/types/work";
 import BaseButton from "@/components/ui/form/BaseButton/BaseButton.vue";
 defineProps<{
-  works: Work[];
+  works: workPackage[];
   onMoreClick: () => void;
 }>();
 </script>

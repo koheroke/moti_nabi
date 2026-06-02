@@ -38,7 +38,7 @@ export interface addPreviewItemToken {
   caseId: string
   parentItemId?: string
   itemId: string
-  originalId?: string
+  originalId: string
 }
 
 export interface positionChangePreviewItemToken {
@@ -61,6 +61,7 @@ export interface deletePreviewCaseToken {
   id: string
 }
 export interface confirmedResizePocketToken {
+  pos: { x: number, y: number, width: number, height: number }
   caseId: string,
   pocketId: string
 }
@@ -72,7 +73,7 @@ export interface provisionalResizePocket {
 export interface provisionalRemovePocket {
   caseId: string,
   pocketId: string,
-  resizeData: { x: number, y: number }
+  removeData: { x: number, y: number }
 }
 
 
@@ -150,21 +151,33 @@ export const UseCreateWork = () => {
     const item = items[itemId]
     if (!item) return "noneItem"
     if (item.isStorage == true && token.parentItemId != undefined) return "isRegulatedAction"
+    const originalId = token.originalId ? token.originalId : `item_${createStore.addItemCounter}`
+    const deleteToken: deletePreviewItemToken = {
+      originalId: originalId,
+      caseId: token.caseId,
+      pocketId: token.pocketId,
+      parentItemId: token.parentItemId,
+      itemId: token.itemId
+    }
 
+    const newToken = {
+      ...token,
+      originalId: originalId
+    }
 
-    const newToken: alterationToken = {
+    const fowardToken: alterationToken = {
       alterationType: "previewItems_additem",
-      token: token,
-      user: userStore.userName
+      token: newToken,
+      user: userStore.userName,
     }
 
     const reverseToken: alterationToken = {
       alterationType: "previewItems_delete",
-      token: token,
+      token: deleteToken,
       user: userStore.userName
     }
-    alterationLog.saveState({ forwardToken: newToken, reverseToken: reverseToken })
-    applyCreateAction.alterationData(newToken)
+    alterationLog.saveState({ forwardToken: fowardToken, reverseToken: reverseToken })
+    applyCreateAction.alterationData(fowardToken)
     return "addPreview"
   }
 
@@ -291,41 +304,130 @@ export const UseCreateWork = () => {
     alterationLog.saveState({ forwardToken: forwardToken, reverseToken: reverseToken })
   }
 
+  let provisionalpocket = false
+  let sevePocket: { x: number, y: number, width: number, height: number } = { x: 0, y: 0, width: 0, height: 0 }
   const provisionalResizePocket = (resizeData: { x: number, y: number, width: number, height: number }, pocketId: string, caseId: string) => {
+    if (!provisionalpocket) {
+      provisionalpocket = true
+      const { x, y, width, height } = createStore.previewCase[caseId].pockets[pocketId]
+      sevePocket = { x: x, y: y, width: width, height: height }
+    }
     const token: provisionalResizePocket = {
       caseId: caseId,
       pocketId: pocketId,
       resizeData: resizeData,
     };
-    createStore.provisionalResizePocket(token)
+    createStore.reSizePocket(token)
   }
   const confirmedResizePocket = (caseid: string, pocketId: string) => {
+    const { x, y, width, height } = createStore.previewCase[caseid].pockets[pocketId]
+
     const confirmedToken: confirmedResizePocketToken = {
+      pos: { x: x, y: y, width: width, height: height },
+      caseId: caseid,
+      pocketId: pocketId,
+    }
+
+    const revarseConfirmedToken: confirmedResizePocketToken = {
+      pos: sevePocket,
       caseId: caseid,
       pocketId: pocketId
     }
-    const token: alterationToken = {
-      token: confirmedToken,
-      alterationType: "confirmed-resizePocket",
+
+    const reverseToken: alterationToken = {
+      alterationType: "confirmed_resizePocket",
+      token: revarseConfirmedToken,
       user: userStore.userName
     }
+
+    const token: alterationToken = {
+      token: confirmedToken,
+      alterationType: "confirmed_resizePocket",
+      user: userStore.userName
+    }
+    provisionalpocket = false
+
+    alterationLog.saveState({ forwardToken: token, reverseToken: reverseToken })
     applyCreateAction.alterationData(token)
   }
 
-  const provisionalReMovePocket = (resizeData: { x: number, y: number }, pocketId: string, caseId: string) => {
-    const token: provisionalRemovePocket = {
-      caseId: caseId,
-      pocketId: pocketId,
-      resizeData: resizeData,
-    };
-    createStore.provisionalRemovePocket(token)
-  }
-  const positionChangeItemToPreview = (token: positionChangePreviewItemToken) => {
-    const target_item = createStore.previewCase[token.popCaseId].pockets[token.popPocketId].items.find((item) => item.originalId === token.originalId)
-    if (!target_item) return
-    const push_target = createStore.previewCase[token.pushCaseId].pockets[token.pushCaseId].items
-    push_target.push(target_item)
+
+  let provisionalPocket = false
+  let savePocket: { x: number; y: number; width: number; height: number } = {
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
   }
 
-  return { positionChangeItemToPreview, provisionalReMovePocket, provisionalResizePocket, confirmedResizePocket, load, addItemToPreview, addItemCount, addBookmark, deletePreviewItem, addListItem, addCase, deleteCase }
+  const provisionalRemovePocket = (
+    moveData: { x: number; y: number },
+    pocketId: string,
+    caseId: string
+  ) => {
+    if (!provisionalPocket) {
+      provisionalPocket = true
+
+      const { x, y, width, height } =
+        createStore.previewCase[caseId].pockets[pocketId]
+
+      savePocket = { x, y, width, height }
+    }
+
+    const token: provisionalRemovePocket = {
+      caseId,
+      pocketId,
+      removeData: moveData,
+    }
+
+    createStore.reMovePocket(token)
+  }
+
+  const confirmedRemovePocket = (caseId: string, pocketId: string) => {
+    const { x, y, width, height } =
+      createStore.previewCase[caseId].pockets[pocketId]
+
+    const confirmedToken: confirmedResizePocketToken = {
+      pos: { x, y, width, height },
+      caseId,
+      pocketId,
+    }
+
+    const reverseConfirmedToken: confirmedResizePocketToken = {
+      pos: savePocket,
+      caseId,
+      pocketId,
+    }
+
+    const token: alterationToken = {
+      alterationType: "confirmed_resizePocket",
+      token: confirmedToken,
+      user: userStore.userName,
+    }
+
+    const reverseToken: alterationToken = {
+      alterationType: "confirmed_resizePocket",
+      token: reverseConfirmedToken,
+      user: userStore.userName,
+    }
+
+    provisionalPocket = false
+
+    alterationLog.saveState({
+      forwardToken: token,
+      reverseToken,
+    })
+
+    applyCreateAction.alterationData(token)
+  }
+
+
+  // const positionChangeItemToPreview = (token: positionChangePreviewItemToken) => {
+  //   const target_item = createStore.previewCase[token.popCaseId].pockets[token.popPocketId].items.
+  //     if(!target_item) return
+  //   const push_target = createStore.previewCase[token.pushCaseId].pockets[token.pushCaseId].items
+  //   push_target.set(target_item, target_item)
+  // }
+
+  return { confirmedRemovePocket, provisionalRemovePocket, provisionalResizePocket, confirmedResizePocket, load, addItemToPreview, addItemCount, addBookmark, deletePreviewItem, addListItem, addCase, deleteCase }
 }

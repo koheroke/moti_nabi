@@ -1,8 +1,8 @@
 import { Server, Socket } from "socket.io";
-import { useCreateWork } from "../createWork";
-import { editWorkToken } from "@/features/create/types"
+import { useWork } from "../createWork";
+import { editWorkToken } from "@/features/work/types"
 
-const createWork = useCreateWork()
+const createWork = useWork()
 export const setupPersistenceSocket = (io: Server, socket: Socket) => {
   socket.on("work:save", (data: { id: string, token: editWorkToken }) => {
     createWork.editWork(data.id, data.token)

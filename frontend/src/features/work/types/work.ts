@@ -1,9 +1,10 @@
-export interface Work {
-  id: string
-  title: string
-  thumbnailUrl: string
-  createdAt: string
-  isPublished: boolean
-  likeCount: number     
-  tags: string[]         
+export interface workPackage {
+  id: string,
+  name: string,
+  thumbnailUrl?: string,
+  public: boolean,
+  likes: number,
+  tags: string[],
+  copies: number,
+  createdAt: string,
 }

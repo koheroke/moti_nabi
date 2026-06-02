@@ -14,14 +14,13 @@
         @onWorkCard="onWorkCard(work.id)"
       />
     </div>
-
     <div v-if="works.length === 0" class="empty">作品がありません</div>
   </section>
 </template>
 
 <script setup lang="ts">
 import WorkCard from "@/features/work/components/WorkCard.vue";
-import type { Work } from "@/features/work/types/work";
+import type { workPackage } from "@/features/work/types/work";
 import { useRouter } from "vuetify/lib/composables/router.mjs";
 const router = useRouter();
 const onWorkCard = (cardId: string) => {
@@ -30,7 +29,7 @@ const onWorkCard = (cardId: string) => {
 
 withDefaults(
   defineProps<{
-    works: Work[];
+    works: workPackage[];
     wrap?: boolean;
   }>(),
   {

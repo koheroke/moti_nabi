@@ -20,7 +20,10 @@
       @drop="onDrop"
       @drop.stop
     >
-      <div v-for="item in props.item.innerItems" :key="item.originalId">
+      <div
+        v-for="[originalId, item] in props.item.innerItems"
+        :key="originalId"
+      >
         <previewItem
           :item="item"
           :pocketId="props.pocketId"
@@ -28,7 +31,7 @@
           :caseId="props.caseId"
         />
       </div>
-      <p v-if="props.item.innerItems?.length === 0" class="drop-text">
+      <p v-if="props.item.innerItems?.size === 0" class="drop-text">
         {{ "ここにドロップ" }}
       </p>
     </section>
@@ -63,11 +66,12 @@ function onDragStart(event: DragEvent) {
 const onDrop = (event: DragEvent) => {
   const draggedId = event.dataTransfer?.getData("itemId");
   if (!draggedId) return;
-  const addPreviewItemToken: addPreviewItemToken = {
+  const addPreviewItemToken = {
     itemId: draggedId,
     pocketId: props.pocketId,
     parentItemId: props.item.originalId,
     caseId: props.caseId,
+    originalId: props.item.originalId,
   };
   createWork.addItemToPreview(addPreviewItemToken);
 };
@@ -84,15 +88,16 @@ const onPlue = (plue: number) => {
 };
 
 const onDelete = () => {
-  const innerItemsToken: addPreviewItemToken[] | undefined =
-    props.item.innerItems?.map((item) => {
-      return {
-        pocketId: props.pocketId,
-        caseId: props.caseId,
-        parentItemId: props.item.originalId,
-        itemId: item.id,
-      };
+  const innerItemsToken: addPreviewItemToken[] | undefined = [];
+  props.item.innerItems?.forEach((item) => {
+    innerItemsToken?.push({
+      pocketId: props.pocketId,
+      caseId: props.caseId,
+      parentItemId: props.item.originalId,
+      itemId: item.id,
+      originalId: props.item.originalId,
     });
+  });
   const token: deletePreviewItemToken = {
     originalId: props.item.originalId,
     pocketId: props.pocketId,

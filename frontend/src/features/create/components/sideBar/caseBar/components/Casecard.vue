@@ -53,7 +53,7 @@
           text-anchor="end"
           class="pocket-count"
         >
-          {{ pocket.items.length }}
+          {{ pocket.items.size }}
         </text>
       </g>
     </svg>

@@ -14,8 +14,7 @@
 <script setup lang="ts">
 import { type Pocket } from "@/features/create/type/casetype";
 import { UseCreateWork } from "../../composables/useCreateWork";
-import { onMounted, onUnmounted, ref } from "vue";
-const clickAreaSize = ref(20);
+import { onMounted, onUnmounted } from "vue";
 const createWork = UseCreateWork();
 const props = defineProps<{
   pocket: Pocket;
@@ -46,7 +45,7 @@ const handlePointerMove = (event: PointerEvent) => {
   lastX = event.clientX;
   lastY = event.clientY;
 
-  createWork.provisionalReMovePocket(
+  createWork.provisionalRemovePocket(
     {
       x: props.pocket.x + diffX,
       y: props.pocket.y + diffY,

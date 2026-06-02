@@ -7,18 +7,17 @@ interface innerItems {
   id: string,
   count: number;
   originalId: string;
-  innerItems?: innerItems[];
 }
 
 
-interface saveDBpreviePockets {
+interface saveDBprevieItems {
   id: string,
-  innerItems?: innerItems[];
+  innerItems?: Map<string, innerItems>;
   count: number;
   originalId: string;
 }
 interface saveDBpreviewData {
-  pockets: Record<string, saveDBpreviePockets>
+  pockets: Record<string, saveDBprevieItems>
   id: string
   addItemCounter: number,
   caseType: CaseType
@@ -56,4 +55,4 @@ interface iconInfomation { src: string, category: CategoryId, }
 
 
 
-export type { saveDBpreviePockets, iconInfomation, UserLuggage_SaveDBData, CategoryId, saveDBaddedItem, saveDBpreviewData, innerItems }
+export type { saveDBprevieItems, iconInfomation, UserLuggage_SaveDBData, CategoryId, saveDBaddedItem, saveDBpreviewData, innerItems }

@@ -10,8 +10,16 @@
 <script setup lang="ts">
 import GalleryWorksSection from "@/features/home/components/GalleryWorksSection.vue";
 import { UserWorks } from "../composables/UserWorks";
+import { useWorkPackageStore } from "@/features/work/store/workPackageStore";
+import { computed } from "vue";
+const workPackageStore = useWorkPackageStore();
+
+const workPackage = computed(() => workPackageStore.userWorkPackageStoreGetter);
 const step = 20;
-const { visibleWorks, more } = UserWorks(step);
+const props = defineProps<{
+  userId: string;
+}>();
+const { visibleWorks, more } = UserWorks(step, props.userId);
 const onMoreClick = () => {
   more();
 };

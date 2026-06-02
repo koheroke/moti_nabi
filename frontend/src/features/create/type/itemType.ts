@@ -11,6 +11,7 @@ interface itemCard {
   createType: createdType
 }
 
+
 type Bookmarks = string[];
 export type CaseType = 'HardSuitcase' | 'SoftSuitcase';
 export type { Bookmarks, itemCard }

@@ -3,7 +3,7 @@ import type { alterationToken } from "../composables/applyCreateAction";
 import { useApplyCreateAction } from "../composables/applyCreateAction";
 const applyCreateAction = useApplyCreateAction()
 
-export type server_alterationTokenType = "set" | "delete" | "arrayPush" | "arrayRemove";
+export type server_alterationTokenType = "set" | "delete" | "arrayPush" | "arrayRemove" | "addMap" | "mapPush" | "mapRemove" | "objectPush" | "objectRemove";
 export type server_alterationToken = {
   id: string;
   workId: string;
@@ -67,3 +67,28 @@ socket.onmessage = (message) => {
       console.warn("unknown event", data.event);
   }
 };
+
+
+
+
+// export type server_alterationTokenType = "set" | "delete" | "arrayPush" | "arrayRemove";
+// export type server_alterationToken = {
+//   id: string;
+//   workId: string;
+//   userId: string;
+//   type: server_alterationTokenType;
+//   path: string[];
+//   beforeValue?: unknown;
+//   value: any
+//   createdAt: number;
+// };
+// export interface editWorkToken {
+//   workId: string,
+//   tokens: server_alterationToken[]
+// }
+
+// export const useSocketApi = () => { //DB保存
+
+// }
+
+

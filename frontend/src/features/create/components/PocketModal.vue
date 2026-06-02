@@ -17,16 +17,12 @@
       </header>
       <div class="drop-area">
         <p
-          v-if="pocket.items.length === 0"
+          v-if="pocket.items.size === 0"
           style="font-size: 12px; text-align: center"
         >
           ここに持ち物をドラッグ
         </p>
-        <div
-          v-for="item in pocket.items"
-          :key="item.originalId"
-          class="item-card"
-        >
+        <div v-for="[id, item] in pocket.items" :key="id" class="item-card">
           <PreviewItem
             :caseId="pocket.caseId"
             :item="item"
@@ -91,7 +87,7 @@ const props = defineProps<{
   pocket: {
     id: string;
     name: string;
-    items: previewItem[];
+    items: Map<string, previewItem>;
     caseId: string;
   };
 }>();

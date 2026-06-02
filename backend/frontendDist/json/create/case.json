@@ -1,5 +1,62 @@
 {
-"heard":{
+"HardSuitcase":{
+  "name": "ハードスーツケース",
+  "case": {
+    "x": 40,
+    "y": 40,
+    "width": 320,
+    "height": 480,
+    "radius": 28
+    
+  },
+  "handle": {
+    "x": 145,
+    "y": 15,
+    "width": 110,
+    "height": 35,
+    "radius": 12
+  },
+  "pockets": {
+    "mesh":{
+      "id": "mesh",
+      "name": "メッシュ",
+      "x": 70,
+      "y": 80,
+      "width": 260,
+      "height": 95,
+      "items": []
+    },
+    "main":{
+      "id": "main",
+      "name": "メイン収納",
+      "x": 70,
+      "y": 195,
+      "width": 170,
+      "height": 230,
+      "items": []
+    },
+    "side":{
+      "id": "side",
+      "name": "小物",
+      "x": 255,
+      "y": 195,
+      "width": 75,
+      "height": 230,
+      "items": []
+    },
+    "bottom":{
+      "id": "bottom",
+      "name": "下部収納",
+      "x": 70,
+      "y": 445,
+      "width": 260,
+      "height": 55,
+      "items": []
+    }
+  }
+},
+"NomalSuitcase":{
+  "name": "ノーマル",
   "case": {
     "x": 40,
     "y": 40,
@@ -14,8 +71,8 @@
     "height": 35,
     "radius": 12
   },
-  "pockets": [
-    {
+  "pockets": {
+     "mesh":{
       "id": "mesh",
       "name": "メッシュ",
       "x": 70,
@@ -24,7 +81,7 @@
       "height": 95,
       "items": []
     },
-    {
+    "main":{
       "id": "main",
       "name": "メイン収納",
       "x": 70,
@@ -33,7 +90,7 @@
       "height": 230,
       "items": []
     },
-    {
+   "side":{
       "id": "side",
       "name": "小物",
       "x": 255,
@@ -42,7 +99,7 @@
       "height": 230,
       "items": []
     },
-    {
+    "bottom":{
       "id": "bottom",
       "name": "下部収納",
       "x": 70,
@@ -51,6 +108,6 @@
       "height": 55,
       "items": []
     }
-  ]
+  }
 }
 }

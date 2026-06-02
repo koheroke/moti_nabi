@@ -11,8 +11,7 @@ export type editWorkPackageApi = RequireAtLeastOne<{
   copies?: number,
   members?: SiteMember[]
 }>
-
-export type AlterationTokenType = "set" | "delete" | "arrayPush" | "arrayRemove";
+export type AlterationTokenType = "set" | "delete" | "arrayPush" | "arrayRemove" | "addMap" | "mapPush" | "mapRemove" | "objectPush" | "objectRemove";
 export type AlterationToken = {
   id: string;
   workId: string;

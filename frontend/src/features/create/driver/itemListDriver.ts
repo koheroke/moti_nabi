@@ -1,7 +1,5 @@
+import { type UserLuggage_SaveDBData } from "../type/apiType";
 
-
-
-import { type UserLuggage_SaveDBData } from "../type/apiType"
 const userLuggage_SaveDBData: UserLuggage_SaveDBData = {
   itemListDatas: {
     addedItems: {
@@ -27,65 +25,96 @@ const userLuggage_SaveDBData: UserLuggage_SaveDBData = {
         id: "suitcase_0",
         addItemCounter: 8,
         caseType: "HardSuitcase",
-        // poketSvgEdit: [{ id: "main", width: 200, height: 300, }],
-        // pocketAdd: [{
-        //   id: "side", width: 200, height: 300, name: "サイド", x: 0,
-        //   y: 0,
-        //   items: [],
-        //   originalId: "mesh",
-        // }],
-        // poketDelete: ["mesh"],
-        poketSvgEdit: [],
-        pocketAdd: [],
-        poketDelete: [],
+
+        poketSvgEdit: [
+          {
+            id: "main",
+            width: 200,
+            height: 300,
+          },
+        ],
+
+        pocketAdd: [
+          {
+            id: "side",
+            width: 200,
+            height: 300,
+            name: "サイド",
+            x: 0,
+            y: 0,
+            items: new Map(),
+          },
+        ],
+
+        poketDelete: ["mesh"],
+
         pockets: {
           mesh: {
             id: "mesh",
             originalId: "mesh",
             count: 0,
-            innerItems: [
-              {
-                originalId: "item_1",
-                id: "item_1",
-                count: 3,
-              },
-              {
-                id: "inner_1",
-                count: 1,
-                originalId: "item_2",
-                innerItems: [
-                  {
-                    id: "item_6",
-                    originalId: "item_3",
-                    count: 2,
-                  },
-                  {
-                    originalId: "item_4",
-                    id: "item_6",
-                    count: 1,
-                  },
-                ],
-              },
-            ],
+
+            innerItems: new Map([
+              [
+                "item_1",
+                {
+                  originalId: "item_1",
+                  id: "item_1",
+                  count: 3,
+                },
+              ],
+
+              [
+                "item_2",
+                {
+                  id: "inner_1",
+                  count: 1,
+                  originalId: "item_2",
+
+                  innerItems: new Map([
+                    [
+                      "item_3",
+                      {
+                        id: "item_6",
+                        originalId: "item_3",
+                        count: 2,
+                      },
+                    ],
+
+                    [
+                      "item_4",
+                      {
+                        id: "item_6",
+                        originalId: "item_4",
+                        count: 1,
+                      },
+                    ],
+                  ]),
+                },
+              ],
+            ]),
           },
 
           main: {
             id: "main",
             originalId: "main",
             count: 0,
-            innerItems: [
-              {
-                originalId: "item_5",
-                id: "inner_1",
-                count: 3,
-              },
-            ],
+
+            innerItems: new Map([
+              [
+                "item_5",
+                {
+                  originalId: "item_5",
+                  id: "inner_1",
+                  count: 3,
+                },
+              ],
+            ]),
           },
         },
       },
     },
   },
 };
+
 export default userLuggage_SaveDBData;
-
-

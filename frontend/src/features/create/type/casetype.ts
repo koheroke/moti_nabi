@@ -16,7 +16,7 @@ interface previewItem {
   iconId: string;
   category: CategoryId[];
   isStorage: boolean;
-  innerItems?: previewItem[];
+  innerItems?: Map<string, previewItem>;
   count: number;
 }
 type Pocket = {
@@ -26,7 +26,7 @@ type Pocket = {
   y: number;
   width: number;
   height: number;
-  items: previewItem[];
+  items: Map<string, previewItem>;
 }
 type CaseEdit = {
   x?: number;

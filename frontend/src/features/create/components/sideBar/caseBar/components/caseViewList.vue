@@ -17,7 +17,7 @@
 </template>
 <script setup lang="ts">
 import Casecard from "./Casecard.vue";
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import type { Pocket } from "@/features/create/type/casetype";
 import { useCreateStore } from "@/features/create/store/createStore";
 const createStore = useCreateStore();

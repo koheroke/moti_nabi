@@ -1,15 +1,15 @@
 <template>
   <article class="work-card" @click="emit('onWorkCard')">
-    <img class="thumbnail" :src="work.thumbnailUrl" :alt="work.title" />
+    <img class="thumbnail" :src="work.thumbnailUrl" :alt="work.name" />
 
     <div class="body">
-      <h3 class="title">{{ work.title }}</h3>
+      <h3 class="title">{{ work.name }}</h3>
 
       <div class="meta">
         <span>{{ work.createdAt }}</span>
         <span
           ><ThumbsUp :size="16" color="green" fill="yellowgreen"></ThumbsUp
-          >{{ " " + work.likeCount }}</span
+          >{{ " " + work.likes }}</span
         >
       </div>
     </div>
@@ -17,14 +17,14 @@
 </template>
 
 <script setup lang="ts">
-import type { Work } from "@/features/work/types/work";
+import type { workPackage } from "@/features/work/types/work";
 import { ThumbsUp } from "lucide-vue-next";
 const emit = defineEmits<{
   (e: "onWorkCard"): void;
 }>();
 
 defineProps<{
-  work: Work;
+  work: workPackage;
 }>();
 </script>
 

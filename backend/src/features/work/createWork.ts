@@ -1,11 +1,11 @@
 import { prisma } from "@/lib/prisma/prisma"
 import { Work } from "@/generated/prisma/client"
-import { createApi, editWorkPackageApi, editWorkToken } from "@/features/create/types"
+import { createApi, editWorkPackageApi, editWorkToken } from "@/features/work/types"
 
 
 const workData = new Map()
 
-const useCreateWork = () => {
+const useWork = () => {
   const createNewWork = async (createApi: createApi) => {
     const work = await prisma.work.create({
       data: {
@@ -67,18 +67,71 @@ const useCreateWork = () => {
         data = data[token.path[i]];
       }
       const lastKey = token.path[token.path.length - 1];
-      if (token.type === "set") {
-        data[lastKey] = token.value;
-      } else if (token.type === "delete") {
-        delete data[lastKey];
-      } else if (token.type === "arrayPush") {
-        if (!Array.isArray(data[lastKey])) return;
-        data[lastKey].push(token.value);
-      } else if (token.type === "arrayRemove") {
-        if (!Array.isArray(data[lastKey])) return;
-        data[lastKey] = data[lastKey].filter(
-          (item: any) => item.id !== (token.value as any).id
-        );
+
+      switch (token.type) {
+        case "set":
+          data[lastKey] = token.value;
+          break;
+
+        case "delete":
+          delete data[lastKey];
+          break;
+
+        case "arrayPush":
+          if (!Array.isArray(data[lastKey])) data[lastKey] = [];
+          data[lastKey].push(token.value);
+          break;
+
+        case "arrayRemove":
+          if (!Array.isArray(data[lastKey])) return;
+          data[lastKey] = data[lastKey].filter(
+            (item: any) => item.id !== (token.value as any).id
+          );
+          break;
+
+        case "addMap":
+          if (!(data[lastKey] instanceof Map)) {
+            data[lastKey] = new Map<string, any>();
+          }
+          data[lastKey].set(token.value.id, token.value);
+          break;
+
+        case "mapPush":
+          if (!(data[lastKey] instanceof Map)) {
+            data[lastKey] = new Map<string, any>();
+          }
+          data[lastKey].set(token.value.id, token.value);
+          break;
+
+        case "mapRemove":
+          if (!(data[lastKey] instanceof Map)) return;
+          data[lastKey].delete(token.value.id);
+          break;
+
+        case "objectPush":
+          if (
+            typeof data[lastKey] !== "object" ||
+            data[lastKey] === null ||
+            Array.isArray(data[lastKey])
+          ) {
+            data[lastKey] = {};
+          }
+          data[lastKey][token.value.id] = token.value;
+          break;
+
+        case "objectRemove":
+          if (
+            typeof data[lastKey] !== "object" ||
+            data[lastKey] === null ||
+            Array.isArray(data[lastKey])
+          ) return;
+          delete data[lastKey][token.value.id];
+          break;
+
+        default: {
+          const _exhaustiveCheck: never = token.type;
+          return _exhaustiveCheck;
+        }
       }
     });
     const work = await prisma.work.update({
@@ -90,6 +143,28 @@ const useCreateWork = () => {
       },
     });
     return work
+  }
+
+
+  const getWorkPackage = async () => {
+    const works = await prisma.work.findMany({
+      where: {
+        public: true,
+      },
+    });
+    if (!works) return
+    const thumbnail = works.map((work) => {
+      return {
+        id: work.id,
+        thumbnailUrl: work.thumbnailUrl,
+        name: work.name,
+        public: work.public,
+        likes: work.likes,
+        tags: work.tags,
+        copies: work.copies,
+      };
+    });
+    return thumbnail
   }
 
   const getUserworkPackage = async (userId: string, publicDisplay: boolean) => {
@@ -124,8 +199,9 @@ const useCreateWork = () => {
   }
   return {
     createNewWork, getUserworkPackage, getWork, editWorkPackage, editWork
+    , getWorkPackage
   }
 }
 
-export { useCreateWork };
+export { useWork };
 

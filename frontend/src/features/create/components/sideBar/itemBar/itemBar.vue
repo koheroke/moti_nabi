@@ -37,9 +37,8 @@ import filteredItems from "./components/filteredItems.vue";
 import { ref, watch, onMounted } from "vue";
 // import { useItemListWork } from "../../composables/itemList";
 import addItem from "./components/addItem.vue";
-import { type addItemType } from "../../../type/itemType";
-
-import type { Category } from "../../../type/itemType";
+import type { Category } from "@/features/create/type/categoryType";
+import type { itemCard } from "@/features/create/type/itemType.ts";
 
 import { useCreateStore } from "../../../store/createStore";
 const createStore = useCreateStore();
@@ -47,7 +46,7 @@ const createStore = useCreateStore();
 const categories: Category[] = createStore.categories;
 
 // const itemListWork = useItemListWork();
-const returnAddItem = ref<addItemType | null>(null);
+const returnAddItem = ref<itemCard | null>(null);
 const index = ref(0);
 onMounted(async () => {
   watch(

@@ -1,13 +1,16 @@
 
-import type { confirmedResizePocketToken, deletePreviewCaseToken, addPreviewCaseToken, addPreviewItemToken, addItemCountToken, addBookmarkToken, addListItemToken, deletePreviewItemToken } from "./useCreateWork";
+import type { provisionalResizePocket, provisionalRemovePocket, confirmedResizePocketToken, deletePreviewCaseToken, addPreviewCaseToken, addPreviewItemToken, addItemCountToken, addBookmarkToken, addListItemToken, deletePreviewItemToken } from "./useCreateWork";
 import { useCreateStore } from "../store/createStore";
-
+import type { server_alterationTokenType } from "../api/createSocketApi"
 import { useSaveQueue } from "../services/saveQueue";
 import type { Case } from "@/features/create/type/casetype";
-import type { UserLuggage_SaveDBData, saveDBpreviewData, saveDBpreviePockets } from "@/features/create/type/apiType";
+import type { UserLuggage_SaveDBData, saveDBpreviewData, saveDBprevieItems } from "@/features/create/type/apiType";
 import type { previewItem } from "@/features/create/type/casetype";
 import { useSocketApi } from "../api/createSocketApi";
+
 const socketApi = useSocketApi()
+
+
 
 
 export type alterationType = "previewItems_additem"
@@ -17,9 +20,10 @@ export type alterationType = "previewItems_additem"
   | "itemlistItems_additem"
   | "previewCases_addCase"
   | "previewCases_deleteCase"
-  | "confirmed-resizePocket"
+  | "confirmed_resizePocket"
+  | "confirmed_removePocket"
 
-type allToken = confirmedResizePocketToken | deletePreviewCaseToken | addPreviewCaseToken | addPreviewItemToken | addItemCountToken | addBookmarkToken | addListItemToken | deletePreviewItemToken
+type allToken = provisionalRemovePocket | provisionalResizePocket | confirmedResizePocketToken | deletePreviewCaseToken | addPreviewCaseToken | addPreviewItemToken | addItemCountToken | addBookmarkToken | addListItemToken | deletePreviewItemToken
 
 export interface alterationToken {
   token: allToken
@@ -69,25 +73,34 @@ const useApplyCreateAction = () => {
       ]),
     );
 
-    const getItemDatra = (poket: saveDBpreviePockets[]): previewItem[] => {
-      return poket.map((item: saveDBpreviePockets): previewItem => {
-        const { bookmark, ...itemData } = vueItemList[item.id]
-        if (vueItemList[item.id].isStorage) {
-          return {
-            ...itemData,
-            innerItems: item.innerItems ? getItemDatra(item.innerItems) : [],
-            count: item.count,
-            originalId: item.originalId
-          }
-        } else {
-          return {
-            ...itemData,
-            count: item.count,
-            originalId: item.originalId
-          }
-        }
-      })
-    }
+    const getItemDatra = (
+      pocket: Map<string, saveDBprevieItems>
+    ): Map<string, previewItem> => {
+      return new Map(
+        Array.from(pocket.entries()).map(([originalId, item]) => {
+          const { bookmark, ...itemData } = vueItemList[item.id];
+
+          const data: previewItem = vueItemList[item.id].isStorage
+            ? {
+              ...itemData,
+              innerItems: item.innerItems
+                ? getItemDatra(item.innerItems)
+                : new Map(),
+              count: item.count,
+              originalId: item.originalId,
+            }
+            : {
+              ...itemData,
+              count: item.count,
+              originalId: item.originalId,
+            };
+
+          return [originalId, data] as const;
+        })
+      );
+    };
+
+
 
     const pocketParse = (luggage: saveDBpreviewData, staticCase: Case) => {
 
@@ -110,7 +123,7 @@ const useApplyCreateAction = () => {
               ...pocket,
               ...pocketSvgData,
               items: getItemDatra(
-                luggage.pockets[pocket.id]?.innerItems ?? []
+                luggage.pockets[pocket.id]?.innerItems ?? new Map()
               ),
             },
           ]
@@ -129,7 +142,7 @@ const useApplyCreateAction = () => {
         basePockets[pocket.id] = {
           ...pocket,
           items: getItemDatra(
-            luggage.pockets[pocket.id]?.innerItems ?? []
+            luggage.pockets[pocket.id]?.innerItems ?? new Map()
           ),
         }
       })
@@ -157,37 +170,84 @@ const useApplyCreateAction = () => {
 
   const alterationData = (token: alterationToken) => {
     if (!createStore || !saveQueue) return
-    let res = null
+    let dbpushToken: {
+      type: server_alterationTokenType,
+      path: string[],
+      value: any
+    } = { type: "arrayPush", path: [], value: null }
+
     switch (token.alterationType) {
-      case 'previewItems_additem':
-        res = createStore.pushpreviewItem(token.token as addPreviewItemToken)
+      case 'previewItems_additem': {
+        const res = createStore.pushpreviewItem(token.token as addPreviewItemToken)
+        const this_token = token.token as addPreviewItemToken
+        dbpushToken.path = ["previewDatas", "mainLuggage", this_token.caseId, "pockets", this_token.pocketId, "innerItems"]
+        dbpushToken.value = res
+        dbpushToken.type = "mapPush"
+        break
+      }
+      case 'previewItems_addcount': {
+        const res = createStore.addCount(token.token as addItemCountToken)
+        const this_token = token.token as addItemCountToken
+        dbpushToken.path = ["previewDatas", "mainLuggage", this_token.caseId, "pockets", this_token.pocketId, "innerItems", this_token.originalId]
+        dbpushToken.value = res
+        dbpushToken.type = "set"
+        break
+      }
+      case 'itemlistItems_bookmark': {
+        const res = createStore.addBookmark(token.token as addBookmarkToken)
+        dbpushToken.path = ["itemListDatas", "bookmarks"]
+        dbpushToken.value = res
+        dbpushToken.type = "arrayPush"
+        break
+      }
+      case 'previewItems_delete': {
+        const res = createStore.deletepreviewItem(token.token as deletePreviewItemToken)
+        const this_token = token.token as deletePreviewItemToken
+        dbpushToken.path = ["previewDatas", "mainLuggage", this_token.caseId, "pockets", this_token.pocketId, "innerItems"]
+        dbpushToken.value = res
+        dbpushToken.type = "mapRemove"
+        break
+      }
+      case 'itemlistItems_additem': {
+        const res = createStore.addListItem(token.token as addListItemToken)
+        dbpushToken.path = ["itemListDatas", "addedItems"]
+        dbpushToken.value = res
+        dbpushToken.type = "objectPush"
         break
 
-      case 'previewItems_addcount':
-        res = createStore.addCount(token.token as addItemCountToken)
+      }
+      case 'previewCases_addCase': {
+        const res = createStore.addPreviewCase(token.token as addPreviewCaseToken)
+        dbpushToken.path = ["previewDatas", "mainLuggage"]
+        dbpushToken.value = res
+        dbpushToken.type = "objectPush"
         break
+      }
 
-      case 'itemlistItems_bookmark':
-        res = createStore.addBookmark(token.token as addBookmarkToken)
+      case 'confirmed_resizePocket': {
+        const res = createStore.reMovePocket(token.token as provisionalRemovePocket)
+        const this_token = token.token as provisionalRemovePocket
+        dbpushToken.path = ["previewDatas", "mainLuggage", this_token.caseId, "pockets", this_token.pocketId, "innerItems"]
+        dbpushToken.value = res
+        dbpushToken.type = "mapPush"
         break
+      }
+      case 'confirmed_resizePocket': {
+        const res = createStore.reSizePocket(token.token as provisionalResizePocket)
+        const this_token = token.token as provisionalResizePocket
+        dbpushToken.path = ["previewDatas", "mainLuggage", this_token.caseId, "pockets", this_token.pocketId, "innerItems"]
+        dbpushToken.value = res
+        dbpushToken.type = "mapPush"
+        break
+      }
 
-      case 'previewItems_delete':
-        res = createStore.deletepreviewItem(token.token as deletePreviewItemToken)
+      case 'previewCases_deleteCase': {
+        const res = createStore.deleteCase(token.token as deletePreviewCaseToken)
         break
-
-      case 'itemlistItems_additem':
-        res = createStore.addListItem(token.token as addListItemToken)
-        break
-
-      case 'previewCases_addCase':
-        res = createStore.addPreviewCase(token.token as addPreviewCaseToken)
-        break
-      case 'previewCases_deleteCase':
-        res = createStore.deleteCase(token.token as deletePreviewCaseToken)
-        break
+      }
 
     }
-    saveQueue.push({ user: token.user, alterationType: token.alterationType, token: res })
+    saveQueue.push({ user: token.user, alterationType: token.alterationType, token: dbpushToken })
   }
   return { hydrateCreateState, alterationData, initCreateStaticData }
 }
