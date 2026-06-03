@@ -8,8 +8,7 @@ export const useWorkPackageStore = defineStore("package", {
   }),
   getters: {
     workPackageStoreGetter: (state) => state.WorkPackageStore,
-    userWorkPackageStoreGetter: (state) => state.userWorkPackageStore
-    ,
+    userWorkPackageStoreGetter: (state) => state.userWorkPackageStore,
     selectedPackageGetter: (state) => state.selectedPackage
   },
   actions: {

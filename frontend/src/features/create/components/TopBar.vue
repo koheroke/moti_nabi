@@ -1,9 +1,7 @@
 <template>
   <div class="topBar">
     <div class="right">
-      <div style="color: black; font-size: 35px; font-weight: 400">
-        {{ props.title }}
-      </div>
+      <BaseInput v-model="createStore.workNameGetter"></BaseInput>
       <div style="gap: 10px; display: flex; margin-left: auto">
         <CornerUpLeft @click="back" />
         <CornerUpRight @click="forward" />
@@ -20,7 +18,7 @@
           style="margin-right: 20px"
         ></UserIcon>
         <BaseButton variant="ghost">招待</BaseButton>
-        <BaseButton>公開</BaseButton>
+        <BaseButton @click="onpublich">公開</BaseButton>
       </div>
     </div>
   </div>
@@ -30,6 +28,11 @@ import BaseButton from "@/components/ui/form/BaseButton/BaseButton.vue";
 import { CornerUpLeft, CornerUpRight } from "lucide-vue-next";
 import UserIcon from "@/features/user/components/UserIcon.vue";
 import { useAlterationLogStore } from "../store/useAlterationLogStore";
+import { BaseInput } from "@/components/ui/form/BaseInput";
+import { useCreateStore } from "../store/createStore";
+import { useRouter } from "vue-router";
+const router = useRouter();
+const createStore = useCreateStore();
 const alterationLog = useAlterationLogStore();
 const forward = () => {
   alterationLog.redo();
@@ -40,6 +43,9 @@ const back = () => {
 const props = defineProps<{
   title: string;
 }>();
+const onpublich = () => {
+  router.push("/publishReady");
+};
 </script>
 <style lang="css" scoped>
 .topBar {

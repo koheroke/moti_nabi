@@ -13,7 +13,8 @@ export interface caseArray {
 
 export const useCreateStore = defineStore("create", {
   state: () => ({
-    workId: "" as string | null,
+    workId: "" as string,
+    workName: "" as string,
     userLuggage_SaveDBData: null as UserLuggage_SaveDBData | null,
     listItem: null as Record<string, itemCard> | null,
     previewCase: {} as Record<string, Case>,
@@ -29,6 +30,7 @@ export const useCreateStore = defineStore("create", {
   }),
   getters: {
     staticCasesGetter: (state) => state.staticCases,
+    workNameGetter: (state) => state.workName,
     categorys: (state) => state.categories,
     iconMapGetter: (state) => state.iconMap,
     categoryColorGetter: (state) => state.categoryColor,
@@ -77,6 +79,9 @@ export const useCreateStore = defineStore("create", {
     },
     setStaticCases(cases: Record<string, Case>) {
       this.staticCases = cases
+    },
+    setWorkName(name: string) {
+      this.workName = name
     },
     setCategoryColor(colorList: Record<string, string>) {
       this.categoryColor = colorList

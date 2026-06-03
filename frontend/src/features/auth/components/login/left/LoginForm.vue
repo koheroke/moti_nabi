@@ -7,16 +7,24 @@ import { BaseLabel } from "@/components/ui/form/BaseLabel";
 import { useLogin } from "@/features/auth/composables/useLogin";
 import GoogleButton from "./GoogleButton.vue";
 import { useRecaptchaToken } from "@/features/auth/composables/recaptcha";
+import { useRouter } from "vue-router";
 const recaptchaToken = useRecaptchaToken();
+const router = useRouter();
 const Login = useLogin();
-
 const email = ref("");
 const passward = ref("");
 const error = ref("");
 
 const onLogin = async () => {
   const token = await recaptchaToken.get("SIGNUP");
-  Login.login({ email: email.value, password: passward.value }, token);
+  const res = await Login.login(
+    { email: email.value, password: passward.value },
+    token,
+  );
+  console.log("res", res);
+  if (res != null) {
+    router.push("/home");
+  }
 };
 const loginWithGoogle = async () => {
   window.location.href = "/auth/googleLogin";
@@ -36,7 +44,7 @@ const loginWithGoogle = async () => {
         pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
       />
     </FormField>
-    <BaseButton @click="onLogin"> ログイン</BaseButton>
+    <BaseButton @click.prevent="onLogin"> ここでログイン</BaseButton>
     <BaseLabel> ──────── または ──────── </BaseLabel>
     <GoogleButton @click="loginWithGoogle" />
   </form>

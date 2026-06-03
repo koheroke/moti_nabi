@@ -8,9 +8,9 @@ workRouter.post('/editWorkPackage', async (c) => {
   return c.json(res);
 });
 
-workRouter.post('/createWork', async (c) => {
+workRouter.post('/create', async (c) => {
   const body = await c.req.json();
-  const res = await createWork.createNewWork(body.workId)
+  const res = await createWork.createNewWork(body.userId)
   return c.json(res);
 });
 
@@ -32,3 +32,5 @@ workRouter.post('/getWorkPackages', async (c) => {
   const res = await createWork.getWorkPackage()
   return c.json(res);
 });
+
+

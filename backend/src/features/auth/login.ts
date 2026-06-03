@@ -6,6 +6,9 @@ import { jwtDecode } from "jwt-decode";
 import { prisma } from "@/lib/prisma/prisma"
 import { User } from "@/lib/prisma/prismaType"
 import argon2 from "argon2";
+import { useSession } from '@/features/auth/session';
+
+const this_session = useSession()
 
 
 
@@ -19,15 +22,16 @@ export type LoginInput = {
 }
 
 export const useLogin = () => {
-  const login = async (user: LoginInput, c: Context): Promise<User | string> => {
+  const login = async (user: LoginInput, c: Context): Promise<User | null> => {
+    console.log(user)
     const userResponse = await prisma.user.findFirst({
       where: {
         email: user.email
       }
     });
-    if (!userResponse) return "notfoundUser"
+    if (!userResponse) return null
     const passward = await argon2.verify(userResponse.passwordHash, user.password);
-    if (!passward) return "notdifferentPassward"
+    if (!passward) return null
     const this_user = userResponse
     const userId = this_user.id
     const token = await sign(
@@ -38,13 +42,7 @@ export const useLogin = () => {
       env.JWT_SECRET
     )
 
-    setCookie(c, "auth_token", token, {
-      httpOnly: true,
-      secure: env.NODE_ENV === "production",
-      sameSite: "Lax",
-      maxAge: 60 * 60 * 24,
-      path: "/",
-    })
+    this_session.setLoginSession(c, token)
 
     return this_user
   }

@@ -2,7 +2,7 @@
   <div class="page">
     <header class="top">
       <h1>motinabi</h1>
-      <UserIcon :userid="testUserId" size="large"></UserIcon>
+      <UserIcon :userid="userStore.userId" size="large"></UserIcon>
     </header>
     <body class="body">
       <section class="container">
@@ -14,7 +14,7 @@
       </section>
       <section class="container">
         <h2 class="title">あなたの作品</h2>
-        <MyWorksSection :userId="testUserId" class="content" />
+        <MyWorksSection :userId="userStore.userId" class="content" />
       </section>
 
       <section class="container">
@@ -35,9 +35,14 @@ import MyWorksSection from "@/features/home/components/MyWorksSection.vue";
 import BaseButton from "@/components/ui/form/BaseButton/BaseButton.vue";
 import { useRouter } from "vue-router";
 import UserIcon from "@/features/user/components/UserIcon.vue";
+import { useWorkPackageStore } from "@/features/work/store/workPackageStore";
+import { useUserStore } from "@/store/user/userStore";
+const userStore = useUserStore();
 const router = useRouter();
-const testUserId = "a";
+const workPackageStore = useWorkPackageStore();
+// const testUserId = "a";
 const goCreate = () => {
+  workPackageStore.selectWorkPackage("");
   router.push("/create");
 };
 </script>

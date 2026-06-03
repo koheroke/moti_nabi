@@ -1,6 +1,7 @@
 import { ref } from "vue"
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
-const url = `${apiUrl}/auth`;
+
+const url = `${apiUrl}/auth/login`;
 import { useUserStore } from "@/store/user/userStore"
 const userStore = useUserStore()
 
@@ -17,7 +18,7 @@ const useLogin = () => {
     console.log(loginInput)
     try {
       const singup_res = await fetch(
-        `${url}/login`,
+        url,
         {
           method: 'POST',
           headers: {
@@ -27,6 +28,7 @@ const useLogin = () => {
         }
       )
       const user = await singup_res.json()
+      if (user == null) return null
       userStore.login(user, token)
       return user
     } catch (e) {

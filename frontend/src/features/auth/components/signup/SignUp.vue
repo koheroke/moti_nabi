@@ -14,10 +14,10 @@ const router = useRouter();
 const dialogStore = useDialogStore();
 const alertStore = useAlertStore();
 
-const name = ref("azuma");
-const email = ref("kouhei_24s1101798@nnn.ed.jp ");
-const password = ref("azumax1000");
-const passwordConfirm = ref("azumax1000");
+const name = ref("");
+const email = ref("");
+const password = ref("");
+const passwordConfirm = ref("");
 
 const isEmailValid = computed(() => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value);

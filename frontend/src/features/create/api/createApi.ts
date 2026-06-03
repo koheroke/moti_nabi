@@ -3,11 +3,11 @@ import userLuggage_SaveDBData from "../driver/itemListDriver";
 
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
-const url = `${apiUrl}/create`;
+const url = `${apiUrl}/work`;
 const useCreateApi = () => {
   const getWork = async (theWorkId: string): Promise<UserLuggage_SaveDBData> => {
     const data = await fetch(
-      `${url}/work/get`,
+      `${url}/get`,
       {
         method: 'POST',
         headers: {
@@ -17,8 +17,25 @@ const useCreateApi = () => {
           theWorkId: theWorkId
         })
       })
-    const res = await data.json()
+    return await data.json()
 
+  }
+
+
+  const createNewWork = async (userId: string,): Promise<UserLuggage_SaveDBData> => {
+    const data = await fetch(
+      `${url}/create`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: userId,
+        })
+      })
+
+    const res = await data.json()
 
     const newWork: UserLuggage_SaveDBData = {
       "workId": res.workId,
@@ -35,22 +52,6 @@ const useCreateApi = () => {
     };
 
     return newWork
-  }
-
-
-  const createNewWork = async (userId: string,): Promise<UserLuggage_SaveDBData> => {
-    const data = await fetch(
-      `${url}/work/create`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          createToken: userId,
-        })
-      })
-    return await data.json()
   }
 
 

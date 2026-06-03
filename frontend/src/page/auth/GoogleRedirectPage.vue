@@ -8,7 +8,7 @@ const alertStore = useAlertStore();
 const session = useSession();
 onMounted(async () => {
   const user = await session.login();
-  if (!user.email) {
+  if (!user) {
     alertStore.showAlert("ログインに失敗しました", true);
     return;
   }

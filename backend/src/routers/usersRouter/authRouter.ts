@@ -42,7 +42,8 @@ authRouter.post('/2fa/verification', async (c) => {
 
 
 authRouter.post('/session/login', async (c) => {
-  const session = this_session.loginSession(c)
+  const loginResult = await this_session.getLoginSession(c);
+  const session = loginResult ? loginResult : "noneToken";
   return c.json(session);
 });
 

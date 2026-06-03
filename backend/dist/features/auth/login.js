@@ -1,4 +1,7 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useGoogleLogin = exports.useLogin = void 0;
 const cookie_1 = require("hono/cookie");
@@ -6,21 +9,24 @@ const jwt_1 = require("hono/jwt");
 const env_1 = require("@/constants/env/env");
 const jwt_decode_1 = require("jwt-decode");
 const prisma_1 = require("@/lib/prisma/prisma");
+const argon2_1 = __importDefault(require("argon2"));
 if (!env_1.env.JWT_SECRET) {
     throw new Error("JWT_SECRET is not set");
 }
 const useLogin = () => {
     const login = async (user, c) => {
+        console.log(user);
         const userResponse = await prisma_1.prisma.user.findFirst({
             where: {
                 email: user.email
             }
         });
         if (!userResponse)
-            return "notfoundUser";
-        const this_user = userResponse.passwordHash == user.password ? userResponse : null;
-        if (!this_user)
-            return "notdifferentPassward";
+            return null;
+        const passward = await argon2_1.default.verify(userResponse.passwordHash, user.password);
+        if (!passward)
+            return null;
+        const this_user = userResponse;
         const userId = this_user.id;
         const token = await (0, jwt_1.sign)({
             userId,
@@ -75,13 +81,6 @@ const useGoogleLogin = () => {
         const payload = (0, jwt_decode_1.jwtDecode)(tokenData.id_token);
         const email = payload.email;
         const sub = payload.sub;
-        const userResponse = await prisma_1.prisma.user.findFirst({
-            where: {
-                email: email
-            }
-        });
-        if (!userResponse)
-            return c.json({ error: "token exchange failed", detail: "userNotFound" }, 400);
         let account = await prisma_1.prisma.account.findUnique({
             where: {
                 provider_providerAccountId: {
@@ -91,6 +90,13 @@ const useGoogleLogin = () => {
             },
         });
         if (!account) {
+            const userResponse = await prisma_1.prisma.user.findFirst({
+                where: {
+                    email: email
+                }
+            });
+            if (!userResponse)
+                return c.json({ error: "token exchange failed", detail: "userNotFound" }, 400);
             account = await prisma_1.prisma.account.create({
                 data: {
                     userId: userResponse?.id,
@@ -100,7 +106,7 @@ const useGoogleLogin = () => {
             });
         }
         const token = await (0, jwt_1.sign)({
-            id: userResponse.id,
+            id: account.userId,
             email: email,
         }, env_1.env.JWT_SECRET);
         (0, cookie_1.setCookie)(c, "auth_token", token, {

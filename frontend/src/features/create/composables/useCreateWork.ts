@@ -22,6 +22,7 @@ import { useCreateStore } from "../store/createStore";
 import type { alterationToken } from "./applyCreateAction";
 import { useAlterationLogStore } from "../store/useAlterationLogStore"
 import { useWorkPackageStore } from "@/features/work/store/workPackageStore";
+
 const workPackageStore = useWorkPackageStore();
 
 export const UseCreateWork = () => {
@@ -59,6 +60,9 @@ export const UseCreateWork = () => {
     createStore.setSaveDBData(newWork)
     createStore.setlistItem(vueItemList)
     createStore.setpreviewData(vuepreviewData)
+    createStore.setWorkId(newWork.workId)
+    createStore.setWorkName(newWork.workName)
+    workPackageStore.selectWorkPackage(newWork.workId)
     return "none"
 
   }
@@ -94,6 +98,8 @@ export const UseCreateWork = () => {
     createStore.setSaveDBData(data)
     createStore.setlistItem(vueItemList)
     createStore.setpreviewData(vuepreviewData)
+    createStore.setWorkId(data.workId)
+    createStore.setWorkName(data.workName)
     return "none"
   }
   const addItemToPreview = async (token: addPreviewItemToken): Promise<addItemToPreviewResponse> => {
