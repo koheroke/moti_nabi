@@ -13,16 +13,18 @@
         </section>
       </section>
       <section class="container">
-        <p2 class="title">あなたの作品</p2>
-        <MyWorksSection class="content"></MyWorksSection>
+        <h2 class="title">あなたの作品</h2>
+        <MyWorksSection :userId="testUserId" class="content" />
       </section>
+
       <section class="container">
-        <p2 class="title">続きから編集</p2>
+        <h2 class="title">続きから編集</h2>
         作りかけの持ち物リストの画像をぼやけさせて写す
       </section>
+
       <section class="container">
-        <p2 class="title">みんなの作品</p2>
-        <GalleryWorksSection class="content"></GalleryWorksSection>
+        <h2 class="title">みんなの作品</h2>
+        <GalleryWorksSection class="content" />
       </section>
     </body>
   </div>
@@ -34,7 +36,7 @@ import BaseButton from "@/components/ui/form/BaseButton/BaseButton.vue";
 import { useRouter } from "vue-router";
 import UserIcon from "@/features/user/components/UserIcon.vue";
 const router = useRouter();
-const testUserId = 1;
+const testUserId = "a";
 const goCreate = () => {
   router.push("/create");
 };
@@ -56,6 +58,8 @@ const goCreate = () => {
 .container {
   display: grid;
   width: 80vw;
+}
+.container h2 {
 }
 .content {
   overflow-x: auto;

@@ -1,16 +1,21 @@
-import { fetchWorks } from "@/features/work/composables/work"
-import type { Work } from "@/features/work/types/work"
+import type { workPackage } from "@/features/work/types/work"
 import { useIncrementalList } from "@/composables/array/useIncrementalList"
 import { onMounted, ref } from "vue"
 import type { ParseSearchQuery, SortType } from "../type"
 import { isSubset } from "@/composables/array/isSubset"
+import { useWorkPackageStore } from "@/features/work/store/workPackageStore"
+import { useGetWorkPackage } from "@/features/work/composables/work"
+const workPackageStore = useWorkPackageStore();
+const getWorkPackage = useGetWorkPackage()
 
 export const useGalleryWorks = (step: number) => {
-  const allWorks = ref<Work[]>([])
-  const works = ref<Work[]>([])
+  const allWorks = ref<workPackage[]>([])
+  const works = ref<workPackage[]>([])
 
   onMounted(async () => {
-    const fetchedWorks = await fetchWorks()
+    const work = await getWorkPackage.getworkPackage()
+    workPackageStore.setWorkPackageStore(work)
+    const fetchedWorks = workPackageStore.workPackageStoreGetter
     allWorks.value = fetchedWorks
     works.value = fetchedWorks
   })
@@ -33,7 +38,7 @@ export const useGalleryWorks = (step: number) => {
 
       const matchWord =
         !lowerWord ||
-        work.title.toLowerCase().includes(lowerWord)
+        work.name.toLowerCase().includes(lowerWord)
 
       return matchTag && matchWord
     })
@@ -51,7 +56,7 @@ export const useGalleryWorks = (step: number) => {
 
       case "likes":
         works.value = [...works.value].sort(
-          (a, b) => b.likeCount - a.likeCount
+          (a, b) => b.likes - a.likes
         )
         break
     }

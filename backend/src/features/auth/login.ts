@@ -5,7 +5,7 @@ import { env } from "@/constants/env/env"
 import { jwtDecode } from "jwt-decode";
 import { prisma } from "@/lib/prisma/prisma"
 import { User } from "@/lib/prisma/prismaType"
-
+import argon2 from "argon2";
 
 
 
@@ -26,8 +26,9 @@ export const useLogin = () => {
       }
     });
     if (!userResponse) return "notfoundUser"
-    const this_user = userResponse.passwordHash == user.password ? userResponse : null
-    if (!this_user) return "notdifferentPassward"
+    const passward = await argon2.verify(userResponse.passwordHash, user.password);
+    if (!passward) return "notdifferentPassward"
+    const this_user = userResponse
     const userId = this_user.id
     const token = await sign(
       {

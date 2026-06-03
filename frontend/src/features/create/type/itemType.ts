@@ -1,5 +1,5 @@
 import type { CategoryId } from "./categoryType";
-import type { createdType } from "../composables/useCreateWork";
+import type { createdType } from "@/features/create/type/tokens"
 
 interface itemCard {
   id: string;

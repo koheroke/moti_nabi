@@ -5,7 +5,7 @@
 import { useRouter } from "vue-router";
 const router = useRouter();
 const props = defineProps<{
-  userid: number;
+  userid: string;
   size: "small" | "medium" | "large";
 }>();
 const testThumbnailUrl = "https://picsum.photos/400/300";

@@ -1,28 +1,30 @@
 <template>
   <div class="UserWorksPanel">
     <GalleryWorksSection
-      :works="visibleWorks"
-      :onMoreClick="onMoreClick"
+      :works="visibleItems"
+      :onMoreClick="more"
     ></GalleryWorksSection>
   </div>
 </template>
 
 <script setup lang="ts">
 import GalleryWorksSection from "@/features/home/components/GalleryWorksSection.vue";
-import { UserWorks } from "../composables/UserWorks";
 import { useWorkPackageStore } from "@/features/work/store/workPackageStore";
-import { computed } from "vue";
+import { useIncrementalList } from "@/composables/array/useIncrementalList";
+import { storeToRefs } from "pinia";
+
 const workPackageStore = useWorkPackageStore();
 
-const workPackage = computed(() => workPackageStore.userWorkPackageStoreGetter);
-const step = 20;
+const { userWorkPackageStoreGetter } = storeToRefs(workPackageStore);
+
+const { visibleItems, more } = useIncrementalList(
+  userWorkPackageStoreGetter,
+  20,
+);
+
 const props = defineProps<{
   userId: string;
 }>();
-const { visibleWorks, more } = UserWorks(step, props.userId);
-const onMoreClick = () => {
-  more();
-};
 </script>
 <style lang="css" scoped>
 .UserWorksPanel {

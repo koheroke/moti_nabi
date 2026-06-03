@@ -5,7 +5,7 @@ import type { CategoryId } from "@/features/create/type/categoryType";
 import type { iconInfomation, UserLuggage_SaveDBData } from "@/features/create/type/apiType";
 import { type Category, } from "@/features/create/type/categoryType";
 import type { CaseType } from "@/features/create/type/itemType";
-import type { provisionalRemovePocket, provisionalResizePocket, addPreviewCaseToken, deletePreviewCaseToken, addPreviewItemToken, addItemCountToken, addBookmarkToken, deletePreviewItemToken, addListItemToken } from '../composables/useCreateWork';
+import type { provisionalRemovePocket, provisionalResizePocket, addPreviewCaseToken, deletePreviewCaseToken, addPreviewItemToken, addItemCountToken, addBookmarkToken, deletePreviewItemToken, addListItemToken } from "@/features/create/type/tokens";
 export interface caseArray {
   id: string;
   data: Case
@@ -13,14 +13,14 @@ export interface caseArray {
 
 export const useCreateStore = defineStore("create", {
   state: () => ({
-    workId: null as string | null,
+    workId: "" as string | null,
     userLuggage_SaveDBData: null as UserLuggage_SaveDBData | null,
     listItem: null as Record<string, itemCard> | null,
     previewCase: {} as Record<string, Case>,
     searchText: "",
     staticItemData: {} as Record<string, itemCard>,
     category: null as CategoryId | null,
-    addItemCounter: null as number | null,
+    addItemCounter: 0 as number | null,
     staticCases: {} as Record<string, Case>,
     iconMap: {} as Record<string, iconInfomation>,
     categoryColor: {} as Record<string, string>,
@@ -132,7 +132,7 @@ export const useCreateStore = defineStore("create", {
       const pocket = this.previewCase[token.caseId].pockets[token.pocketId]
       this.addItemCounter++
       const cardItem: previewItem = {
-        ...this.listItem[token.itemId], ...{ originalId: token.originalId, count: 1, innerItems: new Map() }
+        ...this.listItem[token.itemId], ...{ originalId: token.originalId as string, count: 1, innerItems: new Map() }
       }
       if (token.parentItemId == undefined) {
         pocket.items.set(cardItem.originalId, cardItem)

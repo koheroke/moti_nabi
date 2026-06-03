@@ -1,17 +1,27 @@
 <template>
   <HomeWorksSection
-    :works="works"
+    :works="visibleItems"
     :onMoreClick="onMoreClick"
   ></HomeWorksSection>
 </template>
 
 <script setup lang="ts">
 import HomeWorksSection from "./HomeWorksSection.vue";
-import { useWorks } from "../composables/Works";
 import { useRouter } from "vue-router";
-const router = useRouter();
+import { useUserStore } from "@/store/user/userStore.ts";
+import { useIncrementalList } from "@/composables/array/useIncrementalList.ts";
+import { useWorkPackageStore } from "@/features/work/store/workPackageStore.ts";
+import { computed } from "vue";
 
-const { works } = useWorks();
+const workPackageStore = useWorkPackageStore();
+const userStore = useUserStore();
+import { storeToRefs } from "pinia";
+const { workPackageStoreGetter } = storeToRefs(workPackageStore);
+const sortedWorks = computed(() =>
+  [...workPackageStoreGetter.value].sort((a, b) => b.likes - a.likes),
+);
+const { visibleItems, more } = useIncrementalList(sortedWorks, 5);
+const router = useRouter();
 const onMoreClick = () => {
   router.push("/gallery");
 };

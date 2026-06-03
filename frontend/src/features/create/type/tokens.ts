@@ -1,0 +1,84 @@
+import type { CategoryId } from "../type/categoryType";
+import type { Case } from "../type/casetype";
+import type { CaseType } from "../type/itemType";
+export type loadResponse = "noneNameorWorkId" | "fallLoadData" | "damagedData" | "none"
+export type addItemToPreviewResponse = "nonePreview" | "addPreview" | "noneItem" | "isRegulatedAction"
+export type createdType = "default" | "userCreated" | "othersUserCreated"
+
+
+
+export interface addItemCountToken {
+  originalId: string
+  caseId: string
+  pocketId: string
+  parentItemId: string | undefined
+  pulse: number;
+}
+
+export interface deletePreviewItemToken {
+  originalId: string
+  caseId: string
+  pocketId: string
+  innnerItemToken?: addPreviewItemToken[]
+  parentItemId: string | undefined
+  itemId: string
+}
+
+export interface addPreviewItemToken {
+  pocketId: string
+  caseId: string
+  parentItemId?: string
+  itemId: string
+  originalId: string | null
+}
+
+export interface positionChangePreviewItemToken {
+  popPocketId: string
+  popCaseId: string
+  pushPocketId: string,
+  pushCaseId: string
+  originalId: string
+}
+
+export interface addPreviewCaseToken {
+  case: Case | {
+    caseId: string,
+    caseType: CaseType
+  }
+  reverse: boolean
+}
+export interface deletePreviewCaseToken {
+  deletecase: Case,
+  id: string
+}
+export interface confirmedResizePocketToken {
+  pos: { x: number, y: number, width: number, height: number }
+  caseId: string,
+  pocketId: string
+}
+export interface provisionalResizePocket {
+  caseId: string,
+  pocketId: string,
+  resizeData: { x: number, y: number, width: number, height: number }
+}
+export interface provisionalRemovePocket {
+  caseId: string,
+  pocketId: string,
+  removeData: { x: number, y: number }
+}
+
+
+//リスト
+export interface addListItemToken {
+  name: string
+  category: CategoryId[],
+  isStorage: boolean,
+  iconId: string
+  createType: createdType
+}
+
+
+export interface addBookmarkToken {
+  itemId: string
+}
+

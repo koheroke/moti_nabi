@@ -38,8 +38,10 @@ interface saveDBaddedItem {
 
 
 
-import { type createdType } from "../composables/useCreateWork"
+import { type createdType } from "@/features/create/type/tokens"
 interface UserLuggage_SaveDBData {
+  workId: string
+  workName: string
   itemListDatas: {
     addedItems: Record<string, saveDBaddedItem>
     bookmarks: Bookmarks
@@ -47,7 +49,6 @@ interface UserLuggage_SaveDBData {
   },
   previewDatas: {
     mainLuggage: Record<string, saveDBpreviewData>
-    caseType: CaseType
     addItemCounter: number
   }
 };

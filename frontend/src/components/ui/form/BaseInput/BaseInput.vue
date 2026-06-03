@@ -2,6 +2,7 @@
 defineProps<{
   modelValue: string;
   type?: string;
+  placeholder?: string;
 }>();
 
 const emit = defineEmits(["update:modelValue"]);
@@ -10,6 +11,7 @@ const emit = defineEmits(["update:modelValue"]);
 <template>
   <input
     class="c-input"
+    :placeholder="placeholder || ''"
     :type="type || 'text'"
     :value="modelValue"
     @input="

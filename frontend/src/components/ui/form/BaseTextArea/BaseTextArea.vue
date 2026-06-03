@@ -12,7 +12,7 @@
       :disabled="disabled"
       :rows="rows"
       class="textarea"
-      @blur="onInput"
+      @input="onInput"
     />
 
     <div v-if="maxlength" class="textarea-count">

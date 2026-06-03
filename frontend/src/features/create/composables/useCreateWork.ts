@@ -1,131 +1,83 @@
 import type { UserLuggage_SaveDBData } from "../type/apiType";
-import type { Pocket, Case } from "../type/casetype";
+import type { Case } from "../type/casetype";
 import type { itemCard, CaseType } from "../type/itemType";
-import type { CategoryId } from "../type/categoryType";
+import type {
+  loadResponse, addItemToPreviewResponse,
+  addItemCountToken,
+  deletePreviewItemToken,
+  addPreviewItemToken,
+  addPreviewCaseToken,
+  deletePreviewCaseToken,
+  confirmedResizePocketToken,
+  provisionalResizePocket,
+  provisionalRemovePocket,
+  addListItemToken,
+  addBookmarkToken
+} from "@/features/create/type/tokens";
+
 import { useApplyCreateAction } from "./applyCreateAction";
 import { useCreateApi } from "../api/createApi";
 import { useUserStore } from "@/store/user/userStore";
 import { useCreateStore } from "../store/createStore";
 import type { alterationToken } from "./applyCreateAction";
 import { useAlterationLogStore } from "../store/useAlterationLogStore"
-
-
-
-type loadResponse = "noneNameorWorkId" | "fallLoadData" | "damagedData" | "none"
-type addItemToPreviewResponse = "nonePreview" | "addPreview" | "noneItem" | "isRegulatedAction"
-export type createdType = "default" | "userCreated" | "othersUserCreated"
-
-
-export interface addItemCountToken {
-  originalId: string
-  caseId: string
-  pocketId: string
-  parentItemId: string | undefined
-  pulse: number;
-}
-
-export interface deletePreviewItemToken {
-  originalId: string
-  caseId: string
-  pocketId: string
-  innnerItemToken?: addPreviewItemToken[]
-  parentItemId: string | undefined
-  itemId: string
-}
-
-export interface addPreviewItemToken {
-  pocketId: string
-  caseId: string
-  parentItemId?: string
-  itemId: string
-  originalId: string
-}
-
-export interface positionChangePreviewItemToken {
-  popPocketId: string
-  popCaseId: string
-  pushPocketId: string,
-  pushCaseId: string
-  originalId: string
-}
-
-export interface addPreviewCaseToken {
-  case: Case | {
-    caseId: string,
-    caseType: CaseType
-  }
-  reverse: boolean
-}
-export interface deletePreviewCaseToken {
-  deletecase: Case,
-  id: string
-}
-export interface confirmedResizePocketToken {
-  pos: { x: number, y: number, width: number, height: number }
-  caseId: string,
-  pocketId: string
-}
-export interface provisionalResizePocket {
-  caseId: string,
-  pocketId: string,
-  resizeData: { x: number, y: number, width: number, height: number }
-}
-export interface provisionalRemovePocket {
-  caseId: string,
-  pocketId: string,
-  removeData: { x: number, y: number }
-}
-
-
-//リスト
-export interface addListItemToken {
-  name: string
-  category: CategoryId[],
-  isStorage: boolean,
-  iconId: string
-  createType: createdType
-}
-
-
-export interface addBookmarkToken {
-  itemId: string
-}
-
-//
-
-
+import { useWorkPackageStore } from "@/features/work/store/workPackageStore";
+const workPackageStore = useWorkPackageStore();
 
 export const UseCreateWork = () => {
   const createStore = useCreateStore()
   const userStore = useUserStore()
   const alterationLog = useAlterationLogStore()
   const createApi = useCreateApi()
-
   const applyCreateAction = useApplyCreateAction()
 
-  const load = async (): Promise<loadResponse> => {
-    // const userId = userStore.userId
-    // const theWorkId = createStore.workIdGetter
-
-    const userId = 1 //テスト
-    const theWorkId = 1 //テスト
 
 
-    if (!userId || !theWorkId) return "noneNameorWorkId"
+  const createNewwork = async () => {
+    const userId = userStore.userId
+    let newWork = null as UserLuggage_SaveDBData | null
+    let vuepreviewData = {} as Record<string, Case>
+    let vueItemList = {} as Record<string, itemCard>
+    let addItemCounter = 0 as number
+    try {
+      newWork = await createApi.createNewWork(userId)
+    } catch (e) {
+      return "fallLoadData"
+    }
+    try {
+      if (newWork == null) throw new Error()
+      const createAction = useApplyCreateAction()
+      await createAction.initCreateStaticData()
+      const response = applyCreateAction.hydrateCreateState(newWork)
+      vuepreviewData = response.vuepreviewData
+      vueItemList = response.vueItemList
+      addItemCounter = response.addItemCounter
+    } catch (e) {
+      return "damagedData"
+    }
+    createStore.setAddItemCounter(addItemCounter)
+    createStore.setSaveDBData(newWork)
+    createStore.setlistItem(vueItemList)
+    createStore.setpreviewData(vuepreviewData)
+    return "none"
+
+  }
+
+
+  const loadWork = async (): Promise<loadResponse> => {
+    const theWorkId: string = workPackageStore.selectedPackageGetter.id
+
+    if (!theWorkId) return "noneNameorWorkId"
     let data = null as UserLuggage_SaveDBData | null
     let vuepreviewData = {} as Record<string, Case>
     let vueItemList = {} as Record<string, itemCard>
     let addItemCounter = 0 as number
 
     try {
-      data = await createApi.load(userId, theWorkId)
+      data = await createApi.getWork(theWorkId)
     } catch (e) {
       return "fallLoadData"
     }
-
-    const createAction = useApplyCreateAction()
-    await createAction.initCreateStaticData()
-    const response = applyCreateAction.hydrateCreateState(data)
     try {
       if (data == null) throw new Error()
       const createAction = useApplyCreateAction()
@@ -151,7 +103,7 @@ export const UseCreateWork = () => {
     const item = items[itemId]
     if (!item) return "noneItem"
     if (item.isStorage == true && token.parentItemId != undefined) return "isRegulatedAction"
-    const originalId = token.originalId ? token.originalId : `item_${createStore.addItemCounter}`
+    const originalId = (token.originalId != null) ? token.originalId : `item_${createStore.addItemCounter}`
     const deleteToken: deletePreviewItemToken = {
       originalId: originalId,
       caseId: token.caseId,
@@ -429,5 +381,7 @@ export const UseCreateWork = () => {
   //   push_target.set(target_item, target_item)
   // }
 
-  return { confirmedRemovePocket, provisionalRemovePocket, provisionalResizePocket, confirmedResizePocket, load, addItemToPreview, addItemCount, addBookmark, deletePreviewItem, addListItem, addCase, deleteCase }
+  return { createNewwork, confirmedRemovePocket, provisionalRemovePocket, provisionalResizePocket, confirmedResizePocket, loadWork, addItemToPreview, addItemCount, addBookmark, deletePreviewItem, addListItem, addCase, deleteCase }
 }
+
+

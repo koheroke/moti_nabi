@@ -31,7 +31,7 @@ const createWork = UseCreateWork();
 const workDetail = ref<WorkDetail | null>(null);
 
 onMounted(async () => {
-  await createWork.load();
+  await createWork.loadWork();
   workDetail.value = await fetchWorkDetail();
 });
 </script>

@@ -19,11 +19,11 @@ import sideBar from "@/features/create/components/sideBar/sideBar.vue";
 import { UseCreateWork } from "@/features/create/composables/useCreateWork";
 import { onMounted } from "vue";
 import { useAlertStore } from "@/store/feedback/alertStore";
+
 const alertStore = useAlertStore();
 const createWork = UseCreateWork();
 onMounted(async () => {
-  const res = await createWork.load();
-
+  const res = await createWork.loadWork();
   switch (res) {
     case "noneNameorWorkId":
       alertStore.showAlert("ユーザー情報の取得に失敗しました", true);

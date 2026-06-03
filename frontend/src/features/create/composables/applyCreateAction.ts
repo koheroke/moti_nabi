@@ -1,16 +1,11 @@
 
-import type { provisionalResizePocket, provisionalRemovePocket, confirmedResizePocketToken, deletePreviewCaseToken, addPreviewCaseToken, addPreviewItemToken, addItemCountToken, addBookmarkToken, addListItemToken, deletePreviewItemToken } from "./useCreateWork";
+import type { provisionalResizePocket, provisionalRemovePocket, confirmedResizePocketToken, deletePreviewCaseToken, addPreviewCaseToken, addPreviewItemToken, addItemCountToken, addBookmarkToken, addListItemToken, deletePreviewItemToken } from "@/features/create/type/tokens";
 import { useCreateStore } from "../store/createStore";
 import type { server_alterationTokenType } from "../api/createSocketApi"
 import { useSaveQueue } from "../services/saveQueue";
 import type { Case } from "@/features/create/type/casetype";
 import type { UserLuggage_SaveDBData, saveDBpreviewData, saveDBprevieItems } from "@/features/create/type/apiType";
 import type { previewItem } from "@/features/create/type/casetype";
-import { useSocketApi } from "../api/createSocketApi";
-
-const socketApi = useSocketApi()
-
-
 
 
 export type alterationType = "previewItems_additem"
@@ -224,7 +219,7 @@ const useApplyCreateAction = () => {
         break
       }
 
-      case 'confirmed_resizePocket': {
+      case 'confirmed_removePocket': {
         const res = createStore.reMovePocket(token.token as provisionalRemovePocket)
         const this_token = token.token as provisionalRemovePocket
         dbpushToken.path = ["previewDatas", "mainLuggage", this_token.caseId, "pockets", this_token.pocketId, "innerItems"]

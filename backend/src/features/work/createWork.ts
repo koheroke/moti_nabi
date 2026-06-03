@@ -1,15 +1,16 @@
 import { prisma } from "@/lib/prisma/prisma"
 import { Work } from "@/generated/prisma/client"
-import { createApi, editWorkPackageApi, editWorkToken } from "@/features/work/types"
+import { editWorkPackageApi, editWorkToken } from "@/features/work/types"
 
 
 const workData = new Map()
 
 const useWork = () => {
-  const createNewWork = async (createApi: createApi) => {
+  const createNewWork = async (userId: string) => {
+
     const work = await prisma.work.create({
       data: {
-        name: createApi.name,
+        name: "新しいリスト",
         thumbnailUrl: null,
         data: "",
         public: false,
@@ -18,14 +19,14 @@ const useWork = () => {
         copies: 0,
         members: {
           create: {
-            userId: createApi.userId,
+            userId: userId,
             role: "owner",
           },
         },
       }
     })
     workData.set(work.id, work)
-    return work.id
+    return { workName: work.name, workId: work.id }
   }
 
 
@@ -39,6 +40,7 @@ const useWork = () => {
   }
 
   const editWorkPackage = async (workId: string, editData: editWorkPackageApi) => {
+
     const work = await prisma.work.update({
       where: {
         id: workId,

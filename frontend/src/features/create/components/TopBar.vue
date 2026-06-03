@@ -16,10 +16,9 @@
       >
         <UserIcon
           size="medium"
-          :userid="1"
+          userid="a"
           style="margin-right: 20px"
         ></UserIcon>
-
         <BaseButton variant="ghost">招待</BaseButton>
         <BaseButton>公開</BaseButton>
       </div>
@@ -31,9 +30,7 @@ import BaseButton from "@/components/ui/form/BaseButton/BaseButton.vue";
 import { CornerUpLeft, CornerUpRight } from "lucide-vue-next";
 import UserIcon from "@/features/user/components/UserIcon.vue";
 import { useAlterationLogStore } from "../store/useAlterationLogStore";
-
 const alterationLog = useAlterationLogStore();
-
 const forward = () => {
   alterationLog.redo();
 };

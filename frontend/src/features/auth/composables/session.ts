@@ -3,9 +3,10 @@ const apiUrl = import.meta.env.VITE_API_BASE_URL;
 const url = `${apiUrl}/auth`;
 
 interface loginToken {
-  id: number
+  id: string
   name: string
   email: string
+  iconUrl: string
 }
 
 export const useSession = () => {

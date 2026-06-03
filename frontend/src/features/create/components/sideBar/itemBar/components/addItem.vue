@@ -70,7 +70,7 @@ import BaseInput from "@/components/ui/form/BaseInput/BaseInput.vue";
 import { ref, watch } from "vue";
 import type { Category } from "@/features/create/type/casetype.ts";
 import type { CategoryId } from "@/features/create/type/categoryType.ts";
-import type { addListItemToken } from "@/features/create/composables/useCreateWork";
+import type { addListItemToken } from "@/features/create/type/tokens.ts";
 import { UseCreateWork } from "@/features/create/composables/useCreateWork";
 import iconSelect from "./iconSelect.vue";
 import { useCreateStore } from "../../../../store/createStore";

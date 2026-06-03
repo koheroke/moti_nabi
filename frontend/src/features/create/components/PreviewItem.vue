@@ -48,8 +48,11 @@ const props = defineProps<{
 import { CirclePlus, CircleMinus } from "lucide-vue-next";
 import { UseCreateWork } from "../composables/useCreateWork";
 import { BaseButton } from "@/components/ui/form/BaseButton";
-import type { deletePreviewItemToken } from "../composables/useCreateWork";
-import type { addPreviewItemToken } from "../composables/useCreateWork";
+import type {
+  deletePreviewItemToken,
+  addPreviewItemToken,
+} from "@/features/create/type/tokens.ts";
+
 import { useCreateStore } from "../store/createStore";
 const createStore = useCreateStore();
 const createWork = UseCreateWork();

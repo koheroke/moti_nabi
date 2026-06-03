@@ -27,7 +27,8 @@ export const useSignup = () => {
       const user: User = {
         id: userId,
         name: signupInput.name,
-        email: signupInput.email
+        email: signupInput.email,
+        iconUrl: ""
 
       }
       userStore.login(user, token)

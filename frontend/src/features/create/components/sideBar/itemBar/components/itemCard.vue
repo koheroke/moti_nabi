@@ -35,7 +35,7 @@
 import type { itemCard } from "@/features/create/type/itemType";
 import { Star } from "lucide-vue-next";
 import { UseCreateWork } from "@/features/create/composables/useCreateWork";
-import type { addBookmarkToken } from "@/features/create/composables/useCreateWork";
+import type { addBookmarkToken } from "@/features/create/type/tokens";
 
 const createWork = UseCreateWork();
 const props = defineProps<{ item: itemCard }>();

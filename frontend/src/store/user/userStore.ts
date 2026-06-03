@@ -1,15 +1,17 @@
 // src/stores/user.ts
 import { defineStore } from 'pinia'
 const testUser = {
-  id: 1,
+  id: "",
   name: "あずまこうへい",
-  email: "@aaa"
+  email: "@aaa",
+  iconUrl: ""
 }
 export type User = {
-  id: number
+  id: string
   name: string
   email: string
   role?: string
+  iconUrl: string
 }
 
 type UserState = {
@@ -22,7 +24,7 @@ type UserState = {
 
 export const useUserStore = defineStore('user', {
   state: (): UserState => ({
-    user: testUser,
+    user: {} as User,
     token: localStorage.getItem('token'),
     isLoading: false,
     isAuthenticated: false,

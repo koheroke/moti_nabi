@@ -1,6 +1,9 @@
 import { type UserLuggage_SaveDBData } from "../type/apiType";
 
 const userLuggage_SaveDBData: UserLuggage_SaveDBData = {
+  workId: "work_1",
+  workName: "test",
+
   itemListDatas: {
     addedItems: {
       item_1: {
@@ -17,7 +20,6 @@ const userLuggage_SaveDBData: UserLuggage_SaveDBData = {
   },
 
   previewDatas: {
-    caseType: "HardSuitcase",
     addItemCounter: 1,
 
     mainLuggage: {

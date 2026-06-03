@@ -83,10 +83,7 @@
 </template>
 <script setup lang="ts">
 import { type Pocket } from "@/features/create/type/casetype";
-import {
-  UseCreateWork,
-  type provisionalResizePocket,
-} from "../../composables/useCreateWork";
+import { UseCreateWork } from "@/features/create/composables/useCreateWork";
 import { onMounted, onUnmounted } from "vue";
 const createWork = UseCreateWork();
 const props = defineProps<{

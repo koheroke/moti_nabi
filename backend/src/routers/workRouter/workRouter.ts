@@ -1,16 +1,16 @@
 import { Hono } from 'hono';
 import { useWork } from '@/features/work/createWork';
 const createWork = useWork()
-const workRouter = new Hono();
+export const workRouter = new Hono();
 workRouter.post('/editWorkPackage', async (c) => {
   const body = await c.req.json();
   const res = await createWork.editWorkPackage(body.workId, body.data)
   return c.json(res);
 });
 
-workRouter.post('/pushWork', async (c) => {
+workRouter.post('/createWork', async (c) => {
   const body = await c.req.json();
-  const res = await createWork.editWorkPackage(body.workId, body.data)
+  const res = await createWork.createNewWork(body.workId)
   return c.json(res);
 });
 

@@ -6,7 +6,7 @@
     <div v-else="edit">
       <ProfileSection :userId="userId" v-model="profile"></ProfileSection>
     </div>
-    <UserWorksPanel></UserWorksPanel>
+    <UserWorksPanel :userId="userId"></UserWorksPanel>
   </div>
 </template>
 <script setup lang="ts">

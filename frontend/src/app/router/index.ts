@@ -6,8 +6,9 @@ import { createRoutes } from "./routers/create"
 import { userRoutes } from './routers/user'
 import { homeRoutes } from './routers/home'
 import { galleryRoutes } from './routers/gallery'
-import {detailRoutes} from "./routers/workDetail"
+import { detailRoutes } from "./routers/workDetail"
 import { entryRoutes } from './routers/entry'
+import { publishReadyRouters } from './routers/publishReady'
 // import { billingRoutes } from './routes/billing'
 // import { systemRoutes } from './routes/system'
 
@@ -19,6 +20,7 @@ const routes: RouteRecordRaw[] = [
   ...galleryRoutes,
   ...detailRoutes,
   ...entryRoutes,
+  ...publishReadyRouters
 ]
 
 export const router = createRouter({

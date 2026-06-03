@@ -37,11 +37,8 @@
 <script setup lang="ts">
 import { X } from "lucide-vue-next";
 import { ref } from "vue";
-import {
-  UseCreateWork,
-  type addPreviewItemToken,
-  type positionChangePreviewItemToken,
-} from "../composables/useCreateWork";
+import { type addPreviewItemToken } from "@/features/create/type/tokens.ts";
+import { UseCreateWork } from "@/features/create/composables/useCreateWork";
 import PreviewItem from "./PreviewItem.vue";
 import type { previewItem } from "../type/casetype.ts";
 import { el } from "vuetify/locale";
@@ -66,6 +63,7 @@ const onDrop = (event: DragEvent) => {
       itemId: dragged_itemId,
       pocketId: props.pocket.id,
       caseId: props.pocket.caseId,
+      originalId: null,
     };
     createWork.addItemToPreview(addPreviewItemToken);
   }
