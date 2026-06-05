@@ -11,7 +11,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { use2fa, type Setup2FAResponse } from "@/features/auth/composables/2fa";
-import { useUserStore } from "@/store/user/userStore";
+import { useUserAuthStore } from "@/store/user/userAuthStore";
 import SplitQr2fa from "@/features/auth/components/2fa/left/SplitQr2fa.vue";
 import AuthProcedureScreen from "@/features/auth/components/2fa/right/AuthProcedureScreen.vue";
 import { onMounted } from "vue";
@@ -39,12 +39,12 @@ const sendOtp = async (otp: string) => {
 };
 
 onMounted(async () => {
-  if (!userStore.isAuthenticated || userStore.isTempAuthenticated) {
+  if (!userAuthstore.isAuthenticated || userAuthstore.isTempAuthenticated) {
     return;
   }
   use2faResponse.value = await this_2fa.setup();
 });
-const userStore = useUserStore();
+const userAuthstore = useUserAuthStore();
 </script>
 <style lang="css" scoped>
 .page {

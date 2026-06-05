@@ -17,7 +17,7 @@ import { t as p } from "./_plugin-vue_export-helper-S3RvzygF.js";
 import { c as m, i as h, l as g, n as _, o as v } from "./index-CqO4ohJM.js";
 import { t as y } from "./BaseInput-D5in9GYV.js";
 import { t as b } from "./FormField-ZhMS6zHU.js";
-import { t as x } from "./userStore-B06jf6X7.js";
+import { t as x } from "./userAuthstore-B06jf6X7.js";
 var S = x(),
   C = `http://localhost:3000/auth/signup`,
   w = () => {

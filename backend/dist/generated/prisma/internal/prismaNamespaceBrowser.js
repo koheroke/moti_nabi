@@ -48,7 +48,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NullsOrder = exports.QueryMode = exports.SortOrder = exports.AccountScalarFieldEnum = exports.SiteMemberScalarFieldEnum = exports.WorkScalarFieldEnum = exports.UserScalarFieldEnum = exports.TransactionIsolationLevel = exports.ModelName = exports.AnyNull = exports.JsonNull = exports.DbNull = exports.NullTypes = exports.Decimal = void 0;
+exports.NullsOrder = exports.JsonNullValueFilter = exports.QueryMode = exports.JsonNullValueInput = exports.SortOrder = exports.WorkScalarFieldEnum = exports.SiteMemberScalarFieldEnum = exports.AccountScalarFieldEnum = exports.UserAuthScalarFieldEnum = exports.UserProfileScalarFieldEnum = exports.UserScalarFieldEnum = exports.TransactionIsolationLevel = exports.ModelName = exports.AnyNull = exports.JsonNull = exports.DbNull = exports.NullTypes = exports.Decimal = void 0;
 const runtime = __importStar(require("@prisma/client/runtime/index-browser"));
 exports.Decimal = runtime.Decimal;
 exports.NullTypes = {
@@ -76,9 +76,11 @@ exports.JsonNull = runtime.JsonNull;
 exports.AnyNull = runtime.AnyNull;
 exports.ModelName = {
     User: 'User',
-    Work: 'Work',
+    UserProfile: 'UserProfile',
+    UserAuth: 'UserAuth',
+    Account: 'Account',
     SiteMember: 'SiteMember',
-    Account: 'Account'
+    Work: 'Work'
 };
 /*
  * Enums
@@ -92,24 +94,30 @@ exports.TransactionIsolationLevel = runtime.makeStrictEnum({
 exports.UserScalarFieldEnum = {
     id: 'id',
     email: 'email',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+};
+exports.UserProfileScalarFieldEnum = {
+    id: 'id',
+    userId: 'userId',
     iconUrl: 'iconUrl',
-    passwordHash: 'passwordHash',
     name: 'name',
+    snsAccounts: 'snsAccounts',
     followUserIds: 'followUserIds',
     bookmarkWorkIds: 'bookmarkWorkIds',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt',
-    twoFactorSecret: 'twoFactorSecret'
+    bio: 'bio'
 };
-exports.WorkScalarFieldEnum = {
+exports.UserAuthScalarFieldEnum = {
     id: 'id',
-    name: 'name',
-    thumbnailUrl: 'thumbnailUrl',
-    data: 'data',
-    public: 'public',
-    likes: 'likes',
-    tags: 'tags',
-    copies: 'copies'
+    userId: 'userId',
+    twoFactorSecret: 'twoFactorSecret',
+    passwordHash: 'passwordHash'
+};
+exports.AccountScalarFieldEnum = {
+    id: 'id',
+    userId: 'userId',
+    provider: 'provider',
+    providerAccountId: 'providerAccountId'
 };
 exports.SiteMemberScalarFieldEnum = {
     id: 'id',
@@ -118,19 +126,33 @@ exports.SiteMemberScalarFieldEnum = {
     role: 'role',
     addedAt: 'addedAt'
 };
-exports.AccountScalarFieldEnum = {
+exports.WorkScalarFieldEnum = {
     id: 'id',
-    userId: 'userId',
-    provider: 'provider',
-    providerAccountId: 'providerAccountId'
+    name: 'name',
+    bio: 'bio',
+    snsAcounts: 'snsAcounts',
+    thumbnailUrl: 'thumbnailUrl',
+    data: 'data',
+    public: 'public',
+    likes: 'likes',
+    tags: 'tags',
+    copies: 'copies'
 };
 exports.SortOrder = {
     asc: 'asc',
     desc: 'desc'
 };
+exports.JsonNullValueInput = {
+    JsonNull: exports.JsonNull
+};
 exports.QueryMode = {
     default: 'default',
     insensitive: 'insensitive'
+};
+exports.JsonNullValueFilter = {
+    DbNull: exports.DbNull,
+    JsonNull: exports.JsonNull,
+    AnyNull: exports.AnyNull
 };
 exports.NullsOrder = {
     first: 'first',

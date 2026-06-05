@@ -2,13 +2,13 @@
 
 <script setup lang="ts">
 import { onMounted } from "vue";
-import { useUserStore } from "@/store/user/userStore";
+import { useUserAuthStore } from "@/store/user/userAuthStore";
 import { useRouter } from "vue-router";
 
-const userStore = useUserStore();
+const userAuthstore = useUserAuthStore();
 const router = useRouter();
 
 onMounted(() => {
-  router.replace(userStore.isTempAuthenticated ? "/" : "/2fa");
+  router.replace(userAuthstore.isTempAuthenticated ? "/" : "/2fa");
 });
 </script>

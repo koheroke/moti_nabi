@@ -15,8 +15,8 @@ export const use2fa = () => {
     const secret = speakeasy.generateSecret({
       name: `YourAppName:${user.email}`,
     });
-    await prisma.user.update({
-      where: { id: user.userId },
+    await prisma.userAuth.update({
+      where: { userId: user.userId },
       data: { twoFactorSecret: secret.base32 }
     });
 
@@ -28,9 +28,9 @@ export const use2fa = () => {
     };
   }
   const verification2fa = async (user: verification): Promise<boolean> => {
-    const userResponse = await prisma.user.findFirst({
+    const userResponse = await prisma.userAuth.findFirst({
       where: {
-        id: user.userId
+        userId: user.userId
       }
     });
     if (!userResponse) return false

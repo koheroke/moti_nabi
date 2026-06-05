@@ -13,8 +13,8 @@ const use2fa = () => {
         const secret = speakeasy_1.default.generateSecret({
             name: `YourAppName:${user.email}`,
         });
-        await prisma_1.prisma.user.update({
-            where: { id: user.userId },
+        await prisma_1.prisma.userAuth.update({
+            where: { userId: user.userId },
             data: { twoFactorSecret: secret.base32 }
         });
         const qrCodeUrl = await qrcode_1.default.toDataURL(secret.otpauth_url);
@@ -25,9 +25,9 @@ const use2fa = () => {
         };
     };
     const verification2fa = async (user) => {
-        const userResponse = await prisma_1.prisma.user.findFirst({
+        const userResponse = await prisma_1.prisma.userAuth.findFirst({
             where: {
-                id: user.userId
+                userId: user.userId
             }
         });
         if (!userResponse)

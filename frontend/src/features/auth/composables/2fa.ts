@@ -1,5 +1,5 @@
-import { useUserStore } from "@/store/user/userStore"
-const userStore = useUserStore()
+import { useUserAuthStore } from "@/store/user/userAuthStore"
+const userStore = useUserAuthStore()
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 const url = `${apiUrl}/auth/2fa`;
 export interface Setup2FAResponse {

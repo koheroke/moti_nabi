@@ -1,6 +1,5 @@
 import { prisma } from "@/lib/prisma/prisma"
 import argon2 from "argon2";
-import type { User } from "@/generated/prisma/client";
 export type SignupInput = {
   name: string
   email: string
@@ -10,25 +9,33 @@ export type SignupInput = {
 export const usesignup = () => {
   const singup = async (user: SignupInput) => {
     const passwordhash = await argon2.hash(user.password);
-    let users: User = {} as User
+    const snsAccounts = [
+      { type: "x", link: "" },
+      { type: "facebook", link: "" },
+      { type: "instagram", link: "" },
+    ]
     try {
-      users = await prisma.user.create({
+      const users = await prisma.user.create({
         data: {
           email: user.email,
-          passwordHash: passwordhash,
-          name: user.name,
-          followUserIds: [],
-          bookmarkWorkIds: [],
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          twoFactorSecret: null,
-          iconUrl: null,
-        }
-      })
-    } catch (e) {
-      return { userId: null, res: "users", }
-    } finally {
+          profile: {
+            create: {
+              name: user.name,
+              iconUrl: "/images/user/defaultIcon.png",
+              bio: "自己紹介",
+              snsAccounts: snsAccounts
+            },
+          },
+          auth: {
+            create: {
+              passwordHash: passwordhash,
+            },
+          },
+        },
+      });
       return { userId: users.id, res: "users", }
+    } catch (e) {
+      return { userId: null, res: "error", }
     }
   }
   return { singup }

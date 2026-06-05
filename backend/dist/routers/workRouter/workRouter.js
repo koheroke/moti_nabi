@@ -10,9 +10,9 @@ exports.workRouter.post('/editWorkPackage', async (c) => {
     const res = await createWork.editWorkPackage(body.workId, body.data);
     return c.json(res);
 });
-exports.workRouter.post('/createWork', async (c) => {
+exports.workRouter.post('/create', async (c) => {
     const body = await c.req.json();
-    const res = await createWork.createNewWork(body.workId);
+    const res = await createWork.createNewWork(body.userId);
     return c.json(res);
 });
 exports.workRouter.post('/getWork', async (c) => {

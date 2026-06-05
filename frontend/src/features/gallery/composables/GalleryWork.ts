@@ -4,16 +4,16 @@ import { onMounted, ref } from "vue"
 import type { ParseSearchQuery, SortType } from "../type"
 import { isSubset } from "@/composables/array/isSubset"
 import { useWorkPackageStore } from "@/features/work/store/workPackageStore"
-import { useGetWorkPackage } from "@/features/work/composables/work"
+import { useGetWorkPackages } from "@/features/work/composables/work"
 const workPackageStore = useWorkPackageStore();
-const getWorkPackage = useGetWorkPackage()
+const getWorkPackages = useGetWorkPackages()
 
 export const useGalleryWorks = (step: number) => {
   const allWorks = ref<workPackage[]>([])
   const works = ref<workPackage[]>([])
 
   onMounted(async () => {
-    const work = await getWorkPackage.getworkPackage()
+    const work = await getWorkPackages.getworkPackages()
     workPackageStore.setWorkPackageStore(work)
     const fetchedWorks = workPackageStore.workPackageStoreGetter
     allWorks.value = fetchedWorks

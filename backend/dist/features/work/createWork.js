@@ -22,6 +22,7 @@ const useWork = () => {
                 },
             }
         });
+        console.log("work", work);
         workData.set(work.id, work);
         return { workName: work.name, workId: work.id };
     };

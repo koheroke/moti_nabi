@@ -2,7 +2,11 @@
   <div class="page">
     <header class="top">
       <h1>motinabi</h1>
-      <UserIcon :userid="userStore.userId" size="large"></UserIcon>
+      <UserIcon
+        :thumbnailUrl="userIconInfo.iconUrl"
+        :userid="userIconInfo.userId"
+        size="large"
+      ></UserIcon>
     </header>
     <body class="body">
       <section class="container">
@@ -14,7 +18,7 @@
       </section>
       <section class="container">
         <h2 class="title">あなたの作品</h2>
-        <MyWorksSection :userId="userStore.userId" class="content" />
+        <MyWorksSection :userId="userIconInfo.userId" class="content" />
       </section>
 
       <section class="container">
@@ -34,17 +38,28 @@ import GalleryWorksSection from "@features/home/components/GalleryWorksSection.v
 import MyWorksSection from "@/features/home/components/MyWorksSection.vue";
 import BaseButton from "@/components/ui/form/BaseButton/BaseButton.vue";
 import { useRouter } from "vue-router";
-import UserIcon from "@/features/user/components/UserIcon.vue";
+import UserIcon from "@/features/profile/components/UserIcon.vue";
 import { useWorkPackageStore } from "@/features/work/store/workPackageStore";
-import { useUserStore } from "@/store/user/userStore";
+import { ref, onMounted } from "vue";
+import { useUserStore, type UserInfo } from "@/store/user/userIconStore";
 const userStore = useUserStore();
+const userIconInfo = ref<UserInfo>({
+  userId: "",
+  iconUrl: "",
+  name: "",
+});
 const router = useRouter();
 const workPackageStore = useWorkPackageStore();
-// const testUserId = "a";
+
 const goCreate = () => {
   workPackageStore.selectWorkPackage("");
   router.push("/create");
 };
+onMounted(() => {
+  const id = userStore.getMyuserId;
+  userIconInfo.value = userStore.getUserInfo(id);
+  console.log("userIconInfo", userStore.getUserInfo(id), id);
+});
 </script>
 <style lang="css" scoped>
 .hero {

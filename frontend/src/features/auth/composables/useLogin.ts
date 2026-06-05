@@ -2,8 +2,11 @@ import { ref } from "vue"
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
 const url = `${apiUrl}/auth/login`;
-import { useUserStore } from "@/store/user/userStore"
+import { useUserAuthStore } from "@/store/user/userAuthStore"
+const userAuthstore = useUserAuthStore()
+import { useUserStore } from "@/store/user/userIconStore"
 const userStore = useUserStore()
+
 
 interface loginInput {
   email: string
@@ -29,7 +32,13 @@ const useLogin = () => {
       )
       const user = await singup_res.json()
       if (user == null) return null
-      userStore.login(user, token)
+      userAuthstore.login(user.userId, user.email, token)
+      userStore.setUserInfo({
+        userId: user.userId,
+        name: user.name,
+        iconUrl: user.iconUrl
+      })
+      userStore.setMyuserId(user.userId);
       return user
     } catch (e) {
       error.value = '登録失敗'
@@ -43,5 +52,5 @@ const useLogin = () => {
 
 export { useLogin }
 export type { loginInput }
-export type { User } from "@/store/user/userStore"
+
 

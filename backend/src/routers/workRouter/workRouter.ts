@@ -33,4 +33,12 @@ workRouter.post('/getWorkPackages', async (c) => {
   return c.json(res);
 });
 
+workRouter.post('/getUserWorkPackages', async (c) => {
+  const body = await c.req.json();
+  console.log("body" + body)
+  const res = await createWork.getUserWorkPackages(body.userId)
+  console.log(res)
+  return c.json(res);
+});
+
 

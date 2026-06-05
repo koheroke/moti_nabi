@@ -26,6 +26,7 @@ const alertStore = useAlertStore();
 const createWork = UseCreateWork();
 
 onMounted(async () => {
+  console.log("onMounted", workPackageStore.selectedPackageGetter?.id);
   let res = "";
   if (
     (workPackageStore.selectedPackageGetter?.id ?? "").replaceAll(/\s+/g, "")

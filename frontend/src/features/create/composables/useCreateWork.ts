@@ -17,7 +17,7 @@ import type {
 
 import { useApplyCreateAction } from "./applyCreateAction";
 import { useCreateApi } from "../api/createApi";
-import { useUserStore } from "@/store/user/userStore";
+import { useUserAuthStore } from "@/store/user/userAuthStore";
 import { useCreateStore } from "../store/createStore";
 import type { alterationToken } from "./applyCreateAction";
 import { useAlterationLogStore } from "../store/useAlterationLogStore"
@@ -27,7 +27,7 @@ const workPackageStore = useWorkPackageStore();
 
 export const UseCreateWork = () => {
   const createStore = useCreateStore()
-  const userStore = useUserStore()
+  const userAuthstore = useUserAuthStore()
   const alterationLog = useAlterationLogStore()
   const createApi = useCreateApi()
   const applyCreateAction = useApplyCreateAction()
@@ -35,7 +35,8 @@ export const UseCreateWork = () => {
 
 
   const createNewwork = async () => {
-    const userId = userStore.userId
+    const userId = userAuthstore.userId
+    console.log(userId)
     let newWork = null as UserLuggage_SaveDBData | null
     let vuepreviewData = {} as Record<string, Case>
     let vueItemList = {} as Record<string, itemCard>
@@ -126,13 +127,13 @@ export const UseCreateWork = () => {
     const fowardToken: alterationToken = {
       alterationType: "previewItems_additem",
       token: newToken,
-      user: userStore.userName,
+      user: userAuthstore.userId,
     }
 
     const reverseToken: alterationToken = {
       alterationType: "previewItems_delete",
       token: deleteToken,
-      user: userStore.userName
+      user: userAuthstore.userId
     }
     alterationLog.saveState({ forwardToken: fowardToken, reverseToken: reverseToken })
     applyCreateAction.alterationData(fowardToken)
@@ -143,7 +144,7 @@ export const UseCreateWork = () => {
     const newToken: alterationToken = {
       alterationType: "previewItems_addcount",
       token: token,
-      user: userStore.userName
+      user: userAuthstore.userId
     }
 
     const reversePulse = { ...token, pulse: token.pulse * -1 }
@@ -151,7 +152,7 @@ export const UseCreateWork = () => {
     const reverseToken: alterationToken = {
       alterationType: "previewItems_addcount",
       token: reversePulse,
-      user: userStore.userName
+      user: userAuthstore.userId
     }
     alterationLog.saveState({ forwardToken: newToken, reverseToken: reverseToken })
 
@@ -162,7 +163,7 @@ export const UseCreateWork = () => {
     const newToken: alterationToken = {
       alterationType: "itemlistItems_bookmark",
       token: token,
-      user: userStore.userName
+      user: userAuthstore.userId
     }
     applyCreateAction.alterationData(newToken)
   }
@@ -172,21 +173,21 @@ export const UseCreateWork = () => {
     const newToken: alterationToken = {
       alterationType: "previewItems_delete",
       token: token,
-      user: userStore.userName
+      user: userAuthstore.userId
     }
     const { innnerItemToken, ...addtoken } = token
     const reverseToken: alterationToken[] = []
     reverseToken.push({
       alterationType: "previewItems_additem",
       token: addtoken,
-      user: userStore.userName
+      user: userAuthstore.userId
     })
     if (token.innnerItemToken) {
       token.innnerItemToken.forEach((item) => {
         reverseToken.push({
           alterationType: "previewItems_additem",
           token: item,
-          user: userStore.userName
+          user: userAuthstore.userId
         })
       })
     }
@@ -200,7 +201,7 @@ export const UseCreateWork = () => {
     const newToken: alterationToken = {
       alterationType: "itemlistItems_additem",
       token: token,
-      user: userStore.userName
+      user: userAuthstore.userId
     }
     applyCreateAction.alterationData(newToken)
   }
@@ -217,7 +218,7 @@ export const UseCreateWork = () => {
     const forwardToken: alterationToken = {
       alterationType: "previewCases_addCase",
       token: addToken,
-      user: userStore.userName
+      user: userAuthstore.userId
     }
 
     const deleteToken: deletePreviewCaseToken = {
@@ -228,7 +229,7 @@ export const UseCreateWork = () => {
     const reverseToken: alterationToken = {
       alterationType: "previewCases_deleteCase",
       token: deleteToken,
-      user: userStore.userName
+      user: userAuthstore.userId
     }
 
     createStore.addPreviewCase(addToken)
@@ -250,13 +251,13 @@ export const UseCreateWork = () => {
     const reverseToken: alterationToken = {
       alterationType: "previewCases_deleteCase",
       token: deleteToken,
-      user: userStore.userName
+      user: userAuthstore.userId
     }
 
     const forwardToken: alterationToken = {
       alterationType: "previewCases_addCase",
       token: addToken,
-      user: userStore.userName
+      user: userAuthstore.userId
     }
     createStore.addPreviewCase(addToken)
     alterationLog.saveState({ forwardToken: forwardToken, reverseToken: reverseToken })
@@ -295,13 +296,13 @@ export const UseCreateWork = () => {
     const reverseToken: alterationToken = {
       alterationType: "confirmed_resizePocket",
       token: revarseConfirmedToken,
-      user: userStore.userName
+      user: userAuthstore.userId
     }
 
     const token: alterationToken = {
       token: confirmedToken,
       alterationType: "confirmed_resizePocket",
-      user: userStore.userName
+      user: userAuthstore.userId
     }
     provisionalpocket = false
 
@@ -360,13 +361,13 @@ export const UseCreateWork = () => {
     const token: alterationToken = {
       alterationType: "confirmed_resizePocket",
       token: confirmedToken,
-      user: userStore.userName,
+      user: userAuthstore.userId,
     }
 
     const reverseToken: alterationToken = {
       alterationType: "confirmed_resizePocket",
       token: reverseConfirmedToken,
-      user: userStore.userName,
+      user: userAuthstore.userId,
     }
 
     provisionalPocket = false

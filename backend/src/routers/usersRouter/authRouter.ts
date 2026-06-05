@@ -41,13 +41,19 @@ authRouter.post('/2fa/verification', async (c) => {
 });
 
 
-authRouter.post('/session/login', async (c) => {
+authRouter.post('/session/getToken', async (c) => {
   const loginResult = await this_session.getLoginSession(c);
   const session = loginResult ? loginResult : "noneToken";
   return c.json(session);
 });
 
 
+
+authRouter.post('/session/verificationToken', async (c) => {
+  const body = await c.req.json();
+  const userData = await this_session.verificationSessionToken(body.token);
+  return c.json(userData);
+});
 
 
 authRouter.get("/googleLogin", googleLogin.login);

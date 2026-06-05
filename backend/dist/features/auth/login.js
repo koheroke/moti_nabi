@@ -10,6 +10,8 @@ const env_1 = require("@/constants/env/env");
 const jwt_decode_1 = require("jwt-decode");
 const prisma_1 = require("@/lib/prisma/prisma");
 const argon2_1 = __importDefault(require("argon2"));
+const session_1 = require("@/features/auth/session");
+const this_session = (0, session_1.useSession)();
 if (!env_1.env.JWT_SECRET) {
     throw new Error("JWT_SECRET is not set");
 }
@@ -19,11 +21,18 @@ const useLogin = () => {
         const userResponse = await prisma_1.prisma.user.findFirst({
             where: {
                 email: user.email
-            }
+            },
+            include: {
+                auth: true,
+                profile: true
+            },
         });
         if (!userResponse)
             return null;
-        const passward = await argon2_1.default.verify(userResponse.passwordHash, user.password);
+        const hash = userResponse.auth?.passwordHash;
+        if (!hash)
+            return null;
+        const passward = await argon2_1.default.verify(hash, user.password);
         if (!passward)
             return null;
         const this_user = userResponse;
@@ -31,14 +40,9 @@ const useLogin = () => {
         const token = await (0, jwt_1.sign)({
             userId,
             email: user.email,
+            iconUrl: this_user.profile?.iconUrl ?? "",
         }, env_1.env.JWT_SECRET);
-        (0, cookie_1.setCookie)(c, "auth_token", token, {
-            httpOnly: true,
-            secure: env_1.env.NODE_ENV === "production",
-            sameSite: "Lax",
-            maxAge: 60 * 60 * 24,
-            path: "/",
-        });
+        this_session.setLoginSession(c, token);
         return this_user;
     };
     return { login };
@@ -97,16 +101,26 @@ const useGoogleLogin = () => {
             });
             if (!userResponse)
                 return c.json({ error: "token exchange failed", detail: "userNotFound" }, 400);
-            account = await prisma_1.prisma.account.create({
-                data: {
-                    userId: userResponse?.id,
-                    provider: "google",
-                    providerAccountId: sub,
+            account = await prisma_1.prisma.account.findUnique({
+                where: {
+                    provider_providerAccountId: {
+                        provider: "google",
+                        providerAccountId: sub,
+                    },
                 },
             });
+            if (!account) {
+                account = await prisma_1.prisma.account.create({
+                    data: {
+                        userId: userResponse.id,
+                        provider: "google",
+                        providerAccountId: sub,
+                    },
+                });
+            }
         }
         const token = await (0, jwt_1.sign)({
-            id: account.userId,
+            userId: account.userId,
             email: email,
         }, env_1.env.JWT_SECRET);
         (0, cookie_1.setCookie)(c, "auth_token", token, {

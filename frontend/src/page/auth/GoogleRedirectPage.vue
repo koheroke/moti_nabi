@@ -1,19 +1,30 @@
 <script setup lang="ts">
 import { useSession } from "@/features/auth/composables/session";
 import { onMounted } from "vue";
-import { useAlertStore } from "@/store/feedback/alertStore";
-import { useUserStore } from "@/store/user/userStore";
+import { useUserAuthStore } from "@/store/user/userAuthStore";
+import { useUserStore } from "@/store/user/userIconStore";
 const userStore = useUserStore();
-const alertStore = useAlertStore();
+import { useRouter } from "vue-router";
+const router = useRouter();
+const userAuthstore = useUserAuthStore();
 const session = useSession();
 onMounted(async () => {
-  const user = await session.login();
-  if (!user) {
-    alertStore.showAlert("ログインに失敗しました", true);
+  const token = await session.getSessionToken();
+  if (!token) {
+    router.push("/login");
     return;
   }
-  alertStore.showAlert("ログインしました");
-  userStore.login(user, "");
+  console.log("token", token);
+  const { userId, authData, userIconData } =
+    await session.verificationSessionToken(token);
+  if (!userId || !authData) {
+    router.push("/login");
+    return;
+  }
+  userAuthstore.login(userId, authData.email, token);
+  userStore.setUserInfo({ userId: userId, ...userIconData });
+  userStore.setMyuserId(userId);
+  router.push("/home");
 });
 </script>
 

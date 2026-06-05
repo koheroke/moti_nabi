@@ -27,8 +27,10 @@ const isPasswordValid = computed(() => {
   return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(password.value);
 });
 
-const { signup, loading } = useSignup();
-
+const { signup, loading, error } = useSignup();
+if (error && error.value == "登録失敗") {
+  router.push("/login");
+}
 const onSubmit = async () => {
   if (password.value !== passwordConfirm.value) {
     alertStore.showAlert("パスワードが一致しません", true);

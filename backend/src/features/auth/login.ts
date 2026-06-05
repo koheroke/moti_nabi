@@ -27,10 +27,16 @@ export const useLogin = () => {
     const userResponse = await prisma.user.findFirst({
       where: {
         email: user.email
-      }
+      },
+      include: {
+        auth: true,
+        profile: true
+      },
     });
     if (!userResponse) return null
-    const passward = await argon2.verify(userResponse.passwordHash, user.password);
+    const hash = userResponse.auth?.passwordHash
+    if (!hash) return null
+    const passward = await argon2.verify(hash, user.password);
     if (!passward) return null
     const this_user = userResponse
     const userId = this_user.id
@@ -38,6 +44,7 @@ export const useLogin = () => {
       {
         userId,
         email: user.email,
+        iconUrl: this_user.profile?.iconUrl ?? "",
       },
       env.JWT_SECRET
     )
@@ -91,8 +98,7 @@ export const useGoogleLogin = () => {
           code,
           client_id: env.GOOGLE_CLIENT_ID,
           client_secret: env.GOOGLE_CECRET,
-          redirect_uri:
-            "http://localhost:3000/auth/google/callback",
+          redirect_uri: "http://localhost:3000/auth/google/callback",
           grant_type: "authorization_code",
         }),
       }
@@ -103,7 +109,6 @@ export const useGoogleLogin = () => {
     }
 
     const tokenData = await tokenRes.json();
-
     const payload = jwtDecode<{
       email: string;
       sub: string
@@ -130,19 +135,29 @@ export const useGoogleLogin = () => {
       });
       if (!userResponse) return c.json({ error: "token exchange failed", detail: "userNotFound" }, 400);
 
-      account = await prisma.account.create({
-        data: {
-          userId: userResponse?.id,
-          provider: "google",
-          providerAccountId: sub,
+      account = await prisma.account.findUnique({
+        where: {
+          provider_providerAccountId: {
+            provider: "google",
+            providerAccountId: sub,
+          },
         },
-      })
+      });
+      if (!account) {
+        account = await prisma.account.create({
+          data: {
+            userId: userResponse.id,
+            provider: "google",
+            providerAccountId: sub,
+          },
+        });
+      }
     }
 
 
     const token = await sign(
       {
-        id: account.userId,
+        userId: account.userId,
         email: email,
       },
       env.JWT_SECRET

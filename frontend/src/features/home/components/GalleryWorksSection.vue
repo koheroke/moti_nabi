@@ -8,14 +8,16 @@
 <script setup lang="ts">
 import HomeWorksSection from "./HomeWorksSection.vue";
 import { useRouter } from "vue-router";
-import { useUserStore } from "@/store/user/userStore.ts";
 import { useIncrementalList } from "@/composables/array/useIncrementalList.ts";
 import { useWorkPackageStore } from "@/features/work/store/workPackageStore.ts";
 import { computed } from "vue";
-
-const workPackageStore = useWorkPackageStore();
-const userStore = useUserStore();
+import { useGetWorkPackages } from "@/features/work/composables/work.ts";
+import { onMounted } from "vue";
 import { storeToRefs } from "pinia";
+import { useUserAuthStore } from "@/store/user/userAuthStore.ts";
+const userAuthstore = useUserAuthStore();
+const getWorkPackages = useGetWorkPackages();
+const workPackageStore = useWorkPackageStore();
 const { workPackageStoreGetter } = storeToRefs(workPackageStore);
 const sortedWorks = computed(() =>
   [...workPackageStoreGetter.value].sort((a, b) => b.likes - a.likes),
@@ -25,4 +27,7 @@ const router = useRouter();
 const onMoreClick = () => {
   router.push("/gallery");
 };
+onMounted(() => {
+  getWorkPackages.getUserworkPackages(userAuthstore.userIdGetter);
+});
 </script>

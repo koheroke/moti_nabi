@@ -1,1 +1,1825 @@
-import{B as e,C as t,H as n,L as r,R as i,S as a,W as o,X as s,Z as c,_ as l,c as u,d,g as f,h as p,l as m,st as h,t as g,v as _,vt as v,x as y,xt as b,y as x}from"./_plugin-vue_export-helper-BwfGDmfF.js";import{n as S,r as C}from"./pinia-BDLqBGc_.js";import{t as ee}from"./BaseButton-DgJxAwXf.js";import{a as w}from"./index-BWdytgOe.js";import{t as te}from"./userStore-B3Eqog8J.js";import{t as T}from"./workPackageStore-Cx7ot4E2.js";var E=w(`circle-minus`,[[`circle`,{cx:`12`,cy:`12`,r:`10`,key:`1mglay`}],[`path`,{d:`M8 12h8`,key:`1wcyev`}]]),D=w(`circle-plus`,[[`circle`,{cx:`12`,cy:`12`,r:`10`,key:`1mglay`}],[`path`,{d:`M8 12h8`,key:`1wcyev`}],[`path`,{d:`M12 8v8`,key:`napkw2`}]]),O=w(`x`,[[`path`,{d:`M18 6 6 18`,key:`1bl5f8`}],[`path`,{d:`m6 6 12 12`,key:`d8bk6v`}]]),k=S(`create`,{state:()=>({workId:``,userLuggage_SaveDBData:null,listItem:null,previewCase:{},searchText:``,staticItemData:{},category:null,addItemCounter:0,staticCases:{},iconMap:{},categoryColor:{},categories:[],isStaticLoaded:!1}),getters:{staticCasesGetter:e=>e.staticCases,categorys:e=>e.categories,iconMapGetter:e=>e.iconMap,categoryColorGetter:e=>e.categoryColor,listItemGetter:e=>e.listItem,previewItemGetter:e=>e.previewCase,workIdGetter:e=>e.workId,getAllCasesArray:e=>Object.entries(e.staticCases).map(([e,t])=>({id:e,data:t})),getPreviewCasesArray:e=>Object.entries(e.previewCase).map(([e,t])=>({id:e,data:t})),filteredListItem:e=>{if(!e.listItem)return{};let t=e.searchText.trim().toLowerCase();return Object.fromEntries(Object.entries(e.listItem).filter(([n,r])=>{if(e.category===`bookmark`)return r.bookmark==1;if(e.category===`create`)return r.createType==`userCreated`;let i=t===``||r.name.toLowerCase().includes(t),a=!e.category||e.category===`all`||r.category.includes(e.category);return i&&a}))}},actions:{setIconMap(e){this.iconMap=e},setStaticCases(e){this.staticCases=e},setCategoryColor(e){this.categoryColor=e},setCategories(e){this.categories=e},setSearchText(e){this.searchText=e},setCategory(e){this.category=e},setAddItemCounter(e){this.addItemCounter=e},setStaticItemData(e){this.staticItemData=e},setSaveDBData(e){this.userLuggage_SaveDBData=e},setlistItem(e){this.listItem=e},setpreviewData(e){this.previewCase=e},setWorkId(e){this.workId=e},setStaticLoaded(e){this.isStaticLoaded=e},addCount(e){if(!this.previewCase||!this.listItem)return;let t=this.previewCase[e.caseId].pockets[e.pocketId],n=e.parentItemId??e.originalId,r=t.items.get(n);if(!r)return;if(!e.parentItemId){r.count+=e.pulse;return}let i=r.innerItems.get(e.originalId);return i&&(i.count+=e.pulse),t.items},pushpreviewItem(e){if(console.log(e),!this.previewCase||!this.listItem||!this.addItemCounter)return;let t=this.previewCase[e.caseId].pockets[e.pocketId];this.addItemCounter++;let n={...this.listItem[e.itemId],originalId:e.originalId,count:1,innerItems:new Map};if(e.parentItemId==null)t.items.set(n.originalId,n);else{let r=t.items.get(e.parentItemId)?.innerItems;r&&r.set(n.originalId,n)}return console.log(t.items),t.items},addBookmark(e){if(!(!this.previewCase||!this.listItem))return this.listItem[e.itemId].bookmark=!this.listItem[e.itemId].bookmark,e.itemId},addListItem(e){if(!this.previewCase||!this.listItem||!this.addItemCounter)return;let t=`item_${Object.keys(this.listItem).length+1}`,n={...e,bookmark:!1,id:t};return this.listItem[t]=n,n},deletepreviewItem(e){if(!this.previewCase||!this.listItem||!this.previewCase[e.caseId])return;console.log(e);let t=this.previewCase[e.caseId].pockets[e.pocketId],n=e.parentItemId?e.parentItemId:e.originalId;if(e.parentItemId==null)return t.items.delete(n),t.items;if(e.parentItemId!=null)return t.items.get(e.parentItemId)?.innerItems?.delete(e.originalId),t.items},addPreviewCase(e){if(e.reverse){let t=e.case;return t.case?(this.previewCase[t.id]=t,t):void 0}else{let t=e.case;return this.previewCase[t.caseId]=this.staticCasesGetter[t.caseType],t}},deleteCase(e){return delete this.previewItemGetter[e.id],e.id},reSizePocket(e){let t=this.previewCase[e.caseId].pockets[e.pocketId];return t.height=e.resizeData.height,t.width=e.resizeData.width,t.x=e.resizeData.x,t.y=e.resizeData.y,t},reMovePocket(e){let t=this.previewCase[e.caseId].pockets[e.pocketId];return t.x=e.removeData.x,t.y=e.removeData.y,t}}}),A=k(),ne=()=>{if(!A.workIdGetter==null)return;let e=[],t=t=>{let n={id:`id_${e.length}`,workId:A.workIdGetter,userId:t.user,type:t.token.type,path:t.token.path,beforeValue:null,value:t.token,createdAt:Date.now()};e.length==0&&r(),e.push(n)},n=()=>{e.length=0},r=()=>{setTimeout(()=>{n()},3e3)};return{push:t,pop:n}},j=()=>{let e=ne(),t=k();return{hydrateCreateState:e=>{let n=t.staticItemData,r=t.staticCases,{previewDatas:i,itemListDatas:a}=e,o={...n,...a.addedItems},s=Object.fromEntries(Object.entries(o).map(([e,t])=>[e,{...t,bookmark:a.bookmarks.includes(t.id)}])),c=e=>new Map(Array.from(e.entries()).map(([e,t])=>{let{bookmark:n,...r}=s[t.id];return[e,s[t.id].isStorage?{...r,innerItems:t.innerItems?c(t.innerItems):new Map,count:t.count,originalId:t.originalId}:{...r,count:t.count,originalId:t.originalId}]})),l=(e,t)=>{let n=Object.fromEntries(Object.entries(t.pockets).map(([t,n])=>{let r=e.poketSvgEdit?.find(e=>e.id===n.id),i={width:r?.width??n.width,height:r?.height??n.height,x:r?.x??n.x,y:r?.y??n.y,id:n.id,name:n.name};return[n.id,{...n,...i,items:c(e.pockets[n.id]?.innerItems??new Map)}]})),r=Object.fromEntries(Object.entries(n).filter(([t,n])=>!(e.poketDelete??[]).includes(n.id)));return(e.pocketAdd??[]).forEach(t=>{r[t.id]={...t,items:c(e.pockets[t.id]?.innerItems??new Map)}}),r};return{vuepreviewData:Object.fromEntries(Object.entries(i.mainLuggage).map(([e,t])=>{let n=r[t.caseType];return[e,{id:e,case:n.case,handle:n.handle,name:n.name,pockets:l(t,n)}]})),vueItemList:s,addItemCounter:i.addItemCounter}},alterationData:n=>{if(!t||!e)return;let r={type:`arrayPush`,path:[],value:null};switch(n.alterationType){case`previewItems_additem`:{let e=t.pushpreviewItem(n.token),i=n.token;r.path=[`previewDatas`,`mainLuggage`,i.caseId,`pockets`,i.pocketId,`innerItems`],r.value=e,r.type=`mapPush`;break}case`previewItems_addcount`:{let e=t.addCount(n.token),i=n.token;r.path=[`previewDatas`,`mainLuggage`,i.caseId,`pockets`,i.pocketId,`innerItems`,i.originalId],r.value=e,r.type=`set`;break}case`itemlistItems_bookmark`:{let e=t.addBookmark(n.token);r.path=[`itemListDatas`,`bookmarks`],r.value=e,r.type=`arrayPush`;break}case`previewItems_delete`:{let e=t.deletepreviewItem(n.token),i=n.token;r.path=[`previewDatas`,`mainLuggage`,i.caseId,`pockets`,i.pocketId,`innerItems`],r.value=e,r.type=`mapRemove`;break}case`itemlistItems_additem`:{let e=t.addListItem(n.token);r.path=[`itemListDatas`,`addedItems`],r.value=e,r.type=`objectPush`;break}case`previewCases_addCase`:{let e=t.addPreviewCase(n.token);r.path=[`previewDatas`,`mainLuggage`],r.value=e,r.type=`objectPush`;break}case`confirmed_removePocket`:{let e=t.reMovePocket(n.token),i=n.token;r.path=[`previewDatas`,`mainLuggage`,i.caseId,`pockets`,i.pocketId,`innerItems`],r.value=e,r.type=`mapPush`;break}case`confirmed_resizePocket`:{let e=t.reSizePocket(n.token),i=n.token;r.path=[`previewDatas`,`mainLuggage`,i.caseId,`pockets`,i.pocketId,`innerItems`],r.value=e,r.type=`mapPush`;break}case`previewCases_deleteCase`:t.deleteCase(n.token);break}e.push({user:n.user,alterationType:n.alterationType,token:r})},initCreateStaticData:async()=>{if(t.isStaticLoaded)return;let[e,n,r]=await Promise.all([fetch(`/json/create/itemList.json`),fetch(`/json/create/category.json`),fetch(`/json/create/case.json`)]),i=await e.json(),a=await n.json(),o=await r.json();t.setStaticItemData(i),t.setIconMap(a.iconMap),t.setCategoryColor(a.color),t.setCategories(a.categoryData),t.setStaticCases(o),t.setStaticLoaded(!0)}}},M=S(`alterationLog`,()=>{let e=j(),t=[],n=[];return{undoStack:t,redoStack:n,saveState:e=>{t.push(e),n.length=0},undo:()=>{if(t.length===0)return;let r=t.pop();r&&(n.push(r),r.reverseToken instanceof Array?r.reverseToken.forEach(t=>{e.alterationData(t)}):e.alterationData(r.reverseToken))},redo:()=>{if(n.length===0)return;let r=n.pop();r&&(t.push(r),e.alterationData(r.forwardToken))}}}),N={workId:`work_1`,workName:`test`,itemListDatas:{addedItems:{item_1:{id:`item_1`,name:`Tシャツ`,category:[`create`,`food`],iconId:`charger`,isStorage:!1,createType:`userCreated`}},addItemCounter:1,bookmarks:[`item_1`,`item_2`,`item_3`,`item_4`]},previewDatas:{addItemCounter:1,mainLuggage:{suitcase_0:{id:`suitcase_0`,addItemCounter:8,caseType:`HardSuitcase`,poketSvgEdit:[{id:`main`,width:200,height:300}],pocketAdd:[{id:`side`,width:200,height:300,name:`サイド`,x:0,y:0,items:new Map}],poketDelete:[`mesh`],pockets:{mesh:{id:`mesh`,originalId:`mesh`,count:0,innerItems:new Map([[`item_1`,{originalId:`item_1`,id:`item_1`,count:3}],[`item_2`,{id:`inner_1`,count:1,originalId:`item_2`,innerItems:new Map([[`item_3`,{id:`item_6`,originalId:`item_3`,count:2}],[`item_4`,{id:`item_6`,originalId:`item_4`,count:1}]])}]])},main:{id:`main`,originalId:`main`,count:0,innerItems:new Map([[`item_5`,{originalId:`item_5`,id:`inner_1`,count:3}]])}}}}}},P=`http://localhost:3000/create`,F=()=>({load:()=>N,getWork:async e=>{let t=await(await fetch(`${P}/work/get`,{method:`POST`,headers:{"Content-Type":`application/json`},body:JSON.stringify({theWorkId:e})})).json();return{workId:t.workId,workName:t.workName,itemListDatas:{addedItems:{},bookmarks:[],addItemCounter:0},previewDatas:{mainLuggage:{},addItemCounter:0}}},createNewWork:async e=>await(await fetch(`${P}/work/create`,{method:`POST`,headers:{"Content-Type":`application/json`},body:JSON.stringify({createToken:e})})).json()}),I=T(),L=()=>{let e=k(),t=te(),n=M(),r=F(),i=j(),a=async()=>{let n=t.userId,a=null,o={},s={},c=0;try{a=await r.createNewWork(n)}catch{return`fallLoadData`}try{if(a==null)throw Error();await j().initCreateStaticData();let e=i.hydrateCreateState(a);o=e.vuepreviewData,s=e.vueItemList,c=e.addItemCounter}catch{return`damagedData`}return e.setAddItemCounter(c),e.setSaveDBData(a),e.setlistItem(s),e.setpreviewData(o),`none`},o=async()=>{let t=I.selectedPackageGetter.id;if(!t)return`noneNameorWorkId`;let n=null,a={},o={},s=0;try{n=await r.getWork(t)}catch{return`fallLoadData`}try{if(n==null)throw Error();await j().initCreateStaticData();let e=i.hydrateCreateState(n);a=e.vuepreviewData,o=e.vueItemList,s=e.addItemCounter}catch{return`damagedData`}return e.setAddItemCounter(s),e.setSaveDBData(n),e.setlistItem(o),e.setpreviewData(a),`none`},s=async r=>{let{itemId:a}=r,o=e?.listItemGetter;if(!o)return`nonePreview`;let s=o[a];if(!s)return`noneItem`;if(s.isStorage==1&&r.parentItemId!=null)return`isRegulatedAction`;let c=r.originalId==null?`item_${e.addItemCounter}`:r.originalId,l={originalId:c,caseId:r.caseId,pocketId:r.pocketId,parentItemId:r.parentItemId,itemId:r.itemId},u={alterationType:`previewItems_additem`,token:{...r,originalId:c},user:t.userName},d={alterationType:`previewItems_delete`,token:l,user:t.userName};return n.saveState({forwardToken:u,reverseToken:d}),i.alterationData(u),`addPreview`},c=e=>{let r={alterationType:`previewItems_addcount`,token:e,user:t.userName},a={alterationType:`previewItems_addcount`,token:{...e,pulse:e.pulse*-1},user:t.userName};n.saveState({forwardToken:r,reverseToken:a}),i.alterationData(r)},l=e=>{let n={alterationType:`itemlistItems_bookmark`,token:e,user:t.userName};i.alterationData(n)},u=r=>{if(!e.listItemGetter)return;let a={alterationType:`previewItems_delete`,token:r,user:t.userName},{innnerItemToken:o,...s}=r,c=[];c.push({alterationType:`previewItems_additem`,token:s,user:t.userName}),r.innnerItemToken&&r.innnerItemToken.forEach(e=>{c.push({alterationType:`previewItems_additem`,token:e,user:t.userName})}),i.alterationData(a),n.saveState({forwardToken:a,reverseToken:c})},d=e=>{let n={alterationType:`itemlistItems_additem`,token:e,user:t.userName};i.alterationData(n)},f=r=>{let i=`caseID_${e.getPreviewCasesArray.length}`,a={case:{caseType:r,caseId:i},reverse:!1},o={alterationType:`previewCases_addCase`,token:a,user:t.userName},s={alterationType:`previewCases_deleteCase`,token:{id:i,deletecase:e.staticCasesGetter[r]},user:t.userName};e.addPreviewCase(a),n.saveState({forwardToken:o,reverseToken:s})},p=r=>{let i=e.previewItemGetter[r],a={case:i,reverse:!0},o={alterationType:`previewCases_deleteCase`,token:{id:r,deletecase:i},user:t.userName},s={alterationType:`previewCases_addCase`,token:a,user:t.userName};e.addPreviewCase(a),n.saveState({forwardToken:s,reverseToken:o})},m=!1,h={x:0,y:0,width:0,height:0},g=(t,n,r)=>{if(!m){m=!0;let{x:t,y:i,width:a,height:o}=e.previewCase[r].pockets[n];h={x:t,y:i,width:a,height:o}}let i={caseId:r,pocketId:n,resizeData:t};e.reSizePocket(i)},_=(r,a)=>{let{x:o,y:s,width:c,height:l}=e.previewCase[r].pockets[a],u={pos:{x:o,y:s,width:c,height:l},caseId:r,pocketId:a},d={alterationType:`confirmed_resizePocket`,token:{pos:h,caseId:r,pocketId:a},user:t.userName},f={token:u,alterationType:`confirmed_resizePocket`,user:t.userName};m=!1,n.saveState({forwardToken:f,reverseToken:d}),i.alterationData(f)},v=!1,y={x:0,y:0,width:0,height:0};return{createNewwork:a,confirmedRemovePocket:(r,a)=>{let{x:o,y:s,width:c,height:l}=e.previewCase[r].pockets[a],u={pos:{x:o,y:s,width:c,height:l},caseId:r,pocketId:a},d={pos:y,caseId:r,pocketId:a},f={alterationType:`confirmed_resizePocket`,token:u,user:t.userName},p={alterationType:`confirmed_resizePocket`,token:d,user:t.userName};v=!1,n.saveState({forwardToken:f,reverseToken:p}),i.alterationData(f)},provisionalRemovePocket:(t,n,r)=>{if(!v){v=!0;let{x:t,y:i,width:a,height:o}=e.previewCase[r].pockets[n];y={x:t,y:i,width:a,height:o}}let i={caseId:r,pocketId:n,removeData:t};e.reMovePocket(i)},provisionalResizePocket:g,confirmedResizePocket:_,loadWork:o,addItemToPreview:s,addItemCount:c,addBookmark:l,deletePreviewItem:u,addListItem:d,addCase:f,deleteCase:p}},R=t({__name:`PreviewItem`,props:{item:{type:Object,required:!0},pocketId:{type:String,required:!0},parentItem:{type:String,required:!1},caseId:{type:String,required:!0}},setup(e,{expose:t}){t();let n=e,r=k(),i=L(),a=r.iconMap;function o(e){let t={originalId:n.item.originalId,popCaseId:n.caseId,popPocketId:n.pocketId};e.dataTransfer?.setData(`originalId`,JSON.stringify(t))}let s={props:n,createStore:r,createWork:i,iconMap:a,onDragStart:o,onDrop:e=>{let t=e.dataTransfer?.getData(`itemId`);if(!t)return;let r={itemId:t,pocketId:n.pocketId,parentItemId:n.item.originalId,caseId:n.caseId,originalId:n.item.originalId};i.addItemToPreview(r)},onPlue:e=>{n.item.count+e>=99||n.item.count+e<=0||i.addItemCount({originalId:n.item.originalId,pulse:e,pocketId:n.pocketId,parentItemId:n.parentItem?n.parentItem:void 0,caseId:n.caseId})},onDelete:()=>{let e=[];n.item.innerItems?.forEach(t=>{e?.push({pocketId:n.pocketId,caseId:n.caseId,parentItemId:n.item.originalId,itemId:t.id,originalId:n.item.originalId})});let t={originalId:n.item.originalId,pocketId:n.pocketId,parentItemId:n.parentItem?n.parentItem:void 0,itemId:n.item.id,caseId:n.caseId,innnerItemToken:e};i.deletePreviewItem(t)},icon:a[n.item.iconId]??`📦`,get CirclePlus(){return D},get CircleMinus(){return E},get BaseButton(){return ee}};return Object.defineProperty(s,`__isScriptSetup`,{enumerable:!1,value:!0}),s}}),z={class:`item-card`},B={class:`header`},V={class:`count`},H={key:0,class:`drop-text`};function U(t,r,i,c,l,u){let p=o(`previewItem`,!0);return e(),x(`div`,z,[f(`section`,B,[f(`div`,null,b(c.icon.src),1),f(`div`,null,b(c.props.item.name),1),f(`div`,V,[a(c.CirclePlus,{class:`countIcon`,onClick:r[0]||=e=>c.onPlue(1)}),y(` `+b(c.props.item.count)+` `,1),a(c.CircleMinus,{class:`countIcon`,onClick:r[1]||=e=>c.onPlue(-1)})]),a(c.BaseButton,{class:`delete-button`,onClick:c.onDelete},{default:s(()=>[...r[3]||=[y(`削除`,-1)]]),_:1})]),c.props.item.isStorage?(e(),x(`section`,{key:0,class:`storage innerItems`,onDrop:[c.onDrop,r[2]||=m(()=>{},[`stop`])]},[(e(!0),x(d,null,n(c.props.item.innerItems,([t,n])=>(e(),x(`div`,{key:t},[a(p,{item:n,pocketId:c.props.pocketId,parentItem:c.props.item.originalId,caseId:c.props.caseId},null,8,[`item`,`pocketId`,`parentItem`,`caseId`])]))),128)),c.props.item.innerItems?.size===0?(e(),x(`p`,H,b(`ここにドロップ`))):_(``,!0)],32)):_(``,!0)])}var W=g(R,[[`render`,U],[`__scopeId`,`data-v-126205df`],[`__file`,`/Users/azumakoutaira/workspace/moti_nabi/frontend/src/features/create/components/PreviewItem.vue`]]),G=t({__name:`PocketModal`,props:{pocket:{type:Object,required:!0}},emits:[`close`],setup(e,{expose:t,emit:n}){t();let r=h(!1),i=L(),a=n,o=()=>{r.value=!0,setTimeout(()=>{a(`close`)},300)},s=e=>{let t=e.dataTransfer?.getData(`itemId`),n=e.dataTransfer?.getData(`positionChangeData`);if(!(!t&&!n)&&t){let e={itemId:t,pocketId:l.pocket.id,caseId:l.pocket.caseId,originalId:null};i.addItemToPreview(e)}},c=()=>{},l=e,u={isClose:r,createWork:i,emit:a,close:o,onDrop:s,handleDrop:c,props:l,get X(){return O},PreviewItem:W};return Object.defineProperty(u,`__isScriptSetup`,{enumerable:!1,value:!0}),u}}),K={class:`modal`},q={class:`header`},J={class:`name`},Y={class:`drop-area`},X={key:0,style:{"font-size":`12px`,"text-align":`center`}};function Z(t,r,i,o,s,c){return e(),x(`div`,{class:v([`overlay`,[`overlay`,{close:o.isClose}]]),onDrop:[o.onDrop,r[0]||=m(()=>{},[`stop`])],onDragover:m(o.handleDrop,[`prevent`])},[f(`div`,K,[f(`header`,q,[f(`div`,J,b(`#`+i.pocket.name),1),f(`div`,{onClick:o.close,class:`close-button`},[a(o.X,{size:20,color:`black`,"stroke-width":`2.5`})])]),f(`div`,Y,[i.pocket.items.size===0?(e(),x(`p`,X,` ここに持ち物をドラッグ `)):_(``,!0),(e(!0),x(d,null,n(i.pocket.items,([t,n])=>(e(),x(`div`,{key:t,class:`item-card`},[a(o.PreviewItem,{caseId:i.pocket.caseId,item:n,pocketId:i.pocket.id},null,8,[`caseId`,`item`,`pocketId`])]))),128))])])],34)}var re=g(G,[[`render`,Z],[`__scopeId`,`data-v-f42593c0`],[`__file`,`/Users/azumakoutaira/workspace/moti_nabi/frontend/src/features/create/components/PocketModal.vue`]]),Q=S(`caseDragStore`,{state:()=>({isDrag:!1}),getters:{isDragging:e=>e.isDrag},actions:{drag(e){this.isDrag=e}}}),ie=t({__name:`dropCaseArea`,setup(e,{expose:t}){t();let n=L(),r=Q(),{isDrag:i}=C(r),a={createWork:n,casecardDragStore:r,isDrag:i,handleDrop:()=>{},onDrop:e=>{let t=e.dataTransfer?.getData(`caseId`);t&&n.addCase(t)}};return Object.defineProperty(a,`__isScriptSetup`,{enumerable:!1,value:!0}),a}});function ae(t,n,r,i,a,o){return c((e(),x(`div`,{onDrop:[i.onDrop,n[0]||=m(()=>{},[`stop`])],onDragover:m(i.handleDrop,[`prevent`]),class:`drop-area`},[...n[1]||=[f(`h1`,null,`ここにドロップ`,-1)]],544)),[[u,i.isDrag]])}var oe=g(ie,[[`render`,ae],[`__scopeId`,`data-v-4322c95e`],[`__file`,`/Users/azumakoutaira/workspace/moti_nabi/frontend/src/features/create/components/sideBar/caseBar/components/dropCaseArea.vue`]]),se=t({__name:`svgResizeHandle`,props:{pocket:{type:Object,required:!0},caseId:{type:String,required:!0},pocketId:{type:String,required:!0}},setup(e,{expose:t}){t();let n=L(),a=e,o=!1,s={x:0,y:0},c=0,l=0,u=(e,t,n)=>{o=!0,s={x:t,y:n},c=e.clientX,l=e.clientY,e.currentTarget.setPointerCapture(e.pointerId)},d=()=>{o=!1},f=e=>{if(!o)return;let t=e.clientX-c,r=e.clientY-l;c=e.clientX,l=e.clientY;let i=s.x===-1?t:0,u=s.y===-1?r:0;n.provisionalResizePocket({x:a.pocket.x+i,y:a.pocket.y+u,width:a.pocket.width+t*s.x,height:a.pocket.height+r*s.y},a.pocketId,a.caseId)};r(()=>{window.addEventListener(`pointermove`,f),window.addEventListener(`pointerup`,d)}),i(()=>{window.removeEventListener(`pointermove`,f),window.removeEventListener(`pointerup`,d)});let p={createWork:n,props:a,get isResizing(){return o},set isResizing(e){o=e},get resizeDirection(){return s},set resizeDirection(e){s=e},get lastX(){return c},set lastX(e){c=e},get lastY(){return l},set lastY(e){l=e},startResize:u,stopResize:d,handlePointerMove:f};return Object.defineProperty(p,`__isScriptSetup`,{enumerable:!1,value:!0}),p}}),ce={class:`resize-handles`},le=[`cx`,`cy`],ue=[`cx`,`cy`],de=[`cx`,`cy`],fe=[`cx`,`cy`],pe=[`cx`,`cy`],me=[`cx`,`cy`],he=[`cx`,`cy`],ge=[`cx`,`cy`];function _e(t,n,r,i,a,o){return e(),x(`g`,ce,[f(`circle`,{cx:r.pocket.x,cy:r.pocket.y,r:`6`,onPointerdown:n[0]||=e=>i.startResize(e,-1,-1),class:`resize-handle`,style:{cursor:`nwse-resize`}},null,40,le),f(`circle`,{cx:r.pocket.x+r.pocket.width,cy:r.pocket.y,r:`6`,onPointerdown:n[1]||=e=>i.startResize(e,1,-1),class:`resize-handle`,style:{cursor:`nesw-resize`}},null,40,ue),f(`circle`,{cx:r.pocket.x,cy:r.pocket.y+r.pocket.height,r:`6`,onPointerdown:n[2]||=e=>i.startResize(e,-1,1),class:`resize-handle`,style:{cursor:`nesw-resize`}},null,40,de),f(`circle`,{cx:r.pocket.x+r.pocket.width,cy:r.pocket.y+r.pocket.height,r:`6`,onPointerdown:n[3]||=e=>i.startResize(e,1,1),class:`resize-handle`,style:{cursor:`nwse-resize`}},null,40,fe),f(`circle`,{cx:r.pocket.x+r.pocket.width/2,cy:r.pocket.y,r:`6`,onPointerdown:n[4]||=e=>i.startResize(e,0,-1),class:`resize-handle`,style:{cursor:`ns-resize`}},null,40,pe),f(`circle`,{cx:r.pocket.x+r.pocket.width/2,cy:r.pocket.y+r.pocket.height,r:`6`,onPointerdown:n[5]||=e=>i.startResize(e,0,1),class:`resize-handle`,style:{cursor:`ns-resize`}},null,40,me),f(`circle`,{cx:r.pocket.x,cy:r.pocket.y+r.pocket.height/2,r:`6`,onPointerdown:n[6]||=e=>i.startResize(e,-1,0),class:`resize-handle`,style:{cursor:`ew-resize`}},null,40,he),f(`circle`,{cx:r.pocket.x+r.pocket.width,cy:r.pocket.y+r.pocket.height/2,r:`6`,onPointerdown:n[7]||=e=>i.startResize(e,1,0),class:`resize-handle`,style:{cursor:`ew-resize`}},null,40,ge)])}var ve=g(se,[[`render`,_e],[`__scopeId`,`data-v-95e8907c`],[`__file`,`/Users/azumakoutaira/workspace/moti_nabi/frontend/src/features/create/components/svgUi/svgResizeHandle.vue`]]),ye=t({__name:`SvgRemoveHandle`,props:{pocket:{type:Object,required:!0},caseId:{type:String,required:!0},pocketId:{type:String,required:!0}},setup(e,{expose:t}){t();let n=L(),a=e,o=!1,s=0,c=0,l=e=>{o=!0,s=e.clientX,c=e.clientY,e.currentTarget.setPointerCapture(e.pointerId)},u=()=>{o=!1},d=e=>{if(!o)return;let t=e.clientX-s,r=e.clientY-c;s=e.clientX,c=e.clientY,n.provisionalRemovePocket({x:a.pocket.x+t,y:a.pocket.y+r},a.pocketId,a.caseId)};r(()=>{window.addEventListener(`pointermove`,d),window.addEventListener(`pointerup`,u)}),i(()=>{window.removeEventListener(`pointermove`,d),window.removeEventListener(`pointerup`,u)});let f={createWork:n,props:a,get isRemoveing(){return o},set isRemoveing(e){o=e},get lastX(){return s},set lastX(e){s=e},get lastY(){return c},set lastY(e){c=e},startReMove:l,stopResize:u,handlePointerMove:d};return Object.defineProperty(f,`__isScriptSetup`,{enumerable:!1,value:!0}),f}}),be=[`x`,`y`,`width`,`height`];function xe(t,n,r,i,a,o){return e(),x(`g`,{div:``,onPointerdown:n[0]||=e=>i.startReMove(e),class:`remove-handle`},[f(`rect`,{x:r.pocket.x,y:r.pocket.y,width:r.pocket.width,height:r.pocket.height,rx:`1`,class:`pocket`,fill:`transparent`},null,8,be)],32)}var Se=g(ye,[[`render`,xe],[`__scopeId`,`data-v-c265c640`],[`__file`,`/Users/azumakoutaira/workspace/moti_nabi/frontend/src/features/create/components/svgUi/SvgRemoveHandle.vue`]]),Ce=t({__name:`case`,props:{pockets:{type:Object,required:!0},case:{type:Object,required:!0},handle:{type:Object,required:!0},name:{type:String,required:!0},id:{type:String,required:!0}},emits:[`update:selectedPocket`],setup(e,{expose:t,emit:n}){t();let r=e,i=p(()=>Object.values(r.pockets).map(e=>e.items?e:{...e,items:new Map})),a=n;function o(e){a(`update:selectedPocket`,{items:e.items,id:e.id,name:e.name,caseId:r.id})}let s={props:r,pockets:i,emit:a,openPocket:o,SvgResizeHandle:ve,SvgRemoveHandle:Se};return Object.defineProperty(s,`__isScriptSetup`,{enumerable:!1,value:!0}),s}}),we={class:`suitcase-wrap`},Te={viewBox:`0 0 400 560`,class:`suitcase`},Ee=[`x`,`y`,`width`,`height`],De=[`x`,`y`,`width`,`height`],$=[`onDblclick`],Oe=[`x`,`y`,`width`,`height`],ke=[`x`,`y`],Ae=[`x`,`y`];function je(t,r,i,o,s,c){return e(),x(`div`,we,[(e(),x(`svg`,Te,[f(`rect`,{x:o.props.case.x,y:o.props.case.y,width:o.props.case.width,height:o.props.case.height,class:`case-body`,rx:`14`},null,8,Ee),f(`rect`,{x:o.props.handle.x,y:o.props.handle.y,width:o.props.handle.width,height:o.props.handle.height,rx:`12`,class:`handle`},null,8,De),(e(!0),x(d,null,n(o.pockets,t=>(e(),x(`g`,{key:t.id,class:`pocket-group`,onDblclick:e=>o.openPocket(t)},[f(`rect`,{x:t.x,y:t.y,width:t.width,height:t.height,rx:`14`,class:`pocket`},null,8,Oe),f(`text`,{x:t.x+t.width/2,y:t.y+t.height/2,"text-anchor":`middle`,"dominant-baseline":`middle`,class:`pocket-label`},b(t.name),9,ke),a(o.SvgRemoveHandle,{class:`svg-removehandle`,pocket:t,caseId:i.id,pocketId:t.id},null,8,[`pocket`,`caseId`,`pocketId`]),f(`text`,{x:t.x+t.width-12,y:t.y+22,"text-anchor":`end`,class:`pocket-count`},b(t.items?.size),9,Ae),a(o.SvgResizeHandle,{pocket:t,caseId:i.id,pocketId:t.id,class:`svg-resizehandle`},null,8,[`pocket`,`caseId`,`pocketId`])],40,$))),128))]))])}var Me=g(Ce,[[`render`,je],[`__scopeId`,`data-v-06975ad1`],[`__file`,`/Users/azumakoutaira/workspace/moti_nabi/frontend/src/features/create/components/svgUi/case.vue`]]),Ne=t({__name:`Preview`,setup(e,{expose:t}){t();let n=h(),r=k(),{getPreviewCasesArray:i}=C(r),a={selectedPocket:n,createStore:r,cases:i,PocketModal:re,dropCaseArea:oe,Case:Me};return Object.defineProperty(a,`__isScriptSetup`,{enumerable:!1,value:!0}),a}}),Pe={class:`preview-area`},Fe={class:`pocketModal`};function Ie(t,r,i,o,s,c){return e(),x(`div`,Pe,[a(o.dropCaseArea,{class:`drop-area`}),(e(!0),x(d,null,n(o.cases,t=>(e(),x(`div`,{class:`preview`,key:t.id},[a(o.Case,{pockets:t.data.pockets,case:t.data.case,name:t.data.name,handle:t.data.handle,id:t.id,selectedPocket:o.selectedPocket,"onUpdate:selectedPocket":r[0]||=e=>o.selectedPocket=e},null,8,[`pockets`,`case`,`name`,`handle`,`id`,`selectedPocket`])]))),128)),f(`section`,Fe,[o.selectedPocket?(e(),l(o.PocketModal,{key:0,pocket:o.selectedPocket,onClose:r[1]||=e=>o.selectedPocket=null},null,8,[`pocket`])):_(``,!0)])])}var Le=g(Ne,[[`render`,Ie],[`__scopeId`,`data-v-d64e8ecd`],[`__file`,`/Users/azumakoutaira/workspace/moti_nabi/frontend/src/features/create/components/Preview.vue`]]);export{k as a,M as i,Q as n,L as r,Le as t};
+import {
+  B as e,
+  C as t,
+  H as n,
+  L as r,
+  R as i,
+  S as a,
+  W as o,
+  X as s,
+  Z as c,
+  _ as l,
+  c as u,
+  d,
+  g as f,
+  h as p,
+  l as m,
+  st as h,
+  t as g,
+  v as _,
+  vt as v,
+  x as y,
+  xt as b,
+  y as x,
+} from "./_plugin-vue_export-helper-BwfGDmfF.js";
+import { n as S, r as C } from "./pinia-BDLqBGc_.js";
+import { t as ee } from "./BaseButton-DgJxAwXf.js";
+import { a as w } from "./index-BWdytgOe.js";
+import { t as te } from "./userAuthstore-B3Eqog8J.js";
+import { t as T } from "./workPackageStore-Cx7ot4E2.js";
+var E = w(`circle-minus`, [
+    [`circle`, { cx: `12`, cy: `12`, r: `10`, key: `1mglay` }],
+    [`path`, { d: `M8 12h8`, key: `1wcyev` }],
+  ]),
+  D = w(`circle-plus`, [
+    [`circle`, { cx: `12`, cy: `12`, r: `10`, key: `1mglay` }],
+    [`path`, { d: `M8 12h8`, key: `1wcyev` }],
+    [`path`, { d: `M12 8v8`, key: `napkw2` }],
+  ]),
+  O = w(`x`, [
+    [`path`, { d: `M18 6 6 18`, key: `1bl5f8` }],
+    [`path`, { d: `m6 6 12 12`, key: `d8bk6v` }],
+  ]),
+  k = S(`create`, {
+    state: () => ({
+      workId: ``,
+      userLuggage_SaveDBData: null,
+      listItem: null,
+      previewCase: {},
+      searchText: ``,
+      staticItemData: {},
+      category: null,
+      addItemCounter: 0,
+      staticCases: {},
+      iconMap: {},
+      categoryColor: {},
+      categories: [],
+      isStaticLoaded: !1,
+    }),
+    getters: {
+      staticCasesGetter: (e) => e.staticCases,
+      categorys: (e) => e.categories,
+      iconMapGetter: (e) => e.iconMap,
+      categoryColorGetter: (e) => e.categoryColor,
+      listItemGetter: (e) => e.listItem,
+      previewItemGetter: (e) => e.previewCase,
+      workIdGetter: (e) => e.workId,
+      getAllCasesArray: (e) =>
+        Object.entries(e.staticCases).map(([e, t]) => ({ id: e, data: t })),
+      getPreviewCasesArray: (e) =>
+        Object.entries(e.previewCase).map(([e, t]) => ({ id: e, data: t })),
+      filteredListItem: (e) => {
+        if (!e.listItem) return {};
+        let t = e.searchText.trim().toLowerCase();
+        return Object.fromEntries(
+          Object.entries(e.listItem).filter(([n, r]) => {
+            if (e.category === `bookmark`) return r.bookmark == 1;
+            if (e.category === `create`) return r.createType == `userCreated`;
+            let i = t === `` || r.name.toLowerCase().includes(t),
+              a =
+                !e.category ||
+                e.category === `all` ||
+                r.category.includes(e.category);
+            return i && a;
+          }),
+        );
+      },
+    },
+    actions: {
+      setIconMap(e) {
+        this.iconMap = e;
+      },
+      setStaticCases(e) {
+        this.staticCases = e;
+      },
+      setCategoryColor(e) {
+        this.categoryColor = e;
+      },
+      setCategories(e) {
+        this.categories = e;
+      },
+      setSearchText(e) {
+        this.searchText = e;
+      },
+      setCategory(e) {
+        this.category = e;
+      },
+      setAddItemCounter(e) {
+        this.addItemCounter = e;
+      },
+      setStaticItemData(e) {
+        this.staticItemData = e;
+      },
+      setSaveDBData(e) {
+        this.userLuggage_SaveDBData = e;
+      },
+      setlistItem(e) {
+        this.listItem = e;
+      },
+      setpreviewData(e) {
+        this.previewCase = e;
+      },
+      setWorkId(e) {
+        this.workId = e;
+      },
+      setStaticLoaded(e) {
+        this.isStaticLoaded = e;
+      },
+      addCount(e) {
+        if (!this.previewCase || !this.listItem) return;
+        let t = this.previewCase[e.caseId].pockets[e.pocketId],
+          n = e.parentItemId ?? e.originalId,
+          r = t.items.get(n);
+        if (!r) return;
+        if (!e.parentItemId) {
+          r.count += e.pulse;
+          return;
+        }
+        let i = r.innerItems.get(e.originalId);
+        return (i && (i.count += e.pulse), t.items);
+      },
+      pushpreviewItem(e) {
+        if (
+          (console.log(e),
+          !this.previewCase || !this.listItem || !this.addItemCounter)
+        )
+          return;
+        let t = this.previewCase[e.caseId].pockets[e.pocketId];
+        this.addItemCounter++;
+        let n = {
+          ...this.listItem[e.itemId],
+          originalId: e.originalId,
+          count: 1,
+          innerItems: new Map(),
+        };
+        if (e.parentItemId == null) t.items.set(n.originalId, n);
+        else {
+          let r = t.items.get(e.parentItemId)?.innerItems;
+          r && r.set(n.originalId, n);
+        }
+        return (console.log(t.items), t.items);
+      },
+      addBookmark(e) {
+        if (!(!this.previewCase || !this.listItem))
+          return (
+            (this.listItem[e.itemId].bookmark =
+              !this.listItem[e.itemId].bookmark),
+            e.itemId
+          );
+      },
+      addListItem(e) {
+        if (!this.previewCase || !this.listItem || !this.addItemCounter) return;
+        let t = `item_${Object.keys(this.listItem).length + 1}`,
+          n = { ...e, bookmark: !1, id: t };
+        return ((this.listItem[t] = n), n);
+      },
+      deletepreviewItem(e) {
+        if (!this.previewCase || !this.listItem || !this.previewCase[e.caseId])
+          return;
+        console.log(e);
+        let t = this.previewCase[e.caseId].pockets[e.pocketId],
+          n = e.parentItemId ? e.parentItemId : e.originalId;
+        if (e.parentItemId == null) return (t.items.delete(n), t.items);
+        if (e.parentItemId != null)
+          return (
+            t.items.get(e.parentItemId)?.innerItems?.delete(e.originalId),
+            t.items
+          );
+      },
+      addPreviewCase(e) {
+        if (e.reverse) {
+          let t = e.case;
+          return t.case ? ((this.previewCase[t.id] = t), t) : void 0;
+        } else {
+          let t = e.case;
+          return (
+            (this.previewCase[t.caseId] = this.staticCasesGetter[t.caseType]),
+            t
+          );
+        }
+      },
+      deleteCase(e) {
+        return (delete this.previewItemGetter[e.id], e.id);
+      },
+      reSizePocket(e) {
+        let t = this.previewCase[e.caseId].pockets[e.pocketId];
+        return (
+          (t.height = e.resizeData.height),
+          (t.width = e.resizeData.width),
+          (t.x = e.resizeData.x),
+          (t.y = e.resizeData.y),
+          t
+        );
+      },
+      reMovePocket(e) {
+        let t = this.previewCase[e.caseId].pockets[e.pocketId];
+        return ((t.x = e.removeData.x), (t.y = e.removeData.y), t);
+      },
+    },
+  }),
+  A = k(),
+  ne = () => {
+    if (!A.workIdGetter == null) return;
+    let e = [],
+      t = (t) => {
+        let n = {
+          id: `id_${e.length}`,
+          workId: A.workIdGetter,
+          userId: t.user,
+          type: t.token.type,
+          path: t.token.path,
+          beforeValue: null,
+          value: t.token,
+          createdAt: Date.now(),
+        };
+        (e.length == 0 && r(), e.push(n));
+      },
+      n = () => {
+        e.length = 0;
+      },
+      r = () => {
+        setTimeout(() => {
+          n();
+        }, 3e3);
+      };
+    return { push: t, pop: n };
+  },
+  j = () => {
+    let e = ne(),
+      t = k();
+    return {
+      hydrateCreateState: (e) => {
+        let n = t.staticItemData,
+          r = t.staticCases,
+          { previewDatas: i, itemListDatas: a } = e,
+          o = { ...n, ...a.addedItems },
+          s = Object.fromEntries(
+            Object.entries(o).map(([e, t]) => [
+              e,
+              { ...t, bookmark: a.bookmarks.includes(t.id) },
+            ]),
+          ),
+          c = (e) =>
+            new Map(
+              Array.from(e.entries()).map(([e, t]) => {
+                let { bookmark: n, ...r } = s[t.id];
+                return [
+                  e,
+                  s[t.id].isStorage
+                    ? {
+                        ...r,
+                        innerItems: t.innerItems ? c(t.innerItems) : new Map(),
+                        count: t.count,
+                        originalId: t.originalId,
+                      }
+                    : { ...r, count: t.count, originalId: t.originalId },
+                ];
+              }),
+            ),
+          l = (e, t) => {
+            let n = Object.fromEntries(
+                Object.entries(t.pockets).map(([t, n]) => {
+                  let r = e.poketSvgEdit?.find((e) => e.id === n.id),
+                    i = {
+                      width: r?.width ?? n.width,
+                      height: r?.height ?? n.height,
+                      x: r?.x ?? n.x,
+                      y: r?.y ?? n.y,
+                      id: n.id,
+                      name: n.name,
+                    };
+                  return [
+                    n.id,
+                    {
+                      ...n,
+                      ...i,
+                      items: c(e.pockets[n.id]?.innerItems ?? new Map()),
+                    },
+                  ];
+                }),
+              ),
+              r = Object.fromEntries(
+                Object.entries(n).filter(
+                  ([t, n]) => !(e.poketDelete ?? []).includes(n.id),
+                ),
+              );
+            return (
+              (e.pocketAdd ?? []).forEach((t) => {
+                r[t.id] = {
+                  ...t,
+                  items: c(e.pockets[t.id]?.innerItems ?? new Map()),
+                };
+              }),
+              r
+            );
+          };
+        return {
+          vuepreviewData: Object.fromEntries(
+            Object.entries(i.mainLuggage).map(([e, t]) => {
+              let n = r[t.caseType];
+              return [
+                e,
+                {
+                  id: e,
+                  case: n.case,
+                  handle: n.handle,
+                  name: n.name,
+                  pockets: l(t, n),
+                },
+              ];
+            }),
+          ),
+          vueItemList: s,
+          addItemCounter: i.addItemCounter,
+        };
+      },
+      alterationData: (n) => {
+        if (!t || !e) return;
+        let r = { type: `arrayPush`, path: [], value: null };
+        switch (n.alterationType) {
+          case `previewItems_additem`: {
+            let e = t.pushpreviewItem(n.token),
+              i = n.token;
+            ((r.path = [
+              `previewDatas`,
+              `mainLuggage`,
+              i.caseId,
+              `pockets`,
+              i.pocketId,
+              `innerItems`,
+            ]),
+              (r.value = e),
+              (r.type = `mapPush`));
+            break;
+          }
+          case `previewItems_addcount`: {
+            let e = t.addCount(n.token),
+              i = n.token;
+            ((r.path = [
+              `previewDatas`,
+              `mainLuggage`,
+              i.caseId,
+              `pockets`,
+              i.pocketId,
+              `innerItems`,
+              i.originalId,
+            ]),
+              (r.value = e),
+              (r.type = `set`));
+            break;
+          }
+          case `itemlistItems_bookmark`: {
+            let e = t.addBookmark(n.token);
+            ((r.path = [`itemListDatas`, `bookmarks`]),
+              (r.value = e),
+              (r.type = `arrayPush`));
+            break;
+          }
+          case `previewItems_delete`: {
+            let e = t.deletepreviewItem(n.token),
+              i = n.token;
+            ((r.path = [
+              `previewDatas`,
+              `mainLuggage`,
+              i.caseId,
+              `pockets`,
+              i.pocketId,
+              `innerItems`,
+            ]),
+              (r.value = e),
+              (r.type = `mapRemove`));
+            break;
+          }
+          case `itemlistItems_additem`: {
+            let e = t.addListItem(n.token);
+            ((r.path = [`itemListDatas`, `addedItems`]),
+              (r.value = e),
+              (r.type = `objectPush`));
+            break;
+          }
+          case `previewCases_addCase`: {
+            let e = t.addPreviewCase(n.token);
+            ((r.path = [`previewDatas`, `mainLuggage`]),
+              (r.value = e),
+              (r.type = `objectPush`));
+            break;
+          }
+          case `confirmed_removePocket`: {
+            let e = t.reMovePocket(n.token),
+              i = n.token;
+            ((r.path = [
+              `previewDatas`,
+              `mainLuggage`,
+              i.caseId,
+              `pockets`,
+              i.pocketId,
+              `innerItems`,
+            ]),
+              (r.value = e),
+              (r.type = `mapPush`));
+            break;
+          }
+          case `confirmed_resizePocket`: {
+            let e = t.reSizePocket(n.token),
+              i = n.token;
+            ((r.path = [
+              `previewDatas`,
+              `mainLuggage`,
+              i.caseId,
+              `pockets`,
+              i.pocketId,
+              `innerItems`,
+            ]),
+              (r.value = e),
+              (r.type = `mapPush`));
+            break;
+          }
+          case `previewCases_deleteCase`:
+            t.deleteCase(n.token);
+            break;
+        }
+        e.push({ user: n.user, alterationType: n.alterationType, token: r });
+      },
+      initCreateStaticData: async () => {
+        if (t.isStaticLoaded) return;
+        let [e, n, r] = await Promise.all([
+            fetch(`/json/create/itemList.json`),
+            fetch(`/json/create/category.json`),
+            fetch(`/json/create/case.json`),
+          ]),
+          i = await e.json(),
+          a = await n.json(),
+          o = await r.json();
+        (t.setStaticItemData(i),
+          t.setIconMap(a.iconMap),
+          t.setCategoryColor(a.color),
+          t.setCategories(a.categoryData),
+          t.setStaticCases(o),
+          t.setStaticLoaded(!0));
+      },
+    };
+  },
+  M = S(`alterationLog`, () => {
+    let e = j(),
+      t = [],
+      n = [];
+    return {
+      undoStack: t,
+      redoStack: n,
+      saveState: (e) => {
+        (t.push(e), (n.length = 0));
+      },
+      undo: () => {
+        if (t.length === 0) return;
+        let r = t.pop();
+        r &&
+          (n.push(r),
+          r.reverseToken instanceof Array
+            ? r.reverseToken.forEach((t) => {
+                e.alterationData(t);
+              })
+            : e.alterationData(r.reverseToken));
+      },
+      redo: () => {
+        if (n.length === 0) return;
+        let r = n.pop();
+        r && (t.push(r), e.alterationData(r.forwardToken));
+      },
+    };
+  }),
+  N = {
+    workId: `work_1`,
+    workName: `test`,
+    itemListDatas: {
+      addedItems: {
+        item_1: {
+          id: `item_1`,
+          name: `Tシャツ`,
+          category: [`create`, `food`],
+          iconId: `charger`,
+          isStorage: !1,
+          createType: `userCreated`,
+        },
+      },
+      addItemCounter: 1,
+      bookmarks: [`item_1`, `item_2`, `item_3`, `item_4`],
+    },
+    previewDatas: {
+      addItemCounter: 1,
+      mainLuggage: {
+        suitcase_0: {
+          id: `suitcase_0`,
+          addItemCounter: 8,
+          caseType: `HardSuitcase`,
+          poketSvgEdit: [{ id: `main`, width: 200, height: 300 }],
+          pocketAdd: [
+            {
+              id: `side`,
+              width: 200,
+              height: 300,
+              name: `サイド`,
+              x: 0,
+              y: 0,
+              items: new Map(),
+            },
+          ],
+          poketDelete: [`mesh`],
+          pockets: {
+            mesh: {
+              id: `mesh`,
+              originalId: `mesh`,
+              count: 0,
+              innerItems: new Map([
+                [`item_1`, { originalId: `item_1`, id: `item_1`, count: 3 }],
+                [
+                  `item_2`,
+                  {
+                    id: `inner_1`,
+                    count: 1,
+                    originalId: `item_2`,
+                    innerItems: new Map([
+                      [
+                        `item_3`,
+                        { id: `item_6`, originalId: `item_3`, count: 2 },
+                      ],
+                      [
+                        `item_4`,
+                        { id: `item_6`, originalId: `item_4`, count: 1 },
+                      ],
+                    ]),
+                  },
+                ],
+              ]),
+            },
+            main: {
+              id: `main`,
+              originalId: `main`,
+              count: 0,
+              innerItems: new Map([
+                [`item_5`, { originalId: `item_5`, id: `inner_1`, count: 3 }],
+              ]),
+            },
+          },
+        },
+      },
+    },
+  },
+  P = `http://localhost:3000/create`,
+  F = () => ({
+    load: () => N,
+    getWork: async (e) => {
+      let t = await (
+        await fetch(`${P}/work/get`, {
+          method: `POST`,
+          headers: { "Content-Type": `application/json` },
+          body: JSON.stringify({ theWorkId: e }),
+        })
+      ).json();
+      return {
+        workId: t.workId,
+        workName: t.workName,
+        itemListDatas: { addedItems: {}, bookmarks: [], addItemCounter: 0 },
+        previewDatas: { mainLuggage: {}, addItemCounter: 0 },
+      };
+    },
+    createNewWork: async (e) =>
+      await (
+        await fetch(`${P}/work/create`, {
+          method: `POST`,
+          headers: { "Content-Type": `application/json` },
+          body: JSON.stringify({ createToken: e }),
+        })
+      ).json(),
+  }),
+  I = T(),
+  L = () => {
+    let e = k(),
+      t = te(),
+      n = M(),
+      r = F(),
+      i = j(),
+      a = async () => {
+        let n = t.userId,
+          a = null,
+          o = {},
+          s = {},
+          c = 0;
+        try {
+          a = await r.createNewWork(n);
+        } catch {
+          return `fallLoadData`;
+        }
+        try {
+          if (a == null) throw Error();
+          await j().initCreateStaticData();
+          let e = i.hydrateCreateState(a);
+          ((o = e.vuepreviewData), (s = e.vueItemList), (c = e.addItemCounter));
+        } catch {
+          return `damagedData`;
+        }
+        return (
+          e.setAddItemCounter(c),
+          e.setSaveDBData(a),
+          e.setlistItem(s),
+          e.setpreviewData(o),
+          `none`
+        );
+      },
+      o = async () => {
+        let t = I.selectedPackageGetter.id;
+        if (!t) return `noneNameorWorkId`;
+        let n = null,
+          a = {},
+          o = {},
+          s = 0;
+        try {
+          n = await r.getWork(t);
+        } catch {
+          return `fallLoadData`;
+        }
+        try {
+          if (n == null) throw Error();
+          await j().initCreateStaticData();
+          let e = i.hydrateCreateState(n);
+          ((a = e.vuepreviewData), (o = e.vueItemList), (s = e.addItemCounter));
+        } catch {
+          return `damagedData`;
+        }
+        return (
+          e.setAddItemCounter(s),
+          e.setSaveDBData(n),
+          e.setlistItem(o),
+          e.setpreviewData(a),
+          `none`
+        );
+      },
+      s = async (r) => {
+        let { itemId: a } = r,
+          o = e?.listItemGetter;
+        if (!o) return `nonePreview`;
+        let s = o[a];
+        if (!s) return `noneItem`;
+        if (s.isStorage == 1 && r.parentItemId != null)
+          return `isRegulatedAction`;
+        let c =
+            r.originalId == null ? `item_${e.addItemCounter}` : r.originalId,
+          l = {
+            originalId: c,
+            caseId: r.caseId,
+            pocketId: r.pocketId,
+            parentItemId: r.parentItemId,
+            itemId: r.itemId,
+          },
+          u = {
+            alterationType: `previewItems_additem`,
+            token: { ...r, originalId: c },
+            user: t.userName,
+          },
+          d = {
+            alterationType: `previewItems_delete`,
+            token: l,
+            user: t.userName,
+          };
+        return (
+          n.saveState({ forwardToken: u, reverseToken: d }),
+          i.alterationData(u),
+          `addPreview`
+        );
+      },
+      c = (e) => {
+        let r = {
+            alterationType: `previewItems_addcount`,
+            token: e,
+            user: t.userName,
+          },
+          a = {
+            alterationType: `previewItems_addcount`,
+            token: { ...e, pulse: e.pulse * -1 },
+            user: t.userName,
+          };
+        (n.saveState({ forwardToken: r, reverseToken: a }),
+          i.alterationData(r));
+      },
+      l = (e) => {
+        let n = {
+          alterationType: `itemlistItems_bookmark`,
+          token: e,
+          user: t.userName,
+        };
+        i.alterationData(n);
+      },
+      u = (r) => {
+        if (!e.listItemGetter) return;
+        let a = {
+            alterationType: `previewItems_delete`,
+            token: r,
+            user: t.userName,
+          },
+          { innnerItemToken: o, ...s } = r,
+          c = [];
+        (c.push({
+          alterationType: `previewItems_additem`,
+          token: s,
+          user: t.userName,
+        }),
+          r.innnerItemToken &&
+            r.innnerItemToken.forEach((e) => {
+              c.push({
+                alterationType: `previewItems_additem`,
+                token: e,
+                user: t.userName,
+              });
+            }),
+          i.alterationData(a),
+          n.saveState({ forwardToken: a, reverseToken: c }));
+      },
+      d = (e) => {
+        let n = {
+          alterationType: `itemlistItems_additem`,
+          token: e,
+          user: t.userName,
+        };
+        i.alterationData(n);
+      },
+      f = (r) => {
+        let i = `caseID_${e.getPreviewCasesArray.length}`,
+          a = { case: { caseType: r, caseId: i }, reverse: !1 },
+          o = {
+            alterationType: `previewCases_addCase`,
+            token: a,
+            user: t.userName,
+          },
+          s = {
+            alterationType: `previewCases_deleteCase`,
+            token: { id: i, deletecase: e.staticCasesGetter[r] },
+            user: t.userName,
+          };
+        (e.addPreviewCase(a),
+          n.saveState({ forwardToken: o, reverseToken: s }));
+      },
+      p = (r) => {
+        let i = e.previewItemGetter[r],
+          a = { case: i, reverse: !0 },
+          o = {
+            alterationType: `previewCases_deleteCase`,
+            token: { id: r, deletecase: i },
+            user: t.userName,
+          },
+          s = {
+            alterationType: `previewCases_addCase`,
+            token: a,
+            user: t.userName,
+          };
+        (e.addPreviewCase(a),
+          n.saveState({ forwardToken: s, reverseToken: o }));
+      },
+      m = !1,
+      h = { x: 0, y: 0, width: 0, height: 0 },
+      g = (t, n, r) => {
+        if (!m) {
+          m = !0;
+          let { x: t, y: i, width: a, height: o } = e.previewCase[r].pockets[n];
+          h = { x: t, y: i, width: a, height: o };
+        }
+        let i = { caseId: r, pocketId: n, resizeData: t };
+        e.reSizePocket(i);
+      },
+      _ = (r, a) => {
+        let { x: o, y: s, width: c, height: l } = e.previewCase[r].pockets[a],
+          u = {
+            pos: { x: o, y: s, width: c, height: l },
+            caseId: r,
+            pocketId: a,
+          },
+          d = {
+            alterationType: `confirmed_resizePocket`,
+            token: { pos: h, caseId: r, pocketId: a },
+            user: t.userName,
+          },
+          f = {
+            token: u,
+            alterationType: `confirmed_resizePocket`,
+            user: t.userName,
+          };
+        ((m = !1),
+          n.saveState({ forwardToken: f, reverseToken: d }),
+          i.alterationData(f));
+      },
+      v = !1,
+      y = { x: 0, y: 0, width: 0, height: 0 };
+    return {
+      createNewwork: a,
+      confirmedRemovePocket: (r, a) => {
+        let { x: o, y: s, width: c, height: l } = e.previewCase[r].pockets[a],
+          u = {
+            pos: { x: o, y: s, width: c, height: l },
+            caseId: r,
+            pocketId: a,
+          },
+          d = { pos: y, caseId: r, pocketId: a },
+          f = {
+            alterationType: `confirmed_resizePocket`,
+            token: u,
+            user: t.userName,
+          },
+          p = {
+            alterationType: `confirmed_resizePocket`,
+            token: d,
+            user: t.userName,
+          };
+        ((v = !1),
+          n.saveState({ forwardToken: f, reverseToken: p }),
+          i.alterationData(f));
+      },
+      provisionalRemovePocket: (t, n, r) => {
+        if (!v) {
+          v = !0;
+          let { x: t, y: i, width: a, height: o } = e.previewCase[r].pockets[n];
+          y = { x: t, y: i, width: a, height: o };
+        }
+        let i = { caseId: r, pocketId: n, removeData: t };
+        e.reMovePocket(i);
+      },
+      provisionalResizePocket: g,
+      confirmedResizePocket: _,
+      loadWork: o,
+      addItemToPreview: s,
+      addItemCount: c,
+      addBookmark: l,
+      deletePreviewItem: u,
+      addListItem: d,
+      addCase: f,
+      deleteCase: p,
+    };
+  },
+  R = t({
+    __name: `PreviewItem`,
+    props: {
+      item: { type: Object, required: !0 },
+      pocketId: { type: String, required: !0 },
+      parentItem: { type: String, required: !1 },
+      caseId: { type: String, required: !0 },
+    },
+    setup(e, { expose: t }) {
+      t();
+      let n = e,
+        r = k(),
+        i = L(),
+        a = r.iconMap;
+      function o(e) {
+        let t = {
+          originalId: n.item.originalId,
+          popCaseId: n.caseId,
+          popPocketId: n.pocketId,
+        };
+        e.dataTransfer?.setData(`originalId`, JSON.stringify(t));
+      }
+      let s = {
+        props: n,
+        createStore: r,
+        createWork: i,
+        iconMap: a,
+        onDragStart: o,
+        onDrop: (e) => {
+          let t = e.dataTransfer?.getData(`itemId`);
+          if (!t) return;
+          let r = {
+            itemId: t,
+            pocketId: n.pocketId,
+            parentItemId: n.item.originalId,
+            caseId: n.caseId,
+            originalId: n.item.originalId,
+          };
+          i.addItemToPreview(r);
+        },
+        onPlue: (e) => {
+          n.item.count + e >= 99 ||
+            n.item.count + e <= 0 ||
+            i.addItemCount({
+              originalId: n.item.originalId,
+              pulse: e,
+              pocketId: n.pocketId,
+              parentItemId: n.parentItem ? n.parentItem : void 0,
+              caseId: n.caseId,
+            });
+        },
+        onDelete: () => {
+          let e = [];
+          n.item.innerItems?.forEach((t) => {
+            e?.push({
+              pocketId: n.pocketId,
+              caseId: n.caseId,
+              parentItemId: n.item.originalId,
+              itemId: t.id,
+              originalId: n.item.originalId,
+            });
+          });
+          let t = {
+            originalId: n.item.originalId,
+            pocketId: n.pocketId,
+            parentItemId: n.parentItem ? n.parentItem : void 0,
+            itemId: n.item.id,
+            caseId: n.caseId,
+            innnerItemToken: e,
+          };
+          i.deletePreviewItem(t);
+        },
+        icon: a[n.item.iconId] ?? `📦`,
+        get CirclePlus() {
+          return D;
+        },
+        get CircleMinus() {
+          return E;
+        },
+        get BaseButton() {
+          return ee;
+        },
+      };
+      return (
+        Object.defineProperty(s, `__isScriptSetup`, {
+          enumerable: !1,
+          value: !0,
+        }),
+        s
+      );
+    },
+  }),
+  z = { class: `item-card` },
+  B = { class: `header` },
+  V = { class: `count` },
+  H = { key: 0, class: `drop-text` };
+function U(t, r, i, c, l, u) {
+  let p = o(`previewItem`, !0);
+  return (
+    e(),
+    x(`div`, z, [
+      f(`section`, B, [
+        f(`div`, null, b(c.icon.src), 1),
+        f(`div`, null, b(c.props.item.name), 1),
+        f(`div`, V, [
+          a(c.CirclePlus, {
+            class: `countIcon`,
+            onClick: (r[0] ||= (e) => c.onPlue(1)),
+          }),
+          y(` ` + b(c.props.item.count) + ` `, 1),
+          a(c.CircleMinus, {
+            class: `countIcon`,
+            onClick: (r[1] ||= (e) => c.onPlue(-1)),
+          }),
+        ]),
+        a(
+          c.BaseButton,
+          { class: `delete-button`, onClick: c.onDelete },
+          { default: s(() => [...(r[3] ||= [y(`削除`, -1)])]), _: 1 },
+        ),
+      ]),
+      c.props.item.isStorage
+        ? (e(),
+          x(
+            `section`,
+            {
+              key: 0,
+              class: `storage innerItems`,
+              onDrop: [c.onDrop, (r[2] ||= m(() => {}, [`stop`]))],
+            },
+            [
+              (e(!0),
+              x(
+                d,
+                null,
+                n(
+                  c.props.item.innerItems,
+                  ([t, n]) => (
+                    e(),
+                    x(`div`, { key: t }, [
+                      a(
+                        p,
+                        {
+                          item: n,
+                          pocketId: c.props.pocketId,
+                          parentItem: c.props.item.originalId,
+                          caseId: c.props.caseId,
+                        },
+                        null,
+                        8,
+                        [`item`, `pocketId`, `parentItem`, `caseId`],
+                      ),
+                    ])
+                  ),
+                ),
+                128,
+              )),
+              c.props.item.innerItems?.size === 0
+                ? (e(), x(`p`, H, b(`ここにドロップ`)))
+                : _(``, !0),
+            ],
+            32,
+          ))
+        : _(``, !0),
+    ])
+  );
+}
+var W = g(R, [
+    [`render`, U],
+    [`__scopeId`, `data-v-126205df`],
+    [
+      `__file`,
+      `/Users/azumakoutaira/workspace/moti_nabi/frontend/src/features/create/components/PreviewItem.vue`,
+    ],
+  ]),
+  G = t({
+    __name: `PocketModal`,
+    props: { pocket: { type: Object, required: !0 } },
+    emits: [`close`],
+    setup(e, { expose: t, emit: n }) {
+      t();
+      let r = h(!1),
+        i = L(),
+        a = n,
+        o = () => {
+          ((r.value = !0),
+            setTimeout(() => {
+              a(`close`);
+            }, 300));
+        },
+        s = (e) => {
+          let t = e.dataTransfer?.getData(`itemId`),
+            n = e.dataTransfer?.getData(`positionChangeData`);
+          if (!(!t && !n) && t) {
+            let e = {
+              itemId: t,
+              pocketId: l.pocket.id,
+              caseId: l.pocket.caseId,
+              originalId: null,
+            };
+            i.addItemToPreview(e);
+          }
+        },
+        c = () => {},
+        l = e,
+        u = {
+          isClose: r,
+          createWork: i,
+          emit: a,
+          close: o,
+          onDrop: s,
+          handleDrop: c,
+          props: l,
+          get X() {
+            return O;
+          },
+          PreviewItem: W,
+        };
+      return (
+        Object.defineProperty(u, `__isScriptSetup`, {
+          enumerable: !1,
+          value: !0,
+        }),
+        u
+      );
+    },
+  }),
+  K = { class: `modal` },
+  q = { class: `header` },
+  J = { class: `name` },
+  Y = { class: `drop-area` },
+  X = { key: 0, style: { "font-size": `12px`, "text-align": `center` } };
+function Z(t, r, i, o, s, c) {
+  return (
+    e(),
+    x(
+      `div`,
+      {
+        class: v([`overlay`, [`overlay`, { close: o.isClose }]]),
+        onDrop: [o.onDrop, (r[0] ||= m(() => {}, [`stop`]))],
+        onDragover: m(o.handleDrop, [`prevent`]),
+      },
+      [
+        f(`div`, K, [
+          f(`header`, q, [
+            f(`div`, J, b(`#` + i.pocket.name), 1),
+            f(`div`, { onClick: o.close, class: `close-button` }, [
+              a(o.X, { size: 20, color: `black`, "stroke-width": `2.5` }),
+            ]),
+          ]),
+          f(`div`, Y, [
+            i.pocket.items.size === 0
+              ? (e(), x(`p`, X, ` ここに持ち物をドラッグ `))
+              : _(``, !0),
+            (e(!0),
+            x(
+              d,
+              null,
+              n(
+                i.pocket.items,
+                ([t, n]) => (
+                  e(),
+                  x(`div`, { key: t, class: `item-card` }, [
+                    a(
+                      o.PreviewItem,
+                      {
+                        caseId: i.pocket.caseId,
+                        item: n,
+                        pocketId: i.pocket.id,
+                      },
+                      null,
+                      8,
+                      [`caseId`, `item`, `pocketId`],
+                    ),
+                  ])
+                ),
+              ),
+              128,
+            )),
+          ]),
+        ]),
+      ],
+      34,
+    )
+  );
+}
+var re = g(G, [
+    [`render`, Z],
+    [`__scopeId`, `data-v-f42593c0`],
+    [
+      `__file`,
+      `/Users/azumakoutaira/workspace/moti_nabi/frontend/src/features/create/components/PocketModal.vue`,
+    ],
+  ]),
+  Q = S(`caseDragStore`, {
+    state: () => ({ isDrag: !1 }),
+    getters: { isDragging: (e) => e.isDrag },
+    actions: {
+      drag(e) {
+        this.isDrag = e;
+      },
+    },
+  }),
+  ie = t({
+    __name: `dropCaseArea`,
+    setup(e, { expose: t }) {
+      t();
+      let n = L(),
+        r = Q(),
+        { isDrag: i } = C(r),
+        a = {
+          createWork: n,
+          casecardDragStore: r,
+          isDrag: i,
+          handleDrop: () => {},
+          onDrop: (e) => {
+            let t = e.dataTransfer?.getData(`caseId`);
+            t && n.addCase(t);
+          },
+        };
+      return (
+        Object.defineProperty(a, `__isScriptSetup`, {
+          enumerable: !1,
+          value: !0,
+        }),
+        a
+      );
+    },
+  });
+function ae(t, n, r, i, a, o) {
+  return c(
+    (e(),
+    x(
+      `div`,
+      {
+        onDrop: [i.onDrop, (n[0] ||= m(() => {}, [`stop`]))],
+        onDragover: m(i.handleDrop, [`prevent`]),
+        class: `drop-area`,
+      },
+      [...(n[1] ||= [f(`h1`, null, `ここにドロップ`, -1)])],
+      544,
+    )),
+    [[u, i.isDrag]],
+  );
+}
+var oe = g(ie, [
+    [`render`, ae],
+    [`__scopeId`, `data-v-4322c95e`],
+    [
+      `__file`,
+      `/Users/azumakoutaira/workspace/moti_nabi/frontend/src/features/create/components/sideBar/caseBar/components/dropCaseArea.vue`,
+    ],
+  ]),
+  se = t({
+    __name: `svgResizeHandle`,
+    props: {
+      pocket: { type: Object, required: !0 },
+      caseId: { type: String, required: !0 },
+      pocketId: { type: String, required: !0 },
+    },
+    setup(e, { expose: t }) {
+      t();
+      let n = L(),
+        a = e,
+        o = !1,
+        s = { x: 0, y: 0 },
+        c = 0,
+        l = 0,
+        u = (e, t, n) => {
+          ((o = !0),
+            (s = { x: t, y: n }),
+            (c = e.clientX),
+            (l = e.clientY),
+            e.currentTarget.setPointerCapture(e.pointerId));
+        },
+        d = () => {
+          o = !1;
+        },
+        f = (e) => {
+          if (!o) return;
+          let t = e.clientX - c,
+            r = e.clientY - l;
+          ((c = e.clientX), (l = e.clientY));
+          let i = s.x === -1 ? t : 0,
+            u = s.y === -1 ? r : 0;
+          n.provisionalResizePocket(
+            {
+              x: a.pocket.x + i,
+              y: a.pocket.y + u,
+              width: a.pocket.width + t * s.x,
+              height: a.pocket.height + r * s.y,
+            },
+            a.pocketId,
+            a.caseId,
+          );
+        };
+      (r(() => {
+        (window.addEventListener(`pointermove`, f),
+          window.addEventListener(`pointerup`, d));
+      }),
+        i(() => {
+          (window.removeEventListener(`pointermove`, f),
+            window.removeEventListener(`pointerup`, d));
+        }));
+      let p = {
+        createWork: n,
+        props: a,
+        get isResizing() {
+          return o;
+        },
+        set isResizing(e) {
+          o = e;
+        },
+        get resizeDirection() {
+          return s;
+        },
+        set resizeDirection(e) {
+          s = e;
+        },
+        get lastX() {
+          return c;
+        },
+        set lastX(e) {
+          c = e;
+        },
+        get lastY() {
+          return l;
+        },
+        set lastY(e) {
+          l = e;
+        },
+        startResize: u,
+        stopResize: d,
+        handlePointerMove: f,
+      };
+      return (
+        Object.defineProperty(p, `__isScriptSetup`, {
+          enumerable: !1,
+          value: !0,
+        }),
+        p
+      );
+    },
+  }),
+  ce = { class: `resize-handles` },
+  le = [`cx`, `cy`],
+  ue = [`cx`, `cy`],
+  de = [`cx`, `cy`],
+  fe = [`cx`, `cy`],
+  pe = [`cx`, `cy`],
+  me = [`cx`, `cy`],
+  he = [`cx`, `cy`],
+  ge = [`cx`, `cy`];
+function _e(t, n, r, i, a, o) {
+  return (
+    e(),
+    x(`g`, ce, [
+      f(
+        `circle`,
+        {
+          cx: r.pocket.x,
+          cy: r.pocket.y,
+          r: `6`,
+          onPointerdown: (n[0] ||= (e) => i.startResize(e, -1, -1)),
+          class: `resize-handle`,
+          style: { cursor: `nwse-resize` },
+        },
+        null,
+        40,
+        le,
+      ),
+      f(
+        `circle`,
+        {
+          cx: r.pocket.x + r.pocket.width,
+          cy: r.pocket.y,
+          r: `6`,
+          onPointerdown: (n[1] ||= (e) => i.startResize(e, 1, -1)),
+          class: `resize-handle`,
+          style: { cursor: `nesw-resize` },
+        },
+        null,
+        40,
+        ue,
+      ),
+      f(
+        `circle`,
+        {
+          cx: r.pocket.x,
+          cy: r.pocket.y + r.pocket.height,
+          r: `6`,
+          onPointerdown: (n[2] ||= (e) => i.startResize(e, -1, 1)),
+          class: `resize-handle`,
+          style: { cursor: `nesw-resize` },
+        },
+        null,
+        40,
+        de,
+      ),
+      f(
+        `circle`,
+        {
+          cx: r.pocket.x + r.pocket.width,
+          cy: r.pocket.y + r.pocket.height,
+          r: `6`,
+          onPointerdown: (n[3] ||= (e) => i.startResize(e, 1, 1)),
+          class: `resize-handle`,
+          style: { cursor: `nwse-resize` },
+        },
+        null,
+        40,
+        fe,
+      ),
+      f(
+        `circle`,
+        {
+          cx: r.pocket.x + r.pocket.width / 2,
+          cy: r.pocket.y,
+          r: `6`,
+          onPointerdown: (n[4] ||= (e) => i.startResize(e, 0, -1)),
+          class: `resize-handle`,
+          style: { cursor: `ns-resize` },
+        },
+        null,
+        40,
+        pe,
+      ),
+      f(
+        `circle`,
+        {
+          cx: r.pocket.x + r.pocket.width / 2,
+          cy: r.pocket.y + r.pocket.height,
+          r: `6`,
+          onPointerdown: (n[5] ||= (e) => i.startResize(e, 0, 1)),
+          class: `resize-handle`,
+          style: { cursor: `ns-resize` },
+        },
+        null,
+        40,
+        me,
+      ),
+      f(
+        `circle`,
+        {
+          cx: r.pocket.x,
+          cy: r.pocket.y + r.pocket.height / 2,
+          r: `6`,
+          onPointerdown: (n[6] ||= (e) => i.startResize(e, -1, 0)),
+          class: `resize-handle`,
+          style: { cursor: `ew-resize` },
+        },
+        null,
+        40,
+        he,
+      ),
+      f(
+        `circle`,
+        {
+          cx: r.pocket.x + r.pocket.width,
+          cy: r.pocket.y + r.pocket.height / 2,
+          r: `6`,
+          onPointerdown: (n[7] ||= (e) => i.startResize(e, 1, 0)),
+          class: `resize-handle`,
+          style: { cursor: `ew-resize` },
+        },
+        null,
+        40,
+        ge,
+      ),
+    ])
+  );
+}
+var ve = g(se, [
+    [`render`, _e],
+    [`__scopeId`, `data-v-95e8907c`],
+    [
+      `__file`,
+      `/Users/azumakoutaira/workspace/moti_nabi/frontend/src/features/create/components/svgUi/svgResizeHandle.vue`,
+    ],
+  ]),
+  ye = t({
+    __name: `SvgRemoveHandle`,
+    props: {
+      pocket: { type: Object, required: !0 },
+      caseId: { type: String, required: !0 },
+      pocketId: { type: String, required: !0 },
+    },
+    setup(e, { expose: t }) {
+      t();
+      let n = L(),
+        a = e,
+        o = !1,
+        s = 0,
+        c = 0,
+        l = (e) => {
+          ((o = !0),
+            (s = e.clientX),
+            (c = e.clientY),
+            e.currentTarget.setPointerCapture(e.pointerId));
+        },
+        u = () => {
+          o = !1;
+        },
+        d = (e) => {
+          if (!o) return;
+          let t = e.clientX - s,
+            r = e.clientY - c;
+          ((s = e.clientX),
+            (c = e.clientY),
+            n.provisionalRemovePocket(
+              { x: a.pocket.x + t, y: a.pocket.y + r },
+              a.pocketId,
+              a.caseId,
+            ));
+        };
+      (r(() => {
+        (window.addEventListener(`pointermove`, d),
+          window.addEventListener(`pointerup`, u));
+      }),
+        i(() => {
+          (window.removeEventListener(`pointermove`, d),
+            window.removeEventListener(`pointerup`, u));
+        }));
+      let f = {
+        createWork: n,
+        props: a,
+        get isRemoveing() {
+          return o;
+        },
+        set isRemoveing(e) {
+          o = e;
+        },
+        get lastX() {
+          return s;
+        },
+        set lastX(e) {
+          s = e;
+        },
+        get lastY() {
+          return c;
+        },
+        set lastY(e) {
+          c = e;
+        },
+        startReMove: l,
+        stopResize: u,
+        handlePointerMove: d,
+      };
+      return (
+        Object.defineProperty(f, `__isScriptSetup`, {
+          enumerable: !1,
+          value: !0,
+        }),
+        f
+      );
+    },
+  }),
+  be = [`x`, `y`, `width`, `height`];
+function xe(t, n, r, i, a, o) {
+  return (
+    e(),
+    x(
+      `g`,
+      {
+        div: ``,
+        onPointerdown: (n[0] ||= (e) => i.startReMove(e)),
+        class: `remove-handle`,
+      },
+      [
+        f(
+          `rect`,
+          {
+            x: r.pocket.x,
+            y: r.pocket.y,
+            width: r.pocket.width,
+            height: r.pocket.height,
+            rx: `1`,
+            class: `pocket`,
+            fill: `transparent`,
+          },
+          null,
+          8,
+          be,
+        ),
+      ],
+      32,
+    )
+  );
+}
+var Se = g(ye, [
+    [`render`, xe],
+    [`__scopeId`, `data-v-c265c640`],
+    [
+      `__file`,
+      `/Users/azumakoutaira/workspace/moti_nabi/frontend/src/features/create/components/svgUi/SvgRemoveHandle.vue`,
+    ],
+  ]),
+  Ce = t({
+    __name: `case`,
+    props: {
+      pockets: { type: Object, required: !0 },
+      case: { type: Object, required: !0 },
+      handle: { type: Object, required: !0 },
+      name: { type: String, required: !0 },
+      id: { type: String, required: !0 },
+    },
+    emits: [`update:selectedPocket`],
+    setup(e, { expose: t, emit: n }) {
+      t();
+      let r = e,
+        i = p(() =>
+          Object.values(r.pockets).map((e) =>
+            e.items ? e : { ...e, items: new Map() },
+          ),
+        ),
+        a = n;
+      function o(e) {
+        a(`update:selectedPocket`, {
+          items: e.items,
+          id: e.id,
+          name: e.name,
+          caseId: r.id,
+        });
+      }
+      let s = {
+        props: r,
+        pockets: i,
+        emit: a,
+        openPocket: o,
+        SvgResizeHandle: ve,
+        SvgRemoveHandle: Se,
+      };
+      return (
+        Object.defineProperty(s, `__isScriptSetup`, {
+          enumerable: !1,
+          value: !0,
+        }),
+        s
+      );
+    },
+  }),
+  we = { class: `suitcase-wrap` },
+  Te = { viewBox: `0 0 400 560`, class: `suitcase` },
+  Ee = [`x`, `y`, `width`, `height`],
+  De = [`x`, `y`, `width`, `height`],
+  $ = [`onDblclick`],
+  Oe = [`x`, `y`, `width`, `height`],
+  ke = [`x`, `y`],
+  Ae = [`x`, `y`];
+function je(t, r, i, o, s, c) {
+  return (
+    e(),
+    x(`div`, we, [
+      (e(),
+      x(`svg`, Te, [
+        f(
+          `rect`,
+          {
+            x: o.props.case.x,
+            y: o.props.case.y,
+            width: o.props.case.width,
+            height: o.props.case.height,
+            class: `case-body`,
+            rx: `14`,
+          },
+          null,
+          8,
+          Ee,
+        ),
+        f(
+          `rect`,
+          {
+            x: o.props.handle.x,
+            y: o.props.handle.y,
+            width: o.props.handle.width,
+            height: o.props.handle.height,
+            rx: `12`,
+            class: `handle`,
+          },
+          null,
+          8,
+          De,
+        ),
+        (e(!0),
+        x(
+          d,
+          null,
+          n(
+            o.pockets,
+            (t) => (
+              e(),
+              x(
+                `g`,
+                {
+                  key: t.id,
+                  class: `pocket-group`,
+                  onDblclick: (e) => o.openPocket(t),
+                },
+                [
+                  f(
+                    `rect`,
+                    {
+                      x: t.x,
+                      y: t.y,
+                      width: t.width,
+                      height: t.height,
+                      rx: `14`,
+                      class: `pocket`,
+                    },
+                    null,
+                    8,
+                    Oe,
+                  ),
+                  f(
+                    `text`,
+                    {
+                      x: t.x + t.width / 2,
+                      y: t.y + t.height / 2,
+                      "text-anchor": `middle`,
+                      "dominant-baseline": `middle`,
+                      class: `pocket-label`,
+                    },
+                    b(t.name),
+                    9,
+                    ke,
+                  ),
+                  a(
+                    o.SvgRemoveHandle,
+                    {
+                      class: `svg-removehandle`,
+                      pocket: t,
+                      caseId: i.id,
+                      pocketId: t.id,
+                    },
+                    null,
+                    8,
+                    [`pocket`, `caseId`, `pocketId`],
+                  ),
+                  f(
+                    `text`,
+                    {
+                      x: t.x + t.width - 12,
+                      y: t.y + 22,
+                      "text-anchor": `end`,
+                      class: `pocket-count`,
+                    },
+                    b(t.items?.size),
+                    9,
+                    Ae,
+                  ),
+                  a(
+                    o.SvgResizeHandle,
+                    {
+                      pocket: t,
+                      caseId: i.id,
+                      pocketId: t.id,
+                      class: `svg-resizehandle`,
+                    },
+                    null,
+                    8,
+                    [`pocket`, `caseId`, `pocketId`],
+                  ),
+                ],
+                40,
+                $,
+              )
+            ),
+          ),
+          128,
+        )),
+      ])),
+    ])
+  );
+}
+var Me = g(Ce, [
+    [`render`, je],
+    [`__scopeId`, `data-v-06975ad1`],
+    [
+      `__file`,
+      `/Users/azumakoutaira/workspace/moti_nabi/frontend/src/features/create/components/svgUi/case.vue`,
+    ],
+  ]),
+  Ne = t({
+    __name: `Preview`,
+    setup(e, { expose: t }) {
+      t();
+      let n = h(),
+        r = k(),
+        { getPreviewCasesArray: i } = C(r),
+        a = {
+          selectedPocket: n,
+          createStore: r,
+          cases: i,
+          PocketModal: re,
+          dropCaseArea: oe,
+          Case: Me,
+        };
+      return (
+        Object.defineProperty(a, `__isScriptSetup`, {
+          enumerable: !1,
+          value: !0,
+        }),
+        a
+      );
+    },
+  }),
+  Pe = { class: `preview-area` },
+  Fe = { class: `pocketModal` };
+function Ie(t, r, i, o, s, c) {
+  return (
+    e(),
+    x(`div`, Pe, [
+      a(o.dropCaseArea, { class: `drop-area` }),
+      (e(!0),
+      x(
+        d,
+        null,
+        n(
+          o.cases,
+          (t) => (
+            e(),
+            x(`div`, { class: `preview`, key: t.id }, [
+              a(
+                o.Case,
+                {
+                  pockets: t.data.pockets,
+                  case: t.data.case,
+                  name: t.data.name,
+                  handle: t.data.handle,
+                  id: t.id,
+                  selectedPocket: o.selectedPocket,
+                  "onUpdate:selectedPocket": (r[0] ||= (e) =>
+                    (o.selectedPocket = e)),
+                },
+                null,
+                8,
+                [`pockets`, `case`, `name`, `handle`, `id`, `selectedPocket`],
+              ),
+            ])
+          ),
+        ),
+        128,
+      )),
+      f(`section`, Fe, [
+        o.selectedPocket
+          ? (e(),
+            l(
+              o.PocketModal,
+              {
+                key: 0,
+                pocket: o.selectedPocket,
+                onClose: (r[1] ||= (e) => (o.selectedPocket = null)),
+              },
+              null,
+              8,
+              [`pocket`],
+            ))
+          : _(``, !0),
+      ]),
+    ])
+  );
+}
+var Le = g(Ne, [
+  [`render`, Ie],
+  [`__scopeId`, `data-v-d64e8ecd`],
+  [
+    `__file`,
+    `/Users/azumakoutaira/workspace/moti_nabi/frontend/src/features/create/components/Preview.vue`,
+  ],
+]);
+export { k as a, M as i, Q as n, L as r, Le as t };

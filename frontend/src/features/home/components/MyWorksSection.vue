@@ -7,11 +7,11 @@
 
 <script setup lang="ts">
 import HomeWorksSection from "./HomeWorksSection.vue";
-import { useUserStore } from "@/store/user/userStore.ts";
+import { useUserAuthStore } from "@/store/user/userAuthStore.ts";
 import { useIncrementalList } from "@/composables/array/useIncrementalList.ts";
 import { useWorkPackageStore } from "@/features/work/store/workPackageStore.ts";
 const workPackageStore = useWorkPackageStore();
-const userStore = useUserStore();
+const userAuthstore = useUserAuthStore();
 import { storeToRefs } from "pinia";
 const { userWorkPackageStoreGetter } = storeToRefs(workPackageStore);
 

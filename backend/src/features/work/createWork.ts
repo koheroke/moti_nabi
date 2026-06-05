@@ -25,6 +25,7 @@ const useWork = () => {
         },
       }
     })
+    console.log("work", work)
     workData.set(work.id, work)
     return { workName: work.name, workId: work.id }
   }
@@ -199,9 +200,23 @@ const useWork = () => {
     }
     return thumbnail
   }
+  const getUserWorkPackages = async (userId: string) => {
+    const works = await prisma.work.findMany({
+      where: {
+        members: {
+          some: {
+            userId,
+            role: "owner",
+          },
+        },
+      },
+    });
+    return works
+  }
+
   return {
     createNewWork, getUserworkPackage, getWork, editWorkPackage, editWork
-    , getWorkPackage
+    , getWorkPackage, getUserWorkPackages
   }
 }
 

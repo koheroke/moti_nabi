@@ -1,10 +1,12 @@
 import type { workPackage } from "../types/work"
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
-const url = `${apiUrl}/create`;
-const useGetWorkPackage = () => {
-  const getUserworkPackage = async (userId: string): Promise<workPackage[]> => {
+import { useUserProfileStore } from "@/features/profile/store/userProfileStore";
+const userProfileStore = useUserProfileStore()
+const url = `${apiUrl}/work`;
+const useGetWorkPackages = () => {
+  const getUserworkPackages = async (userId: string): Promise<workPackage[]> => {
     const data = await fetch(
-      `${url}/work/getUserWorkPackage`,
+      `${url}/getUserWorkPackages`,
       {
         method: 'POST',
         headers: {
@@ -12,16 +14,16 @@ const useGetWorkPackage = () => {
         },
         body: JSON.stringify({
           userId: userId,
-
         })
       })
+    userProfileStore.setUserProfile(await data.json())
     return await data.json()
   }
 
 
-  const getworkPackage = async (): Promise<workPackage[]> => {
+  const getworkPackages = async (): Promise<workPackage[]> => {
     const data = await fetch(
-      `${url}/work/getWorkPackage`,
+      `${url}/getWorkPackage`,
       {
         method: 'POST',
         headers: {
@@ -32,7 +34,7 @@ const useGetWorkPackage = () => {
   }
 
 
-  return { getworkPackage, getUserworkPackage }
+  return { getworkPackages, getUserworkPackages }
 }
-export { useGetWorkPackage }
+export { useGetWorkPackages }
 

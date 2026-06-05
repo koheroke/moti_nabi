@@ -1,30 +1,28 @@
 <template>
   <div class="page">
-    <div v-if="edit">
-      <ProfileEdit :userId="userId"></ProfileEdit>
+    <div v-if="getEditBool">
+      <ProfileEdit></ProfileEdit>
     </div>
-    <div v-else="edit">
-      <ProfileSection :userId="userId" v-model="profile"></ProfileSection>
+    <div v-else>
+      <ProfileSection></ProfileSection>
     </div>
-    <UserWorksPanel :userId="userId"></UserWorksPanel>
+    <UserWorksPanel></UserWorksPanel>
   </div>
 </template>
 <script setup lang="ts">
-import ProfileSection from "@features/user/components/ProfileSection.vue";
-import UserWorksPanel from "@/features/user/components/UserWorksPanel.vue";
-import ProfileEdit from "@/features/user/components/ProfileEdit.vue";
-import { useRoute } from "vue-router";
-import type { UserProfile } from "@/features/user/types/profile";
-import { ref } from "vue";
-import { useUserStore } from "@/store/user/userStore";
-const userstore = useUserStore();
-const route = useRoute();
-const profile = ref<UserProfile>();
-const editbool = route.query.edit;
-const userId = Array.isArray(route.params.userId)
-  ? route.params.userId[0]
-  : route.params.userId;
-const edit = ref(userId == userstore.userId ? editbool : false);
+import ProfileSection from "@/features/profile/components/ProfileSection.vue";
+import UserWorksPanel from "@/features/profile/components/UserWorksPanel.vue";
+import ProfileEdit from "@/features/profile/components/ProfileEdit.vue";
+import { useUserProfile } from "@/features/profile/composables/user";
+import { onMounted } from "vue";
+import { useUserProfileStore } from "@/features/profile/store/userProfileStore";
+import { storeToRefs } from "pinia";
+const userProfileStore = useUserProfileStore();
+const { getEditBool } = storeToRefs(userProfileStore);
+const userProfile = useUserProfile();
+onMounted(async () => {
+  userProfile.setUserProfile();
+});
 </script>
 <style lang="css" scoped>
 .page {

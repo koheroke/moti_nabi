@@ -1,1 +1,38 @@
-import{N as e,ot as t,v as n}from"./runtime-core.esm-bundler-BxSeyN28.js";import{n as r}from"./index-Ck1BRSx1.js";import{t as i}from"./userStore-y9warsrk.js";var a=`http://localhost:3000/auth`,o=()=>({login:async()=>{let e=await fetch(`${a}/session/login`,{method:`POST`,headers:{"Content-Type":`application/json`}});return console.log(e),await e.json()},loading:t(!1),error:t(null)}),s=n({__name:`sessionPage`,setup(t){let n=r(),a=o(),s=i();return e(async()=>{let e=await a.login();console.log(e),e||n.push(`/login`),s.login(e,``),n.push(`/home`)}),(e,t)=>null}});export{s as default};
+import {
+  N as e,
+  ot as t,
+  v as n,
+} from "./runtime-core.esm-bundler-BxSeyN28.js";
+import { n as r } from "./index-Ck1BRSx1.js";
+import { t as i } from "./userAuthstore-y9warsrk.js";
+var a = `http://localhost:3000/auth`,
+  o = () => ({
+    login: async () => {
+      let e = await fetch(`${a}/session/login`, {
+        method: `POST`,
+        headers: { "Content-Type": `application/json` },
+      });
+      return (console.log(e), await e.json());
+    },
+    loading: t(!1),
+    error: t(null),
+  }),
+  s = n({
+    __name: `sessionPage`,
+    setup(t) {
+      let n = r(),
+        a = o(),
+        s = i();
+      return (
+        e(async () => {
+          let e = await a.login();
+          (console.log(e),
+            e || n.push(`/login`),
+            s.login(e, ``),
+            n.push(`/home`));
+        }),
+        (e, t) => null
+      );
+    },
+  });
+export { s as default };

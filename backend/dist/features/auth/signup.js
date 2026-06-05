@@ -9,27 +9,34 @@ const argon2_1 = __importDefault(require("argon2"));
 const usesignup = () => {
     const singup = async (user) => {
         const passwordhash = await argon2_1.default.hash(user.password);
-        let users = {};
+        const snsAccounts = [
+            { type: "x", link: "" },
+            { type: "facebook", link: "" },
+            { type: "instagram", link: "" },
+        ];
         try {
-            users = await prisma_1.prisma.user.create({
+            const users = await prisma_1.prisma.user.create({
                 data: {
                     email: user.email,
-                    passwordHash: passwordhash,
-                    name: user.name,
-                    followUserIds: [],
-                    bookmarkWorkIds: [],
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
-                    twoFactorSecret: null,
-                    iconUrl: null,
-                }
+                    profile: {
+                        create: {
+                            name: user.name,
+                            iconUrl: "/images/user/defaultIcon.png",
+                            bio: "自己紹介",
+                            snsAccounts: snsAccounts
+                        },
+                    },
+                    auth: {
+                        create: {
+                            passwordHash: passwordhash,
+                        },
+                    },
+                },
             });
+            return { userId: users.id, res: "users", };
         }
         catch (e) {
-            return { userId: null, res: "users", };
-        }
-        finally {
-            return { userId: users.id, res: "users", };
+            return { userId: null, res: "error", };
         }
     };
     return { singup };

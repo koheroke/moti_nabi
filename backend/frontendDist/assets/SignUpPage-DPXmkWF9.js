@@ -17,7 +17,7 @@ import {
 import { c as m, i as h, l as g, n as _, o as v } from "./index-B3TDTa9m.js";
 import { t as y } from "./BaseInput-CTToEzGg.js";
 import { t as b } from "./FormField-DuOUwFih.js";
-import { t as x } from "./userStore-CZQhWD_z.js";
+import { t as x } from "./userAuthstore-CZQhWD_z.js";
 var S = x(),
   C = `http://localhost:3000/signup`,
   w = () => {
