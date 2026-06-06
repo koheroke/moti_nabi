@@ -29,7 +29,7 @@ workRouter.post('/removeWork', async (c) => {
 
 
 workRouter.post('/getWorkPackages', async (c) => {
-  const res = await createWork.getWorkPackage()
+  const res = await createWork.getWorkPackages()
   return c.json(res);
 });
 

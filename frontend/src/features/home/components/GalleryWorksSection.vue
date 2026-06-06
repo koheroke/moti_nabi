@@ -2,6 +2,7 @@
   <HomeWorksSection
     :works="visibleItems"
     :onMoreClick="onMoreClick"
+    :onWorkCard="onWorkCard"
   ></HomeWorksSection>
 </template>
 
@@ -26,6 +27,10 @@ const { visibleItems, more } = useIncrementalList(sortedWorks, 5);
 const router = useRouter();
 const onMoreClick = () => {
   router.push("/gallery");
+};
+
+const onWorkCard = (cardId: string) => {
+  router?.push({ path: "/detail", query: { cardId: cardId } });
 };
 onMounted(() => {
   getWorkPackages.getUserworkPackages(userAuthstore.userIdGetter);

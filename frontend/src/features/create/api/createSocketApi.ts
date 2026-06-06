@@ -14,19 +14,15 @@ export type server_alterationToken = {
   value: any
   createdAt: number;
 };
-export interface editWorkToken {
-  workId: string,
-  tokens: server_alterationToken[]
-}
 
 export const useSocketApi = () => { //DB保存
 
-  const sendDb = (token: { id: string, data: editWorkToken }) => {
+  const sendDb = (data: server_alterationToken[]) => {
     socket.send(
       JSON.stringify({
         event: "work:save",
         payload: {
-          ...token
+          data
         },
       })
     );
@@ -69,26 +65,5 @@ socket.onmessage = (message) => {
 };
 
 
-
-
-// export type server_alterationTokenType = "set" | "delete" | "arrayPush" | "arrayRemove";
-// export type server_alterationToken = {
-//   id: string;
-//   workId: string;
-//   userId: string;
-//   type: server_alterationTokenType;
-//   path: string[];
-//   beforeValue?: unknown;
-//   value: any
-//   createdAt: number;
-// };
-// export interface editWorkToken {
-//   workId: string,
-//   tokens: server_alterationToken[]
-// }
-
-// export const useSocketApi = () => { //DB保存
-
-// }
 
 

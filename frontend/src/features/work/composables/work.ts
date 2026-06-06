@@ -1,7 +1,7 @@
 import type { workPackage } from "../types/work"
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
-import { useUserProfileStore } from "@/features/profile/store/userProfileStore";
-const userProfileStore = useUserProfileStore()
+import { useWorkPackageStore } from "../store/workPackageStore";
+const workPackageStore = useWorkPackageStore()
 const url = `${apiUrl}/work`;
 const useGetWorkPackages = () => {
   const getUserworkPackages = async (userId: string): Promise<workPackage[]> => {
@@ -16,8 +16,10 @@ const useGetWorkPackages = () => {
           userId: userId,
         })
       })
-    userProfileStore.setUserProfile(await data.json())
-    return await data.json()
+    const works = await data.json()
+    console.log("works", works)
+    workPackageStore.setUserWorkPackageStore(works)
+    return works
   }
 
 

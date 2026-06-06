@@ -51,7 +51,6 @@ const useUserProfileStore = defineStore('userProfile', {
     setEditBool(bool: boolean) {
       this.editBool = bool
     }
-
   }
 })
 export { useUserProfileStore }

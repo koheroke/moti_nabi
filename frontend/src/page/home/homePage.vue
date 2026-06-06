@@ -2,6 +2,7 @@
   <div class="page">
     <header class="top">
       <h1>motinabi</h1>
+      <p @click="onLogout" class="logout-button">ログアウト</p>
       <UserIcon
         :thumbnailUrl="userIconInfo.iconUrl"
         :userid="userIconInfo.userId"
@@ -60,6 +61,14 @@ onMounted(() => {
   userIconInfo.value = userStore.getUserInfo(id);
   console.log("userIconInfo", userStore.getUserInfo(id), id);
 });
+
+import { useLogout } from "@/features/auth/composables/useLogout";
+const onLogout = async () => {
+  const res = await useLogout();
+  if (res == "success") {
+    router?.push("/login");
+  }
+};
 </script>
 <style lang="css" scoped>
 .hero {
@@ -79,8 +88,7 @@ onMounted(() => {
   display: grid;
   width: 80vw;
 }
-.container h2 {
-}
+
 .content {
   overflow-x: auto;
   width: 100%;
@@ -120,5 +128,17 @@ onMounted(() => {
 }
 .page {
   padding-bottom: 30px;
+}
+
+.logout-button {
+  font-size: 15px;
+  font-weight: 500;
+  margin-right: 20px;
+  color: rgb(27, 27, 27);
+  cursor: pointer;
+  transition: scale 0.2s;
+}
+.logout-button:hover {
+  scale: 1.02;
 }
 </style>

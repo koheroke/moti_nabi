@@ -12,7 +12,7 @@ interface loginInput {
   email: string
   password: string
 }
-const useLogin = () => {
+export const useLogin = () => {
   const loading = ref(false)
   const error = ref<string | null>(null)
   const login = async (loginInput: loginInput, token: string) => {
@@ -46,11 +46,8 @@ const useLogin = () => {
       loading.value = false
     }
   }
+
   return { login, loading, error }
 }
-
-
-export { useLogin }
-export type { loginInput }
 
 

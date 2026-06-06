@@ -17,6 +17,7 @@ export const useWorkPackageStore = defineStore("package", {
     },
     setUserWorkPackageStore(data: workPackage[]) {
       this.userWorkPackageStore = data
+      console.log(this.userWorkPackageStore)
     },
     selectWorkPackage(id: string) {
       this.selectedPackage = this.WorkPackageStore.find((work) => { work.id === id }) as workPackage

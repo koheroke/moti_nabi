@@ -1,7 +1,7 @@
 <template>
   <section class="works-section">
     <div class="box">
-      <WorksSection :works="works"></WorksSection>
+      <WorksSection :works="works" :onWorkCard="onWorkCard"></WorksSection>
     </div>
     <BaseButton variant="text" @click="onMoreClick?.()">
       すべて見る →
@@ -16,6 +16,7 @@ import BaseButton from "@/components/ui/form/BaseButton/BaseButton.vue";
 defineProps<{
   works: workPackage[];
   onMoreClick: () => void;
+  onWorkCard: (cardId: string) => void;
 }>();
 </script>
 

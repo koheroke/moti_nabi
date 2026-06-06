@@ -4,6 +4,7 @@ import { usesignup } from '@/features/auth/signup';
 import { useLogin } from '@/features/auth/login';
 import { useSession } from '@/features/auth/session';
 import { useGoogleLogin } from '@/features/auth/login';
+
 const authRouter = new Hono();
 const googleLogin = useGoogleLogin()
 const this_login = useLogin()
@@ -13,13 +14,18 @@ const this_session = useSession()
 
 authRouter.post('/signup', async (c) => {
   const body = await c.req.json();
-  const user = await this_signup.singup(body)
+  const user = await this_signup.singup(body, c)
   return c.json(user)
 });
 
 authRouter.post('/login', async (c) => {
   const body = await c.req.json();
   const user = await this_login.login(body, c)
+  return c.json(user)
+});
+
+authRouter.post('/logout', async (c) => {
+  const user = this_session.discardToken(c)
   return c.json(user)
 });
 
@@ -57,7 +63,12 @@ authRouter.post('/session/verificationToken', async (c) => {
 
 
 authRouter.get("/googleLogin", googleLogin.login);
-authRouter.get("/google/callback", googleLogin.callback);
+authRouter.post("/google/callback", async (c) => {
+  const res = await googleLogin.callback(c)
+  return c.redirect(
+    `http://localhost:5173/googleCallback?token=${res}`
+  );
+});
 
 import { verifyRecaptcha } from '@/shared/security/recaptcha'
 authRouter.post('/recaptcha', async (c) => {

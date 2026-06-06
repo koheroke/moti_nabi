@@ -7,7 +7,7 @@ const workData = new Map()
 
 const useWork = () => {
   const createNewWork = async (userId: string) => {
-
+    if (!userId) return "error"
     const work = await prisma.work.create({
       data: {
         name: "新しいリスト",
@@ -30,18 +30,33 @@ const useWork = () => {
     return { workName: work.name, workId: work.id }
   }
 
+  const getWorkPreview = async (workId: string) => {
+    const work = await prisma.work.findUnique({
+      where: {
+        id: workId,
+      },
+      select: {
+        data: true,
+        id: true
+      }
+    });
+    return work
+  }
 
   const getWork = async (workId: string) => {
     const work = await prisma.work.findUnique({
       where: {
         id: workId,
       },
+      select: {
+        data: true,
+        id: true
+      }
     });
     return work
   }
 
   const editWorkPackage = async (workId: string, editData: editWorkPackageApi) => {
-
     const work = await prisma.work.update({
       where: {
         id: workId,
@@ -149,59 +164,29 @@ const useWork = () => {
   }
 
 
-  const getWorkPackage = async () => {
-    const works = await prisma.work.findMany({
+  const getWorkPackages = async () => {
+
+    const packages = await prisma.work.findMany({
       where: {
+        public: true
+      },
+      select: {
+        id: true,
+        name: true,
+        thumbnailUrl: true,
         public: true,
+        likes: true,
+        tags: true,
+        copies: true,
+        createdAt: true,
       },
+      orderBy: { likes: "desc", },
     });
-    if (!works) return
-    const thumbnail = works.map((work) => {
-      return {
-        id: work.id,
-        thumbnailUrl: work.thumbnailUrl,
-        name: work.name,
-        public: work.public,
-        likes: work.likes,
-        tags: work.tags,
-        copies: work.copies,
-      };
-    });
-    return thumbnail
+    return packages
   }
 
-  const getUserworkPackage = async (userId: string, publicDisplay: boolean) => {
-    const works: Work[] | null = await prisma.work.findMany({
-      where: {
-        members: {
-          some: {
-            userId,
-            role: "owner",
-          },
-        },
-      },
-    });
-    if (!works) return
-
-    const thumbnail = works.map((work) => {
-      return {
-        id: work.id,
-        thumbnailUrl: work.thumbnailUrl,
-        name: work.name,
-        public: work.public,
-        likes: work.likes,
-        tags: work.tags,
-        copies: work.copies,
-      };
-    });
-
-    if (publicDisplay) {
-      return thumbnail.filter((work) => work.public)
-    }
-    return thumbnail
-  }
   const getUserWorkPackages = async (userId: string) => {
-    const works = await prisma.work.findMany({
+    const packages = await prisma.work.findMany({
       where: {
         members: {
           some: {
@@ -210,13 +195,23 @@ const useWork = () => {
           },
         },
       },
+      select: {
+        id: true,
+        name: true,
+        thumbnailUrl: true,
+        public: true,
+        likes: true,
+        tags: true,
+        copies: true,
+        createdAt: true,
+      },
     });
-    return works
+    return packages
   }
-
   return {
-    createNewWork, getUserworkPackage, getWork, editWorkPackage, editWork
-    , getWorkPackage, getUserWorkPackages
+    createNewWork, getWork, editWorkPackage, editWork
+    , getWorkPackages, getUserWorkPackages
+    , getWorkPreview
   }
 }
 

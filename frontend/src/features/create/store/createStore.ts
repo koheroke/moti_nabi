@@ -132,8 +132,7 @@ export const useCreateStore = defineStore("create", {
       return pocket.items
     },
     pushpreviewItem(token: addPreviewItemToken) {
-      console.log(token)
-      if (!this.previewCase || !this.listItem || !this.addItemCounter) return
+      if (!this.previewCase || !this.listItem || this.addItemCounter == null) { return }
       const pocket = this.previewCase[token.caseId].pockets[token.pocketId]
       this.addItemCounter++
       const cardItem: previewItem = {
@@ -145,7 +144,7 @@ export const useCreateStore = defineStore("create", {
         const innnerItem = pocket.items.get(token.parentItemId)?.innerItems
         if (innnerItem) { innnerItem.set(cardItem.originalId, cardItem) }
       }
-      console.log(pocket.items)
+      console.log("pocket.items", pocket.items)
       return pocket.items
     },
 

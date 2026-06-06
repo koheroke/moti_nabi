@@ -14,10 +14,13 @@
           style="display: flex; justify-content: center; margin-bottom: 10px"
         >
           <h1 style="font-size: 20px; margin: 0">プロフィール</h1>
-
-          <BaseButton style="margin-left: auto" @click="onEdit" v-if="editbool"
-            >編集
-          </BaseButton>
+          <section
+            style="margin-left: auto; gap: 10px; display: flex"
+            v-if="editbool"
+          >
+            <BaseButton @click="onEdit" variant="ghost">編集 </BaseButton>
+            <BaseButton @click="" variant="danger">アカウントを削除</BaseButton>
+          </section>
         </div>
         <div class="profile-description">
           {{ "自己紹介 :" }}
@@ -54,6 +57,8 @@ import { useUserProfileStore } from "../store/userProfileStore";
 import { storeToRefs } from "pinia";
 import { useUserAuthStore } from "@/store/user/userAuthStore";
 import { BaseButton } from "@/components/ui/form/BaseButton";
+import { useRouter } from "vuetify/lib/composables/router.mjs";
+const router = useRouter();
 const userAuthStore = useUserAuthStore();
 const userProfileStore = useUserProfileStore();
 const { getUserProfile } = storeToRefs(userProfileStore);

@@ -29,10 +29,20 @@ export const useLogin = () => {
         email: user.email
       },
       include: {
-        auth: true,
-        profile: true
+        auth: {
+          select: {
+            passwordHash: true
+          }
+        },
+        profile: {
+          select: {
+            name: true,
+            iconUrl: true,
+          }
+        }
       },
     });
+
     if (!userResponse) return null
     const hash = userResponse.auth?.passwordHash
     if (!hash) return null
@@ -80,10 +90,7 @@ export const useGoogleLogin = () => {
     const code = c.req.query("code");
 
     if (!code) {
-      return c.json(
-        { error: "code not found" },
-        400
-      );
+      return { error: "codeNotFount" }
     }
 
     const tokenRes = await fetch(
@@ -105,7 +112,7 @@ export const useGoogleLogin = () => {
     );
     if (!tokenRes.ok) {
       const error = await tokenRes.text();
-      return c.json({ error: "token exchange failed", detail: error }, 400);
+      return { error: "tokenNotFount" }
     }
 
     const tokenData = await tokenRes.json();
@@ -116,24 +123,18 @@ export const useGoogleLogin = () => {
 
     const email = payload.email;
     const sub = payload.sub
-
-
-    let account = await prisma.account.findUnique({
-      where: {
-        provider_providerAccountId: {
-          provider: "google",
-          providerAccountId: sub,
-        },
-      },
-    })
+    let account
 
     if (!account) {
       const userResponse = await prisma.user.findFirst({
         where: {
           email: email
+        },
+        select: {
+          id: true
         }
       });
-      if (!userResponse) return c.json({ error: "token exchange failed", detail: "userNotFound" }, 400);
+      if (!userResponse) return { error: "userNotFount" }
 
       account = await prisma.account.findUnique({
         where: {
@@ -142,6 +143,9 @@ export const useGoogleLogin = () => {
             providerAccountId: sub,
           },
         },
+        select: {
+          userId: true,
+        }
       });
       if (!account) {
         account = await prisma.account.create({
@@ -162,14 +166,10 @@ export const useGoogleLogin = () => {
       },
       env.JWT_SECRET
     )
+    console.log("token", account.userId, email)
+    this_session.setLoginSession(c, token)
 
-    setCookie(c, "auth_token", token, {
-      httpOnly: true,
-      secure: env.NODE_ENV === "production",
-      sameSite: "Lax",
-      maxAge: 60 * 60 * 24,
-      path: "/",
-    })
+    return { error: "nonerror" }
   };
   return {
     login,

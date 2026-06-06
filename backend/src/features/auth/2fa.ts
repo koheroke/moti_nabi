@@ -32,6 +32,9 @@ export const use2fa = () => {
       where: {
         userId: user.userId
       }
+      , select: {
+        twoFactorSecret: true
+      }
     });
     if (!userResponse) return false
     const secretBase32 = userResponse.twoFactorSecret

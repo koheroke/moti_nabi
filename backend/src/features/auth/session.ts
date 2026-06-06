@@ -1,4 +1,4 @@
-import { getCookie } from "hono/cookie";
+import { deleteCookie, getCookie } from "hono/cookie";
 import type { Context } from "hono"
 import { setCookie } from "hono/cookie"
 import { env } from "@/constants/env/env"
@@ -21,11 +21,17 @@ export const useSession = () => {
     if (!payload.userId) return false
     const userResponse = await prisma.user.findFirst({
       where: {
-        id: payload.userId
+        id: payload.userId,
       },
-      include: {
-        auth: true,
-        profile: true
+      select: {
+        id: true,
+        email: true,
+        profile: {
+          select: {
+            name: true,
+            iconUrl: true,
+          },
+        },
       },
     });
     console.log("userResponse===", userResponse)
@@ -36,6 +42,14 @@ export const useSession = () => {
     }
   }
 
+  const discardToken = (c: Context) => {
+    try {
+      deleteCookie(c, "auth_token")
+      return "success"
+    } catch {
+      return "error"
+    }
+  }
 
 
   const setLoginSession = async (c: Context, token: string) => {
@@ -47,5 +61,5 @@ export const useSession = () => {
       path: "/",
     })
   }
-  return { verificationSessionToken, getLoginSession, setLoginSession }
+  return { verificationSessionToken, getLoginSession, setLoginSession, discardToken }
 }

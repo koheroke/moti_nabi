@@ -18,11 +18,10 @@ const useCreateApi = () => {
         })
       })
     return await data.json()
-
   }
 
 
-  const createNewWork = async (userId: string,): Promise<UserLuggage_SaveDBData> => {
+  const createNewWork = async (userId: string,): Promise<UserLuggage_SaveDBData | null> => {
     const data = await fetch(
       `${url}/create`,
       {
@@ -36,6 +35,9 @@ const useCreateApi = () => {
       })
 
     const res = await data.json()
+    if (res == "error") {
+      return null
+    }
 
     const newWork: UserLuggage_SaveDBData = {
       "workId": res.workId,

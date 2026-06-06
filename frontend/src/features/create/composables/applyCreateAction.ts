@@ -29,6 +29,8 @@ export interface alterationToken {
 const useApplyCreateAction = () => {
   const saveQueue = useSaveQueue()
   const createStore = useCreateStore()
+
+
   const initCreateStaticData = async () => {
     if (createStore.isStaticLoaded) return
     const [itemListRes, categoryRes, casesRes] = await Promise.all([
@@ -39,6 +41,17 @@ const useApplyCreateAction = () => {
     const staticItemData = await itemListRes.json()
     const categoryData = await categoryRes.json()
     const casesData = await casesRes.json()
+    console.log("casesData", casesData)
+    const caseKey = Object.keys(casesData)
+    caseKey.forEach((key: string) => {
+      const pockets = casesData[key].pockets
+      const pocketkeys = Object.keys(pockets)
+      pocketkeys.forEach((key: string) => {
+        const pocket = pockets[key]
+        pocket.items = new Map(Object.entries(pocket.items))
+      })
+    })
+    console.log("casesData", casesData)
     createStore.setStaticItemData(staticItemData)
     createStore.setIconMap(categoryData.iconMap)
     createStore.setCategoryColor(categoryData.color)

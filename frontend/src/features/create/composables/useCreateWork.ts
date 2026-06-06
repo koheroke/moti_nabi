@@ -36,7 +36,6 @@ export const UseCreateWork = () => {
 
   const createNewwork = async () => {
     const userId = userAuthstore.userId
-    console.log(userId)
     let newWork = null as UserLuggage_SaveDBData | null
     let vuepreviewData = {} as Record<string, Case>
     let vueItemList = {} as Record<string, itemCard>
@@ -46,8 +45,16 @@ export const UseCreateWork = () => {
     } catch (e) {
       return "fallLoadData"
     }
+    if (newWork == null) return "damagedData"
+    const createAction = useApplyCreateAction()
+    await createAction.initCreateStaticData()
+    const response = applyCreateAction.hydrateCreateState(newWork)
+    vuepreviewData = response.vuepreviewData
+    vueItemList = response.vueItemList
+    addItemCounter = response.addItemCounter
     try {
-      if (newWork == null) throw new Error()
+      console.log("newWork", newWork)
+      if (newWork == null) return "damagedData"
       const createAction = useApplyCreateAction()
       await createAction.initCreateStaticData()
       const response = applyCreateAction.hydrateCreateState(newWork)

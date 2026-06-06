@@ -1,5 +1,11 @@
 import { prisma } from "@/lib/prisma/prisma"
 import argon2 from "argon2";
+import { sign } from "hono/jwt"
+import { setCookie } from "hono/cookie"
+import { env } from "@/constants/env/env"
+import type { Context } from "hono"
+import { useSession } from "./session";
+const this_session = useSession()
 export type SignupInput = {
   name: string
   email: string
@@ -7,7 +13,7 @@ export type SignupInput = {
   recaptchaToken: string
 }
 export const usesignup = () => {
-  const singup = async (user: SignupInput) => {
+  const singup = async (user: SignupInput, c: Context) => {
     const passwordhash = await argon2.hash(user.password);
     const snsAccounts = [
       { type: "x", link: "" },
@@ -32,7 +38,22 @@ export const usesignup = () => {
             },
           },
         },
+        include: {
+          profile: true,
+          auth: true,
+        },
       });
+
+
+      const token = await sign(
+        {
+          userId: users.id,
+          email: user.email,
+          iconUrl: users.profile?.iconUrl ?? "",
+        },
+        env.JWT_SECRET
+      )
+      this_session.setLoginSession(c, token)
       return { userId: users.id, res: "users", }
     } catch (e) {
       return { userId: null, res: "error", }

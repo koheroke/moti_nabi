@@ -23,14 +23,12 @@ import WorkCard from "@/features/work/components/WorkCard.vue";
 import type { workPackage } from "@/features/work/types/work";
 import { useRouter } from "vuetify/lib/composables/router.mjs";
 const router = useRouter();
-const onWorkCard = (cardId: string) => {
-  router?.push({ path: "/detail", query: { cardId: cardId } });
-};
 
 withDefaults(
   defineProps<{
     works: workPackage[];
     wrap?: boolean;
+    onWorkCard: (cardId: string) => void;
   }>(),
   {
     wrap: false,

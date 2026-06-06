@@ -1,6 +1,9 @@
 import type { server_alterationToken, server_alterationTokenType } from "../api/createSocketApi"
 import type { alterationToken, alterationType } from "../composables/applyCreateAction"
-
+import { useSocketApi } from "../api/createSocketApi"
+import { useWorkPackageStore } from "@/features/work/store/workPackageStore"
+const workPackageStore = useWorkPackageStore()
+const socketApi = useSocketApi()
 import { useCreateStore } from "../store/createStore"
 const createStore = useCreateStore()
 
@@ -31,6 +34,7 @@ export const useSaveQueue = () => {
     queue.push(pushDBtoken)
   }
   const pop = () => {
+    socketApi.sendDb(queue)
     queue.length = 0;
 
   }
