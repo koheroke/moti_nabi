@@ -119,52 +119,57 @@ export const useCreateStore = defineStore("create", {
     addCount(token: addItemCountToken) {
       if (!this.previewCase || !this.listItem) return
       const pocket = this.previewCase[token.caseId].pockets[token.pocketId]
-      const targetId = token.parentItemId ?? token.originalId
-      const item = pocket.items.get(targetId)
+      const targetId = token.parentId ?? token.id
+      const item = pocket.items[targetId]
       if (!item) return
 
-      if (!token.parentItemId) {
+      if (!token.parentId) {
         item.count += token.pulse
-        return
+        return { data: item.count }
       }
-      const innerItem = item.innerItems!.get(token.originalId)
+      const innerItem = item.innerItems![token.id]
       if (innerItem) innerItem.count += token.pulse
-      return pocket.items
+      return { data: innerItem.count, parent: token.parentId }
     },
     pushpreviewItem(token: addPreviewItemToken) {
+      console.log("token", token)
       if (!this.previewCase || !this.listItem || this.addItemCounter == null) { return }
       const pocket = this.previewCase[token.caseId].pockets[token.pocketId]
       this.addItemCounter++
+      const { id, ...listItemData } = this.listItem[token.itemId]
       const cardItem: previewItem = {
-        ...this.listItem[token.itemId], ...{ originalId: token.originalId as string, count: 1, innerItems: new Map() }
+        ...listItemData, ...{ itemId: id as string, count: 1, innerItems: {}, id: token.id as string }
       }
-      if (token.parentItemId == undefined) {
-        pocket.items.set(cardItem.originalId, cardItem)
+
+      if (token.parentId == undefined) {
+        pocket.items[cardItem.id] = cardItem
       } else {
-        const innnerItem = pocket.items.get(token.parentItemId)?.innerItems
-        if (innnerItem) { innnerItem.set(cardItem.originalId, cardItem) }
+        const innnerItem = pocket.items[token.parentId]?.innerItems
+        if (innnerItem) {
+          innnerItem[cardItem.id] = cardItem
+          return { item: innnerItem[cardItem.id], parent: token.parentId }
+        }
       }
-      console.log("pocket.items", pocket.items)
-      return pocket.items
+      console.log("pocket.items", pocket)
+      return { item: pocket.items[cardItem.id] }
     },
 
     addBookmark(token: addBookmarkToken) {
-      if (!this.previewCase || !this.listItem) return
+      if (!this.previewCase || !this.listItem) return;
       this.listItem[token.itemId].bookmark = !this.listItem[token.itemId].bookmark
 
       return token.itemId
     },
 
     addListItem(token: addListItemToken) {
-      if (!this.previewCase || !this.listItem || !this.addItemCounter) return
-      const keys = Object.keys(this.listItem)
-      const id = `item_${keys.length + 1}`
 
+      if (!this.previewCase || !this.listItem) { return };
+      const id = crypto.randomUUID()
       const listItem: itemCard = {
         ...token, ...{ bookmark: false, id: id }
       }
+      console.log("listItem", listItem)
       this.listItem[id] = listItem
-
       return listItem
     },
 
@@ -173,15 +178,15 @@ export const useCreateStore = defineStore("create", {
       if (!this.previewCase[token.caseId]) { return }
       console.log(token)
       const pocket = this.previewCase[token.caseId].pockets[token.pocketId]
-      const findId = token.parentItemId ? token.parentItemId : token.originalId
-      if (token.parentItemId == undefined) {
-        pocket.items.delete(findId)
-        return pocket.items
+      const findId = token.parentId ? token.parentId : token.id
+      if (token.parentId == undefined) {
+        delete pocket.items[findId]
+        return { id: token.id }
       }
-      if (token.parentItemId != undefined) {
-        const innnerItem = pocket.items.get(token.parentItemId)
-        innnerItem?.innerItems?.delete(token.originalId)
-        return pocket.items
+      if (token.parentId != undefined) {
+        const innnerItem = pocket.items[token.parentId]
+        delete innnerItem?.innerItems?.[token.id]
+        return { id: token.id, parent: token.parentId }
       }
     },
 
@@ -196,7 +201,6 @@ export const useCreateStore = defineStore("create", {
         this.previewCase[this_case.caseId] = this.staticCasesGetter[this_case.caseType]
         return this_case
       }
-
     },
     deleteCase(token: deletePreviewCaseToken) {
       delete this.previewItemGetter[token.id]
@@ -204,22 +208,21 @@ export const useCreateStore = defineStore("create", {
     },
     reSizePocket(token: provisionalResizePocket) {
       const pocket = this.previewCase[token.caseId].pockets[token.pocketId]
-      pocket.height = token.resizeData.height
-      pocket.width = token.resizeData.width
-      pocket.x = token.resizeData.x
-      pocket.y = token.resizeData.y
-      return pocket
+      pocket.size.height = token.resizeData.height
+      pocket.size.width = token.resizeData.width
+      pocket.pos.x = token.resizeData.x
+      pocket.pos.y = token.resizeData.y
+      return pocket.size
     },
 
 
     reMovePocket(token: provisionalRemovePocket) {
       const pocket = this.previewCase[token.caseId].pockets[token.pocketId]
-      pocket.x = token.removeData.x
-      pocket.y = token.removeData.y
-      return pocket
+      pocket.pos.x = token.removeData.x
+      pocket.pos.y = token.removeData.y
+      return pocket.pos
     }
 
 
   }
 })
-

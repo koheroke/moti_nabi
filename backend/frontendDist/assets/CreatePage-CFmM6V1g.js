@@ -141,26 +141,26 @@ var R = A(`boxes`, [
       mainLuggage: {
         pockets: {
           mesh: [
-            { originalId: `item_1`, id: `item_1`, count: 3 },
+            { id: `item_1`, id: `item_1`, count: 3 },
             {
               id: `inner_1`,
               count: 1,
-              originalId: `item_2`,
+              id: `item_2`,
               innerItems: [
-                { id: `item_6`, originalId: `item_3`, count: 2 },
-                { originalId: `item_4`, id: `item_6`, count: 1 },
+                { id: `item_6`, id: `item_3`, count: 2 },
+                { id: `item_4`, id: `item_6`, count: 1 },
               ],
             },
           ],
           main: [
-            { originalId: `item_5`, id: `inner_1`, count: 3 },
+            { id: `item_5`, id: `inner_1`, count: 3 },
             {
               id: `item_6`,
               count: 1,
-              originalId: `item_6`,
+              id: `item_6`,
               innerItems: [
-                { originalId: `item_7`, id: `item_6`, count: 2 },
-                { originalId: `item_8`, id: `item_6`, count: 1 },
+                { id: `item_7`, id: `item_6`, count: 2 },
+                { id: `item_8`, id: `item_6`, count: 1 },
               ],
             },
           ],
@@ -208,8 +208,7 @@ var R = A(`boxes`, [
         if (!o) return `nonePreview`;
         let s = o[a];
         if (!s) return `noneItem`;
-        if (s.isStorage == 1 && r.parentItemId != null)
-          return `isRegulatedAction`;
+        if (s.isStorage == 1 && r.parentId != null) return `isRegulatedAction`;
         let c = {
             alterationType: `previewItems_additem`,
             token: r,
@@ -366,16 +365,13 @@ var R = A(`boxes`, [
       },
       addCount(e) {
         if (!this.previewItem || !this.listItem) return;
-        let t = J(
-          e.parentItemId ? e.parentItemId : e.originalId,
-          this.previewItem[e.pocketId],
-        );
+        let t = J(e.parentId ? e.parentId : e.id, this.previewItem[e.pocketId]);
         if (
           t != -1 &&
-          (e.parentItemId ?? (this.previewItem[e.pocketId][t].count += e.pulse),
-          e.parentItemId != null)
+          (e.parentId ?? (this.previewItem[e.pocketId][t].count += e.pulse),
+          e.parentId != null)
         ) {
-          let n = J(e.originalId, this.previewItem[e.pocketId][t].innerItems);
+          let n = J(e.id, this.previewItem[e.pocketId][t].innerItems);
           this.previewItem[e.pocketId][t].innerItems[n].count += e.pulse;
         }
       },
@@ -385,12 +381,12 @@ var R = A(`boxes`, [
         let t = {
           ...this.listItem[e.itemId],
           count: 1,
-          originalId: `item_${this.addItemCounter}`,
+          id: `item_${this.addItemCounter}`,
           innerItems: [],
         };
-        if (e.parentItemId == null) this.previewItem[e.pocketId].push(t);
+        if (e.parentId == null) this.previewItem[e.pocketId].push(t);
         else {
-          let n = J(e.parentItemId, this.previewItem[e.pocketId]);
+          let n = J(e.parentId, this.previewItem[e.pocketId]);
           if (n == -1) return;
           this.previewItem[e.pocketId][n].innerItems.push(t);
         }
@@ -414,14 +410,14 @@ var R = A(`boxes`, [
           !this.previewItem[e.pocketId]
         )
           return;
-        let t = e.parentItemId ? e.parentItemId : e.originalId;
+        let t = e.parentId ? e.parentId : e.id;
         console.log(t, this.previewItem[e.pocketId], e);
         let n = J(t, this.previewItem[e.pocketId]);
         if (
-          (e.parentItemId ?? this.previewItem[e.pocketId].splice(n, 1),
-          e.parentItemId != null)
+          (e.parentId ?? this.previewItem[e.pocketId].splice(n, 1),
+          e.parentId != null)
         ) {
-          let t = J(e.originalId, this.previewItem[e.pocketId][n].innerItems);
+          let t = J(e.id, this.previewItem[e.pocketId][n].innerItems);
           this.previewItem[e.pocketId][n].innerItems.splice(t, 1);
         }
       },
@@ -434,7 +430,7 @@ var R = A(`boxes`, [
       reSizeCase(e, t) {},
     },
   }),
-  J = (e, t) => t.findIndex((t) => t.originalId === e),
+  J = (e, t) => t.findIndex((t) => t.id === e),
   Y = () => {
     let e = [],
       t = (t) => {
@@ -472,9 +468,9 @@ var R = A(`boxes`, [
                     ...n,
                     innerItems: e.innerItems ? s(e.innerItems) : [],
                     count: e.count,
-                    originalId: e.originalId,
+                    id: e.id,
                   }
-                : { ...n, count: e.count, originalId: e.originalId };
+                : { ...n, count: e.count, id: e.id };
             });
         return {
           vuepreviewData: Object.fromEntries(
@@ -624,7 +620,7 @@ var R = A(`boxes`, [
             let n = {
               itemId: t,
               pocketId: i.pocketId,
-              parentItemId: i.item.originalId,
+              parentId: i.item.id,
             };
             o.addItemToPreview(n);
           },
@@ -632,17 +628,17 @@ var R = A(`boxes`, [
             i.item.count + e >= 99 ||
               i.item.count + e <= 0 ||
               o.addItemCount({
-                originalId: i.item.originalId,
+                id: i.item.id,
                 pulse: e,
                 pocketId: i.pocketId,
-                parentItemId: i.parentItem ? i.parentItem : void 0,
+                parentId: i.parentItem ? i.parentItem : void 0,
               });
           },
           g = () => {
             let e = {
-              originalId: i.item.originalId,
+              id: i.item.id,
               pocketId: i.pocketId,
-              parentItemId: i.parentItem ? i.parentItem : void 0,
+              parentId: i.parentItem ? i.parentItem : void 0,
               itemId: i.item.id,
             };
             o.deletePreviewItem(e);
@@ -691,13 +687,13 @@ var R = A(`boxes`, [
                           i.item.innerItems,
                           (e) => (
                             n(),
-                            y(`div`, { key: e.originalId }, [
+                            y(`div`, { key: e.id }, [
                               d(
                                 o,
                                 {
                                   item: e,
                                   pocketId: i.pocketId,
-                                  parentItem: i.item.originalId,
+                                  parentItem: i.item.id,
                                 },
                                 null,
                                 8,
@@ -783,7 +779,7 @@ var R = A(`boxes`, [
                       e.pocket.items,
                       (t) => (
                         n(),
-                        y(`div`, { key: t.originalId, class: `item-card` }, [
+                        y(`div`, { key: t.id, class: `item-card` }, [
                           d(me, { item: t, pocketId: e.pocket.id }, null, 8, [
                             `item`,
                             `pocketId`,

@@ -30,17 +30,17 @@
         @dblclick="openPocket(pocket)"
       >
         <rect
-          :x="pocket.x"
-          :y="pocket.y"
-          :width="pocket.width"
-          :height="pocket.height"
+          :x="pocket.pos.x"
+          :y="pocket.pos.y"
+          :width="pocket.size.width"
+          :height="pocket.size.height"
           rx="14"
           class="pocket"
         />
 
         <text
-          :x="pocket.x + pocket.width / 2"
-          :y="pocket.y + pocket.height / 2"
+          :x="pocket.pos.x + pocket.size.width / 2"
+          :y="pocket.pos.y + pocket.size.height / 2"
           text-anchor="middle"
           dominant-baseline="middle"
           class="pocket-label"
@@ -56,8 +56,8 @@
         ></SvgRemoveHandle>
 
         <text
-          :x="pocket.x + pocket.width - 12"
-          :y="pocket.y + 22"
+          :x="pocket.pos.x + pocket.size.width - 12"
+          :y="pocket.pos.y + 22"
           text-anchor="end"
           class="pocket-count"
         >
@@ -84,7 +84,7 @@ const pockets = computed(() => {
     if (pocket.items) return pocket;
     return {
       ...pocket,
-      items: new Map(),
+      items: {},
     };
   });
 });
@@ -92,7 +92,7 @@ const emit = defineEmits<{
   (
     e: "update:selectedPocket",
     payload: {
-      items: Map<string, previewItem>;
+      items: Record<string, previewItem>;
       id: string;
       name: string;
       caseId: string;

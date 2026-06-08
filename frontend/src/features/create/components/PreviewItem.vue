@@ -20,18 +20,15 @@
       @drop="onDrop"
       @drop.stop
     >
-      <div
-        v-for="[originalId, item] in props.item.innerItems"
-        :key="originalId"
-      >
+      <div v-for="item in props.item.innerItems" :key="item.id">
         <previewItem
           :item="item"
           :pocketId="props.pocketId"
-          :parentItem="props.item.originalId"
+          :parentItem="props.item.id"
           :caseId="props.caseId"
         />
       </div>
-      <p v-if="props.item.innerItems?.size === 0" class="drop-text">
+      <p v-if="props.item.isStorage === true" class="drop-text">
         {{ "ここにドロップ" }}
       </p>
     </section>
@@ -60,11 +57,11 @@ const iconMap = createStore.iconMap;
 
 function onDragStart(event: DragEvent) {
   const token = {
-    originalId: props.item.originalId,
+    id: props.item.id,
     popCaseId: props.caseId,
     popPocketId: props.pocketId,
   };
-  event.dataTransfer?.setData("originalId", JSON.stringify(token));
+  event.dataTransfer?.setData("id", JSON.stringify(token));
 }
 const onDrop = (event: DragEvent) => {
   const draggedId = event.dataTransfer?.getData("itemId");
@@ -72,9 +69,9 @@ const onDrop = (event: DragEvent) => {
   const addPreviewItemToken = {
     itemId: draggedId,
     pocketId: props.pocketId,
-    parentItemId: props.item.originalId,
+    parentId: props.item.id,
     caseId: props.caseId,
-    originalId: props.item.originalId,
+    id: props.item.id,
   };
   createWork.addItemToPreview(addPreviewItemToken);
 };
@@ -82,30 +79,35 @@ const onDrop = (event: DragEvent) => {
 const onPlue = (plue: number) => {
   if (props.item.count + plue >= 99 || props.item.count + plue <= 0) return;
   createWork.addItemCount({
-    originalId: props.item.originalId,
+    id: props.item.id,
     pulse: plue,
     pocketId: props.pocketId,
-    parentItemId: props.parentItem ? props.parentItem : undefined,
+    parentId: props.parentItem ? props.parentItem : undefined,
     caseId: props.caseId,
   });
 };
 
 const onDelete = () => {
   const innerItemsToken: addPreviewItemToken[] | undefined = [];
-  props.item.innerItems?.forEach((item) => {
-    innerItemsToken?.push({
-      pocketId: props.pocketId,
-      caseId: props.caseId,
-      parentItemId: props.item.originalId,
-      itemId: item.id,
-      originalId: props.item.originalId,
+  const items = props.item.innerItems;
+  if (items != undefined) {
+    const keys = Object.keys(items);
+    keys.forEach((item) => {
+      if (items[item] == undefined) return;
+      innerItemsToken?.push({
+        pocketId: props.pocketId,
+        caseId: props.caseId,
+        parentId: props.item.id,
+        itemId: items[item].itemId,
+        id: props.item.id,
+      });
     });
-  });
+  }
   const token: deletePreviewItemToken = {
-    originalId: props.item.originalId,
+    id: props.item.id,
     pocketId: props.pocketId,
-    parentItemId: props.parentItem ? props.parentItem : undefined,
-    itemId: props.item.id,
+    parentId: props.parentItem ? props.parentItem : undefined,
+    itemId: props.item.itemId,
     caseId: props.caseId,
     innnerItemToken: innerItemsToken,
   };

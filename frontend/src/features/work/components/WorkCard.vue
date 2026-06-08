@@ -1,5 +1,11 @@
 <template>
-  <article class="work-card" @click="emit('onWorkCard')">
+  <article
+    class="work-card"
+    @click="
+      setSelectPackage();
+      emit('onWorkCard');
+    "
+  >
     <img class="thumbnail" :src="work.thumbnailUrl" :alt="work.name" />
 
     <div class="body">
@@ -19,13 +25,21 @@
 <script setup lang="ts">
 import type { workPackage } from "@/features/work/types/work";
 import { ThumbsUp } from "lucide-vue-next";
+import { useWorkPackageStore } from "../store/workPackageStore";
+const workPackageStore = useWorkPackageStore();
+
 const emit = defineEmits<{
   (e: "onWorkCard"): void;
 }>();
 
-defineProps<{
+const props = defineProps<{
   work: workPackage;
 }>();
+
+const setSelectPackage = () => {
+  console.log(props.work.id);
+  workPackageStore.selectedPackageIdStore(props.work.id);
+};
 </script>
 
 <style scoped>

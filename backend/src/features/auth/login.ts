@@ -1,4 +1,3 @@
-import { setCookie } from "hono/cookie"
 import type { Context } from "hono"
 import { sign } from "hono/jwt"
 import { env } from "@/constants/env/env"
@@ -80,7 +79,6 @@ export const useGoogleLogin = () => {
         response_type: "code",
         scope: "openid email profile",
       });
-
     return c.redirect(url);
   };
 
@@ -88,6 +86,7 @@ export const useGoogleLogin = () => {
 
   const callback = async (c: Context) => {
     const code = c.req.query("code");
+    console.log("code", code)
 
     if (!code) {
       return { error: "codeNotFount" }
@@ -168,7 +167,7 @@ export const useGoogleLogin = () => {
     )
     console.log("token", account.userId, email)
     this_session.setLoginSession(c, token)
-
+    console.log("token", token)
     return { error: "nonerror" }
   };
   return {

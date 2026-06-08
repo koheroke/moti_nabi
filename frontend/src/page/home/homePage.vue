@@ -53,13 +53,12 @@ const router = useRouter();
 const workPackageStore = useWorkPackageStore();
 
 const goCreate = () => {
-  workPackageStore.selectWorkPackage("");
+  workPackageStore.selectedPackageIdStore("");
   router.push("/create");
 };
 onMounted(() => {
   const id = userStore.getMyuserId;
   userIconInfo.value = userStore.getUserInfo(id);
-  console.log("userIconInfo", userStore.getUserInfo(id), id);
 });
 
 import { useLogout } from "@/features/auth/composables/useLogout";

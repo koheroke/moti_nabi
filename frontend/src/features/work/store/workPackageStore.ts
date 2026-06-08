@@ -4,12 +4,13 @@ export const useWorkPackageStore = defineStore("package", {
   state: () => ({
     WorkPackageStore: [] as workPackage[],
     userWorkPackageStore: [] as workPackage[],
-    selectedPackage: {} as workPackage
+    selectedPackageId: {} as string
   }),
   getters: {
     workPackageStoreGetter: (state) => state.WorkPackageStore,
     userWorkPackageStoreGetter: (state) => state.userWorkPackageStore,
-    selectedPackageGetter: (state) => state.selectedPackage
+    selectedPackageIdGetter: (state) => state.selectedPackageId
+
   },
   actions: {
     setWorkPackageStore(data: workPackage[]) {
@@ -17,10 +18,15 @@ export const useWorkPackageStore = defineStore("package", {
     },
     setUserWorkPackageStore(data: workPackage[]) {
       this.userWorkPackageStore = data
-      console.log(this.userWorkPackageStore)
+
     },
-    selectWorkPackage(id: string) {
-      this.selectedPackage = this.WorkPackageStore.find((work) => { work.id === id }) as workPackage
+    selectedPackageIdStore(id: string) {
+      this.selectedPackageId = id
+    },
+    findPackage(id: string) {
+      const allPackage = [... this.userWorkPackageStore, ...this.WorkPackageStore]
+      const index = allPackage.findIndex((item) => { item.id == id })
+      return allPackage[index]
     }
   }
 })

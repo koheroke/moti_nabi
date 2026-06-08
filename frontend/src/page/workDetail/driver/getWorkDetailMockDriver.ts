@@ -1,4 +1,4 @@
-import type{ WorkDetail } from "../workDetailType";
+import type { WorkDetail } from "../workDetailType";
 
 // export const getMockWorkDetail = async (): Promise<Map<string,WorkDetail>> => {
 //   await delay(800)
@@ -22,12 +22,13 @@ export const getMockWorkDetail = async (): Promise<WorkDetail> => {
 
 
 
-  return {title:"旅行用持ち物リスト",
-      tags: ["旅行", "パッキング", "チェックリスト"],
-      likes:3,
-      commits:4,
-      about:"旅行前に必要な持ち物を整理するためのリストです",
-    }
+  return {
+    title: "旅行用持ち物リスト",
+    tags: ["旅行", "パッキング", "チェックリスト"],
+    likes: 3,
+    commits: 4,
+    about: "旅行前に必要な持ち物を整理するためのリストです",
+  }
 }
 
 

@@ -12,13 +12,13 @@ interface Case {
 }
 
 interface previewItem {
-  originalId: string;
-  id: string
+  id: string;
+  itemId: string
   name: string;
   iconId: string;
   category: CategoryId[];
   isStorage: boolean;
-  confirmed_removePocket?: Map<string, previewItem>;
+  confirmed_removePocket?: Record<string, previewItem>;
   count: number;
 }
 type Pocket = {
@@ -52,4 +52,3 @@ interface part {
   radius: number;
 }
 export type { Category, previewItem, Pocket, part, Case, CaseEdit }
-

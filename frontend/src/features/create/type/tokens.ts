@@ -8,28 +8,28 @@ export type createdType = "default" | "userCreated" | "othersUserCreated"
 
 
 export interface addItemCountToken {
-  originalId: string
+  id: string
   caseId: string
   pocketId: string
-  parentItemId: string | undefined
+  parentId: string | undefined
   pulse: number;
 }
 
 export interface deletePreviewItemToken {
-  originalId: string
+  id: string
   caseId: string
   pocketId: string
   innnerItemToken?: addPreviewItemToken[]
-  parentItemId: string | undefined
+  parentId: string | undefined
   itemId: string
 }
 
 export interface addPreviewItemToken {
   pocketId: string
   caseId: string
-  parentItemId?: string
+  parentId?: string
   itemId: string
-  originalId: string | null
+  id: string | null
 }
 
 export interface positionChangePreviewItemToken {
@@ -37,7 +37,7 @@ export interface positionChangePreviewItemToken {
   popCaseId: string
   pushPocketId: string,
   pushCaseId: string
-  originalId: string
+  id: string
 }
 
 export interface addPreviewCaseToken {
@@ -52,7 +52,7 @@ export interface deletePreviewCaseToken {
   id: string
 }
 export interface confirmedResizePocketToken {
-  pos: { x: number, y: number, width: number, height: number }
+  resizeData: { x: number, y: number, width: number, height: number }
   caseId: string,
   pocketId: string
 }
@@ -64,10 +64,15 @@ export interface provisionalResizePocket {
 export interface provisionalRemovePocket {
   caseId: string,
   pocketId: string,
-  removeData: { x: number, y: number }
+  removeData: { x: number, y: number, width: number, height: number }
 }
 
 
+export interface confirmedRemovePocketToken {
+  removeData: { x: number, y: number, width: number, height: number }
+  caseId: string,
+  pocketId: string
+}
 //リスト
 export interface addListItemToken {
   name: string
@@ -81,4 +86,3 @@ export interface addListItemToken {
 export interface addBookmarkToken {
   itemId: string
 }
-

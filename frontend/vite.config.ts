@@ -7,6 +7,7 @@ export default defineConfig({
   envDir: '../',
   build: {
     outDir: '../backend/frontendDist',
+    sourcemap: true,
   },
   resolve: {
     alias: {

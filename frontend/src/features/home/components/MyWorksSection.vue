@@ -23,7 +23,6 @@ const { visibleItems, more } = useIncrementalList(
   20,
 );
 const onWorkCard = (cardId: string) => {
-  workPackageStore.selectWorkPackage(cardId);
   router?.push("create");
 };
 

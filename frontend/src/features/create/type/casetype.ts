@@ -10,23 +10,27 @@ interface Case {
 }
 
 interface previewItem {
-  originalId: string;
-  id: string
+  id: string;
+  itemId: string
   name: string;
   iconId: string;
   category: CategoryId[];
   isStorage: boolean;
-  innerItems?: Map<string, previewItem>;
+  innerItems?: Record<string, previewItem>;
   count: number;
 }
 type Pocket = {
   id: string;
   name: string;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  items: Map<string, previewItem>;
+  pos: {
+    x: number;
+    y: number;
+  }
+  size: {
+    width: number;
+    height: number;
+  }
+  items: Record<string, previewItem>;
 }
 type CaseEdit = {
   x?: number;
@@ -50,4 +54,3 @@ interface part {
   radius: number;
 }
 export type { Category, previewItem, Pocket, part, Case, CaseEdit }
-

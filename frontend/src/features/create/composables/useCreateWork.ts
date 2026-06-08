@@ -12,7 +12,8 @@ import type {
   provisionalResizePocket,
   provisionalRemovePocket,
   addListItemToken,
-  addBookmarkToken
+  addBookmarkToken,
+  confirmedRemovePocketToken
 } from "@/features/create/type/tokens";
 
 import { useApplyCreateAction } from "./applyCreateAction";
@@ -70,15 +71,12 @@ export const UseCreateWork = () => {
     createStore.setpreviewData(vuepreviewData)
     createStore.setWorkId(newWork.workId)
     createStore.setWorkName(newWork.workName)
-    workPackageStore.selectWorkPackage(newWork.workId)
+    workPackageStore.selectedPackageIdStore(newWork.workId)
     return "none"
-
   }
 
-
   const loadWork = async (): Promise<loadResponse> => {
-    const theWorkId: string = workPackageStore.selectedPackageGetter.id
-
+    const theWorkId: string = workPackageStore.selectedPackageIdGetter
     if (!theWorkId) return "noneNameorWorkId"
     let data = null as UserLuggage_SaveDBData | null
     let vuepreviewData = {} as Record<string, Case>
@@ -116,19 +114,19 @@ export const UseCreateWork = () => {
     if (!items) return "nonePreview"
     const item = items[itemId]
     if (!item) return "noneItem"
-    if (item.isStorage == true && token.parentItemId != undefined) return "isRegulatedAction"
-    const originalId = (token.originalId != null) ? token.originalId : `item_${createStore.addItemCounter}`
+    if (item.isStorage == true && token.parentId != undefined) return "isRegulatedAction"
+    const id = (token.id != null) ? token.id : crypto.randomUUID()
     const deleteToken: deletePreviewItemToken = {
-      originalId: originalId,
+      id: id,
       caseId: token.caseId,
       pocketId: token.pocketId,
-      parentItemId: token.parentItemId,
+      parentId: token.parentId,
       itemId: token.itemId
     }
 
     const newToken = {
       ...token,
-      originalId: originalId
+      id: id
     }
 
     const fowardToken: alterationToken = {
@@ -199,8 +197,6 @@ export const UseCreateWork = () => {
       })
     }
 
-
-
     applyCreateAction.alterationData(newToken)
     alterationLog.saveState({ forwardToken: newToken, reverseToken: reverseToken })
   }
@@ -213,7 +209,7 @@ export const UseCreateWork = () => {
     applyCreateAction.alterationData(newToken)
   }
   const addCase = (caseType: CaseType) => {
-    const id = `caseID_${createStore.getPreviewCasesArray.length}`
+    const id = crypto.randomUUID()
     const addToken: addPreviewCaseToken = {
       case: {
         caseType: caseType as CaseType,
@@ -238,8 +234,7 @@ export const UseCreateWork = () => {
       token: deleteToken,
       user: userAuthstore.userId
     }
-
-    createStore.addPreviewCase(addToken)
+    applyCreateAction.alterationData(forwardToken)
     alterationLog.saveState({ forwardToken: forwardToken, reverseToken: reverseToken })
   }
   const deleteCase = (id: string) => {
@@ -275,7 +270,10 @@ export const UseCreateWork = () => {
   const provisionalResizePocket = (resizeData: { x: number, y: number, width: number, height: number }, pocketId: string, caseId: string) => {
     if (!provisionalpocket) {
       provisionalpocket = true
-      const { x, y, width, height } = createStore.previewCase[caseId].pockets[pocketId]
+      const { x, y } =
+        createStore.previewCase[caseId].pockets[pocketId].pos
+      const { width, height } =
+        createStore.previewCase[caseId].pockets[pocketId].size
       sevePocket = { x: x, y: y, width: width, height: height }
     }
     const token: provisionalResizePocket = {
@@ -283,19 +281,22 @@ export const UseCreateWork = () => {
       pocketId: pocketId,
       resizeData: resizeData,
     };
-    createStore.reSizePocket(token)
+    createStore.reSizePocket(token) //userのみの変更で合ってる
   }
   const confirmedResizePocket = (caseid: string, pocketId: string) => {
-    const { x, y, width, height } = createStore.previewCase[caseid].pockets[pocketId]
+    const { x, y } =
+      createStore.previewCase[caseid].pockets[pocketId].pos
+    const { width, height } =
+      createStore.previewCase[caseid].pockets[pocketId].size
 
     const confirmedToken: confirmedResizePocketToken = {
-      pos: { x: x, y: y, width: width, height: height },
+      resizeData: { x: x, y: y, width: width, height: height },
       caseId: caseid,
       pocketId: pocketId,
     }
 
     const revarseConfirmedToken: confirmedResizePocketToken = {
-      pos: sevePocket,
+      resizeData: sevePocket,
       caseId: caseid,
       pocketId: pocketId
     }
@@ -326,16 +327,21 @@ export const UseCreateWork = () => {
     height: 0,
   }
 
+
+
+
   const provisionalRemovePocket = (
-    moveData: { x: number; y: number },
+    moveData: { x: number; y: number, width: number, height: number },
     pocketId: string,
     caseId: string
   ) => {
     if (!provisionalPocket) {
       provisionalPocket = true
 
-      const { x, y, width, height } =
-        createStore.previewCase[caseId].pockets[pocketId]
+      const { x, y } =
+        createStore.previewCase[caseId].pockets[pocketId].pos
+      const { width, height } =
+        createStore.previewCase[caseId].pockets[pocketId].size
 
       savePocket = { x, y, width, height }
     }
@@ -350,29 +356,27 @@ export const UseCreateWork = () => {
   }
 
   const confirmedRemovePocket = (caseId: string, pocketId: string) => {
-    const { x, y, width, height } =
-      createStore.previewCase[caseId].pockets[pocketId]
+    const nowpos =
+      { ...createStore.previewCase[caseId].pockets[pocketId].pos, ...createStore.previewCase[caseId].pockets[pocketId].size }
 
-    const confirmedToken: confirmedResizePocketToken = {
-      pos: { x, y, width, height },
+    const confirmedToken: confirmedRemovePocketToken = {
+      removeData: nowpos,
+      caseId: caseId,
+      pocketId: pocketId,
+    }
+    const reverseConfirmedToken: confirmedRemovePocketToken = {
+      removeData: savePocket,
       caseId,
       pocketId,
     }
-
-    const reverseConfirmedToken: confirmedResizePocketToken = {
-      pos: savePocket,
-      caseId,
-      pocketId,
-    }
-
     const token: alterationToken = {
-      alterationType: "confirmed_resizePocket",
+      alterationType: "confirmed_removePocket",
       token: confirmedToken,
       user: userAuthstore.userId,
     }
 
     const reverseToken: alterationToken = {
-      alterationType: "confirmed_resizePocket",
+      alterationType: "confirmed_removePocket",
       token: reverseConfirmedToken,
       user: userAuthstore.userId,
     }
@@ -397,5 +401,3 @@ export const UseCreateWork = () => {
 
   return { createNewwork, confirmedRemovePocket, provisionalRemovePocket, provisionalResizePocket, confirmedResizePocket, loadWork, addItemToPreview, addItemCount, addBookmark, deletePreviewItem, addListItem, addCase, deleteCase }
 }
-
-

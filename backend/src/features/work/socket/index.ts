@@ -6,7 +6,6 @@ export const registerSocketEvents = (
   io: Server,
   socket: Socket
 ) => {
-
   setupCollaborationSocket(io, socket);
   setupPersistenceSocket(io, socket);
 };

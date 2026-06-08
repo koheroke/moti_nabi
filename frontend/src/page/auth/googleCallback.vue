@@ -14,7 +14,6 @@ const fall = () => {
 onMounted(async () => {
   const route = useRoute();
   const res = route.query.error;
-  console.log("error", res);
   if (!res) {
     fall();
     return;

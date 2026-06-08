@@ -11,22 +11,17 @@ export type editWorkPackageApi = RequireAtLeastOne<{
   copies?: number,
   members?: SiteMember[]
 }>
-export type AlterationTokenType = "set" | "delete" | "arrayPush" | "arrayRemove" | "addMap" | "mapPush" | "mapRemove" | "objectPush" | "objectRemove";
+export type AlterationTokenType = "set" | "delete" | "arrayPush" | "arrayRemove" | "objectPush" | "objectRemove";
 export type AlterationToken = {
   id: string;
-  workId: string;
-  userId: string;
   type: AlterationTokenType;
-  path: string[];
   beforeValue?: unknown;
   value: any
   createdAt: number;
+  path: string[];
 };
 
-export interface editWorkToken {
-  workId: string,
-  tokens: AlterationToken[]
-}
+
 
 export interface createApi {
   name: string

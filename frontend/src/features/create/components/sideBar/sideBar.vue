@@ -7,17 +7,17 @@
             class="iconArea flexCanter"
             @click="
               onSelect(item.id);
-              selectItemId = item.id;
+              selectedId = item.id;
             "
             style="flex-direction: column"
           >
             <div
               class="flexCanter icon"
-              :class="{ shadow: selectItemId == item.id }"
+              :class="{ shadow: selectedId == item.id }"
             >
               <component
                 :is="item.icon"
-                v-if="selectItemId == item.id"
+                v-if="selectedId == item.id"
                 :fill="item.onColor"
                 :stroke-width="1.5"
                 color="white"
@@ -25,7 +25,7 @@
               />
               <component
                 :is="item.icon"
-                v-if="selectItemId != item.id"
+                v-if="selectedId != item.id"
                 :stroke-width="1.5"
                 :size="26"
               />
@@ -38,8 +38,8 @@
       </div>
     </div>
     <div class="selectContent">
-      <itemBar v-if="selectItemId == 'item'"></itemBar>
-      <caseSelectBar v-if="selectItemId == 'case'"></caseSelectBar>
+      <itemBar v-if="selectedId == 'item'"></itemBar>
+      <caseSelectBar v-if="selectedId == 'case'"></caseSelectBar>
     </div>
   </div>
   <!-- <itemBar /> -->
@@ -51,7 +51,7 @@ import itemBar from "@/features/create/components/sideBar/itemBar/itemBar.vue";
 import caseSelectBar from "@/features/create/components/sideBar/caseBar/caseSelectBar.vue";
 
 import { ref, type Component } from "vue";
-const selectItemId = ref<string>("template");
+const selectedId = ref<string>("template");
 const onSelect = (id: string) => {};
 
 interface SideBar {

@@ -16,8 +16,10 @@ workRouter.post('/create', async (c) => {
 
 
 workRouter.post('/getWork', async (c) => {
-  const body = await c.req.json();
-  const res = await createWork.getWork(body.workId)
+  console.log("getWork")
+  const data = await c.req.json();
+  console.log("getWork", data)
+  const res = await createWork.getWork(data.theWorkId)
   return c.json(res);
 });
 

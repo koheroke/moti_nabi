@@ -127,31 +127,31 @@ var T = w(`circle-minus`, [
       addCount(e) {
         if (!this.previewCase || !this.listItem) return;
         let t = this.previewCase[e.caseId].pockets[e.pocketId],
-          n = e.parentItemId ?? e.originalId,
+          n = e.parentId ?? e.id,
           r = t.items.get(n);
         if (!r) return;
-        if (!e.parentItemId) {
+        if (!e.parentId) {
           r.count += e.pulse;
           return;
         }
-        let i = r.innerItems.get(e.originalId);
+        let i = r.innerItems.get(e.id);
         return (i && (i.count += e.pulse), t.items);
       },
       pushpreviewItem(e) {
         if (!this.previewCase || !this.listItem || !this.addItemCounter) return;
         let t = this.previewCase[e.caseId].pockets[e.pocketId],
-          n = e.originalId ? e.originalId : `item_${this.addItemCounter}`;
+          n = e.id ? e.id : `item_${this.addItemCounter}`;
         this.addItemCounter++;
         let r = {
           ...this.listItem[e.itemId],
           count: 1,
-          originalId: n,
+          id: n,
           innerItems: new Map(),
         };
-        if (e.parentItemId == null) t.items.set(r.originalId, r);
+        if (e.parentId == null) t.items.set(r.id, r);
         else {
-          let n = t.items.get(e.parentItemId)?.innerItems;
-          n && n.set(r.originalId, r);
+          let n = t.items.get(e.parentId)?.innerItems;
+          n && n.set(r.id, r);
         }
         return t.items;
       },
@@ -173,13 +173,12 @@ var T = w(`circle-minus`, [
         if (!this.previewCase || !this.listItem || !this.previewCase[e.caseId])
           return;
         let t = this.previewCase[e.caseId].pockets[e.pocketId],
-          n = e.parentItemId ? e.parentItemId : e.originalId,
+          n = e.parentId ? e.parentId : e.id,
           r = t.items.get(n)?.innerItems;
-        if (r && e.parentItemId == null)
+        if (r && e.parentId == null)
           return (
             r.delete(n),
-            e.parentItemId != null &&
-              r.get(e.originalId)?.innerItems?.delete(e.itemId),
+            e.parentId != null && r.get(e.id)?.innerItems?.delete(e.itemId),
             t.items
           );
       },
@@ -286,9 +285,9 @@ var M = () => {
                         ...r,
                         innerItems: t.innerItems ? c(t.innerItems) : new Map(),
                         count: t.count,
-                        originalId: t.originalId,
+                        id: t.id,
                       }
-                    : { ...r, count: t.count, originalId: t.originalId },
+                    : { ...r, count: t.count, id: t.id },
                 ];
               }),
             ),
@@ -474,25 +473,19 @@ var M = () => {
           pockets: {
             mesh: {
               id: `mesh`,
-              originalId: `mesh`,
+              id: `mesh`,
               count: 0,
               innerItems: new Map([
-                [`item_1`, { originalId: `item_1`, id: `item_1`, count: 3 }],
+                [`item_1`, { id: `item_1`, id: `item_1`, count: 3 }],
                 [
                   `item_2`,
                   {
                     id: `inner_1`,
                     count: 1,
-                    originalId: `item_2`,
+                    id: `item_2`,
                     innerItems: new Map([
-                      [
-                        `item_3`,
-                        { id: `item_6`, originalId: `item_3`, count: 2 },
-                      ],
-                      [
-                        `item_4`,
-                        { id: `item_6`, originalId: `item_4`, count: 1 },
-                      ],
+                      [`item_3`, { id: `item_6`, id: `item_3`, count: 2 }],
+                      [`item_4`, { id: `item_6`, id: `item_4`, count: 1 }],
                     ]),
                   },
                 ],
@@ -500,10 +493,10 @@ var M = () => {
             },
             main: {
               id: `main`,
-              originalId: `main`,
+              id: `main`,
               count: 0,
               innerItems: new Map([
-                [`item_5`, { originalId: `item_5`, id: `inner_1`, count: 3 }],
+                [`item_5`, { id: `item_5`, id: `inner_1`, count: 3 }],
               ]),
             },
           },
@@ -551,8 +544,7 @@ var M = () => {
         if (!o) return `nonePreview`;
         let s = o[a];
         if (!s) return `noneItem`;
-        if (s.isStorage == 1 && r.parentItemId != null)
-          return `isRegulatedAction`;
+        if (s.isStorage == 1 && r.parentId != null) return `isRegulatedAction`;
         let c = {
             alterationType: `previewItems_additem`,
             token: r,
@@ -750,11 +742,11 @@ var M = () => {
         a = r.iconMap;
       function o(e) {
         let t = {
-          originalId: n.item.originalId,
+          id: n.item.id,
           popCaseId: n.caseId,
           popPocketId: n.pocketId,
         };
-        e.dataTransfer?.setData(`originalId`, JSON.stringify(t));
+        e.dataTransfer?.setData(`id`, JSON.stringify(t));
       }
       let s = {
         props: n,
@@ -768,7 +760,7 @@ var M = () => {
           let r = {
             itemId: t,
             pocketId: n.pocketId,
-            parentItemId: n.item.originalId,
+            parentId: n.item.id,
             caseId: n.caseId,
           };
           i.addItemToPreview(r);
@@ -777,10 +769,10 @@ var M = () => {
           n.item.count + e >= 99 ||
             n.item.count + e <= 0 ||
             i.addItemCount({
-              originalId: n.item.originalId,
+              id: n.item.id,
               pulse: e,
               pocketId: n.pocketId,
-              parentItemId: n.parentItem ? n.parentItem : void 0,
+              parentId: n.parentItem ? n.parentItem : void 0,
               caseId: n.caseId,
             });
         },
@@ -790,14 +782,14 @@ var M = () => {
             e?.push({
               pocketId: n.pocketId,
               caseId: n.caseId,
-              parentItemId: n.item.originalId,
+              parentId: n.item.id,
               itemId: t.id,
             });
           });
           let t = {
-            originalId: n.item.originalId,
+            id: n.item.id,
             pocketId: n.pocketId,
-            parentItemId: n.parentItem ? n.parentItem : void 0,
+            parentId: n.parentItem ? n.parentItem : void 0,
             itemId: n.item.id,
             caseId: n.caseId,
             innnerItemToken: e,
@@ -877,7 +869,7 @@ function H(t, r, i, c, l, u) {
                         {
                           item: n,
                           pocketId: c.props.pocketId,
-                          parentItem: c.props.item.originalId,
+                          parentItem: c.props.item.id,
                           caseId: c.props.caseId,
                         },
                         null,

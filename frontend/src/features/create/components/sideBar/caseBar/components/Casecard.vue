@@ -29,17 +29,17 @@
       <!-- ポケット -->
       <g v-for="pocket in pockets" :key="pocket.id" class="pocket-group">
         <rect
-          :x="pocket.x"
-          :y="pocket.y"
-          :width="pocket.width"
-          :height="pocket.height"
+          :x="pocket.pos.x"
+          :y="pocket.pos.y"
+          :width="pocket.size.width"
+          :height="pocket.size.height"
           rx="14"
           class="pocket"
         />
 
         <text
-          :x="pocket.x + pocket.width / 2"
-          :y="pocket.y + pocket.height / 2"
+          :x="pocket.pos.x + pocket.size.width / 2"
+          :y="pocket.pos.y + pocket.size.height / 2"
           text-anchor="middle"
           dominant-baseline="middle"
           class="pocket-label"
@@ -48,8 +48,8 @@
         </text>
 
         <text
-          :x="pocket.x + pocket.width - 12"
-          :y="pocket.y + 22"
+          :x="pocket.pos.x + pocket.size.width - 12"
+          :y="pocket.pos.y + 22"
           text-anchor="end"
           class="pocket-count"
         >

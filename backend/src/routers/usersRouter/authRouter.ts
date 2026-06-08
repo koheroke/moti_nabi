@@ -63,10 +63,10 @@ authRouter.post('/session/verificationToken', async (c) => {
 
 
 authRouter.get("/googleLogin", googleLogin.login);
-authRouter.post("/google/callback", async (c) => {
-  const res = await googleLogin.callback(c)
+authRouter.get("/google/callback", async (c) => {
+  await googleLogin.callback(c)
   return c.redirect(
-    `http://localhost:5173/googleCallback?token=${res}`
+    `http://localhost:3000`
   );
 });
 
@@ -74,7 +74,7 @@ import { verifyRecaptcha } from '@/shared/security/recaptcha'
 authRouter.post('/recaptcha', async (c) => {
   const body = await c.req.json()
   const recaptchaToken = body
-  const result = await verifyRecaptcha(recaptchaToken)
+  const result = await verifyRecaptcha(recaptchaToken);
   if (!result.success) {
     return c.json({ message: 'reCAPTCHA failed' }, 400)
   }

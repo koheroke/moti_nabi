@@ -17,12 +17,12 @@
       </header>
       <div class="drop-area">
         <p
-          v-if="pocket.items.size === 0"
+          v-if="Object.keys(pocket.items).length === 0"
           style="font-size: 12px; text-align: center"
         >
           ここに持ち物をドラッグ
         </p>
-        <div v-for="[id, item] in pocket.items" :key="id" class="item-card">
+        <div v-for="item in pocket.items" :key="item.id" class="item-card">
           <PreviewItem
             :caseId="pocket.caseId"
             :item="item"
@@ -41,7 +41,6 @@ import { type addPreviewItemToken } from "@/features/create/type/tokens.ts";
 import { UseCreateWork } from "@/features/create/composables/useCreateWork";
 import PreviewItem from "./PreviewItem.vue";
 import type { previewItem } from "../type/casetype.ts";
-import { el } from "vuetify/locale";
 const isClose = ref(false);
 const createWork = UseCreateWork();
 
@@ -56,21 +55,21 @@ const close = () => {
 };
 const onDrop = (event: DragEvent) => {
   const dragged_itemId = event.dataTransfer?.getData("itemId");
-  const dragged_originalId = event.dataTransfer?.getData("positionChangeData");
-  if (!dragged_itemId && !dragged_originalId) return;
+  const dragged_id = event.dataTransfer?.getData("positionChangeData");
+  if (!dragged_itemId && !dragged_id) return;
   if (dragged_itemId) {
     const addPreviewItemToken: addPreviewItemToken = {
       itemId: dragged_itemId,
       pocketId: props.pocket.id,
       caseId: props.pocket.caseId,
-      originalId: null,
+      id: null,
     };
     createWork.addItemToPreview(addPreviewItemToken);
   }
-  // if (dragged_originalId) {
-  //   const data = JSON.parse(dragged_originalId);
+  // if (dragged_id) {
+  //   const data = JSON.parse(dragged_id);
   //   const positionChange: positionChangePreviewItemToken = {
-  //     originalId: data.originalId,
+  //     id: data.id,
   //     pushPocketId: props.pocket.id,
   //     pushCaseId: props.pocket.caseId,
   //     popPocketId: data.id,
@@ -85,7 +84,7 @@ const props = defineProps<{
   pocket: {
     id: string;
     name: string;
-    items: Map<string, previewItem>;
+    items: Record<string, previewItem>;
     caseId: string;
   };
 }>();

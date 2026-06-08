@@ -4,26 +4,26 @@ import type { Bookmarks } from "./itemType";
 import type { CaseEdit } from "./casetype";
 import type { Pocket } from "./casetype";
 interface innerItems {
-  id: string,
+  itemId: string,
   count: number;
-  originalId: string;
+  id: string;
 }
 
 
 interface saveDBprevieItems {
-  id: string,
-  innerItems?: Map<string, innerItems>;
+  itemId: string,
+  innerItems?: Record<string, innerItems>;
   count: number;
-  originalId: string;
+  id: string;
 }
 interface saveDBpreviewData {
-  pockets: Record<string, saveDBprevieItems>
+  pockets?: Record<string, saveDBprevieItems>
   id: string
-  addItemCounter: number,
+  addItemCounter?: number,
   caseType: CaseType
-  poketSvgEdit: CaseEdit[]
-  pocketAdd: Pocket[]
-  poketDelete: string[]
+  poketSvgEdit?: Record<string, CaseEdit>
+  pocketAdd?: Pocket[]
+  poketDelete?: string[]
 }
 
 
@@ -53,6 +53,7 @@ interface UserLuggage_SaveDBData {
   }
 };
 interface iconInfomation { src: string, category: CategoryId, }
+
 
 
 

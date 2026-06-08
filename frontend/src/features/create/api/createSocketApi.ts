@@ -1,69 +1,54 @@
-const socket = new WebSocket('ws://localhost:3080');
-import type { alterationToken } from "../composables/applyCreateAction";
+import { type alterationToken } from "../composables/applyCreateAction";
 import { useApplyCreateAction } from "../composables/applyCreateAction";
-const applyCreateAction = useApplyCreateAction()
+import { useCreateStore } from "../store/createStore"
 
-export type server_alterationTokenType = "set" | "delete" | "arrayPush" | "arrayRemove" | "addMap" | "mapPush" | "mapRemove" | "objectPush" | "objectRemove";
+import { io } from "socket.io-client";
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
+const createStore = useCreateStore()
+const socket = io(apiUrl);
+
+
+export type server_alterationTokenType = "set" | "delete" | "arrayPush" | "arrayRemove" | "objectPush" | "objectRemove";
 export type server_alterationToken = {
   id: string;
-  workId: string;
-  userId: string;
   type: server_alterationTokenType;
-  path: string[];
   beforeValue?: unknown;
   value: any
   createdAt: number;
+  path: string[];
 };
 
-export const useSocketApi = () => { //DB保存
-
-  const sendDb = (data: server_alterationToken[]) => {
-    socket.send(
-      JSON.stringify({
-        event: "work:save",
-        payload: {
-          data
-        },
+export const useSocketApi = () => {
+  const sendDb = (data: server_alterationToken[]): Promise<{ success: boolean, error?: string }> => {
+    if (!createStore.workIdGetter || data.length == 0) { success: false };
+    const queue = JSON.stringify({
+      workId: createStore.workIdGetter,
+      data,
+    })
+    return new Promise((resolve) => {
+      socket.emit("work:save", queue, (response: { success: boolean, error?: string }) => {
+        resolve(response)
       })
-    );
+    })
   };
 
-  const sendAlteration = (token: server_alterationToken) => { //共同編集
-    socket.send(
-      JSON.stringify({
-        event: "work:alteration",
-        payload: JSON.stringify(token),
-      })
-    );
+  const sendAlteration = (token: server_alterationToken) => {
+    socket.emit("work:alteration", token);
   };
-  return { sendAlteration, sendDb }
-}
-//共同編集はトークンを送って DB保存は差分を送る
-
-socket.onmessage = (message) => {
-  const data = JSON.parse(message.data);
-
-  switch (data.event) {
-    case "work:alteration":
-      const token = JSON.parse(data.payload) as alterationToken
-      applyCreateAction.alterationData(
-        token
-      );
-      break;
-
-    case "work:userJoin":
-      console.log("join");
-      break;
-
-    case "work:userLeave":
-      console.log("leave");
-      break;
-
-    default:
-      console.warn("unknown event", data.event);
-  }
+  return { sendAlteration, sendDb };
 };
 
 
-
-
+export const getAlteration = () => {
+  const applyCreateAction = useApplyCreateAction()
+  socket.on("work:alteration", (token: alterationToken) => {
+    if (!applyCreateAction) return
+    applyCreateAction.alterationData(token);
+  });
+  socket.on("work:userJoin", () => {
+    console.log("join");
+  });
+  socket.on("work:userLeave", () => {
+    console.log("leave");
+  })
+};

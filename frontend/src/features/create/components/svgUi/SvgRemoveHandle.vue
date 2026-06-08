@@ -1,10 +1,10 @@
 <template>
   <g div @pointerdown="startReMove($event)" class="remove-handle">
     <rect
-      :x="pocket.x"
-      :y="pocket.y"
-      :width="pocket.width"
-      :height="pocket.height"
+      :x="pocket.pos.x"
+      :y="pocket.pos.y"
+      :width="pocket.size.width"
+      :height="pocket.size.height"
       rx="1"
       class="pocket"
       fill="transparent"
@@ -15,6 +15,7 @@
 import { type Pocket } from "@/features/create/type/casetype";
 import { UseCreateWork } from "../../composables/useCreateWork";
 import { onMounted, onUnmounted } from "vue";
+let stop = true;
 const createWork = UseCreateWork();
 const props = defineProps<{
   pocket: Pocket;
@@ -27,6 +28,7 @@ let lastX = 0;
 let lastY = 0;
 
 const startReMove = (event: PointerEvent) => {
+  stop = false;
   isRemoveing = true;
   lastX = event.clientX;
   lastY = event.clientY;
@@ -35,7 +37,12 @@ const startReMove = (event: PointerEvent) => {
 };
 
 const stopResize = () => {
-  isRemoveing = false;
+  if (!stop) {
+    console.log("stopResize");
+    createWork.confirmedRemovePocket(props.caseId, props.pocketId);
+    isRemoveing = false;
+    stop = true;
+  }
 };
 
 const handlePointerMove = (event: PointerEvent) => {
@@ -47,8 +54,10 @@ const handlePointerMove = (event: PointerEvent) => {
 
   createWork.provisionalRemovePocket(
     {
-      x: props.pocket.x + diffX,
-      y: props.pocket.y + diffY,
+      x: props.pocket.pos.x + diffX,
+      y: props.pocket.pos.y + diffY,
+      width: props.pocket.size.width,
+      height: props.pocket.size.height,
     },
     props.pocketId,
     props.caseId,

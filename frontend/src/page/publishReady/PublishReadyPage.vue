@@ -84,7 +84,7 @@ const nameMax = ref(10);
 const tagMax = ref(10);
 import { useWorkPackageStore } from "@/features/work/store/workPackageStore";
 const workPackageStore = useWorkPackageStore();
-const { selectedPackageGetter } = storeToRefs(workPackageStore);
+const { selectedPackageIdGetter } = storeToRefs(workPackageStore);
 onMounted(async () => {
   const baseTag = await fetch("/json/work/baseTags.json");
   allTags.value = await baseTag.json();
@@ -104,7 +104,7 @@ const onPublich = () => {
   ) {
     return;
   }
-  const id = selectedPackageGetter.value.id;
+  const id = selectedPackageIdGetter.value;
   const publichToken = {
     id: id,
     name: name.value,

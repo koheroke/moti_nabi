@@ -1,18 +1,32 @@
 import { prisma } from "@/lib/prisma/prisma"
-import { Work } from "@/generated/prisma/client"
-import { editWorkPackageApi, editWorkToken } from "@/features/work/types"
+import { editWorkPackageApi } from "@/features/work/types"
+import { type AlterationToken } from "@/features/work/types"
 
 
 const workData = new Map()
 
 const useWork = () => {
   const createNewWork = async (userId: string) => {
+    console.log("userId", userId)
     if (!userId) return "error"
+
+    const newWork = JSON.stringify({
+      "itemListDatas": {
+        "addedItems": {},
+        "bookmarks": [],
+        "addItemCounter": 0,
+      },
+      "previewDatas": {
+        mainLuggage: {},
+        "addItemCounter": 0
+      }
+    });
+
     const work = await prisma.work.create({
       data: {
         name: "新しいリスト",
         thumbnailUrl: null,
-        data: "",
+        data: newWork,
         public: false,
         likes: 0,
         tags: [],
@@ -23,11 +37,15 @@ const useWork = () => {
             role: "owner",
           },
         },
+      },
+      select: {
+        id: true,
+        name: true,
+        data: true
       }
     })
-    console.log("work", work)
-    workData.set(work.id, work)
-    return { workName: work.name, workId: work.id }
+
+    return { workName: work.name, workId: work.id, data: work.data }
   }
 
   const getWorkPreview = async (workId: string) => {
@@ -50,7 +68,9 @@ const useWork = () => {
       },
       select: {
         data: true,
-        id: true
+        id: true,
+        name: true
+
       }
     });
     return work
@@ -69,81 +89,91 @@ const useWork = () => {
   }
 
 
-
-  const editWork = async (workId: string, token: editWorkToken) => {
-    let this_work = workData.get(workId)
+  const editWork = async (workId: string, editDataToken: AlterationToken[]) => {
+    console.log("editDataTokens", editDataToken);
+    let this_work = workData.get(workId);
     if (!this_work) {
-      const work = await getWork(workId)
-      if (!work) return
-      workData.set(work.id, work)
-      this_work = work
+      const work = await getWork(workId);
+      if (!work) return;
+      work.data = JSON.parse(work.data);
+      workData.set(workId, work);
+      this_work = work;
     }
 
-    token.tokens.forEach((token) => {
-      let data: any = this_work.data;
-      for (let i = 0; i < token.path.length - 1; i++) {
-        data = data[token.path[i]];
-      }
-      const lastKey = token.path[token.path.length - 1];
+    editDataToken.forEach((token) => {
+      const path = [...token.path];
+      const lastKey = path.pop();
+      let parent: any = this_work.data;
+      path.forEach((key) => {
+        if (key == undefined) return;
+        if (parent[key] == undefined) {
+          parent[key] = {};
+        }
+        parent = parent[key];
+      });
 
       switch (token.type) {
         case "set":
-          data[lastKey] = token.value;
+          console.log("token.value", token.value)
+          console.log(lastKey)
+          console.log(parent)
+          if (lastKey == null) return;
+          parent[lastKey] = token.value;
           break;
 
         case "delete":
-          delete data[lastKey];
+          if (lastKey == null) return;
+          delete parent[lastKey];
           break;
 
         case "arrayPush":
-          if (!Array.isArray(data[lastKey])) data[lastKey] = [];
-          data[lastKey].push(token.value);
+          if (lastKey == null) return;
+
+          if (!Array.isArray(parent[lastKey])) {
+            parent[lastKey] = [];
+          }
+
+          parent[lastKey].push(token.value);
           break;
 
         case "arrayRemove":
-          if (!Array.isArray(data[lastKey])) return;
-          data[lastKey] = data[lastKey].filter(
-            (item: any) => item.id !== (token.value as any).id
+          if (lastKey == null) return;
+          if (!Array.isArray(parent[lastKey])) return;
+
+          parent[lastKey] = parent[lastKey].filter(
+            (item: any) => item.id !== token.value.id
           );
           break;
 
-        case "addMap":
-          if (!(data[lastKey] instanceof Map)) {
-            data[lastKey] = new Map<string, any>();
-          }
-          data[lastKey].set(token.value.id, token.value);
-          break;
-
-        case "mapPush":
-          if (!(data[lastKey] instanceof Map)) {
-            data[lastKey] = new Map<string, any>();
-          }
-          data[lastKey].set(token.value.id, token.value);
-          break;
-
-        case "mapRemove":
-          if (!(data[lastKey] instanceof Map)) return;
-          data[lastKey].delete(token.value.id);
-          break;
-
         case "objectPush":
+          if (lastKey == null) return;
+
           if (
-            typeof data[lastKey] !== "object" ||
-            data[lastKey] === null ||
-            Array.isArray(data[lastKey])
+            typeof parent[lastKey] !== "object" ||
+            parent[lastKey] === null ||
+            Array.isArray(parent[lastKey])
           ) {
-            data[lastKey] = {};
+            parent[lastKey] = {};
           }
-          data[lastKey][token.value.id] = token.value;
+
+          parent[lastKey][token.value.id] = token.value;
           break;
 
         case "objectRemove":
+          if (lastKey == null) return;
+          console.log("lastKey", lastKey)
+          console.log("token.value.id", token.value.id)
+          console.log("parent[lastKey]", parent)
+
           if (
-            typeof data[lastKey] !== "object" ||
-            data[lastKey] === null ||
-            Array.isArray(data[lastKey])
-          ) return;
-          delete data[lastKey][token.value.id];
+            typeof parent[lastKey] !== "object" ||
+            parent[lastKey] === null ||
+            Array.isArray(parent[lastKey])
+          ) {
+            return;
+          }
+
+          delete parent[lastKey][token.value.id];
           break;
 
         default: {
@@ -152,17 +182,19 @@ const useWork = () => {
         }
       }
     });
+    const jsonData = JSON.stringify(this_work.data);
+    console.log("jsonData", jsonData)
     const work = await prisma.work.update({
       where: {
         id: workId,
       },
       data: {
-        data: this_work.data,
+        data: jsonData,
       },
     });
-    return work
-  }
 
+    return work;
+  };
 
   const getWorkPackages = async () => {
 

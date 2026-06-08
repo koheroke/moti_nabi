@@ -1,8 +1,6 @@
 import { defineStore } from "pinia"
 import type { alterationToken } from "../composables/applyCreateAction"
 import { useApplyCreateAction } from "../composables/applyCreateAction"
-import { el } from "vuetify/locale"
-
 interface HistoryToken {
   forwardToken: alterationToken
   reverseToken: alterationToken | alterationToken[]

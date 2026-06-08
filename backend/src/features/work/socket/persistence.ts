@@ -1,10 +1,27 @@
 import { Server, Socket } from "socket.io";
 import { useWork } from "../createWork";
-import { editWorkToken } from "@/features/work/types"
+
 
 const createWork = useWork()
 export const setupPersistenceSocket = (io: Server, socket: Socket) => {
-  socket.on("work:save", (data: { id: string, token: editWorkToken }) => {
-    createWork.editWork(data.id, data.token)
+
+  socket.on('work/join', (workId: string) => {
+    socket.join(workId);
+  });
+  socket.on("work:save", async (data: string, callback) => {
+    const queue = JSON.parse(data)
+    await createWork.editWork(queue.workId, queue.data)
+    try {
+      console.log("savqueuee", queue)
+      await createWork.editWork(queue.workId, queue.data)
+      callback({
+        success: true
+      })
+    } catch (error) {
+      callback({
+        success: false,
+        error: String(error)
+      })
+    }
   });
 }

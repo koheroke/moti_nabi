@@ -1,13 +1,11 @@
 import { type UserLuggage_SaveDBData } from "../type/apiType";
-import userLuggage_SaveDBData from "../driver/itemListDriver";
-
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 const url = `${apiUrl}/work`;
 const useCreateApi = () => {
   const getWork = async (theWorkId: string): Promise<UserLuggage_SaveDBData> => {
-    const data = await fetch(
-      `${url}/get`,
+    const res = await fetch(
+      `${url}/getWork`,
       {
         method: 'POST',
         headers: {
@@ -17,7 +15,16 @@ const useCreateApi = () => {
           theWorkId: theWorkId
         })
       })
-    return await data.json()
+    const data = await res.json()
+    data.data = JSON.parse(data.data)
+    const parse = {
+      ...data.data,
+      workName: data.name,
+      workId: data.id,
+    }
+    console.log("parse", parse);
+
+    return parse
   }
 
 
@@ -33,35 +40,22 @@ const useCreateApi = () => {
           userId: userId,
         })
       })
+    const newWorkData = await data.json();
 
-    const res = await data.json()
-    if (res == "error") {
+    if (newWorkData == "error") {
       return null
-    }
-
-    const newWork: UserLuggage_SaveDBData = {
-      "workId": res.workId,
-      "workName": res.workName,
-      "itemListDatas": {
-        "addedItems": {},
-        "bookmarks": [],
-        "addItemCounter": 0,
-      },
-      "previewDatas": {
-        mainLuggage: {},
-        "addItemCounter": 0
-      }
     };
 
-    return newWork
+    const createdData = await JSON.parse(newWorkData.data);
+    const workData = {
+      workName: newWorkData.workName,
+      workId: newWorkData.workId,
+      ...createdData
+    }
+    return workData
   }
 
-
-  const load = () => { //テスト用
-    const data = userLuggage_SaveDBData
-    return data
-  }
-  return { load, getWork, createNewWork }
+  return { getWork, createNewWork }
 }
 export { useCreateApi }
 

@@ -1,0 +1,17 @@
+{
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/.vite": true,
+    "**/coverage": true,
+    "**/*.js": true,
+    "**/*.js.map": true,
+    "**/*.d.ts": true
+  },
+  "files.exclude": {
+    "**/dist": true,
+    "**/build": true,
+    "**/.vite": true
+  }
+}

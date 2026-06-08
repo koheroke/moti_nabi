@@ -2,8 +2,8 @@
   <g class="resize-handles">
     <!-- 左上 -->
     <circle
-      :cx="pocket.x"
-      :cy="pocket.y"
+      :cx="pocket.pos.x"
+      :cy="pocket.pos.y"
       r="6"
       @pointerdown="startResize($event, -1, -1)"
       class="resize-handle"
@@ -12,8 +12,8 @@
 
     <!-- 右上 -->
     <circle
-      :cx="pocket.x + pocket.width"
-      :cy="pocket.y"
+      :cx="pocket.pos.x + pocket.size.width"
+      :cy="pocket.pos.y"
       r="6"
       @pointerdown="startResize($event, 1, -1)"
       class="resize-handle"
@@ -22,8 +22,8 @@
 
     <!-- 左下 -->
     <circle
-      :cx="pocket.x"
-      :cy="pocket.y + pocket.height"
+      :cx="pocket.pos.x"
+      :cy="pocket.pos.y + pocket.size.height"
       r="6"
       @pointerdown="startResize($event, -1, 1)"
       class="resize-handle"
@@ -32,8 +32,8 @@
 
     <!-- 右下 -->
     <circle
-      :cx="pocket.x + pocket.width"
-      :cy="pocket.y + pocket.height"
+      :cx="pocket.pos.x + pocket.size.width"
+      :cy="pocket.pos.y + pocket.size.height"
       r="6"
       @pointerdown="startResize($event, 1, 1)"
       class="resize-handle"
@@ -42,8 +42,8 @@
 
     <!-- 上 -->
     <circle
-      :cx="pocket.x + pocket.width / 2"
-      :cy="pocket.y"
+      :cx="pocket.pos.x + pocket.size.width / 2"
+      :cy="pocket.pos.y"
       r="6"
       @pointerdown="startResize($event, 0, -1)"
       class="resize-handle"
@@ -52,8 +52,8 @@
 
     <!-- 下 -->
     <circle
-      :cx="pocket.x + pocket.width / 2"
-      :cy="pocket.y + pocket.height"
+      :cx="pocket.pos.x + pocket.size.width / 2"
+      :cy="pocket.pos.y + pocket.size.height"
       r="6"
       @pointerdown="startResize($event, 0, 1)"
       class="resize-handle"
@@ -62,8 +62,8 @@
 
     <!-- 左 -->
     <circle
-      :cx="pocket.x"
-      :cy="pocket.y + pocket.height / 2"
+      :cx="pocket.pos.x"
+      :cy="pocket.pos.y + pocket.size.height / 2"
       r="6"
       @pointerdown="startResize($event, -1, 0)"
       class="resize-handle"
@@ -72,8 +72,8 @@
 
     <!-- 右 -->
     <circle
-      :cx="pocket.x + pocket.width"
-      :cy="pocket.y + pocket.height / 2"
+      :cx="pocket.pos.x + pocket.size.width"
+      :cy="pocket.pos.y + pocket.size.height / 2"
       r="6"
       @pointerdown="startResize($event, 1, 0)"
       class="resize-handle"
@@ -86,6 +86,7 @@ import { type Pocket } from "@/features/create/type/casetype";
 import { UseCreateWork } from "@/features/create/composables/useCreateWork";
 import { onMounted, onUnmounted } from "vue";
 const createWork = UseCreateWork();
+let stop = true;
 const props = defineProps<{
   pocket: Pocket;
   caseId: string;
@@ -98,9 +99,9 @@ let lastX = 0;
 let lastY = 0;
 
 const startResize = (event: PointerEvent, x: number, y: number) => {
+  stop = false;
   isResizing = true;
   resizeDirection = { x, y };
-
   lastX = event.clientX;
   lastY = event.clientY;
   const target = event.currentTarget as SVGCircleElement;
@@ -108,7 +109,11 @@ const startResize = (event: PointerEvent, x: number, y: number) => {
 };
 
 const stopResize = () => {
-  isResizing = false;
+  if (!stop) {
+    createWork.confirmedResizePocket(props.caseId, props.pocketId);
+    isResizing = false;
+    stop = true;
+  }
 };
 
 const handlePointerMove = (event: PointerEvent) => {
@@ -125,10 +130,10 @@ const handlePointerMove = (event: PointerEvent) => {
 
   createWork.provisionalResizePocket(
     {
-      x: props.pocket.x + moveX,
-      y: props.pocket.y + moveY,
-      width: props.pocket.width + diffX * resizeDirection.x,
-      height: props.pocket.height + diffY * resizeDirection.y,
+      x: props.pocket.pos.x + moveX,
+      y: props.pocket.pos.y + moveY,
+      width: props.pocket.size.width + diffX * resizeDirection.x,
+      height: props.pocket.size.height + diffY * resizeDirection.y,
     },
     props.pocketId,
     props.caseId,

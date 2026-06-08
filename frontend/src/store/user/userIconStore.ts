@@ -30,7 +30,6 @@ export const useUserStore = defineStore('user', {
   actions: {
     setUserInfo(userInfo: UserInfo) {
       this.userInfos[userInfo.userId] = userInfo
-      console.log("userInfouserInfouserInfo", this.userInfos)
     },
     setMyuserId(userId: string) {
       this.myuserId = userId
