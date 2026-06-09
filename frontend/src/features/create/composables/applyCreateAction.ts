@@ -2,12 +2,13 @@
 import type { provisionalResizePocket, confirmedRemovePocketToken, provisionalRemovePocket, confirmedResizePocketToken, deletePreviewCaseToken, addPreviewCaseToken, addPreviewItemToken, addItemCountToken, addBookmarkToken, addListItemToken, deletePreviewItemToken } from "@/features/create/type/tokens";
 import { useCreateStore } from "../store/createStore";
 import type { server_alterationTokenType } from "../api/createSocketApi"
-import { useSaveQueue } from "../services/saveQueue";
 import type { Case } from "@/features/create/type/casetype";
 import type { UserLuggage_SaveDBData, saveDBpreviewData, saveDBprevieItems } from "@/features/create/type/apiType";
 import type { previewItem } from "@/features/create/type/casetype";
-import type { CaseEdit } from "@/features/create/type/casetype";
-
+import { useSocketApi } from "@/features/create/api/createSocketApi"
+import { useUserAuthStore } from "@/store/user/userAuthStore";
+const userAuthstore = useUserAuthStore()
+const api = useSocketApi()
 export type alterationType = "previewItems_additem"
   | "previewItems_addcount"
   | "itemlistItems_bookmark"
@@ -28,7 +29,6 @@ export interface alterationToken {
 }
 
 const useApplyCreateAction = () => {
-  const saveQueue = useSaveQueue()
   const createStore = useCreateStore()
 
 
@@ -191,14 +191,14 @@ const useApplyCreateAction = () => {
     return { vuepreviewData: vuepreviewData, vueItemList: vueItemList, addItemCounter: previewDatas.addItemCounter }
   }
 
-  const alterationData = (token: alterationToken) => {
-    if (!createStore || !saveQueue) return
+  const alterationData = (token: alterationToken, socketResponse?: boolean) => {
+    if (!createStore) return
     let dbpushToken: {
       type: server_alterationTokenType,
       path: string[],
       value: any
     } = { type: "arrayPush", path: [], value: null }
-
+    if (token.user == userAuthstore.userId && socketResponse == true) return;
     switch (token.alterationType) {
       case 'previewItems_additem': { //完了
 
@@ -306,10 +306,23 @@ const useApplyCreateAction = () => {
         const res = createStore.deleteCase(token.token as deletePreviewCaseToken)
         break
       }
-
     }
-    saveQueue.push({ user: token.user, alterationType: token.alterationType, token: dbpushToken })
+    if (socketResponse == undefined || socketResponse == false) {
+      const pendingToken = {
+        sendDbToken: {
+          type: dbpushToken.type,
+          value: dbpushToken.value,
+          createdAt: Date.now(),
+          path: dbpushToken.path
+        },
+        alterationToken: token
+      }
+      api.sendAlteration(pendingToken)
+    }
   }
   return { hydrateCreateState, alterationData, initCreateStaticData }
 }
 export { useApplyCreateAction }
+
+
+

@@ -1,9 +1,9 @@
 import { type UserLuggage_SaveDBData } from "../type/apiType";
-
+import { type menber } from "../type/infoType";
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 const url = `${apiUrl}/work`;
 const useCreateApi = () => {
-  const getWork = async (theWorkId: string): Promise<UserLuggage_SaveDBData> => {
+  const getWork = async (theWorkId: string): Promise<{ parseData: UserLuggage_SaveDBData, menbers: menber[] }> => {
     const res = await fetch(
       `${url}/getWork`,
       {
@@ -17,14 +17,17 @@ const useCreateApi = () => {
       })
     const data = await res.json()
     data.data = JSON.parse(data.data)
+
+
     const parse = {
       ...data.data,
       workName: data.name,
       workId: data.id,
     }
     console.log("parse", parse);
-
-    return parse
+    return {
+      parseData: parse, menbers: data.members
+    }
   }
 
 
@@ -55,7 +58,39 @@ const useCreateApi = () => {
     return workData
   }
 
-  return { getWork, createNewWork }
+
+  const addMenber = async (token: { workId: string, role: string, userId: string }): Promise<string> => {
+    const data = await fetch(
+      `${url}/addMenber`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...token
+        })
+      })
+    return await data.json()
+  }
+
+
+  const deleteMenber = async (token: { userId: string, workId: string }): Promise<string> => {
+    const data = await fetch(
+      `${url}/deleteMenber`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...token
+        })
+      })
+    return await data.json()
+  }
+
+  return { getWork, createNewWork, addMenber, deleteMenber }
 }
 export { useCreateApi }
 

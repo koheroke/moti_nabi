@@ -14,6 +14,22 @@ workRouter.post('/create', async (c) => {
   return c.json(res);
 });
 
+workRouter.post('/addMenber', async (c) => {
+  const token = await c.req.json();
+  console.log("token", token)
+  const res = await createWork.addMenber(token)
+  return c.json(res);
+});
+
+
+workRouter.post('/deleteMenber', async (c) => {
+  const token = await c.req.json();
+  console.log("token", token)
+  const res = await createWork.deleteMenber(token)
+  return c.json(res);
+});
+
+
 
 workRouter.post('/getWork', async (c) => {
   console.log("getWork")

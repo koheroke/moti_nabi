@@ -6,6 +6,8 @@ import type { iconInfomation, UserLuggage_SaveDBData } from "@/features/create/t
 import { type Category, } from "@/features/create/type/categoryType";
 import type { CaseType } from "@/features/create/type/itemType";
 import type { provisionalRemovePocket, provisionalResizePocket, addPreviewCaseToken, deletePreviewCaseToken, addPreviewItemToken, addItemCountToken, addBookmarkToken, deletePreviewItemToken, addListItemToken } from "@/features/create/type/tokens";
+
+import { type menber } from '../type/infoType';
 export interface caseArray {
   id: string;
   data: Case
@@ -27,6 +29,8 @@ export const useCreateStore = defineStore("create", {
     categoryColor: {} as Record<string, string>,
     categories: [] as Category[],
     isStaticLoaded: false,
+    menbers: [] as menber[],
+    role: "viewer" as "owner" | "editor" | "viewer"
   }),
   getters: {
     staticCasesGetter: (state) => state.staticCases,
@@ -37,6 +41,10 @@ export const useCreateStore = defineStore("create", {
     listItemGetter: (state) => state.listItem,
     previewItemGetter: (state) => state.previewCase,
     workIdGetter: (state) => state.workId,
+    roleGetter: (state) => state.role,
+    menbersGetter: (state) => {
+      return state.menbers
+    },
     getAllCasesArray: (state): caseArray[] =>
       Object.entries(state.staticCases).map(([key, value]) => ({
         id: key,
@@ -48,6 +56,11 @@ export const useCreateStore = defineStore("create", {
         id: key,
         data: value,
       })),
+
+    getBlockEdit: (state): boolean => {
+      console.log("state.role", state.role)
+      return state.role === "owner" || state.role === "editor" ? false : true;
+    },
 
 
     filteredListItem: (state) => {
@@ -74,6 +87,10 @@ export const useCreateStore = defineStore("create", {
     }
   },
   actions: {
+    setRole(role: "owner" | "editor" | "viewer") {
+      console.log("state.role", role)
+      this.role = role
+    },
     setIconMap(icons: Record<string, iconInfomation>) {
       this.iconMap = icons
     },
@@ -116,6 +133,12 @@ export const useCreateStore = defineStore("create", {
     setStaticLoaded(state: boolean) {
       this.isStaticLoaded = state
     },
+
+    setMenbersSetter(menbers: menber[]) {
+      this.menbers = menbers
+    },
+
+
     addCount(token: addItemCountToken) {
       if (!this.previewCase || !this.listItem) return
       const pocket = this.previewCase[token.caseId].pockets[token.pocketId]
@@ -153,13 +176,20 @@ export const useCreateStore = defineStore("create", {
       console.log("pocket.items", pocket)
       return { item: pocket.items[cardItem.id] }
     },
-
+    addMenber(token: menber) {
+      if (!this.menbers) return
+      this.menbers.push({ userId: token.userId, role: token.role })
+    },
+    deleteMenber(userId: string) {
+      this.menbers = this.menbers.filter((menber) => menber.userId != userId)
+    },
     addBookmark(token: addBookmarkToken) {
       if (!this.previewCase || !this.listItem) return;
       this.listItem[token.itemId].bookmark = !this.listItem[token.itemId].bookmark
 
       return token.itemId
     },
+
 
     addListItem(token: addListItemToken) {
 
@@ -222,7 +252,5 @@ export const useCreateStore = defineStore("create", {
       pocket.pos.y = token.removeData.y
       return pocket.pos
     }
-
-
   }
 })

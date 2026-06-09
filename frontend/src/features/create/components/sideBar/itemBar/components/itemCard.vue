@@ -3,7 +3,7 @@
   <div
     class="item-card"
     :class="{ storage: item.isStorage }"
-    draggable="true"
+    :draggable="!createStore.getBlockEdit"
     @dragstart="onDragStart"
   >
     <div class="on-bookmark-area">

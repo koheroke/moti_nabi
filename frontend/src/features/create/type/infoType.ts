@@ -1,0 +1,1 @@
+export interface menber { role: "viewer" | "editor" | "owner", userId: string } 

@@ -8,11 +8,21 @@
         {{ props.item.name }}
       </div>
       <div class="count">
-        <CirclePlus class="countIcon" @click="onPlue(1)"></CirclePlus>
+        <CirclePlus
+          v-if="block"
+          class="countIcon"
+          @click="onPlue(1)"
+        ></CirclePlus>
         {{ props.item.count }}
-        <CircleMinus class="countIcon" @click="onPlue(-1)"></CircleMinus>
+        <CircleMinus
+          v-if="block"
+          class="countIcon"
+          @click="onPlue(-1)"
+        ></CircleMinus>
       </div>
-      <BaseButton class="delete-button" @click="onDelete">削除</BaseButton>
+      <BaseButton v-if="block" class="delete-button" @click="onDelete"
+        >削除</BaseButton
+      >
     </section>
     <section
       class="storage innerItems"
@@ -36,6 +46,7 @@
 </template>
 <script setup lang="ts">
 import type { previewItem } from "../type/casetype";
+import { ref } from "vue";
 const props = defineProps<{
   item: previewItem;
   pocketId: string;
@@ -54,6 +65,7 @@ import { useCreateStore } from "../store/createStore";
 const createStore = useCreateStore();
 const createWork = UseCreateWork();
 const iconMap = createStore.iconMap;
+const block = ref(createStore.roleGetter == "owner" || "editor" ? false : true);
 
 function onDragStart(event: DragEvent) {
   const token = {

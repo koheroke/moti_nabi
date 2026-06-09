@@ -59,7 +59,7 @@
             {{ "アイテムを収納にする" }}
           </label>
         </section>
-        <BaseButton @click="onAddItem">追加</BaseButton>
+        <BaseButton @click="onAddItem" :class="{ blockBotton: createStore.getBlockEdit }"">追加</BaseButton>
       </section>
     </div>
   </div>
@@ -85,6 +85,7 @@ const show = ref<boolean>(false);
 const selectedIcon = ref<string>();
 const selectedIcoSrc = ref<string>();
 const createWork = UseCreateWork();
+
 const closeIconSelect = () => {
   iconSelectToggle();
 };
@@ -97,6 +98,7 @@ watch(
 );
 
 const onAddItem = () => {
+  if(createStore.getBlockEdit)return;
   if (!name.value) return;
   if (!selectedCategory.value) return;
   if (!selectedIcon.value) return;

@@ -15,6 +15,7 @@ import type {
   addBookmarkToken,
   confirmedRemovePocketToken
 } from "@/features/create/type/tokens";
+import { type menber } from "../type/infoType";
 
 import { useApplyCreateAction } from "./applyCreateAction";
 import { useCreateApi } from "../api/createApi";
@@ -23,7 +24,8 @@ import { useCreateStore } from "../store/createStore";
 import type { alterationToken } from "./applyCreateAction";
 import { useAlterationLogStore } from "../store/useAlterationLogStore"
 import { useWorkPackageStore } from "@/features/work/store/workPackageStore";
-
+import { useSocketApi } from "../api/createSocketApi";
+const api = useSocketApi()
 const workPackageStore = useWorkPackageStore();
 
 export const UseCreateWork = () => {
@@ -65,6 +67,7 @@ export const UseCreateWork = () => {
     } catch (e) {
       return "damagedData"
     }
+    createStore.setRole("owner")
     createStore.setAddItemCounter(addItemCounter)
     createStore.setSaveDBData(newWork)
     createStore.setlistItem(vueItemList)
@@ -72,17 +75,19 @@ export const UseCreateWork = () => {
     createStore.setWorkId(newWork.workId)
     createStore.setWorkName(newWork.workName)
     workPackageStore.selectedPackageIdStore(newWork.workId)
+    await api.joinWorkRoom()
     return "none"
   }
 
   const loadWork = async (): Promise<loadResponse> => {
     const theWorkId: string = workPackageStore.selectedPackageIdGetter
     if (!theWorkId) return "noneNameorWorkId"
-    let data = null as UserLuggage_SaveDBData | null
+    let data = null as { parseData: UserLuggage_SaveDBData, menbers: menber[] } | null
     let vuepreviewData = {} as Record<string, Case>
     let vueItemList = {} as Record<string, itemCard>
     let addItemCounter = 0 as number
-
+    let parseData = {} as UserLuggage_SaveDBData
+    let menbers = [] as menber[]
     try {
       data = await createApi.getWork(theWorkId)
     } catch (e) {
@@ -92,23 +97,38 @@ export const UseCreateWork = () => {
       if (data == null) throw new Error()
       const createAction = useApplyCreateAction()
       await createAction.initCreateStaticData()
-      const response = applyCreateAction.hydrateCreateState(data)
+      const response = applyCreateAction.hydrateCreateState(data.parseData)
       vuepreviewData = response.vuepreviewData
       vueItemList = response.vueItemList
       addItemCounter = response.addItemCounter
+      parseData = data.parseData
+      menbers = data.menbers
     } catch (e) {
       return "damagedData"
     }
 
     createStore.setAddItemCounter(addItemCounter)
-    createStore.setSaveDBData(data)
+    createStore.setSaveDBData(parseData)
     createStore.setlistItem(vueItemList)
     createStore.setpreviewData(vuepreviewData)
-    createStore.setWorkId(data.workId)
-    createStore.setWorkName(data.workName)
+    createStore.setWorkId(parseData.workId)
+    createStore.setWorkName(parseData.workName)
+    createStore.setMenbersSetter(menbers)
+    const alterationTokens = await api.joinWorkRoom()
+    const user = menbers.find((menber) => menber.userId == userAuthstore.userId);
+
+    createStore.setRole(user?.role ?? "viewer")
+    console.log("alterationTokens", alterationTokens)
+    console.log("usfefeeefer", createStore.getBlockEdit)
+    if (!alterationTokens) return "none";
+    alterationTokens.forEach((token: alterationToken) => {
+      applyCreateAction.alterationData(token, true)
+    })
+
     return "none"
   }
   const addItemToPreview = async (token: addPreviewItemToken): Promise<addItemToPreviewResponse> => {
+    if (createStore.getBlockEdit) return "blockEdit"
     const { itemId } = token
     const items = createStore?.listItemGetter
     if (!items) return "nonePreview"
@@ -140,12 +160,14 @@ export const UseCreateWork = () => {
       token: deleteToken,
       user: userAuthstore.userId
     }
+
     alterationLog.saveState({ forwardToken: fowardToken, reverseToken: reverseToken })
     applyCreateAction.alterationData(fowardToken)
     return "addPreview"
   }
 
   const addItemCount = (token: addItemCountToken) => {
+    if (createStore.getBlockEdit) return "blockEdit"
     const newToken: alterationToken = {
       alterationType: "previewItems_addcount",
       token: token,
@@ -165,6 +187,7 @@ export const UseCreateWork = () => {
   }
 
   const addBookmark = (token: addBookmarkToken) => {
+    if (createStore.getBlockEdit) return "blockEdit"
     const newToken: alterationToken = {
       alterationType: "itemlistItems_bookmark",
       token: token,
@@ -174,6 +197,7 @@ export const UseCreateWork = () => {
   }
 
   const deletePreviewItem = (token: deletePreviewItemToken) => {
+    if (createStore.getBlockEdit) return "blockEdit"
     if (!createStore.listItemGetter) return
     const newToken: alterationToken = {
       alterationType: "previewItems_delete",
@@ -201,6 +225,7 @@ export const UseCreateWork = () => {
     alterationLog.saveState({ forwardToken: newToken, reverseToken: reverseToken })
   }
   const addListItem = (token: addListItemToken) => {
+    if (createStore.getBlockEdit) return "blockEdit"
     const newToken: alterationToken = {
       alterationType: "itemlistItems_additem",
       token: token,
@@ -209,6 +234,7 @@ export const UseCreateWork = () => {
     applyCreateAction.alterationData(newToken)
   }
   const addCase = (caseType: CaseType) => {
+    if (createStore.getBlockEdit) return "blockEdit"
     const id = crypto.randomUUID()
     const addToken: addPreviewCaseToken = {
       case: {
@@ -237,37 +263,39 @@ export const UseCreateWork = () => {
     applyCreateAction.alterationData(forwardToken)
     alterationLog.saveState({ forwardToken: forwardToken, reverseToken: reverseToken })
   }
-  const deleteCase = (id: string) => {
+  const deleteCase = (id: string) => { //作成途中
+    // if (createStore.getBlockEdit) return "blockEdit"
 
-    const this_case: Case = createStore.previewItemGetter[id]
-    const addToken: addPreviewCaseToken = {
-      case: this_case,
-      reverse: true
-    }
+    // const this_case: Case = createStore.previewItemGetter[id]
+    // const addToken: addPreviewCaseToken = {
+    //   case: this_case,
+    //   reverse: true
+    // }
 
-    const deleteToken: deletePreviewCaseToken = {
-      id: id,
-      deletecase: this_case
-    }
+    // const deleteToken: deletePreviewCaseToken = {
+    //   id: id,
+    //   deletecase: this_case
+    // }
 
-    const reverseToken: alterationToken = {
-      alterationType: "previewCases_deleteCase",
-      token: deleteToken,
-      user: userAuthstore.userId
-    }
+    // const reverseToken: alterationToken = {
+    //   alterationType: "previewCases_deleteCase",
+    //   token: addToken,
+    //   user: userAuthstore.userId
+    // }
 
-    const forwardToken: alterationToken = {
-      alterationType: "previewCases_addCase",
-      token: addToken,
-      user: userAuthstore.userId
-    }
-    createStore.addPreviewCase(addToken)
-    alterationLog.saveState({ forwardToken: forwardToken, reverseToken: reverseToken })
+    // const forwardToken: alterationToken = {
+    //   alterationType: "previewCases_addCase",
+    //   token: deleteToken,
+    //   user: userAuthstore.userId
+    // }
+    // createStore.addPreviewCase(addToken)
+    // alterationLog.saveState({ forwardToken: forwardToken, reverseToken: reverseToken })
   }
 
   let provisionalpocket = false
   let sevePocket: { x: number, y: number, width: number, height: number } = { x: 0, y: 0, width: 0, height: 0 }
   const provisionalResizePocket = (resizeData: { x: number, y: number, width: number, height: number }, pocketId: string, caseId: string) => {
+    if (createStore.getBlockEdit) return "blockEdit"
     if (!provisionalpocket) {
       provisionalpocket = true
       const { x, y } =
@@ -284,6 +312,7 @@ export const UseCreateWork = () => {
     createStore.reSizePocket(token) //userのみの変更で合ってる
   }
   const confirmedResizePocket = (caseid: string, pocketId: string) => {
+    if (createStore.getBlockEdit) return "blockEdit"
     const { x, y } =
       createStore.previewCase[caseid].pockets[pocketId].pos
     const { width, height } =
@@ -335,6 +364,7 @@ export const UseCreateWork = () => {
     pocketId: string,
     caseId: string
   ) => {
+    if (createStore.getBlockEdit) return "blockEdit"
     if (!provisionalPocket) {
       provisionalPocket = true
 
@@ -356,6 +386,7 @@ export const UseCreateWork = () => {
   }
 
   const confirmedRemovePocket = (caseId: string, pocketId: string) => {
+    if (createStore.getBlockEdit) return "blockEdit"
     const nowpos =
       { ...createStore.previewCase[caseId].pockets[pocketId].pos, ...createStore.previewCase[caseId].pockets[pocketId].size }
 
@@ -390,6 +421,8 @@ export const UseCreateWork = () => {
 
     applyCreateAction.alterationData(token)
   }
+
+
 
 
   // const positionChangeItemToPreview = (token: positionChangePreviewItemToken) => {

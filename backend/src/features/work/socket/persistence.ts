@@ -5,9 +5,7 @@ import { useWork } from "../createWork";
 const createWork = useWork()
 export const setupPersistenceSocket = (io: Server, socket: Socket) => {
 
-  socket.on('work/join', (workId: string) => {
-    socket.join(workId);
-  });
+
   socket.on("work:save", async (data: string, callback) => {
     const queue = JSON.parse(data)
     try {

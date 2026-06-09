@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma/prisma"
 import { editWorkPackageApi } from "@/features/work/types"
-import { type AlterationToken } from "@/features/work/types"
+import { type server_alterationToken } from "./saveQueue"
+
 
 
 const workData = new Map()
@@ -61,6 +62,44 @@ const useWork = () => {
     return work
   }
 
+  const addMenber = async (token: { workId: string, role: string, userId: string }) => {
+    type Role = "owner" | "editor" | "viewer"
+    try {
+      await prisma.work.update({
+        where: {
+          id: token.workId,
+        },
+        data: {
+          members: {
+            create: {
+              role: token.role as Role,
+              userId: token.userId,
+            },
+          },
+        },
+      });
+      return "success"
+    } catch {
+      return "error"
+    }
+  }
+
+  const deleteMenber = async (token: { workId: string, userId: string }) => {
+    try {
+      await prisma.siteMember.delete({
+        where: {
+          workId_userId: {
+            workId: token.workId,
+            userId: token.userId,
+          },
+        },
+      });
+      return "success"
+    } catch {
+      return "error"
+    }
+  }
+
   const getWork = async (workId: string) => {
     const work = await prisma.work.findUnique({
       where: {
@@ -69,8 +108,13 @@ const useWork = () => {
       select: {
         data: true,
         id: true,
-        name: true
-
+        name: true,
+        members: {
+          select: {
+            role: true,
+            userId: true
+          },
+        },
       }
     });
     return work
@@ -89,7 +133,7 @@ const useWork = () => {
   }
 
 
-  const editWork = async (workId: string, editDataToken: AlterationToken[]) => {
+  const editWork = async (workId: string, editDataToken: server_alterationToken[]) => {
     console.log("editDataTokens", editDataToken);
     let this_work = workData.get(workId);
     if (!this_work) {
@@ -193,7 +237,7 @@ const useWork = () => {
       },
     });
 
-    return work;
+    return { success: true };
   };
 
   const getWorkPackages = async () => {
@@ -223,7 +267,6 @@ const useWork = () => {
         members: {
           some: {
             userId,
-            role: "owner",
           },
         },
       },
@@ -238,12 +281,13 @@ const useWork = () => {
         createdAt: true,
       },
     });
+
     return packages
   }
   return {
     createNewWork, getWork, editWorkPackage, editWork
     , getWorkPackages, getUserWorkPackages
-    , getWorkPreview
+    , getWorkPreview, addMenber, deleteMenber
   }
 }
 

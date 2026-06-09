@@ -18,8 +18,22 @@
           :thumbnailUrl="userIconInfo.iconUrl"
           style="margin-right: 20px"
         ></UserIcon>
-        <BaseButton variant="ghost">招待</BaseButton>
-        <BaseButton @click="onpublich">公開</BaseButton>
+        <div class="wrapper">
+          <BaseButton variant="ghost" @click="addMenberShow = !addMenberShow">
+            招待
+          </BaseButton>
+
+          <addMenber
+            v-if="addMenberShow"
+            class="popup"
+            @close="addMenberShow = false"
+          />
+        </div>
+        <BaseButton
+          @click="onpublich"
+          :class="{ blockBotton: createStore.roleGetter != 'owner' }"
+          >公開</BaseButton
+        >
       </div>
     </div>
   </div>
@@ -33,6 +47,8 @@ import { BaseInput } from "@/components/ui/form/BaseInput";
 import { useCreateStore } from "../store/createStore";
 import { useRouter } from "vue-router";
 import { onMounted, ref } from "vue";
+import addMenber from "@/features/create/components/addMenber.vue";
+const addMenberShow = ref(false);
 const router = useRouter();
 const createStore = useCreateStore();
 const alterationLog = useAlterationLogStore();
@@ -53,6 +69,7 @@ const props = defineProps<{
   title: string;
 }>();
 const onpublich = () => {
+  if (createStore.roleGetter != "owner") return;
   router.push("/publishReady");
 };
 onMounted(() => {
@@ -81,5 +98,16 @@ onMounted(() => {
   gap: 10px;
   display: flex;
   width: 50%;
+}
+
+.wrapper {
+  position: relative;
+}
+
+.popup {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 1000;
 }
 </style>

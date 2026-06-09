@@ -2,7 +2,7 @@ import type { CategoryId } from "../type/categoryType";
 import type { Case } from "../type/casetype";
 import type { CaseType } from "../type/itemType";
 export type loadResponse = "noneNameorWorkId" | "fallLoadData" | "damagedData" | "none"
-export type addItemToPreviewResponse = "nonePreview" | "addPreview" | "noneItem" | "isRegulatedAction"
+export type addItemToPreviewResponse = "nonePreview" | "addPreview" | "noneItem" | "isRegulatedAction" | "blockEdit"
 export type createdType = "default" | "userCreated" | "othersUserCreated"
 
 
