@@ -45,15 +45,24 @@ const { getPreviewCasesArray: cases } = storeToRefs(createStore);
 .preview-area {
   width: 100%;
   height: 100%;
+  min-width: 0;
+  min-height: 0;
   overflow: auto;
+
   background-color: rgb(68, 68, 68);
   background-repeat: repeat;
   background-image: radial-gradient(circle, #dfdddd 1px, transparent 1px);
   background-size: 20px 20px;
+
   scrollbar-width: none;
   -ms-overflow-style: none;
+
   display: grid;
-  grid-template-columns: repeat(3, 4fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-content: start;
+  gap: 20px;
+
   position: relative;
+  box-sizing: border-box;
 }
 </style>

@@ -3,6 +3,7 @@ import { type menber } from "../type/infoType";
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 const url = `${apiUrl}/work`;
 const useCreateApi = () => {
+
   const getWork = async (theWorkId: string): Promise<{ parseData: UserLuggage_SaveDBData, menbers: menber[] }> => {
     const res = await fetch(
       `${url}/getWork`,
@@ -29,7 +30,6 @@ const useCreateApi = () => {
       parseData: parse, menbers: data.members
     }
   }
-
 
   const createNewWork = async (userId: string,): Promise<UserLuggage_SaveDBData | null> => {
     const data = await fetch(

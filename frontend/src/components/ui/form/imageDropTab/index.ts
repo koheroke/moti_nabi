@@ -1,0 +1,1 @@
+export { default as imageDropTab } from "./imageDropTab.vue"

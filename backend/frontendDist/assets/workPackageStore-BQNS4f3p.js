@@ -1,2 +1,0 @@
-import{c as e}from"./index-5crRY6zO.js";var t=e(`package`,{state:()=>({WorkPackageStore:[],userWorkPackageStore:[],selectedPackageId:{}}),getters:{workPackageStoreGetter:e=>e.WorkPackageStore,userWorkPackageStoreGetter:e=>e.userWorkPackageStore,selectedPackageIdGetter:e=>e.selectedPackageId},actions:{setWorkPackageStore(e){this.WorkPackageStore=e},setUserWorkPackageStore(e){this.userWorkPackageStore=e,console.log(this.userWorkPackageStore)},selectedPackageIdStore(e){this.selectedPackageId=e}}});export{t};
-//# sourceMappingURL=workPackageStore-BQNS4f3p.js.map

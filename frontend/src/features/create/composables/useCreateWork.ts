@@ -25,6 +25,8 @@ import type { alterationToken } from "./applyCreateAction";
 import { useAlterationLogStore } from "../store/useAlterationLogStore"
 import { useWorkPackageStore } from "@/features/work/store/workPackageStore";
 import { useSocketApi } from "../api/createSocketApi";
+import { useAlertStore } from "@/store/feedback/alertStore";
+const alertStore = useAlertStore();
 const api = useSocketApi()
 const workPackageStore = useWorkPackageStore();
 
@@ -68,12 +70,7 @@ export const UseCreateWork = () => {
       return "damagedData"
     }
     createStore.setRole("owner")
-    createStore.setAddItemCounter(addItemCounter)
-    createStore.setSaveDBData(newWork)
-    createStore.setlistItem(vueItemList)
-    createStore.setpreviewData(vuepreviewData)
-    createStore.setWorkId(newWork.workId)
-    createStore.setWorkName(newWork.workName)
+    createStore.setWork(newWork, vuepreviewData, vueItemList)
     workPackageStore.selectedPackageIdStore(newWork.workId)
     await api.joinWorkRoom()
     return "none"
@@ -106,27 +103,60 @@ export const UseCreateWork = () => {
     } catch (e) {
       return "damagedData"
     }
-
-    createStore.setAddItemCounter(addItemCounter)
-    createStore.setSaveDBData(parseData)
-    createStore.setlistItem(vueItemList)
-    createStore.setpreviewData(vuepreviewData)
-    createStore.setWorkId(parseData.workId)
-    createStore.setWorkName(parseData.workName)
+    createStore.setWork(parseData, vuepreviewData, vueItemList)
     createStore.setMenbersSetter(menbers)
-    const alterationTokens = await api.joinWorkRoom()
     const user = menbers.find((menber) => menber.userId == userAuthstore.userId);
-
     createStore.setRole(user?.role ?? "viewer")
+    return "none"
+  }
+
+
+  const setWorkSocket = async () => {
+    const alterationTokens = await api.joinWorkRoom()
     console.log("alterationTokens", alterationTokens)
     console.log("usfefeeefer", createStore.getBlockEdit)
-    if (!alterationTokens) return "none";
+    if (!alterationTokens) return "noneNameorWorkId"
     alterationTokens.forEach((token: alterationToken) => {
       applyCreateAction.alterationData(token, true)
     })
-
-    return "none"
+    return "none";
   }
+  const loadCreatePageWork = async () => {
+    const resCreateNewwork = await loadWork();
+    const resSetWorkSocket = await setWorkSocket()
+    if (resCreateNewwork != "none") return resCreateNewwork;
+    return resSetWorkSocket
+  }
+  const setCreatePageWork = async () => {
+    let res = "";
+    if (
+      (workPackageStore.selectedPackageIdGetter ?? "").replaceAll(/\s+/g, "")
+        .length === 0
+    ) {
+      res = await createNewwork();
+    } else {
+      res = await loadCreatePageWork();
+    }
+    switch (res) {
+      case "noneNameorWorkId":
+        alertStore.showAlert("ユーザー情報の取得に失敗しました", true);
+        break;
+      case "fallLoadData":
+        alertStore.showAlert("データの取得に失敗しました", true);
+        break;
+      case "damagedData":
+        alertStore.showAlert("データが破損しています", true);
+        break;
+
+      case "none":
+        alertStore.showAlert("読み込み完了", false);
+        break;
+      default:
+        break;
+    }
+
+  }
+
   const addItemToPreview = async (token: addPreviewItemToken): Promise<addItemToPreviewResponse> => {
     if (createStore.getBlockEdit) return "blockEdit"
     const { itemId } = token
@@ -432,5 +462,5 @@ export const UseCreateWork = () => {
   //   push_target.set(target_item, target_item)
   // }
 
-  return { createNewwork, confirmedRemovePocket, provisionalRemovePocket, provisionalResizePocket, confirmedResizePocket, loadWork, addItemToPreview, addItemCount, addBookmark, deletePreviewItem, addListItem, addCase, deleteCase }
+  return { createNewwork, confirmedRemovePocket, provisionalRemovePocket, provisionalResizePocket, confirmedResizePocket, loadWork, addItemToPreview, addItemCount, addBookmark, deletePreviewItem, addListItem, addCase, deleteCase, setCreatePageWork }
 }

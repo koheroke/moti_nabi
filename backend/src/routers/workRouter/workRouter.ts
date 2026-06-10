@@ -45,8 +45,20 @@ workRouter.post('/removeWork', async (c) => {
   return c.json(res);
 });
 
+workRouter.post('/publicWork', async (c) => {
+  const token = await c.req.json();
+  const res = await createWork.publicWork(token)
+  return c.json(res);
+});
+
+workRouter.post('/getWorkDetail', async (c) => {
+  const body = await c.req.json();
+  const res = await createWork.getWorkDetail(body.theWorkId)
+  return c.json(res);
+});
 
 workRouter.post('/getWorkPackages', async (c) => {
+
   const res = await createWork.getWorkPackages()
   return c.json(res);
 });

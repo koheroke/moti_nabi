@@ -17,28 +17,30 @@ export const useSession = () => {
 
   const verificationSessionToken = async (token: string) => {
     const payload = await verify(token, env.JWT_SECRET, "HS256")
-    console.log("userResponse===", payload)
+    console.log("userRse===", payload)
     if (!payload.userId) return false
-    const userResponse = await prisma.user.findFirst({
-      where: {
-        id: payload.userId,
-      },
-      select: {
-        id: true,
-        email: true,
-        profile: {
-          select: {
-            name: true,
-            iconUrl: true,
+    try {
+      const userResponse = await prisma.user.findFirst({
+        where: {
+          id: payload.userId,
+        },
+        select: {
+          id: true,
+          email: true,
+          profile: {
+            select: {
+              name: true,
+              iconUrl: true,
+            },
           },
         },
-      },
-    });
-    console.log("userResponse===", userResponse)
-
-    if (!userResponse) return false
-    return {
-      userId: userResponse?.id, authData: { email: userResponse?.email }, userIconData: { iconUrl: userResponse?.profile?.iconUrl ?? "", name: userResponse?.profile?.name ?? "" }
+      });
+      if (userResponse == undefined || userResponse == null) return;
+      return {
+        userId: userResponse?.id, authData: { email: userResponse?.email }, userIconData: { iconUrl: userResponse?.profile?.iconUrl ?? "", name: userResponse?.profile?.name ?? "" }
+      }
+    } catch {
+      return false
     }
   }
 

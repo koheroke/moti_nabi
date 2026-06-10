@@ -18,7 +18,6 @@ export const useWorkPackageStore = defineStore("package", {
     },
     setUserWorkPackageStore(data: workPackage[]) {
       this.userWorkPackageStore = data
-
     },
     selectedPackageIdStore(id: string) {
       this.selectedPackageId = id

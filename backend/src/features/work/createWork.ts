@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma/prisma"
 import { editWorkPackageApi } from "@/features/work/types"
 import { type server_alterationToken } from "./saveQueue"
 
-
+import { publichTokenType } from "./types/index"
 
 const workData = new Map()
 
@@ -49,14 +49,38 @@ const useWork = () => {
     return { workName: work.name, workId: work.id, data: work.data }
   }
 
-  const getWorkPreview = async (workId: string) => {
-    const work = await prisma.work.findUnique({
+  const getWorkDetail = async (workId: string) => {
+    const work = await prisma.work.findFirst({
       where: {
         id: workId,
       },
       select: {
         data: true,
-        id: true
+        id: true,
+        name: true,
+        bio: true,
+        likes: true,
+        tags: true,
+        copies: true,
+        createdAt: true,
+        members: {
+          select: {
+            role: true,
+            userId: true,
+            user: {
+              select: {
+                profile: {
+                  select: {
+                    id: true,
+                    userId: true,
+                    iconUrl: true,
+                    name: true
+                  }
+                }
+              }
+            }
+          },
+        },
       }
     });
     return work
@@ -100,6 +124,8 @@ const useWork = () => {
     }
   }
 
+
+
   const getWork = async (workId: string) => {
     const work = await prisma.work.findUnique({
       where: {
@@ -119,6 +145,8 @@ const useWork = () => {
     });
     return work
   }
+
+
 
   const editWorkPackage = async (workId: string, editData: editWorkPackageApi) => {
     const work = await prisma.work.update({
@@ -216,7 +244,6 @@ const useWork = () => {
           ) {
             return;
           }
-
           delete parent[lastKey][token.value.id];
           break;
 
@@ -226,6 +253,7 @@ const useWork = () => {
         }
       }
     });
+
     const jsonData = JSON.stringify(this_work.data);
     console.log("jsonData", jsonData)
     const work = await prisma.work.update({
@@ -241,7 +269,6 @@ const useWork = () => {
   };
 
   const getWorkPackages = async () => {
-
     const packages = await prisma.work.findMany({
       where: {
         public: true
@@ -281,13 +308,34 @@ const useWork = () => {
         createdAt: true,
       },
     });
-
+    console.log("packages", packages)
     return packages
+  }
+
+  const publicWork = async (token: publichTokenType) => {
+    try {
+      const res = await prisma.work.update({
+        where: {
+          id: token.id,
+        },
+        data: {
+          public: true,
+          name: token.name,
+          bio: token.bio,
+          tags: token.tags,
+          thumbnailUrl: token.thumbnailUrl,
+        },
+      });
+      return { success: true };
+    } catch {
+      return { success: false }
+    }
+
   }
   return {
     createNewWork, getWork, editWorkPackage, editWork
     , getWorkPackages, getUserWorkPackages
-    , getWorkPreview, addMenber, deleteMenber
+    , getWorkDetail, addMenber, deleteMenber, publicWork
   }
 }
 

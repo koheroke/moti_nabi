@@ -1,1 +1,0 @@
-import{I as e,_ as t,m as n,t as r,v as i}from"./_plugin-vue_export-helper-Cti9LuzH.js";var a={};function o(e,t){return null}var s=r(a,[[`render`,o]]),c={class:`page`},l=i({__name:`CreatePage`,setup(r){return(r,i)=>(e(),n(`div`,c,[t(s)]))}});export{l as default};

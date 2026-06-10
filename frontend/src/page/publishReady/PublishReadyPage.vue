@@ -15,6 +15,9 @@
             v-model="name"
             type="text"
             required="required"
+            @update:modelValue="
+              workDetailEditStore.addEdit({ name: workDetailEdit.name })
+            "
           ></BaseInput>
           <p>名前検索される時も使用されます</p>
           <p :class="{ error: name.length >= nameMax }">
@@ -23,10 +26,15 @@
         </section>
         <section class="input">
           <h2>説明</h2>
-          <BaseTextArea v-model="detale"></BaseTextArea>
+          <BaseTextArea
+            v-model="bio"
+            @update:modelValue="
+              workDetailEditStore.addEdit({ bio: workDetailEdit.bio })
+            "
+          ></BaseTextArea>
 
-          <p :class="{ error: detale.length >= detaleMax }">
-            文字数制限 : {{ detaleMax }}/{{ detale.length }}
+          <p :class="{ error: bio.length >= bioMax }">
+            文字数制限 : {{ bioMax }}/{{ bio.length }}
           </p>
         </section>
         <section class="input" style="margin-top: 40px">
@@ -47,15 +55,37 @@
             type="text"
             v-model="tagInput"
             class="tagInput"
+            @handleEnter="
+              tags.push(tagInput);
+              workDetailEditStore.addEdit({ tags: workDetailEdit.tags });
+            "
           ></BaseInput>
           <suggest
             v-model:search="tagInput"
             :suggestDatas="allTags"
             @onsuggest="tags.push($event)"
+            @update:modelValue="
+              workDetailEditStore.addEdit({ bio: workDetailEdit.bio })
+            "
           ></suggest>
         </section>
       </li>
-      <section class="thumbnail"></section>
+      <section class="thumbnail">
+        <h2 style="padding-bottom: 10px">サムネイル画像を設定</h2>
+        <img :src="thumbnailImage" class="icon_image" />
+        <div class="icon-edit" @click="editThumbnailShow = true">
+          <Camera fill="white" :size="100" color="#1514143d"></Camera>
+        </div>
+        <imageDropTab
+          v-if="editThumbnailShow"
+          @close="editThumbnailShow = false"
+          :aspectRatio="{ x: 7, y: 5 }"
+          :size="'700x500'"
+          :outputType="'png'"
+          @getNewIcon="thumbnailImage = $event"
+        ></imageDropTab>
+      </section>
+
       <div class="publich">
         <BaseButton style="margin-left: auto" @click="onPublich"
           >公開する
@@ -66,22 +96,40 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
+import { imageDropTab } from "@/components/ui/form/imageDropTab/index.ts";
 import { BaseInput } from "@/components/ui/form/BaseInput";
 import { BaseTextArea } from "@/components/ui/form/BaseTextArea/index.ts";
 import { BaseButton } from "@/components/ui/form/BaseButton";
 import { Tag } from "lucide-vue-next";
 import suggest from "@/features/suggest/components/suggest.vue";
+import { Camera } from "lucide-vue-next";
 import { storeToRefs } from "pinia";
+import { publicWork } from "./publichAPi/publich";
+import { useAlertStore } from "@/store/feedback/alertStore";
+import { useWorkDetailEditStore } from "@/features/workDetailEdit/store/useworkDetail";
+import { type editAboutType } from "@/features/workDetailEdit/store/useworkDetail";
+const workDetailEditStore = useWorkDetailEditStore();
+const alertStore = useAlertStore();
+const editThumbnailShow = ref(false);
 const name = ref<string>("");
 const tagInput = ref<string>("");
 const thumbnailUrl = ref<string>("");
+const thumbnailImage = ref<string>("");
 const tags = ref<string[]>([]);
-const detale = ref<string>("");
+const bio = ref<string>("");
 const allTags = ref<string[]>([]);
-const detaleMax = ref(250);
+const bioMax = ref(250);
 const nameMax = ref(10);
 const tagMax = ref(10);
+const { AboutGetter } = storeToRefs(workDetailEditStore);
+const workDetailEdit = ref<editAboutType>({
+  name: "",
+  bio: "",
+  tags: [],
+  thumbnailUrl: "",
+});
+
 import { useWorkPackageStore } from "@/features/work/store/workPackageStore";
 const workPackageStore = useWorkPackageStore();
 const { selectedPackageIdGetter } = storeToRefs(workPackageStore);
@@ -94,24 +142,52 @@ onMounted(async () => {
     });
   });
 });
-const onPublich = () => {
-  const normalizedName = name.value.normalize("NFKC");
-  if (
-    tags.value.length >= tagMax.value &&
-    detale.value.length >= detaleMax.value &&
-    normalizedName.length != 0 &&
-    name.value.length >= nameMax.value
-  ) {
-    return;
-  }
+
+watch(
+  AboutGetter,
+  (profile) => {
+    if (!profile) return;
+    workDetailEdit.value = {
+      name: profile.name,
+      bio: profile.bio,
+      tags: profile.tags,
+      thumbnailUrl: profile.thumbnailUrl,
+    };
+  },
+  { immediate: true },
+);
+const onPublich = async () => {
+  // const normalizedName = name.value.normalize("NFKC");
+  // if (
+  //   tags.value.length < tagMax.value ||
+  //   bio.value.length < bioMax.value ||
+  //   name.value.length < nameMax.value ||
+  //   normalizedName.length == 0
+  // ) {
+  //   return;
+  // }
+
   const id = selectedPackageIdGetter.value;
+  //メールサーバーに画像を送ってurlをもらう
+  thumbnailUrl.value = "";
+  workDetailEditStore.addEdit({
+    thumbnailUrl: thumbnailUrl.value,
+  });
+
   const publichToken = {
     id: id,
     name: name.value,
-    detale: detale.value,
+    bio: bio.value,
     tags: tags.value,
     thumbnailUrl: thumbnailUrl.value,
   };
+
+  const res = await publicWork(publichToken);
+  if (res.success == true) {
+    alertStore.showAlert("公開できました");
+  } else {
+    alertStore.showAlert("公開に失敗しました", true);
+  }
 };
 </script>
 <style lang="css" scoped>
@@ -182,5 +258,38 @@ const onPublich = () => {
 }
 .error {
   color: red !important;
+}
+
+.icon-edit {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  opacity: 0;
+  transition:
+    opacity 0.2s ease,
+    background-color 0.2s ease;
+  height: 500px;
+}
+.thumbnail {
+  margin-top: 30px;
+  position: relative;
+}
+.icon_image {
+  border-radius: 10px;
+  width: 100%;
+  height: 500px;
+  aspect-ratio: 1/1;
+}
+.icon-edit:hover {
+  opacity: 1;
+  background-color: rgba(0, 0, 0, 0.145);
 }
 </style>

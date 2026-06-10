@@ -5,7 +5,7 @@ defineProps<{
   placeholder?: string;
 }>();
 
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits(["update:modelValue", "handleEnter"]);
 </script>
 
 <template>
@@ -14,6 +14,7 @@ const emit = defineEmits(["update:modelValue"]);
     :placeholder="placeholder || ''"
     :type="type || 'text'"
     :value="modelValue"
+    @keydown.enter="emit('handleEnter')"
     @input="
       emit('update:modelValue', ($event.target as HTMLInputElement).value)
     "

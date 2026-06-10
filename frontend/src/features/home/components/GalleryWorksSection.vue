@@ -33,6 +33,6 @@ const onWorkCard = (cardId: string) => {
   router?.push({ path: "/detail", query: { cardId: cardId } });
 };
 onMounted(() => {
-  getWorkPackages.getUserworkPackages(userAuthstore.userIdGetter);
+  getWorkPackages.getworkPackages();
 });
 </script>

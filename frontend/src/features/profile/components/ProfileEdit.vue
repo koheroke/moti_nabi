@@ -7,10 +7,17 @@
           <div class="icon-edit" @click="onIconEdit">
             <Camera fill="white" :size="100" color="#1514143d"></Camera>
           </div>
-          <EditUserIcon
+          <imageDropTab
             v-if="editUserIconShow"
             @close="editUserIconShow = false"
-          ></EditUserIcon>
+            :aspectRatio="{ x: 1, y: 1 }"
+            :size="'500x500'"
+            :outputType="'png'"
+            :image="getUserProfile.iconUrl"
+            @getNewIcon="
+              userProfileStore.editPrepareProfile({ iconUrl: $event })
+            "
+          ></imageDropTab>
         </div>
         <div class="user-info">
           <BaseInput
@@ -78,7 +85,7 @@ import { BaseTextArea } from "@/components/ui/form/BaseTextArea/index.ts";
 import { BaseInput } from "@/components/ui/form/BaseInput";
 import { Camera } from "lucide-vue-next";
 import { BaseButton } from "@/components/ui/form/BaseButton";
-import EditUserIcon from "./EditUserIcon.vue";
+import imageDropTab from "@/components/ui/form/imageDropTab/imageDropTab.vue";
 import EditSnsurlTab from "./EditSnsurlTab.vue";
 import { useUserProfileStore } from "../store/userProfileStore.ts";
 import { useUserProfile } from "../composables/user.ts";

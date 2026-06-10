@@ -11,14 +11,15 @@ const session = useSession();
 const userAuthstore = useUserAuthStore();
 onMounted(async () => {
   const token = await session.getSessionToken();
+
   if (!token) {
     router.push("/login");
     return;
   }
 
   const userData = await session.verificationSessionToken(token);
-
-  if (!userData) {
+  console.log("token", userData);
+  if (userData == undefined) {
     router.push("/login");
     return;
   }

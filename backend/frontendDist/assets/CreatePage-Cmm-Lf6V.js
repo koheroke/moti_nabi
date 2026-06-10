@@ -1,1 +1,0 @@
-import{F as e,_ as t,g as n,p as r}from"./runtime-core.esm-bundler-Caz2cZfL.js";import{t as i}from"./_plugin-vue_export-helper-S3RvzygF.js";var a={};function o(e,t){return null}var s=i(a,[[`render`,o]]),c={class:`page`},l=t({__name:`CreatePage`,setup(t){return(t,i)=>(e(),r(`div`,c,[n(s)]))}});export{l as default};

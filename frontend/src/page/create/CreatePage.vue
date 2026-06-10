@@ -19,38 +19,9 @@ import Preview from "@/features/create/components/Preview.vue";
 import sideBar from "@/features/create/components/sideBar/sideBar.vue";
 import { UseCreateWork } from "@/features/create/composables/useCreateWork";
 import { onMounted } from "vue";
-import { useAlertStore } from "@/store/feedback/alertStore";
-import { useWorkPackageStore } from "@/features/work/store/workPackageStore";
-const workPackageStore = useWorkPackageStore();
-const alertStore = useAlertStore();
 const createWork = UseCreateWork();
-
 onMounted(async () => {
-  let res = "";
-  if (
-    (workPackageStore.selectedPackageIdGetter ?? "").replaceAll(/\s+/g, "")
-      .length === 0
-  ) {
-    res = await createWork.createNewwork();
-  } else {
-    res = await createWork.loadWork();
-  }
-  switch (res) {
-    case "noneNameorWorkId":
-      alertStore.showAlert("ユーザー情報の取得に失敗しました", true);
-      break;
-    case "fallLoadData":
-      alertStore.showAlert("データの取得に失敗しました", true);
-      break;
-    case "damagedData":
-      alertStore.showAlert("データが破損しています", true);
-      break;
-    case "none":
-      alertStore.showAlert("読み込み完了", false);
-      break;
-    default:
-      break;
-  }
+  createWork.setCreatePageWork();
 });
 </script>
 <style lang="css" scoped>

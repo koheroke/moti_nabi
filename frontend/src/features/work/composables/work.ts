@@ -24,20 +24,18 @@ const useGetWorkPackages = () => {
 
 
   const getworkPackages = async (): Promise<workPackage[]> => {
-    const data = await fetch(
-      `${url}/getWorkPackage`,
+    const res = await fetch(
+      `${url}/getWorkPackages`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
       })
-    return await data.json()
+    const works = await res.json()
+    workPackageStore.setWorkPackageStore(works)
+    return await works
   }
-
-
-
-
 
   return { getworkPackages, getUserworkPackages }
 }

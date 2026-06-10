@@ -87,6 +87,15 @@ export const useCreateStore = defineStore("create", {
     }
   },
   actions: {
+
+    setWork(parseData: UserLuggage_SaveDBData, vuepreviewData: Record<string, Case>, vueItemList: Record<string, itemCard>) {
+      this.setSaveDBData(parseData)
+      this.setlistItem(vueItemList)
+      this.setpreviewData(vuepreviewData)
+      this.setWorkId(parseData.workId)
+      this.setWorkName(parseData.workName)
+    },
+
     setRole(role: "owner" | "editor" | "viewer") {
       console.log("state.role", role)
       this.role = role

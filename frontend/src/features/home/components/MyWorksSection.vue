@@ -11,20 +11,26 @@ import HomeWorksSection from "./HomeWorksSection.vue";
 import { useUserAuthStore } from "@/store/user/userAuthStore.ts";
 import { useIncrementalList } from "@/composables/array/useIncrementalList.ts";
 import { useWorkPackageStore } from "@/features/work/store/workPackageStore.ts";
-
+import { onMounted } from "vue";
 const workPackageStore = useWorkPackageStore();
 const userAuthstore = useUserAuthStore();
+import { useGetWorkPackages } from "@/features/work/composables/work.ts";
+const getWorkPackages = useGetWorkPackages();
 import { storeToRefs } from "pinia";
+
 const { userWorkPackageStoreGetter } = storeToRefs(workPackageStore);
 import { useRouter } from "vue-router";
 const router = useRouter();
 const { visibleItems, more } = useIncrementalList(
   userWorkPackageStoreGetter,
-  20,
+  4,
 );
 const onWorkCard = (cardId: string) => {
   router?.push("create");
 };
+onMounted(() => {
+  getWorkPackages.getUserworkPackages(userAuthstore.userIdGetter);
+});
 
 const props = defineProps<{
   userId: string;

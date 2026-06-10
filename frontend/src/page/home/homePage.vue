@@ -44,6 +44,7 @@ import { useWorkPackageStore } from "@/features/work/store/workPackageStore";
 import { ref, onMounted } from "vue";
 import { useUserStore, type UserInfo } from "@/store/user/userIconStore";
 const userStore = useUserStore();
+
 const userIconInfo = ref<UserInfo>({
   userId: "",
   iconUrl: "",
