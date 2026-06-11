@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="tags">
     <div v-for="tag in tags" :key="tag">
       <div class="tag" @click="onTag(tag)">{{ "#" + tag }}</div>
     </div>
@@ -12,6 +12,7 @@ const emit = defineEmits(["addtag"]);
 const onTag = (tag: string) => {
   emit("addtag", " #" + tag);
 };
+const props = defineProps<{ tags: string[] }>();
 </script>
 <style lang="css" scoped>
 .tag {
@@ -22,7 +23,10 @@ const onTag = (tag: string) => {
 .tag:hover {
   text-decoration: underline;
 }
-.container {
+.tags {
+  align-items: center;
+  justify-content: center;
+  width: 100%;
   display: flex;
   gap: 15px !important;
 }

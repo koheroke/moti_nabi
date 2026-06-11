@@ -13,7 +13,7 @@
 import ProfileSection from "@/features/profile/components/ProfileSection.vue";
 import UserWorksPanel from "@/features/profile/components/UserWorksPanel.vue";
 import ProfileEdit from "@/features/profile/components/ProfileEdit.vue";
-import { useUserProfile } from "@/features/profile/composables/user";
+import { useUserProfile } from "@/features/profile/composables/userProfile";
 import { onMounted } from "vue";
 import { useUserProfileStore } from "@/features/profile/store/userProfileStore";
 import { storeToRefs } from "pinia";
@@ -21,7 +21,7 @@ const userProfileStore = useUserProfileStore();
 const { getEditBool } = storeToRefs(userProfileStore);
 const userProfile = useUserProfile();
 onMounted(async () => {
-  userProfile.setUserProfile();
+  userProfile.getUserProfile();
 });
 </script>
 <style lang="css" scoped>

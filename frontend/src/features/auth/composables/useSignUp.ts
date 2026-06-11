@@ -34,7 +34,6 @@ export const useSignup = () => {
       console.log(user,)
       userStore.setUserInfo(user)
       userAuthstore.login(userId, signupInput.email, token)
-      userStore.setMyuserId(userId);
       return res
     } catch (e) {
       error.value = '登録失敗'

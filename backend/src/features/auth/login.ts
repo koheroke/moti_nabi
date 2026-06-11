@@ -21,7 +21,7 @@ export type LoginInput = {
 }
 
 export const useLogin = () => {
-  const login = async (user: LoginInput, c: Context): Promise<User | null> => {
+  const login = async (user: LoginInput, c: Context) => {
     console.log(user)
     const userResponse = await prisma.user.findFirst({
       where: {
@@ -42,6 +42,7 @@ export const useLogin = () => {
       },
     });
 
+
     if (!userResponse) return null
     const hash = userResponse.auth?.passwordHash
     if (!hash) return null
@@ -60,9 +61,10 @@ export const useLogin = () => {
 
     this_session.setLoginSession(c, token)
 
-    return this_user
+    return {
+      userId: userResponse?.id, authData: { email: userResponse?.email }, userIconData: { iconUrl: userResponse?.profile?.iconUrl ?? "", name: userResponse?.profile?.name ?? "" }
+    }
   }
-
   return { login }
 }
 

@@ -11,15 +11,15 @@ const session = useSession();
 const userAuthstore = useUserAuthStore();
 onMounted(async () => {
   const token = await session.getSessionToken();
-
-  if (!token) {
+  console.log("token", token);
+  if (token == null) {
     router.push("/login");
     return;
   }
 
   const userData = await session.verificationSessionToken(token);
   console.log("token", userData);
-  if (userData == undefined) {
+  if (userData == false) {
     router.push("/login");
     return;
   }
@@ -27,7 +27,6 @@ onMounted(async () => {
 
   userAuthstore.login(userId, authData.email, token);
   userStore.setUserInfo({ userId: userId, ...userIconData });
-  userStore.setMyuserId(userId);
   router.push("/home");
 });
 </script>

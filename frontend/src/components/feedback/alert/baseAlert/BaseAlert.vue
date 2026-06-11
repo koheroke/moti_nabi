@@ -53,7 +53,7 @@ watch(
 .alert {
   z-index: 30;
   display: flex;
-  position: absolute;
+  position: fixed;
   background-color: rgb(255, 255, 255);
   box-sizing: border-box;
   padding: 10px 25px;

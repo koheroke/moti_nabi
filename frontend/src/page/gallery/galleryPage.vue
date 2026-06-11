@@ -22,20 +22,14 @@ const onUpdateSort = (value: SortType) => {
 
 <template>
   <div class="page">
-    <!-- <section class="container">
-      <section class="hero">
-        <h1>公開されてる持ち物</h1>
-        <p>他の人の持ち物を参考にしよう</p>
-      </section>
-    </section> -->
-    <section class="hero">
-      {{ "Search" }}
+    <section class="toolbar">
+      <GalleryToolbar
+        @update:search="onUpdateSearch"
+        @update:sort="onUpdateSort"
+        class="gallery-toolbar"
+      />
     </section>
-    <GalleryToolbar
-      @update:search="onUpdateSearch"
-      @update:sort="onUpdateSort"
-      class="gallery-toolbar"
-    />
+
     <GalleryWorksSection :search="searchQuery" :sort-type="sortType" />
   </div>
 </template>
@@ -50,7 +44,19 @@ const onUpdateSort = (value: SortType) => {
 .hero {
   padding: 10px 16px;
   text-align: center;
-  font-size: 30px;
+}
+.hero h2 {
+  font-size: 35px;
   font-weight: 600;
+}
+
+.hero p {
+  font-size: 15px;
+  font-weight: 400;
+  color: rgb(110, 108, 108);
+}
+.toolbar {
+  margin-top: 30px;
+  width: 90%;
 }
 </style>

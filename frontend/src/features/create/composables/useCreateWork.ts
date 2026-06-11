@@ -16,7 +16,6 @@ import type {
   confirmedRemovePocketToken
 } from "@/features/create/type/tokens";
 import { type menber } from "../type/infoType";
-
 import { useApplyCreateAction } from "./applyCreateAction";
 import { useCreateApi } from "../api/createApi";
 import { useUserAuthStore } from "@/store/user/userAuthStore";
@@ -26,6 +25,9 @@ import { useAlterationLogStore } from "../store/useAlterationLogStore"
 import { useWorkPackageStore } from "@/features/work/store/workPackageStore";
 import { useSocketApi } from "../api/createSocketApi";
 import { useAlertStore } from "@/store/feedback/alertStore";
+import { type editAboutType, useWorkDetailEditStore } from "@/features/workDetailEdit/store/useworkDetail";
+
+const workDetailEditStore = useWorkDetailEditStore()
 const alertStore = useAlertStore();
 const api = useSocketApi()
 const workPackageStore = useWorkPackageStore();
@@ -79,12 +81,13 @@ export const UseCreateWork = () => {
   const loadWork = async (): Promise<loadResponse> => {
     const theWorkId: string = workPackageStore.selectedPackageIdGetter
     if (!theWorkId) return "noneNameorWorkId"
-    let data = null as { parseData: UserLuggage_SaveDBData, menbers: menber[] } | null
+    let data = null as { parseData: UserLuggage_SaveDBData, menbers: menber[], about: editAboutType } | null
     let vuepreviewData = {} as Record<string, Case>
     let vueItemList = {} as Record<string, itemCard>
     let addItemCounter = 0 as number
     let parseData = {} as UserLuggage_SaveDBData
     let menbers = [] as menber[]
+    let about = {} as editAboutType
     try {
       data = await createApi.getWork(theWorkId)
     } catch (e) {
@@ -100,11 +103,13 @@ export const UseCreateWork = () => {
       addItemCounter = response.addItemCounter
       parseData = data.parseData
       menbers = data.menbers
+      about = data.about
     } catch (e) {
       return "damagedData"
     }
     createStore.setWork(parseData, vuepreviewData, vueItemList)
     createStore.setMenbersSetter(menbers)
+    workDetailEditStore.setAbout(about)
     const user = menbers.find((menber) => menber.userId == userAuthstore.userId);
     createStore.setRole(user?.role ?? "viewer")
     return "none"

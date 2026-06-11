@@ -1,0 +1,2 @@
+import{c as e}from"./index-DdqN6_L0.js";var t=e(`workDetailEdit`,{state:()=>({about:{},edit:{}}),getters:{AboutGetter:e=>e.about,EditGetter:e=>e.edit},actions:{setAbout(e){this.about=e},addEdit(e){this.about={...this.about,...e},this.edit={...this.edit,...e}}}});export{t};
+//# sourceMappingURL=useworkDetail-d_6JUMmD.js.map

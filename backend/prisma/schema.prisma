@@ -80,8 +80,8 @@ model Work {
   id            String   @id @default(cuid())
   createdAt    DateTime @default(now())
   name          String
-  bio           String?
-  thumbnailUrl  String?
+  bio           String
+  thumbnailUrl  String
   data          String
   public        Boolean
   likes         Int      @default(0)

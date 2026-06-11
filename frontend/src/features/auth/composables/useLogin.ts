@@ -8,6 +8,7 @@ import { useUserStore } from "@/store/user/userIconStore"
 const userStore = useUserStore()
 
 
+
 interface loginInput {
   email: string
   password: string
@@ -32,13 +33,9 @@ export const useLogin = () => {
       )
       const user = await singup_res.json()
       if (user == null) return null
-      userAuthstore.login(user.userId, user.email, token)
-      userStore.setUserInfo({
-        userId: user.userId,
-        name: user.name,
-        iconUrl: user.iconUrl
-      })
-      userStore.setMyuserId(user.userId);
+      const { userId, userIconData, authData } = user;
+      userAuthstore.login(userId, authData.email, token);
+      userStore.setUserInfo({ userId: userId, ...userIconData });
       return user
     } catch (e) {
       error.value = '登録失敗'

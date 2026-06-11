@@ -88,7 +88,7 @@ import { BaseButton } from "@/components/ui/form/BaseButton";
 import imageDropTab from "@/components/ui/form/imageDropTab/imageDropTab.vue";
 import EditSnsurlTab from "./EditSnsurlTab.vue";
 import { useUserProfileStore } from "../store/userProfileStore.ts";
-import { useUserProfile } from "../composables/user.ts";
+import { useUserProfile } from "../composables/userProfile.ts";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 const router = useRouter();

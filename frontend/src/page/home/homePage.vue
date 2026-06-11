@@ -42,7 +42,11 @@ import { useRouter } from "vue-router";
 import UserIcon from "@/features/profile/components/UserIcon.vue";
 import { useWorkPackageStore } from "@/features/work/store/workPackageStore";
 import { ref, onMounted } from "vue";
+
+import { useUserAuthStore } from "@/store/user/userAuthStore";
 import { useUserStore, type UserInfo } from "@/store/user/userIconStore";
+const userAuthStore = useUserAuthStore();
+
 const userStore = useUserStore();
 
 const userIconInfo = ref<UserInfo>({
@@ -58,8 +62,7 @@ const goCreate = () => {
   router.push("/create");
 };
 onMounted(() => {
-  const id = userStore.getMyuserId;
-  userIconInfo.value = userStore.getUserInfo(id);
+  userIconInfo.value = userStore.getUserInfo(userAuthStore.userIdGetter);
 });
 
 import { useLogout } from "@/features/auth/composables/useLogout";

@@ -12,12 +12,17 @@ export type editWorkPackageApi = RequireAtLeastOne<{
   members?: SiteMember[]
 }>
 
-export interface publichTokenType {
+export type publichTokenType = RequireAtLeastOne<editAboutType> & {
   id: string;
+}
+
+
+export interface editAboutType {
   name: string;
-  bio: string | null;
+  bio: string;
   tags: string[];
   thumbnailUrl: string;
+  public: boolean;
 }
 
 

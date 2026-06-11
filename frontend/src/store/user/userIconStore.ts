@@ -11,7 +11,6 @@ type UserInfos = Record<string, UserInfo>
 export const useUserStore = defineStore('user', {
   state: () => ({
     userInfos: {} as UserInfos,
-    myuserId: ""
   }),
 
   getters: {
@@ -23,7 +22,6 @@ export const useUserStore = defineStore('user', {
 
     getName: (state) => (userId: string) =>
       state.userInfos[userId]?.name ?? '',
-    getMyuserId: (state) => state.myuserId
 
   },
 
@@ -31,9 +29,7 @@ export const useUserStore = defineStore('user', {
     setUserInfo(userInfo: UserInfo) {
       this.userInfos[userInfo.userId] = userInfo
     },
-    setMyuserId(userId: string) {
-      this.myuserId = userId
-    },
+
 
 
     setIconUrl(userId: string, iconUrl: string) {

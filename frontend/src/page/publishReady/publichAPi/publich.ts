@@ -1,15 +1,12 @@
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 const url = `${apiUrl}/work`;
-export interface publichTokenType {
+import { type editAboutType } from "@/features/workDetailEdit/store/useworkDetail"
+import { type RequireAtLeastOne } from '@/types/RequireAtLeastOne'
+export type publichTokenType = RequireAtLeastOne<editAboutType> & {
   id: string;
-  name: string;
-  bio: string;
-  tags: string[];
-  thumbnailUrl: string;
 }
 
 const publicWork = async (publichToken: publichTokenType) => {
-  console.log("publichToken", publichToken)
   const res = await fetch(
     `${url}/publicWork`,
     {

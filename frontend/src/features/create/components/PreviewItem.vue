@@ -9,18 +9,18 @@
       </div>
       <div class="count">
         <CirclePlus
-          v-if="block"
+          v-if="!block"
           class="countIcon"
           @click="onPlue(1)"
         ></CirclePlus>
         {{ props.item.count }}
         <CircleMinus
-          v-if="block"
+          v-if="!block"
           class="countIcon"
           @click="onPlue(-1)"
         ></CircleMinus>
       </div>
-      <BaseButton v-if="block" class="delete-button" @click="onDelete"
+      <BaseButton v-if="!block" class="delete-button" @click="onDelete"
         >削除</BaseButton
       >
     </section>

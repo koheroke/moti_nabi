@@ -21,9 +21,6 @@
 <script setup lang="ts">
 import WorkCard from "@/features/work/components/WorkCard.vue";
 import type { workPackage } from "@/features/work/types/work";
-import { useRouter } from "vuetify/lib/composables/router.mjs";
-const router = useRouter();
-
 withDefaults(
   defineProps<{
     works: workPackage[];
@@ -41,12 +38,12 @@ withDefaults(
   display: flex;
   gap: 12px;
   flex-grow: 0;
+  background-color: rgba(240, 248, 255, 0.325);
 }
 
 .is-wrap {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  background-color: rgba(240, 240, 240, 0.408);
   padding: 10px;
   border-radius: 15px;
 }
@@ -59,5 +56,6 @@ withDefaults(
   margin-top: 12px;
   font-size: 14px;
   color: #999;
+  text-align: center;
 }
 </style>

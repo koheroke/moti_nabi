@@ -7,11 +7,18 @@ export interface editAboutType {
   bio: string;
   tags: string[];
   thumbnailUrl: string;
+  public: boolean;
 }
 
 export const useWorkDetailEditStore = defineStore("workDetailEdit", {
   state: () => ({
-    about: {} as editAboutType,
+    about: {
+      name: "",
+      bio: "",
+      tags: [],
+      thumbnailUrl: "",
+      public: false
+    } as editAboutType,
     edit: {} as RequireAtLeastOne<editAboutType>
   }),
   getters: {
@@ -20,11 +27,13 @@ export const useWorkDetailEditStore = defineStore("workDetailEdit", {
   },
   actions: {
     setAbout(about: editAboutType) {
-      this.about = about
+      console.log("aboutStore setAbout_log", about)
+      this.about = { ...this.about, ...about }
     },
     addEdit(edit: RequireAtLeastOne<editAboutType>) {
       this.about = { ...this.about, ...edit }
       this.edit = { ...this.edit, ...edit }
+
     }
   }
 })

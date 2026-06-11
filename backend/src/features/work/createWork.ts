@@ -1,12 +1,14 @@
 import { prisma } from "@/lib/prisma/prisma"
 import { editWorkPackageApi } from "@/features/work/types"
 import { type server_alterationToken } from "./saveQueue"
-
 import { publichTokenType } from "./types/index"
+
+
 
 const workData = new Map()
 
 const useWork = () => {
+
   const createNewWork = async (userId: string) => {
     console.log("userId", userId)
     if (!userId) return "error"
@@ -26,11 +28,12 @@ const useWork = () => {
     const work = await prisma.work.create({
       data: {
         name: "新しいリスト",
-        thumbnailUrl: null,
+        thumbnailUrl: "",
         data: newWork,
         public: false,
         likes: 0,
         tags: [],
+        bio: "",
         copies: 0,
         members: {
           create: {
@@ -135,6 +138,10 @@ const useWork = () => {
         data: true,
         id: true,
         name: true,
+        bio: true,
+        thumbnailUrl: true,
+        tags: true,
+        public: true,
         members: {
           select: {
             role: true,
@@ -143,6 +150,7 @@ const useWork = () => {
         },
       }
     });
+    if (!work) return
     return work
   }
 
@@ -314,16 +322,12 @@ const useWork = () => {
 
   const publicWork = async (token: publichTokenType) => {
     try {
-      const res = await prisma.work.update({
+      await prisma.work.update({
         where: {
           id: token.id,
         },
         data: {
-          public: true,
-          name: token.name,
-          bio: token.bio,
-          tags: token.tags,
-          thumbnailUrl: token.thumbnailUrl,
+          ...token
         },
       });
       return { success: true };

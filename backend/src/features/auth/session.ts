@@ -15,9 +15,8 @@ export const useSession = () => {
     return cookie
   }
 
-  const verificationSessionToken = async (token: string) => {
+  const verificationSessionToken = async (c: Context, token: string) => {
     const payload = await verify(token, env.JWT_SECRET, "HS256")
-    console.log("userRse===", payload)
     if (!payload.userId) return false
     try {
       const userResponse = await prisma.user.findFirst({
@@ -35,12 +34,16 @@ export const useSession = () => {
           },
         },
       });
-      if (userResponse == undefined || userResponse == null) return;
+      if (userResponse == undefined || userResponse == null) {
+        discardToken(c)
+        return undefined
+      };
+
       return {
         userId: userResponse?.id, authData: { email: userResponse?.email }, userIconData: { iconUrl: userResponse?.profile?.iconUrl ?? "", name: userResponse?.profile?.name ?? "" }
       }
     } catch {
-      return false
+      return undefined
     }
   }
 

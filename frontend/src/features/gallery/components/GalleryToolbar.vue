@@ -38,11 +38,12 @@ watch(sortType, (newSortType) => {
 </template>
 <style>
 .sort-gallery {
-  padding-top: 60px;
-  min-width: 90%;
+  padding-top: 30px;
+  min-width: 100%;
 }
 .search-gallery {
   width: 100%;
+
   display: grid;
   place-items: center;
   gap: 8px;

@@ -1,26 +1,23 @@
 <template>
-  <div class="relative inline-block">
-    <BaseButton
-      @click="openLabel"
-      type="button"
-      class="flex items-center justify-between gap-2 rounded-xl border bg-white px-4 py-2 text-sm"
-    >
+  <div class="dropdown">
+    <BaseButton @click="openLabel" type="button">
       <span>{{ selectedLabel }}</span>
       <span> ⌄</span>
     </BaseButton>
 
-    <div v-if="isOpen">
-      <button
+    <div v-if="isOpen" class="list">
+      <div
         v-for="option in options"
         :key="option.value"
         type="button"
         class="option"
+        @click="onLabel(option)"
       >
-        <span @click="onLabel(option)">{{ option.label }}</span>
+        <p>{{ option.label }}</p>
         <span v-if="option.value === modelValue" :style="{ color: 'green' }">
           ✓</span
         >
-      </button>
+      </div>
     </div>
   </div>
 </template>
@@ -56,11 +53,28 @@ const openLabel = () => {
 </script>
 <style lang="css" scoped>
 .option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-top: 10px;
-  padding-right: 5px;
   color: rgb(56, 54, 54);
+  font-weight: 400;
   border: none;
   font-size: 15px;
-  background-color: rgba(240, 239, 239, 0.431);
+}
+.option:hover {
+  background-color: rgba(244, 244, 244, 0.953);
+}
+.list {
+  position: absolute;
+  background-color: rgb(250, 250, 250);
+  width: 100%;
+  margin-top: 5px;
+  border-radius: 10px;
+  padding: 10px;
+  box-sizing: border-box;
+}
+.dropdown {
+  position: relative;
 }
 </style>

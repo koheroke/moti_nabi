@@ -1,10 +1,8 @@
 <template>
   <div class="page">
     <div class="titlle">
-      <h1>持ち物リストを公開する</h1>
-      <p>
-        公開された持ち物リストはギャラリー画面から誰でも閲覧できる状態になります
-      </p>
+      <h1>持ち物リストを編集する</h1>
+      <p>ギャラリーから閲覧した時の情報を設定できます</p>
     </div>
     <div class="form">
       <li class="inputList">
@@ -12,7 +10,7 @@
           <h2>名前＊</h2>
           <BaseInput
             label="名前"
-            v-model="name"
+            v-model="workDetailEdit.name"
             type="text"
             required="required"
             @update:modelValue="
@@ -20,34 +18,54 @@
             "
           ></BaseInput>
           <p>名前検索される時も使用されます</p>
-          <p :class="{ error: name.length >= nameMax }">
-            文字数制限 : {{ nameMax }}/{{ name.length }}
+          <p :class="{ error: workDetailEdit.name.length >= nameMax }">
+            文字数制限 : {{ nameMax }}/{{ workDetailEdit.name.length }}
           </p>
+        </section>
+        <section class="publish">
+          <h2>公開設定＊</h2>
+          <div class="publishBrief">
+            <p>
+              公開された持ち物リストはギャラリー画面から誰でも閲覧できる状態になります
+            </p>
+            <BaseDropdown
+              v-model="publish"
+              :options="options"
+              style="margin-left: auto"
+            ></BaseDropdown>
+          </div>
         </section>
         <section class="input">
           <h2>説明</h2>
           <BaseTextArea
-            v-model="bio"
+            v-model="workDetailEdit.bio"
             @update:modelValue="
               workDetailEditStore.addEdit({ bio: workDetailEdit.bio })
             "
           ></BaseTextArea>
 
-          <p :class="{ error: bio.length >= bioMax }">
-            文字数制限 : {{ bioMax }}/{{ bio.length }}
+          <p :class="{ error: workDetailEdit.bio.length >= bioMax }">
+            文字数制限 : {{ bioMax }}/{{ workDetailEdit.bio.length }}
           </p>
         </section>
         <section class="input" style="margin-top: 40px">
           <h2 style="padding-bottom: 10px">タグを追加</h2>
-          <div v-for="tag in tags" :key="tag">
+          <div v-for="tag in workDetailEdit.tags" :key="tag">
             <div class="tag">
               <Tag :size="17"></Tag>
               {{ tag }}
+              <Delete
+                style="margin-left: auto"
+                :size="20"
+                fill="red"
+                color="white"
+                @click="deleteTag(tag)"
+              ></Delete>
             </div>
           </div>
 
-          <p :class="{ error: tags.length >= tagMax }">
-            制限 : {{ tagMax }}/{{ tags.length }}
+          <p :class="{ error: workDetailEdit.tags.length >= tagMax }">
+            制限 : {{ tagMax }}/{{ workDetailEdit.tags.length }}
           </p>
           <BaseInput
             placeholder="タグを検索または追加"
@@ -56,39 +74,36 @@
             v-model="tagInput"
             class="tagInput"
             @handleEnter="
-              tags.push(tagInput);
+              workDetailEdit.tags.push(tagInput);
               workDetailEditStore.addEdit({ tags: workDetailEdit.tags });
             "
           ></BaseInput>
           <suggest
             v-model:search="tagInput"
             :suggestDatas="allTags"
-            @onsuggest="tags.push($event)"
-            @update:modelValue="
-              workDetailEditStore.addEdit({ bio: workDetailEdit.bio })
-            "
+            @onsuggest="workDetailEdit.tags.push($event)"
           ></suggest>
         </section>
-      </li>
-      <section class="thumbnail">
-        <h2 style="padding-bottom: 10px">サムネイル画像を設定</h2>
-        <img :src="thumbnailImage" class="icon_image" />
-        <div class="icon-edit" @click="editThumbnailShow = true">
-          <Camera fill="white" :size="100" color="#1514143d"></Camera>
-        </div>
-        <imageDropTab
-          v-if="editThumbnailShow"
-          @close="editThumbnailShow = false"
-          :aspectRatio="{ x: 7, y: 5 }"
-          :size="'700x500'"
-          :outputType="'png'"
-          @getNewIcon="thumbnailImage = $event"
-        ></imageDropTab>
-      </section>
 
+        <section class="thumbnail">
+          <h2 style="padding-bottom: 10px">サムネイル画像を設定</h2>
+          <img :src="thumbnailImage" class="icon_image" />
+          <div class="icon-edit" @click="editThumbnailShow = true">
+            <Camera fill="white" :size="100" color="#1514143d"></Camera>
+          </div>
+          <imageDropTab
+            v-if="editThumbnailShow"
+            @close="editThumbnailShow = false"
+            :aspectRatio="{ x: 7, y: 5 }"
+            :size="'700x500'"
+            :outputType="'png'"
+            @getNewIcon="thumbnailImage = $event"
+          ></imageDropTab>
+        </section>
+      </li>
       <div class="publich">
         <BaseButton style="margin-left: auto" @click="onPublich"
-          >公開する
+          >変更を保存する
         </BaseButton>
       </div>
     </div>
@@ -109,15 +124,13 @@ import { publicWork } from "./publichAPi/publich";
 import { useAlertStore } from "@/store/feedback/alertStore";
 import { useWorkDetailEditStore } from "@/features/workDetailEdit/store/useworkDetail";
 import { type editAboutType } from "@/features/workDetailEdit/store/useworkDetail";
+import { Delete } from "lucide-vue-next";
+import BaseDropdown from "@/components/ui/form/BaseDropdown/BaseDropdown.vue";
 const workDetailEditStore = useWorkDetailEditStore();
 const alertStore = useAlertStore();
 const editThumbnailShow = ref(false);
-const name = ref<string>("");
 const tagInput = ref<string>("");
-const thumbnailUrl = ref<string>("");
 const thumbnailImage = ref<string>("");
-const tags = ref<string[]>([]);
-const bio = ref<string>("");
 const allTags = ref<string[]>([]);
 const bioMax = ref(250);
 const nameMax = ref(10);
@@ -128,7 +141,13 @@ const workDetailEdit = ref<editAboutType>({
   bio: "",
   tags: [],
   thumbnailUrl: "",
+  public: false,
 });
+const publish = ref<string>("private");
+const options = [
+  { label: "パブリック", value: "public" },
+  { label: "プライベート", value: "private" },
+];
 
 import { useWorkPackageStore } from "@/features/work/store/workPackageStore";
 const workPackageStore = useWorkPackageStore();
@@ -143,48 +162,67 @@ onMounted(async () => {
   });
 });
 
+const deleteTag = (tag: string) => {
+  const index = workDetailEdit.value.tags.indexOf(tag);
+  workDetailEdit.value.tags.splice(index, 1);
+  workDetailEditStore.addEdit({ tags: workDetailEdit.value.tags });
+};
 watch(
   AboutGetter,
   (profile) => {
     if (!profile) return;
+
     workDetailEdit.value = {
       name: profile.name,
+      public: profile.public,
       bio: profile.bio,
       tags: profile.tags,
       thumbnailUrl: profile.thumbnailUrl,
     };
+    publish.value = workDetailEdit.value.public ? "public" : "private";
   },
   { immediate: true },
 );
+
+watch(
+  () => publish.value,
+  (publish) => {
+    if (publish === "public") {
+      workDetailEdit.value.public = true;
+    } else {
+      workDetailEdit.value.public = false;
+    }
+    workDetailEditStore.addEdit({ public: workDetailEdit.value.public });
+  },
+);
 const onPublich = async () => {
-  // const normalizedName = name.value.normalize("NFKC");
-  // if (
-  //   tags.value.length < tagMax.value ||
-  //   bio.value.length < bioMax.value ||
-  //   name.value.length < nameMax.value ||
-  //   normalizedName.length == 0
-  // ) {
-  //   return;
-  // }
+  if (
+    workDetailEdit.value.tags.length > tagMax.value ||
+    workDetailEdit.value.bio.length > bioMax.value ||
+    workDetailEdit.value.name.length > nameMax.value
+  ) {
+    return;
+  }
+  if (workDetailEdit.value.thumbnailUrl) {
+    //メールサーバーに画像を送ってurlをもらう
+    workDetailEdit.value.thumbnailUrl = "";
+    workDetailEditStore.addEdit({
+      thumbnailUrl: workDetailEdit.value.thumbnailUrl,
+    });
+  }
+
+  const editData = workDetailEditStore.EditGetter;
+  if (Object.keys(editData).length == 0) {
+    return;
+  }
 
   const id = selectedPackageIdGetter.value;
-  //メールサーバーに画像を送ってurlをもらう
-  thumbnailUrl.value = "";
-  workDetailEditStore.addEdit({
-    thumbnailUrl: thumbnailUrl.value,
-  });
-
-  const publichToken = {
-    id: id,
-    name: name.value,
-    bio: bio.value,
-    tags: tags.value,
-    thumbnailUrl: thumbnailUrl.value,
-  };
-
+  const publichToken = { id: id, ...workDetailEditStore.EditGetter };
+  console.log("publichToken", publichToken);
   const res = await publicWork(publichToken);
+  console.log("res", res);
   if (res.success == true) {
-    alertStore.showAlert("公開できました");
+    alertStore.showAlert("公開できました", false);
   } else {
     alertStore.showAlert("公開に失敗しました", true);
   }
@@ -210,14 +248,21 @@ const onPublich = async () => {
   justify-content: center;
   align-items: center;
 }
-.input h2 {
+h2 {
   font-size: 15px;
   padding-left: 2px;
   font-weight: 600;
+  margin: 0px;
 }
-.input p {
+p {
   font-size: 12px;
   color: rgb(78, 77, 77);
+}
+.publishBrief {
+  border: 1px solid rgba(171, 170, 170, 0.603);
+  border-radius: 10px;
+  padding: 8px;
+  display: flex;
 }
 
 .titlle {
@@ -279,7 +324,6 @@ const onPublich = async () => {
   height: 500px;
 }
 .thumbnail {
-  margin-top: 30px;
   position: relative;
 }
 .icon_image {

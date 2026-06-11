@@ -13,13 +13,22 @@
         <div
           style="display: flex; justify-content: center; margin-bottom: 10px"
         >
-          <h1 style="font-size: 20px; margin: 0">プロフィール</h1>
+          <h1 style="font-size: 20px; margin: 0; margin-right: auto">
+            プロフィール
+          </h1>
           <section
             style="margin-left: auto; gap: 10px; display: flex"
             v-if="editbool"
           >
             <BaseButton @click="onEdit" variant="ghost">編集 </BaseButton>
-            <BaseButton @click="" variant="danger">アカウントを削除</BaseButton>
+            <BaseButton @click="deleteAcount" variant="danger"
+              >アカウントを削除</BaseButton
+            >
+            <popInput
+              v-if="showRePassward"
+              @text="rePassward"
+              @close="showRePassward = false"
+            ></popInput>
           </section>
         </div>
         <div class="profile-description">
@@ -58,7 +67,11 @@ import { storeToRefs } from "pinia";
 import { useUserAuthStore } from "@/store/user/userAuthStore";
 import { BaseButton } from "@/components/ui/form/BaseButton";
 import { useRouter } from "vuetify/lib/composables/router.mjs";
+import { userDelete } from "@/features/auth/composables/userDelete";
+import popInput from "@/components/ui/form/popInput/popInput.vue";
+import { ref } from "vue";
 const router = useRouter();
+const showRePassward = ref(false);
 const userAuthStore = useUserAuthStore();
 const userProfileStore = useUserProfileStore();
 const { getUserProfile } = storeToRefs(userProfileStore);
@@ -67,6 +80,20 @@ const editbool =
 
 const onEdit = () => {
   userProfileStore.setEditBool(true);
+};
+const deleteAcount = async () => {
+  showRePassward.value = true;
+};
+const rePassward = async (text: string) => {
+  if (!router) return;
+  const password = text;
+  const passwordBool = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(password);
+  if (passwordBool) {
+    const res = await userDelete(password);
+    if (res.success == true) {
+      router.push("/login");
+    }
+  }
 };
 </script>
 

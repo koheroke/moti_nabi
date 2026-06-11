@@ -1,10 +1,12 @@
 import { type UserLuggage_SaveDBData } from "../type/apiType";
 import { type menber } from "../type/infoType";
+import { type editAboutType } from "@/features/workDetailEdit/store/useworkDetail";
+
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 const url = `${apiUrl}/work`;
 const useCreateApi = () => {
 
-  const getWork = async (theWorkId: string): Promise<{ parseData: UserLuggage_SaveDBData, menbers: menber[] }> => {
+  const getWork = async (theWorkId: string): Promise<{ parseData: UserLuggage_SaveDBData, menbers: menber[], about: editAboutType }> => {
     const res = await fetch(
       `${url}/getWork`,
       {
@@ -19,15 +21,21 @@ const useCreateApi = () => {
     const data = await res.json()
     data.data = JSON.parse(data.data)
 
-
     const parse = {
       ...data.data,
       workName: data.name,
       workId: data.id,
     }
-    console.log("parse", parse);
+
+    const about = {
+      name: data.name,
+      bio: data.bio,
+      tags: data.tags,
+      thumbnailUrl: data.thumbnailUrl,
+      public: data.public
+    }
     return {
-      parseData: parse, menbers: data.members
+      parseData: parse, menbers: data.members, about: about
     }
   }
 

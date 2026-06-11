@@ -1,7 +1,7 @@
 <template>
   <div class="topBar">
     <div class="right">
-      <BaseInput v-model="createStore.workNameGetter"></BaseInput>
+      <h2>{{ createStore.workNameGetter }}</h2>
       <div style="gap: 10px; display: flex; margin-left: auto">
         <CornerUpLeft @click="back" />
         <CornerUpRight @click="forward" />
@@ -43,11 +43,12 @@ import BaseButton from "@/components/ui/form/BaseButton/BaseButton.vue";
 import { CornerUpLeft, CornerUpRight } from "lucide-vue-next";
 import UserIcon from "@/features/profile/components/UserIcon.vue";
 import { useAlterationLogStore } from "../store/useAlterationLogStore";
-import { BaseInput } from "@/components/ui/form/BaseInput";
 import { useCreateStore } from "../store/createStore";
 import { useRouter } from "vue-router";
 import { onMounted, ref } from "vue";
 import addMenber from "@/features/create/components/addMenber.vue";
+import { useUserAuthStore } from "@/store/user/userAuthStore";
+const userAuthStore = useUserAuthStore();
 const addMenberShow = ref(false);
 const router = useRouter();
 const createStore = useCreateStore();
@@ -73,8 +74,7 @@ const onpublich = () => {
   router.push("/publishReady");
 };
 onMounted(() => {
-  const id = userStore.getMyuserId;
-  userIconInfo.value = userStore.getUserInfo(id);
+  userIconInfo.value = userStore.getUserInfo(userAuthStore.userIdGetter);
 });
 </script>
 <style lang="css" scoped>
