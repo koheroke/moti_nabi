@@ -23,10 +23,13 @@ onMounted(async () => {
     router.push("/login");
     return;
   }
-  const { userId, userIconData, authData } = userData;
-
+  const { userId, userIconData, authData, secoundfaEnabled } = userData;
+  console.log("secoundfaEnabled", secoundfaEnabled);
   userAuthstore.login(userId, authData.email, token);
   userStore.setUserInfo({ userId: userId, ...userIconData });
+  if (secoundfaEnabled == true) {
+    userAuthstore.set2fa();
+  }
   router.push("/home");
 });
 </script>

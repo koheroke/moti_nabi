@@ -26,12 +26,16 @@ export const useUserAuthStore = defineStore('userAuth', {
     isLoggedInGetter: (state) => !!state.userId && !!state.token,
     userEmailGetter: (state) => state.userEmail ?? '',
     userIdGetter: (state) => state.userId ?? '',
+    isAuthenticatedGetter: (state) => state.isAuthenticated,
+    isTempAuthenticatedGetter: (state) => state.isTempAuthenticated,
+
   },
 
   actions: {
     setUserId(userid: string) {
       this.userId = userid
     },
+
     setUserEmail(userEmail: string) {
       this.userEmail = userEmail
     },
@@ -55,6 +59,7 @@ export const useUserAuthStore = defineStore('userAuth', {
 
     set2fa() {
       this.isTempAuthenticated = true
+      this.isAuthenticated = false
     },
 
     logout() {

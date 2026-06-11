@@ -26,6 +26,11 @@ export const useSession = () => {
         select: {
           id: true,
           email: true,
+          auth: {
+            select: {
+              secoundfaEnabled: true,
+            },
+          },
           profile: {
             select: {
               name: true,
@@ -40,7 +45,10 @@ export const useSession = () => {
       };
 
       return {
-        userId: userResponse?.id, authData: { email: userResponse?.email }, userIconData: { iconUrl: userResponse?.profile?.iconUrl ?? "", name: userResponse?.profile?.name ?? "" }
+        userId: userResponse?.id,
+        authData: { email: userResponse?.email },
+        userIconData: { iconUrl: userResponse?.profile?.iconUrl ?? "", name: userResponse?.profile?.name ?? "" },
+        secoundfaEnabled: userResponse?.auth?.secoundfaEnabled ?? false
       }
     } catch {
       return undefined
@@ -66,5 +74,6 @@ export const useSession = () => {
       path: "/",
     })
   }
+
   return { verificationSessionToken, getLoginSession, setLoginSession, discardToken }
 }

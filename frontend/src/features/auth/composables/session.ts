@@ -35,6 +35,7 @@ export const useSession = () => {
         body: JSON.stringify({ token: token })
       }
     )
+    if (!response.ok) return undefined;
     const data = await response.json()
     return data
   }

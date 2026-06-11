@@ -46,6 +46,7 @@ model UserAuth {
   id              String  @id @default(cuid())
   userId          String  @unique
   twoFactorSecret  String?
+  secoundfaEnabled       Boolean @default(false)
   passwordHash     String
   user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   @@map("user_auths")

@@ -30,9 +30,11 @@ export const useLogin = () => {
       include: {
         auth: {
           select: {
-            passwordHash: true
+            passwordHash: true,
+            secoundfaEnabled: true,
           }
         },
+
         profile: {
           select: {
             name: true,
@@ -62,7 +64,10 @@ export const useLogin = () => {
     this_session.setLoginSession(c, token)
 
     return {
-      userId: userResponse?.id, authData: { email: userResponse?.email }, userIconData: { iconUrl: userResponse?.profile?.iconUrl ?? "", name: userResponse?.profile?.name ?? "" }
+      userId: userResponse?.id,
+      authData: { email: userResponse?.email },
+      userIconData: { iconUrl: userResponse?.profile?.iconUrl ?? "", name: userResponse?.profile?.name ?? "" },
+      secoundfaEnabled: userResponse?.auth?.secoundfaEnabled ?? false
     }
   }
   return { login }

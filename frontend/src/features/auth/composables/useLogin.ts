@@ -33,9 +33,12 @@ export const useLogin = () => {
       )
       const user = await singup_res.json()
       if (user == null) return null
-      const { userId, userIconData, authData } = user;
+      const { userId, userIconData, authData, secoundfaEnabled } = user;
       userAuthstore.login(userId, authData.email, token);
       userStore.setUserInfo({ userId: userId, ...userIconData });
+      if (secoundfaEnabled == true) {
+        userAuthstore.set2fa();
+      }
       return user
     } catch (e) {
       error.value = '登録失敗'

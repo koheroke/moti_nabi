@@ -22,12 +22,12 @@ export const authRoutes: RouteRecordRaw[] = [
   },
   {
     path: '/session',
-    name: '/session',
+    name: 'session',
     component: () => import('@/page/auth/sessionPage.vue'),
   },
   {
     path: '/googleCallback',
-    name: '/googleCallback',
+    name: 'googleCallback',
     component: () => import('@/page/auth/googleCallback.vue'),
   }
 ]

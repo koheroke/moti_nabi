@@ -32,11 +32,6 @@ authRouter.post('/logout', async (c) => {
 authRouter.post('/2fa/setup', async (c) => {
   const body = await c.req.json()
   const user2faRes = await this_2fa.setUp(body);
-  const loginInfo = {
-    email: body.email,
-    password: body.password
-  }
-  await this_login.login(loginInfo, c)
   return c.json(user2faRes);
 });
 

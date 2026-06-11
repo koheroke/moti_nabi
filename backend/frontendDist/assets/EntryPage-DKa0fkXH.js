@@ -1,0 +1,2 @@
+import{T as e,t}from"./_plugin-vue_export-helper-5JzQj48q.js";import{r as n}from"./index-DRfI70Cg.js";var r=e({__name:`EntryPage`,setup(e,{expose:t}){t();let r=n();r.push(`/session`);let i={router:r};return Object.defineProperty(i,"__isScriptSetup",{enumerable:!1,value:!0}),i}});function i(e,t,n,r,i,a){return null}var a=t(r,[[`render`,i],[`__file`,`/Users/azumakoutaira/workspace/moti_nabi/frontend/src/page/entryPage/EntryPage.vue`]]);export{a as default};
+//# sourceMappingURL=EntryPage-DKa0fkXH.js.map

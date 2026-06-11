@@ -9,6 +9,10 @@ export interface Setup2FAResponse {
 }
 export const use2fa = () => {
   const setup = async (): Promise<Setup2FAResponse> => {
+    console.log("setup", {
+      userId: userStore.userId,
+      email: userStore.userEmail
+    })
     const response = await fetch(
       `${url}/setup`,
       {
