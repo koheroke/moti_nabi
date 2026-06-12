@@ -10,6 +10,13 @@ export const setupCollaborationSocket = (io: Server, socket: Socket) => {
     io.to(workId).emit("work:alteration", token.alterationToken);
   });
 
+  socket.on("work:kick", (token: { workId: string, kickedUserId: string }) => {
+    const workId = socket.data.workId
+    if (workId == undefined) return
+    socket.to(workId).emit("work:kicked", token.kickedUserId);
+  });
+
+
   socket.on("joinRoom", (workId: string, callback) => {
     console.log("joinRoom", workId)
     socket.data.workId = workId

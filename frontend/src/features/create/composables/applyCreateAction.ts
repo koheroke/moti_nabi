@@ -50,7 +50,9 @@ const useApplyCreateAction = () => {
     createStore.setStaticLoaded(true)
   }
 
-
+  const leaveWork = () => {
+    // api.leaveRoom()
+  }
 
   const hydrateCreateState = (data: UserLuggage_SaveDBData) => {
     console.log("hydrateCreateState_data", data)
@@ -320,7 +322,12 @@ const useApplyCreateAction = () => {
       api.sendAlteration(pendingToken)
     }
   }
-  return { hydrateCreateState, alterationData, initCreateStaticData }
+  const kicked = () => {
+    api.leaveRoom()
+    createStore.leaveWork()
+  }
+
+  return { hydrateCreateState, alterationData, initCreateStaticData, leaveWork, kicked }
 }
 export { useApplyCreateAction }
 

@@ -1,5 +1,5 @@
 import { Server, Socket } from "socket.io";
-import { useWork } from "../createWork";
+import { useWork } from "../work";
 
 
 const createWork = useWork()

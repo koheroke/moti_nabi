@@ -30,8 +30,6 @@ export const useUserStore = defineStore('user', {
       this.userInfos[userInfo.userId] = userInfo
     },
 
-
-
     setIconUrl(userId: string, iconUrl: string) {
       if (this.userInfos[userId]) {
         this.userInfos[userId].iconUrl = iconUrl

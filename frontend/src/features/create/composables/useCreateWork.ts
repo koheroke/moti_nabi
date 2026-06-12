@@ -457,9 +457,6 @@ export const UseCreateWork = () => {
     applyCreateAction.alterationData(token)
   }
 
-
-
-
   // const positionChangeItemToPreview = (token: positionChangePreviewItemToken) => {
   //   const target_item = createStore.previewCase[token.popCaseId].pockets[token.popPocketId].items.
   //     if(!target_item) return

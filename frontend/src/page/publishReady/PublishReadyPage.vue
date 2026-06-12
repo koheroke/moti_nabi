@@ -22,9 +22,9 @@
             文字数制限 : {{ nameMax }}/{{ workDetailEdit.name.length }}
           </p>
         </section>
-        <section class="publish">
+        <section>
           <h2>公開設定＊</h2>
-          <div class="publishBrief">
+          <div class="brief">
             <p>
               公開された持ち物リストはギャラリー画面から誰でも閲覧できる状態になります
             </p>
@@ -101,11 +101,31 @@
           ></imageDropTab>
         </section>
       </li>
-      <div class="publich">
+      <div class="buttonBox">
         <BaseButton style="margin-left: auto" @click="onPublich"
           >変更を保存する
         </BaseButton>
       </div>
+
+      <section style="margin-top: 20px">
+        <h2 style="color: red">削除</h2>
+        <div class="brief" style="border: red 1px solid">
+          <p style="color: red">この操作は取り消すことができません</p>
+          <BaseButton
+            style="margin-left: auto"
+            class="deleteButton"
+            @click="deleteConfirmation = true"
+            variant="ghost"
+            >作品を削除</BaseButton
+          >
+        </div>
+        <confirmation
+          @close="deleteConfirmation = false"
+          v-if="deleteConfirmation"
+          text="作品を削除しますか？"
+          @yes="onDeleteWork"
+        ></confirmation>
+      </section>
     </div>
   </div>
 </template>
@@ -126,6 +146,10 @@ import { useWorkDetailEditStore } from "@/features/workDetailEdit/store/useworkD
 import { type editAboutType } from "@/features/workDetailEdit/store/useworkDetail";
 import { Delete } from "lucide-vue-next";
 import BaseDropdown from "@/components/ui/form/BaseDropdown/BaseDropdown.vue";
+import { useRouter } from "vue-router";
+import { useWork } from "@/features/work/composables/work";
+const work = useWork();
+const router = useRouter();
 const workDetailEditStore = useWorkDetailEditStore();
 const alertStore = useAlertStore();
 const editThumbnailShow = ref(false);
@@ -136,6 +160,8 @@ const bioMax = ref(250);
 const nameMax = ref(10);
 const tagMax = ref(10);
 const { AboutGetter } = storeToRefs(workDetailEditStore);
+const deleteConfirmation = ref(false);
+import confirmation from "@/components/feedback/confirmation/baseConfirmation/confirmation.vue";
 const workDetailEdit = ref<editAboutType>({
   name: "",
   bio: "",
@@ -222,10 +248,20 @@ const onPublich = async () => {
   const res = await publicWork(publichToken);
   console.log("res", res);
   if (res.success == true) {
-    alertStore.showAlert("公開できました", false);
+    alertStore.showAlert("変更できました", false);
   } else {
-    alertStore.showAlert("公開に失敗しました", true);
+    alertStore.showAlert("変更に失敗しました", true);
   }
+};
+const onDeleteWork = async () => {
+  const id = selectedPackageIdGetter.value;
+  const res = await work.deleteWork(id);
+  if (res.success == false) {
+    alertStore.showAlert("削除に失敗しました", true);
+    return;
+  }
+  alertStore.showAlert("削除しました", false);
+  router.push("/home");
 };
 </script>
 <style lang="css" scoped>
@@ -258,7 +294,7 @@ p {
   font-size: 12px;
   color: rgb(78, 77, 77);
 }
-.publishBrief {
+.brief {
   border: 1px solid rgba(171, 170, 170, 0.603);
   border-radius: 10px;
   padding: 8px;
@@ -277,7 +313,7 @@ p {
   font-size: 15px;
   color: rgb(78, 77, 77);
 }
-.publich {
+.buttonBox {
   display: flex;
   padding-top: 50px;
   padding-bottom: 30px;
@@ -321,19 +357,24 @@ p {
   transition:
     opacity 0.2s ease,
     background-color 0.2s ease;
-  height: 500px;
+  height: 100%;
 }
 .thumbnail {
   position: relative;
+  height: 500px;
 }
 .icon_image {
   border-radius: 10px;
   width: 100%;
-  height: 500px;
+  height: 100%;
   aspect-ratio: 1/1;
 }
 .icon-edit:hover {
   opacity: 1;
   background-color: rgba(0, 0, 0, 0.145);
+}
+.deleteButton:hover {
+  background-color: red;
+  color: white;
 }
 </style>

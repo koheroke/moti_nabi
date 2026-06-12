@@ -81,6 +81,12 @@ export const useUser = () => {
     console.log("userResponse", userResponse)
     return userResponse
   }
+
+
+
   return { setProfileEdit, getProfile, deleteUser }
+
+
+
 
 }

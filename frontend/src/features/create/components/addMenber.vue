@@ -44,6 +44,8 @@ import { storeToRefs } from "pinia";
 import { useCreateApi } from "@/features/create/api/createApi";
 import { useAlertStore } from "@/store/feedback/alertStore";
 import { useUserAuthStore } from "@/store/user/userAuthStore";
+import { useSocketApi } from "../api/createSocketApi";
+const socketApi = useSocketApi();
 const userAuthStore = useUserAuthStore();
 const alertStore = useAlertStore();
 const createApi = useCreateApi();
@@ -99,6 +101,7 @@ const deleteMenber = async (userId: string) => {
   });
   if (res == "success") {
     createStore.deleteMenber(userId);
+    socketApi.kick(userId);
   } else {
     alertStore.showAlert("ユーザーが存在しません", true);
   }

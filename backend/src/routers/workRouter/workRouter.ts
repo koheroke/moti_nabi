@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { useWork } from '@/features/work/createWork';
+import { useWork } from '@/features/work/work';
 const createWork = useWork()
 export const workRouter = new Hono();
 workRouter.post('/editWorkPackage', async (c) => {
@@ -39,9 +39,9 @@ workRouter.post('/getWork', async (c) => {
   return c.json(res);
 });
 
-workRouter.post('/removeWork', async (c) => {
+workRouter.post('/deleteWork', async (c) => {
   const body = await c.req.json();
-  const res = await createWork.editWorkPackage(body.workId, body.data)
+  const res = await createWork.deleteWork(body.workId)
   return c.json(res);
 });
 

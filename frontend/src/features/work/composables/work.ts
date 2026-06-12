@@ -3,7 +3,7 @@ const apiUrl = import.meta.env.VITE_API_BASE_URL;
 import { useWorkPackageStore } from "../store/workPackageStore";
 const workPackageStore = useWorkPackageStore()
 const url = `${apiUrl}/work`;
-const useGetWorkPackages = () => {
+const useWork = () => {
   const getUserworkPackages = async (userId: string): Promise<workPackage[]> => {
     const data = await fetch(
       `${url}/getUserWorkPackages`,
@@ -37,7 +37,23 @@ const useGetWorkPackages = () => {
     return await works
   }
 
-  return { getworkPackages, getUserworkPackages }
+  const deleteWork = async (id: string) => {
+    const res = await fetch(
+      `${url}/deleteWork`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          workId: id,
+        })
+      })
+    const deleteRes = await res.json()
+    return await deleteRes
+  }
+
+  return { getworkPackages, getUserworkPackages, deleteWork }
 }
-export { useGetWorkPackages }
+export { useWork }
 

@@ -14,8 +14,8 @@ import { useWorkPackageStore } from "@/features/work/store/workPackageStore.ts";
 import { onMounted } from "vue";
 const workPackageStore = useWorkPackageStore();
 const userAuthstore = useUserAuthStore();
-import { useGetWorkPackages } from "@/features/work/composables/work.ts";
-const getWorkPackages = useGetWorkPackages();
+import { useWork } from "@/features/work/composables/work.ts";
+const getWorkPackages = useWork();
 import { storeToRefs } from "pinia";
 
 const { userWorkPackageStoreGetter } = storeToRefs(workPackageStore);

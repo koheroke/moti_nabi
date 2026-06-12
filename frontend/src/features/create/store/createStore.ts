@@ -30,9 +30,11 @@ export const useCreateStore = defineStore("create", {
     categories: [] as Category[],
     isStaticLoaded: false,
     menbers: [] as menber[],
+    leave: false,
     role: "viewer" as "owner" | "editor" | "viewer"
   }),
   getters: {
+    leaveGetter: (state) => state.leave,
     staticCasesGetter: (state) => state.staticCases,
     workNameGetter: (state) => state.workName,
     categorys: (state) => state.categories,
@@ -87,6 +89,26 @@ export const useCreateStore = defineStore("create", {
     }
   },
   actions: {
+    leaveWork() {
+      this.workId = ""
+      this.workName = ""
+      this.userLuggage_SaveDBData = null
+      this.listItem = null
+      this.previewCase = {}
+      this.searchText = ""
+      this.staticItemData = {}
+      this.category = null
+      this.addItemCounter = 0
+      this.staticCases = {}
+      this.iconMap = {}
+      this.categoryColor = {}
+      this.categories = []
+      this.isStaticLoaded = false
+      this.menbers = []
+      this.role = "viewer"
+      this.leave = true
+    },
+
 
     setWork(parseData: UserLuggage_SaveDBData, vuepreviewData: Record<string, Case>, vueItemList: Record<string, itemCard>) {
       this.setSaveDBData(parseData)
@@ -94,6 +116,9 @@ export const useCreateStore = defineStore("create", {
       this.setpreviewData(vuepreviewData)
       this.setWorkId(parseData.workId)
       this.setWorkName(parseData.workName)
+    },
+    setleave(state: boolean) {
+      this.leave = state
     },
 
     setRole(role: "owner" | "editor" | "viewer") {

@@ -28,6 +28,7 @@
               v-if="showRePassward"
               @text="rePassward"
               @close="showRePassward = false"
+              text="パスワードを入力してください"
             ></popInput>
           </section>
         </div>

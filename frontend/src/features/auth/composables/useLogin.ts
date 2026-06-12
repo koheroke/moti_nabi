@@ -33,9 +33,11 @@ export const useLogin = () => {
       )
       const user = await singup_res.json()
       if (user == null) return null
-      const { userId, userIconData, authData, secoundfaEnabled } = user;
+
+      const { userId, iconUrl, authData, secoundfaEnabled, name } = user;
+      console.log("secoundfaEnabled", secoundfaEnabled);
       userAuthstore.login(userId, authData.email, token);
-      userStore.setUserInfo({ userId: userId, ...userIconData });
+      userStore.setUserInfo({ userId: userId, iconUrl: iconUrl, name: name });
       if (secoundfaEnabled == true) {
         userAuthstore.set2fa();
       }

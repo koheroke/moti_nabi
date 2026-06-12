@@ -96,7 +96,8 @@ const props = defineProps<{
   flex-direction: column;
   gap: 10px;
   padding: 10px;
-  width: 300px;
+  width: 100%;
+  overflow: auto;
   flex: 1;
   min-height: 200px;
   max-height: 400px;
@@ -111,6 +112,7 @@ const props = defineProps<{
   width: 100%;
   background-color: rgb(255, 255, 255);
   overflow-y: auto;
+  overflow-x: hidden;
   animation: modalOpen 0.25s ease-out forwards;
 }
 

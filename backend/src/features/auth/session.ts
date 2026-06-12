@@ -43,11 +43,11 @@ export const useSession = () => {
         discardToken(c)
         return undefined
       };
-
       return {
         userId: userResponse?.id,
         authData: { email: userResponse?.email },
-        userIconData: { iconUrl: userResponse?.profile?.iconUrl ?? "", name: userResponse?.profile?.name ?? "" },
+        iconUrl: userResponse?.profile?.iconUrl ?? "",
+        name: userResponse?.profile?.name ?? "",
         secoundfaEnabled: userResponse?.auth?.secoundfaEnabled ?? false
       }
     } catch {

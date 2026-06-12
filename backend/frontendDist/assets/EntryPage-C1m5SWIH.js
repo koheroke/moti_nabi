@@ -1,0 +1,2 @@
+import{a as e,i as t,k as n}from"./vue-router-n1ElV4vx.js";var r=n({__name:`EntryPage`,setup(e,{expose:n}){n();let r=t();r.push(`/session`);let i={router:r};return Object.defineProperty(i,"__isScriptSetup",{enumerable:!1,value:!0}),i}});function i(e,t,n,r,i,a){return null}var a=e(r,[[`render`,i],[`__file`,`/Users/azumakoutaira/workspace/moti_nabi/frontend/src/page/entryPage/EntryPage.vue`]]);export{a as default};
+//# sourceMappingURL=EntryPage-C1m5SWIH.js.map

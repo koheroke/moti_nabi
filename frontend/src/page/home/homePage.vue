@@ -41,13 +41,13 @@ import BaseButton from "@/components/ui/form/BaseButton/BaseButton.vue";
 import { useRouter } from "vue-router";
 import UserIcon from "@/features/profile/components/UserIcon.vue";
 import { useWorkPackageStore } from "@/features/work/store/workPackageStore";
-import { ref, onMounted } from "vue";
-
+import { ref, watch, onMounted } from "vue";
+import { storeToRefs } from "pinia";
 import { useUserAuthStore } from "@/store/user/userAuthStore";
 import { useUserStore, type UserInfo } from "@/store/user/userIconStore";
 const userAuthStore = useUserAuthStore();
-
 const userStore = useUserStore();
+const { getUserInfo } = storeToRefs(userStore);
 
 const userIconInfo = ref<UserInfo>({
   userId: "",
@@ -61,9 +61,20 @@ const goCreate = () => {
   workPackageStore.selectedPackageIdStore("");
   router.push("/create");
 };
-onMounted(() => {
-  userIconInfo.value = userStore.getUserInfo(userAuthStore.userIdGetter);
-});
+
+watch(
+  getUserInfo,
+  (profile) => {
+    if (!profile) return;
+    const user = userStore.getUserInfo(userAuthStore.userIdGetter);
+    userIconInfo.value = {
+      userId: user.userId,
+      iconUrl: user.iconUrl,
+      name: user.name,
+    };
+  },
+  { immediate: true },
+);
 
 import { useLogout } from "@/features/auth/composables/useLogout";
 const onLogout = async () => {

@@ -12,12 +12,12 @@ import { useRouter } from "vue-router";
 import { useIncrementalList } from "@/composables/array/useIncrementalList.ts";
 import { useWorkPackageStore } from "@/features/work/store/workPackageStore.ts";
 import { computed } from "vue";
-import { useGetWorkPackages } from "@/features/work/composables/work.ts";
+import { useWork } from "@/features/work/composables/work.ts";
 import { onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useUserAuthStore } from "@/store/user/userAuthStore.ts";
 const userAuthstore = useUserAuthStore();
-const getWorkPackages = useGetWorkPackages();
+const getWorkPackages = useWork();
 const workPackageStore = useWorkPackageStore();
 const { workPackageStoreGetter } = storeToRefs(workPackageStore);
 const sortedWorks = computed(() =>

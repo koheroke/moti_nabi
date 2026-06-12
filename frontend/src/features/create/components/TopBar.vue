@@ -19,7 +19,18 @@
           style="margin-right: 20px"
         ></UserIcon>
         <div class="wrapper">
-          <BaseButton variant="ghost" @click="addMenberShow = !addMenberShow">
+          <BaseButton
+            variant="ghost"
+            @click="leaveMenber"
+            v-if="createStore.roleGetter != 'owner'"
+          >
+            脱退
+          </BaseButton>
+          <BaseButton
+            variant="ghost"
+            @click="addMenberShow = !addMenberShow"
+            v-if="createStore.roleGetter == 'owner'"
+          >
             招待
           </BaseButton>
 
@@ -32,7 +43,7 @@
         <BaseButton
           @click="onpublich"
           :class="{ blockBotton: createStore.roleGetter != 'owner' }"
-          >公開</BaseButton
+          >設定</BaseButton
         >
       </div>
     </div>
@@ -48,6 +59,11 @@ import { useRouter } from "vue-router";
 import { onMounted, ref } from "vue";
 import addMenber from "@/features/create/components/addMenber.vue";
 import { useUserAuthStore } from "@/store/user/userAuthStore";
+import { useCreateApi } from "@/features/create/api/createApi";
+const createApi = useCreateApi();
+import { useAlertStore } from "@/store/feedback/alertStore";
+const alertStore = useAlertStore();
+
 const userAuthStore = useUserAuthStore();
 const addMenberShow = ref(false);
 const router = useRouter();
@@ -55,6 +71,7 @@ const createStore = useCreateStore();
 const alterationLog = useAlterationLogStore();
 import { useUserStore, type UserInfo } from "@/store/user/userIconStore";
 const userStore = useUserStore();
+
 const userIconInfo = ref<UserInfo>({
   userId: "",
   iconUrl: "",
@@ -63,6 +80,20 @@ const userIconInfo = ref<UserInfo>({
 const forward = () => {
   alterationLog.redo();
 };
+const leaveMenber = async () => {
+  if (createStore.roleGetter == "owner") return;
+  const res = await createApi.deleteMenber({
+    userId: userAuthStore.userIdGetter,
+    workId: createStore.workId,
+  });
+  if (res == "success") {
+    createStore.deleteMenber(userAuthStore.userIdGetter);
+    router.push("/home");
+  } else {
+    alertStore.showAlert("ユーザーが存在しません", true);
+  }
+};
+
 const back = () => {
   alterationLog.undo();
 };
@@ -79,25 +110,29 @@ onMounted(() => {
 </script>
 <style lang="css" scoped>
 .topBar {
-  box-sizing: border-box;
-  height: 40px;
-  padding: 30px;
+  height: 55px;
+  min-height: 40px;
+  padding: 0px 30px;
   width: 100%;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid rgb(212, 210, 210);
 }
 .right {
-  margin-right: auto;
   display: flex;
-  width: 50%;
+  align-items: center;
+  min-width: 0;
+  flex: 1;
 }
+
 .left {
-  margin-left: auto;
-  gap: 10px;
   display: flex;
-  width: 50%;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1;
+  min-width: 0;
 }
 
 .wrapper {

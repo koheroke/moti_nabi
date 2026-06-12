@@ -1,7 +1,7 @@
 <template>
   <div class="closeArea" @click="emit('close')">
     <div class="tab">
-      {{ "パスワードを入力してください" }}
+      {{ text }}
       <BaseInput
         @click.stop=""
         v-model="message"
@@ -22,6 +22,9 @@ const onMessage = () => {
   emit("text", message.value);
   emit("close");
 };
+const props = defineProps<{
+  text: string;
+}>();
 const emit = defineEmits<{
   (e: "close"): void;
   (e: "text", iconUrl: string): void;
