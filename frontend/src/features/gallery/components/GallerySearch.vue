@@ -31,19 +31,29 @@ import { Search } from "lucide-vue-next";
 const emit = defineEmits(["update:modelValue"]);
 const workPackageStore = useWorkPackageStore();
 const allNames = ref<string[]>([]);
-const candidate = ref<string[]>([]);
+const candidate = ref<{ name: string; value: any; id: string }[]>([]);
 const modelValue = ref("");
 const popularityTag = ref<string[]>([]);
 const nowInput = computed(() => {
   const arr = modelValue.value.split(" ");
   const now = arr[arr.length - 1];
   if (now[0] == "#") {
-    candidate.value = allTags.value;
-    console.log(candidate.value);
-    console.log(now);
+    candidate.value = allTags.value.map((tag) => {
+      return {
+        id: tag,
+        value: tag,
+        name: tag,
+      };
+    });
     return now.substring(1);
   } else {
-    candidate.value = allNames.value;
+    candidate.value = allNames.value.map((name) => {
+      return {
+        id: name,
+        value: name,
+        name: name,
+      };
+    });
     return now;
   }
 });

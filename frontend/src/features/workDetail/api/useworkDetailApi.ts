@@ -45,7 +45,6 @@ const url = `${apiUrl}/work`;
 const useworkDetailApi = () => {
 
   const get = async (theWorkId: string): Promise<parseWorkPreviewData> => {
-    console.log("getWorkDetail", theWorkId)
     const res = await fetch(
       `${url}/getWorkDetail`,
       {

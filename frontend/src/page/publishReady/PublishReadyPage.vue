@@ -155,7 +155,7 @@ const alertStore = useAlertStore();
 const editThumbnailShow = ref(false);
 const tagInput = ref<string>("");
 const thumbnailImage = ref<string>("");
-const allTags = ref<string[]>([]);
+const allTags = ref<{ name: string; value: any; id: string }[]>([]);
 const bioMax = ref(250);
 const nameMax = ref(10);
 const tagMax = ref(10);
@@ -180,10 +180,18 @@ const workPackageStore = useWorkPackageStore();
 const { selectedPackageIdGetter } = storeToRefs(workPackageStore);
 onMounted(async () => {
   const baseTag = await fetch("/json/work/baseTags.json");
-  allTags.value = await baseTag.json();
+  const tags = await baseTag.json();
+  allTags.value = tags.map((tag: string) => {
+    return {
+      id: tag,
+      value: tag,
+      name: tag,
+    };
+  });
   workPackageStore.workPackageStoreGetter.map((work) => {
     work.tags.forEach((tag) => {
-      if (allTags.value.includes(tag) === false) allTags.value.push(tag);
+      if (allTags.value.map((tag) => tag.name).includes(tag) === false)
+        allTags.value.push({ name: tag, value: tag, id: tag });
     });
   });
 });
@@ -244,9 +252,7 @@ const onPublich = async () => {
 
   const id = selectedPackageIdGetter.value;
   const publichToken = { id: id, ...workDetailEditStore.EditGetter };
-  console.log("publichToken", publichToken);
   const res = await publicWork(publichToken);
-  console.log("res", res);
   if (res.success == true) {
     alertStore.showAlert("変更できました", false);
   } else {

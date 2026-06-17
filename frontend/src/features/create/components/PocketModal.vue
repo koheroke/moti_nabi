@@ -80,13 +80,15 @@ const onDrop = (event: DragEvent) => {
 };
 const handleDrop = () => {};
 
+export interface selectedPocketType {
+  id: string;
+  name: string;
+  items: Record<string, previewItem>;
+  caseId: string;
+}
+
 const props = defineProps<{
-  pocket: {
-    id: string;
-    name: string;
-    items: Record<string, previewItem>;
-    caseId: string;
-  };
+  pocket: selectedPocketType;
 }>();
 </script>
 <style lang="css" scoped>

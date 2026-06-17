@@ -1,10 +1,11 @@
 <template>
   <div>
-    <div v-for="word in narrowDownData" :key="word">
-      <div class="suggest" @click="onsuggest(word)">
+    <div v-for="word in narrowDownData" :key="word.id">
+      <div @click="onsuggest(word.value)">
         <div class="wordBox">
           <Tag :size="17"></Tag>
-          {{ word }}
+
+          {{ word.name }}
         </div>
       </div>
     </div>
@@ -13,8 +14,9 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { Tag } from "lucide-vue-next";
+
 const props = defineProps<{
-  suggestDatas: string[];
+  suggestDatas: { name: string; value: any; id: string }[];
   search: string;
 }>();
 const emit = defineEmits(["onsuggest"]);
@@ -23,7 +25,7 @@ const onsuggest = (word: string) => {
 };
 const narrowDownData = computed(() => {
   if (!props.search) return [];
-  return props.suggestDatas.filter((data) => data.includes(props.search));
+  return props.suggestDatas.filter((data) => data.name.includes(props.search));
 });
 </script>
 <style lang="css" scoped>

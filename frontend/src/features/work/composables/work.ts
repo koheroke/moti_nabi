@@ -17,7 +17,6 @@ const useWork = () => {
         })
       })
     const works = await data.json()
-    console.log("works", works)
     workPackageStore.setUserWorkPackageStore(works)
     return works
   }

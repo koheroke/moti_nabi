@@ -1,5 +1,5 @@
 import type { CategoryId } from "../type/categoryType"
-
+import type { Pocket, previewItem } from "../type/casetype";
 
 
 
@@ -11,25 +11,8 @@ interface Case {
   id: string
 }
 
-interface previewItem {
-  id: string;
-  itemId: string
-  name: string;
-  iconId: string;
-  category: CategoryId[];
-  isStorage: boolean;
-  confirmed_removePocket?: Record<string, previewItem>;
-  count: number;
-}
-type Pocket = {
-  id: string;
-  name: string;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  items: Map<string, previewItem>;
-}
+
+
 type CaseEdit = {
   x?: number;
   y?: number;
@@ -51,4 +34,4 @@ interface part {
   height: number;
   radius: number;
 }
-export type { Category, previewItem, Pocket, part, Case, CaseEdit }
+export type { Category, previewItem, part, Case, CaseEdit, Pocket }

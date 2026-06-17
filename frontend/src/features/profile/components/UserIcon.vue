@@ -20,7 +20,6 @@ onMounted(() => {
 });
 
 const onUserIcon = () => {
-  console.log("user", props.userid);
   userProfileStore.setEditBool(false);
   userProfileStore.setSelectedUserId(props.userid);
 

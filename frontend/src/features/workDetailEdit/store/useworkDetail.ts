@@ -27,7 +27,6 @@ export const useWorkDetailEditStore = defineStore("workDetailEdit", {
   },
   actions: {
     setAbout(about: editAboutType) {
-      console.log("aboutStore setAbout_log", about)
       this.about = { ...this.about, ...about }
     },
     addEdit(edit: RequireAtLeastOne<editAboutType>) {

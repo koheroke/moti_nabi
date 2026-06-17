@@ -111,7 +111,6 @@ const onIcon = (type: string) => {
 const iconType = ref("");
 
 const pushEdit = async () => {
-  console.log(userProfileStore.getUserProfile);
   const res = await userProfile.pushUserProfileEdit();
   if (res == "success") {
     userProfileStore.setEditBool(false);

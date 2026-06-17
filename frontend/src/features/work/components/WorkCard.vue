@@ -37,7 +37,6 @@ const props = defineProps<{
 }>();
 
 const setSelectPackage = () => {
-  console.log(props.work.id);
   workPackageStore.selectedPackageIdStore(props.work.id);
 };
 </script>

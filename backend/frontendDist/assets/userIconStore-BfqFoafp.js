@@ -1,0 +1,2 @@
+import{s as e}from"./index-E06n4O2Q.js";var t=e(`user`,{state:()=>({userInfos:{}}),getters:{getUserInfo:e=>t=>e.userInfos[t],getIconUrl:e=>t=>e.userInfos[t]?.iconUrl??``,getName:e=>t=>e.userInfos[t]?.name??``},actions:{setUserInfo(e){this.userInfos[e.userId]=e},setIconUrl(e,t){this.userInfos[e]&&(this.userInfos[e].iconUrl=t)},setName(e,t){this.userInfos[e]&&(this.userInfos[e].name=t)},removeUser(e){delete this.userInfos[e]},resetUsers(){this.userInfos={}}}});export{t};
+//# sourceMappingURL=userIconStore-BfqFoafp.js.map

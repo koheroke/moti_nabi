@@ -1,13 +1,14 @@
 <template>
   <div class="topBar">
-    <div class="right">
-      <h2>{{ createStore.workNameGetter }}</h2>
+    <div class="left">
+      <h2 style="margin-right: 20px">タイトルを入力</h2>
       <div style="gap: 10px; display: flex; margin-left: auto">
         <CornerUpLeft @click="back" />
         <CornerUpRight @click="forward" />
       </div>
+      <PreviewSearch style="margin-left: 10px; flex: 1"></PreviewSearch>
     </div>
-    <div class="left">
+    <div class="right">
       <div
         class="buttons"
         style="margin-left: auto; display: flex; align-items: center; gap: 10px"
@@ -62,6 +63,8 @@ import { useUserAuthStore } from "@/store/user/userAuthStore";
 import { useCreateApi } from "@/features/create/api/createApi";
 const createApi = useCreateApi();
 import { useAlertStore } from "@/store/feedback/alertStore";
+import { BaseInput } from "@/components/ui/form/BaseInput";
+import PreviewSearch from "./PreviewSearch.vue";
 const alertStore = useAlertStore();
 
 const userAuthStore = useUserAuthStore();
@@ -71,7 +74,7 @@ const createStore = useCreateStore();
 const alterationLog = useAlterationLogStore();
 import { useUserStore, type UserInfo } from "@/store/user/userIconStore";
 const userStore = useUserStore();
-
+const searchPreview = ref("");
 const userIconInfo = ref<UserInfo>({
   userId: "",
   iconUrl: "",
@@ -124,13 +127,15 @@ onMounted(() => {
   display: flex;
   align-items: center;
   min-width: 0;
-  flex: 1;
+  width: auto;
+  margin-left: 20px;
 }
 
 .left {
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  gap: 20px;
   flex: 1;
   min-width: 0;
 }

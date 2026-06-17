@@ -26,6 +26,8 @@ import { useWorkPackageStore } from "@/features/work/store/workPackageStore";
 import { useSocketApi } from "../api/createSocketApi";
 import { useAlertStore } from "@/store/feedback/alertStore";
 import { type editAboutType, useWorkDetailEditStore } from "@/features/workDetailEdit/store/useworkDetail";
+import type { Pocket } from "./casetype";
+import type { previewItem } from "./casetype";
 
 const workDetailEditStore = useWorkDetailEditStore()
 const alertStore = useAlertStore();
@@ -118,8 +120,7 @@ export const UseCreateWork = () => {
 
   const setWorkSocket = async () => {
     const alterationTokens = await api.joinWorkRoom()
-    console.log("alterationTokens", alterationTokens)
-    console.log("usfefeeefer", createStore.getBlockEdit)
+
     if (!alterationTokens) return "noneNameorWorkId"
     alterationTokens.forEach((token: alterationToken) => {
       applyCreateAction.alterationData(token, true)
@@ -419,6 +420,60 @@ export const UseCreateWork = () => {
 
     createStore.reMovePocket(token)
   }
+  const buildItemPathMap = () => {
+    const cases = createStore.previewItemGetter;
+
+    const itemPathMap: Record<
+      string,
+      {
+        id: string;
+        pathData: {
+          pocketId: string;
+          caseId: string;
+          itemId: string;
+          parentId?: string;
+        };
+        name: string;
+      }
+    > = {};
+    console.log("cases", cases)
+    Object.entries(cases).forEach(([caseId, caseData]) => {
+      console.log("caseId", caseData)
+      Object.entries(caseData.pockets).forEach(([pocketId, pocketData]) => {
+        console.log("pocketId", pocketData)
+        Object.entries(pocketData.items).forEach(([parentItemId, parentItem]) => {
+          console.log("parentItemId", parentItem)
+          itemPathMap[parentItemId] = {
+            id: parentItemId,
+            pathData: {
+              pocketId,
+              caseId,
+              itemId: parentItemId,
+            },
+            name: parentItem.name,
+          };
+          console.log("itemPathMap", itemPathMap)
+
+          if (parentItem.innerItems) {
+            Object.entries(parentItem.innerItems).forEach(([itemId, item]) => {
+              itemPathMap[itemId] = {
+                id: itemId,
+                pathData: {
+                  pocketId,
+                  caseId,
+                  itemId,
+                  parentId: parentItemId,
+                },
+                name: item.name,
+              };
+            });
+          }
+        });
+      });
+    });
+    console.log("itemPathMap__", itemPathMap)
+    return itemPathMap;
+  };
 
   const confirmedRemovePocket = (caseId: string, pocketId: string) => {
     if (createStore.getBlockEdit) return "blockEdit"
@@ -464,5 +519,5 @@ export const UseCreateWork = () => {
   //   push_target.set(target_item, target_item)
   // }
 
-  return { createNewwork, confirmedRemovePocket, provisionalRemovePocket, provisionalResizePocket, confirmedResizePocket, loadWork, addItemToPreview, addItemCount, addBookmark, deletePreviewItem, addListItem, addCase, deleteCase, setCreatePageWork }
+  return { buildItemPathMap, createNewwork, confirmedRemovePocket, provisionalRemovePocket, provisionalResizePocket, confirmedResizePocket, loadWork, addItemToPreview, addItemCount, addBookmark, deletePreviewItem, addListItem, addCase, deleteCase, setCreatePageWork }
 }

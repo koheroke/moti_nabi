@@ -78,6 +78,8 @@ import { computed } from "vue";
 import type { Pocket, previewItem, Case } from "../../type/casetype";
 import SvgResizeHandle from "./svgResizeHandle.vue";
 import SvgRemoveHandle from "./SvgRemoveHandle.vue";
+import { usePocketStore } from "../../store/pocketStore.ts";
+const pocketStore = usePocketStore();
 const props = defineProps<Case>();
 const pockets = computed(() => {
   return Object.values(props.pockets).map((pocket) => {
@@ -101,10 +103,8 @@ const emit = defineEmits<{
 }>();
 
 function openPocket(pocket: Pocket) {
-  emit("update:selectedPocket", {
-    items: pocket.items,
+  pocketStore.setSelectedPocketId({
     id: pocket.id,
-    name: pocket.name,
     caseId: props.id,
   });
 }

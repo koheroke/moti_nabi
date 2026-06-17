@@ -58,7 +58,6 @@ export const useUserProfile = () => {
       })
 
     const data = await res.json()
-    console.log("data", data)
     userProfileStore.setUserProfile(data)
     return "getUserProfile"
   }

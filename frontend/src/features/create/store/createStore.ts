@@ -189,7 +189,6 @@ export const useCreateStore = defineStore("create", {
       return { data: innerItem.count, parent: token.parentId }
     },
     pushpreviewItem(token: addPreviewItemToken) {
-      console.log("token", token)
       if (!this.previewCase || !this.listItem || this.addItemCounter == null) { return }
       const pocket = this.previewCase[token.caseId].pockets[token.pocketId]
       this.addItemCounter++
@@ -232,7 +231,6 @@ export const useCreateStore = defineStore("create", {
       const listItem: itemCard = {
         ...token, ...{ bookmark: false, id: id }
       }
-      console.log("listItem", listItem)
       this.listItem[id] = listItem
       return listItem
     },
@@ -240,7 +238,6 @@ export const useCreateStore = defineStore("create", {
     deletepreviewItem(token: deletePreviewItemToken) {
       if (!this.previewCase || !this.listItem) { return }
       if (!this.previewCase[token.caseId]) { return }
-      console.log(token)
       const pocket = this.previewCase[token.caseId].pockets[token.pocketId]
       const findId = token.parentId ? token.parentId : token.id
       if (token.parentId == undefined) {
