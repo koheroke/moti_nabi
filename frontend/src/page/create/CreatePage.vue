@@ -32,6 +32,7 @@ const createWork = UseCreateWork();
 import { useRouter } from "vue-router";
 const router = useRouter();
 createStore.setleave(false);
+
 onMounted(async () => {
   createWork.setCreatePageWork();
 });

@@ -4,7 +4,8 @@ import type { previewItem } from "../type/casetype";
 
 export const usePocketStore = defineStore("pocket", {
   state: () => ({
-    selectedPocket: { caseId: "", id: "" }
+    selectedPocket: { caseId: "", id: "" },
+    selectedPocketScroll: { x: 0, y: 0 },
   }),
 
   getters: {

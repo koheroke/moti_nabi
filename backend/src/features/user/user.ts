@@ -20,8 +20,8 @@ type editdata = RequireAtLeastOne<edit>
 export const useUser = () => {
 
   const deleteUser = async (c: Context, userId: string, password: string) => {
-    console.log("deleteUser", userId)
-    console.log("password", password)
+    //console.log("deleteUser", userId)
+    //console.log("password", password)
     const user = await prisma.userAuth.findFirst({
       where: {
         userId: userId,
@@ -32,12 +32,12 @@ export const useUser = () => {
     }
     )
     const hash = user?.passwordHash
-    console.log("hash", hash)
+    //console.log("hash", hash)
     if (!hash) {
       return { success: false }
     }
     const this_password = await argon2.verify(hash, password);
-    console.log("this_password", this_password)
+    //console.log("this_password", this_password)
     if (!this_password) {
       return { success: false }
     }
@@ -78,7 +78,7 @@ export const useUser = () => {
         userId: userid
       },
     });
-    console.log("userResponse", userResponse)
+    //console.log("userResponse", userResponse)
     return userResponse
   }
 

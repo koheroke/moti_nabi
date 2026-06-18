@@ -1,5 +1,5 @@
 <template>
-  <div class="item-card">
+  <div class="item-card" ref="itemDom">
     <section class="header">
       <div>
         {{ icon.src }}
@@ -36,6 +36,7 @@
           :pocketId="props.pocketId"
           :parentItem="props.item.id"
           :caseId="props.caseId"
+          :previewItemsDom="props.previewItemsDom"
         />
       </div>
       <p v-if="props.item.isStorage === true" class="drop-text">
@@ -46,12 +47,13 @@
 </template>
 <script setup lang="ts">
 import type { previewItem } from "../type/casetype";
-import { ref } from "vue";
+import { ref, onMounted, watch } from "vue";
 const props = defineProps<{
   item: previewItem;
   pocketId: string;
   parentItem?: string;
   caseId: string;
+  previewItemsDom: HTMLElement | null;
 }>();
 import { CirclePlus, CircleMinus } from "lucide-vue-next";
 import { UseCreateWork } from "../composables/useCreateWork";
@@ -60,10 +62,14 @@ import type {
   deletePreviewItemToken,
   addPreviewItemToken,
 } from "@/features/create/type/tokens.ts";
-
 import { useCreateStore } from "../store/createStore";
+import { storeToRefs } from "pinia";
+import { usePocketStore } from "../store/pocketStore.ts";
+
+const pocketStore = usePocketStore();
 const createStore = useCreateStore();
 const createWork = UseCreateWork();
+const itemDom = ref<HTMLElement | null>(null);
 const iconMap = createStore.iconMap;
 const block = ref(createStore.roleGetter == "owner" || "editor" ? false : true);
 
@@ -127,6 +133,32 @@ const onDelete = () => {
 };
 
 const icon = iconMap[props.item.iconId] ?? "📦";
+
+const scrollSearchItem = () => {
+  if (searchStore.searchItemGetter.id != props.item.id) return;
+  if (!props.previewItemsDom) return;
+  if (!itemDom.value) return;
+  const top =
+    itemDom.value.getBoundingClientRect().top -
+    props.previewItemsDom.getBoundingClientRect().top +
+    props.previewItemsDom.scrollTop;
+
+  props.previewItemsDom.scrollTo({
+    top,
+    behavior: "smooth",
+  });
+  searchStore.searchItemSetter({ id: "", parentId: "" });
+};
+
+import { useSearchStore } from "../store/searchStore";
+const searchStore = useSearchStore();
+const { searchItemGetter } = storeToRefs(searchStore);
+watch(searchItemGetter, () => {
+  scrollSearchItem();
+});
+onMounted(async () => {
+  scrollSearchItem();
+});
 </script>
 <style lang="css" scoped>
 .item-card {

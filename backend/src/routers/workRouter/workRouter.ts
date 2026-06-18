@@ -16,7 +16,7 @@ workRouter.post('/create', async (c) => {
 
 workRouter.post('/addMenber', async (c) => {
   const token = await c.req.json();
-  console.log("token", token)
+  //console.log("token", token)
   const res = await createWork.addMenber(token)
   return c.json(res);
 });
@@ -24,7 +24,7 @@ workRouter.post('/addMenber', async (c) => {
 
 workRouter.post('/deleteMenber', async (c) => {
   const token = await c.req.json();
-  console.log("token", token)
+  //console.log("token", token)
   const res = await createWork.deleteMenber(token)
   return c.json(res);
 });
@@ -32,9 +32,9 @@ workRouter.post('/deleteMenber', async (c) => {
 
 
 workRouter.post('/getWork', async (c) => {
-  console.log("getWork")
+  //console.log("getWork")
   const data = await c.req.json();
-  console.log("getWork", data)
+  //console.log("getWork", data)
   const res = await createWork.getWork(data.theWorkId)
   return c.json(res);
 });
@@ -65,9 +65,9 @@ workRouter.post('/getWorkPackages', async (c) => {
 
 workRouter.post('/getUserWorkPackages', async (c) => {
   const body = await c.req.json();
-  console.log("body" + body)
+  //console.log("body" + body)
   const res = await createWork.getUserWorkPackages(body.userId)
-  console.log(res)
+  //console.log(res)
   return c.json(res);
 });
 

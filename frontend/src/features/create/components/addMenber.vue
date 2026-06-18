@@ -71,13 +71,13 @@ const Roles = ref([
 ]);
 const addMenber = async () => {
   if (pushBlock.value) return;
-  console.log(userId.value, selectedRole.value);
+  //console.log(userId.value, selectedRole.value);
   const res = await createApi.addMenber({
     userId: userId.value,
     role: selectedRole.value,
     workId: createStore.workId,
   });
-  console.log("feefe", res);
+  //console.log("feefe", res);
   if (res == "success") {
     createStore.addMenber({
       userId: userId.value,
@@ -111,6 +111,7 @@ const deleteMenber = async (userId: string) => {
 .box {
   position: absolute;
   top: calc(100% + 8px);
+  height: 30px;
   display: flex;
   right: 0;
   z-index: 1000;

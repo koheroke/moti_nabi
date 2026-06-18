@@ -6,7 +6,10 @@ import type { iconInfomation, UserLuggage_SaveDBData } from "@/features/create/t
 import { type Category, } from "@/features/create/type/categoryType";
 import type { CaseType } from "@/features/create/type/itemType";
 import type { provisionalRemovePocket, provisionalResizePocket, addPreviewCaseToken, deletePreviewCaseToken, addPreviewItemToken, addItemCountToken, addBookmarkToken, deletePreviewItemToken, addListItemToken } from "@/features/create/type/tokens";
-
+import { useSideBarStore } from './sideBarStore';
+import { useSearchStore } from './searchStore';
+const sideBarStore = useSideBarStore()
+const searchStore = useSearchStore()
 import { type menber } from '../type/infoType';
 export interface caseArray {
   id: string;
@@ -31,7 +34,9 @@ export const useCreateStore = defineStore("create", {
     isStaticLoaded: false,
     menbers: [] as menber[],
     leave: false,
-    role: "viewer" as "owner" | "editor" | "viewer"
+    role: "viewer" as "owner" | "editor" | "viewer",
+    PreviewItemNumberOfChanges: 0,
+    ListItemNumberOfChanges: 0
   }),
   getters: {
     leaveGetter: (state) => state.leave,
@@ -47,6 +52,8 @@ export const useCreateStore = defineStore("create", {
     menbersGetter: (state) => {
       return state.menbers
     },
+    getListItemNumberOfChanges: (state) => state.ListItemNumberOfChanges,
+    getPreviewItemNumberOfChanges: (state) => state.PreviewItemNumberOfChanges,
     getAllCasesArray: (state): caseArray[] =>
       Object.entries(state.staticCases).map(([key, value]) => ({
         id: key,
@@ -60,7 +67,7 @@ export const useCreateStore = defineStore("create", {
       })),
 
     getBlockEdit: (state): boolean => {
-      console.log("state.role", state.role)
+      //console.log("state.role", state.role)
       return state.role === "owner" || state.role === "editor" ? false : true;
     },
 
@@ -107,6 +114,10 @@ export const useCreateStore = defineStore("create", {
       this.menbers = []
       this.role = "viewer"
       this.leave = true
+      this.PreviewItemNumberOfChanges = 0
+      this.ListItemNumberOfChanges = 0
+      sideBarStore.nowSideBarSetter("")
+      searchStore.searchItemSetter({ parentId: undefined, id: "" })
     },
 
 
@@ -116,18 +127,21 @@ export const useCreateStore = defineStore("create", {
       this.setpreviewData(vuepreviewData)
       this.setWorkId(parseData.workId)
       this.setWorkName(parseData.workName)
+      this.PreviewItemNumberOfChanges++
+      this.ListItemNumberOfChanges++
     },
     setleave(state: boolean) {
       this.leave = state
     },
 
     setRole(role: "owner" | "editor" | "viewer") {
-      console.log("state.role", role)
+      //console.log("state.role", role)
       this.role = role
     },
     setIconMap(icons: Record<string, iconInfomation>) {
       this.iconMap = icons
     },
+
     setStaticCases(cases: Record<string, Case>) {
       this.staticCases = cases
     },
@@ -206,7 +220,7 @@ export const useCreateStore = defineStore("create", {
           return { item: innnerItem[cardItem.id], parent: token.parentId }
         }
       }
-      console.log("pocket.items", pocket)
+      this.PreviewItemNumberOfChanges++
       return { item: pocket.items[cardItem.id] }
     },
     addMenber(token: menber) {
@@ -232,6 +246,7 @@ export const useCreateStore = defineStore("create", {
         ...token, ...{ bookmark: false, id: id }
       }
       this.listItem[id] = listItem
+      this.PreviewItemNumberOfChanges++
       return listItem
     },
 
@@ -249,6 +264,7 @@ export const useCreateStore = defineStore("create", {
         delete innnerItem?.innerItems?.[token.id]
         return { id: token.id, parent: token.parentId }
       }
+      this.PreviewItemNumberOfChanges++
     },
 
     addPreviewCase(token: addPreviewCaseToken) {

@@ -8,19 +8,19 @@ export const useRouterBlock = (router: Router, pinia: Pinia) => {
     const userAuthStore = useUserAuthStore(pinia)
     const dialogStore = useDialogStore(pinia)
     const path = to.name ? to.name as string : ""
-    console.log(path)
+    //console.log(path)
     if (!auths.includes(path)) {
       if (
         userAuthStore.isAuthenticatedGetter == false &&
         userAuthStore.isTempAuthenticatedGetter == false
       ) {
-        console.log("login")
+        //console.log("login")
         router.push("/login")
       }
     }
     if (to.name == "create" || to.name == "user") {
-      console.log("userAuthStore.isAuthenticatedGetter", userAuthStore.isAuthenticatedGetter)
-      console.log("userAuthStore.isTempAuthenticatedGetter", userAuthStore.isTempAuthenticatedGetter)
+      //console.log("userAuthStore.isAuthenticatedGetter", userAuthStore.isAuthenticatedGetter)
+      //console.log("userAuthStore.isTempAuthenticatedGetter", userAuthStore.isTempAuthenticatedGetter)
       if (
         userAuthStore.isAuthenticatedGetter &&
         !userAuthStore.isTempAuthenticatedGetter

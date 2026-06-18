@@ -18,7 +18,7 @@ export const setupCollaborationSocket = (io: Server, socket: Socket) => {
 
 
   socket.on("joinRoom", (workId: string, callback) => {
-    console.log("joinRoom", workId)
+    //console.log("joinRoom", workId)
     socket.data.workId = workId
     socket.join(workId);
     const queue = saveQueue.getQueue(workId)

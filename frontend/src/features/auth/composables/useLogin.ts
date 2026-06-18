@@ -19,7 +19,7 @@ export const useLogin = () => {
   const login = async (loginInput: loginInput, token: string) => {
     loading.value = true
     error.value = null
-    console.log(loginInput)
+    //console.log(loginInput)
     try {
       const singup_res = await fetch(
         url,
@@ -35,7 +35,7 @@ export const useLogin = () => {
       if (user == null) return null
 
       const { userId, iconUrl, authData, secoundfaEnabled, name } = user;
-      console.log("secoundfaEnabled", secoundfaEnabled);
+      //console.log("secoundfaEnabled", secoundfaEnabled);
       userAuthstore.login(userId, authData.email, token);
       userStore.setUserInfo({ userId: userId, iconUrl: iconUrl, name: name });
       if (secoundfaEnabled == true) {

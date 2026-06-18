@@ -9,18 +9,18 @@ userRouter.post('/setProfileEdit', async (c) => {
 });
 
 userRouter.post('/getProfile', async (c) => {
-  console.log("/user/getProfile")
+  //console.log("/user/getProfile")
   const body = await c.req.json();
   const res = await user.getProfile(body.userId)
-  console.log("res", res)
+  //console.log("res", res)
   return c.json(res);
 });
 
 
 userRouter.post('/deleteUser', async (c) => {
-  console.log("/user/getProfile")
+  //console.log("/user/getProfile")
   const body = await c.req.json();
   const res = await user.deleteUser(c, body.userId, body.password)
-  console.log("res", res)
+  //console.log("res", res)
   return c.json(res);
 });

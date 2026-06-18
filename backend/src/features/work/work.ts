@@ -10,7 +10,7 @@ const workData = new Map()
 const useWork = () => {
 
   const createNewWork = async (userId: string) => {
-    console.log("userId", userId)
+    //console.log("userId", userId)
     if (!userId) return "error"
 
     const newWork = JSON.stringify({
@@ -170,7 +170,7 @@ const useWork = () => {
 
 
   const editWork = async (workId: string, editDataToken: server_alterationToken[]) => {
-    console.log("editDataTokens", editDataToken);
+    //console.log("editDataTokens", editDataToken);
     let this_work = workData.get(workId);
     if (!this_work) {
       const work = await getWork(workId);
@@ -194,9 +194,9 @@ const useWork = () => {
 
       switch (token.type) {
         case "set":
-          console.log("token.value", token.value)
-          console.log(lastKey)
-          console.log(parent)
+          //console.log("token.value", token.value)
+          //console.log(lastKey)
+          //console.log(parent)
           if (lastKey == null) return;
           parent[lastKey] = token.value;
           break;
@@ -241,9 +241,9 @@ const useWork = () => {
 
         case "objectRemove":
           if (lastKey == null) return;
-          console.log("lastKey", lastKey)
-          console.log("token.value.id", token.value.id)
-          console.log("parent[lastKey]", parent)
+          //console.log("lastKey", lastKey)
+          //console.log("token.value.id", token.value.id)
+          //console.log("parent[lastKey]", parent)
 
           if (
             typeof parent[lastKey] !== "object" ||
@@ -263,7 +263,7 @@ const useWork = () => {
     });
 
     const jsonData = JSON.stringify(this_work.data);
-    console.log("jsonData", jsonData)
+    //console.log("jsonData", jsonData)
     const work = await prisma.work.update({
       where: {
         id: workId,
@@ -316,7 +316,7 @@ const useWork = () => {
         createdAt: true,
       },
     });
-    console.log("packages", packages)
+    //console.log("packages", packages)
     return packages
   }
 

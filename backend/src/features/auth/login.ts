@@ -22,7 +22,7 @@ export type LoginInput = {
 
 export const useLogin = () => {
   const login = async (user: LoginInput, c: Context) => {
-    console.log(user)
+    //console.log(user)
     const userResponse = await prisma.user.findFirst({
       where: {
         email: user.email
@@ -93,7 +93,7 @@ export const useGoogleLogin = () => {
 
   const callback = async (c: Context) => {
     const code = c.req.query("code");
-    console.log("code", code)
+    //console.log("code", code)
 
     if (!code) {
       return { error: "codeNotFount" }
@@ -172,9 +172,9 @@ export const useGoogleLogin = () => {
       },
       env.JWT_SECRET
     )
-    console.log("token", account.userId, email)
+    //console.log("token", account.userId, email)
     this_session.setLoginSession(c, token)
-    console.log("token", token)
+    //console.log("token", token)
     return { error: "nonerror" }
   };
   return {

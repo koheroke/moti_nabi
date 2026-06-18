@@ -55,7 +55,7 @@ const useApplyCreateAction = () => {
   }
 
   const hydrateCreateState = (data: UserLuggage_SaveDBData) => {
-    console.log("hydrateCreateState_data", data)
+    //console.log("hydrateCreateState_data", data)
 
     const staticItemData = createStore.staticItemData
     const caseData = createStore.staticCases
@@ -173,7 +173,7 @@ const useApplyCreateAction = () => {
       return basePockets
     }
 
-    console.log("previewDatas.mainLuggage", previewDatas.mainLuggage)
+    //console.log("previewDatas.mainLuggage", previewDatas.mainLuggage)
     const vuepreviewData: Record<string, Case> = Object.fromEntries(
       Object.entries(previewDatas.mainLuggage).map(([luggageId, luggage]) => {
         const staticCase = caseData[luggage.caseType];
@@ -275,7 +275,7 @@ const useApplyCreateAction = () => {
 
       }
       case 'previewCases_addCase': { //完了
-        console.log("token.token", token.token)
+        //console.log("token.token", token.token)
         const res = createStore.addPreviewCase(token.token as addPreviewCaseToken) as { caseId: string, caseType: string }
         if (!res) return
         const data = { id: res.caseId, caseType: res.caseType }
@@ -290,7 +290,7 @@ const useApplyCreateAction = () => {
         const this_token = token.token as provisionalRemovePocket
         dbpushToken.path = ["previewDatas", "mainLuggage", this_token.caseId, "poketSvgEdit", this_token.pocketId]
         dbpushToken.value = { ...this_token.removeData, id: this_token.pocketId }
-        console.log("dbpushToken.value", dbpushToken.value)
+        //console.log("dbpushToken.value", dbpushToken.value)
         dbpushToken.type = "set"
         break
       }
@@ -300,7 +300,7 @@ const useApplyCreateAction = () => {
 
         dbpushToken.path = ["previewDatas", "mainLuggage", this_token.caseId, "poketSvgEdit", this_token.pocketId]
         dbpushToken.value = { ...this_token.resizeData, id: this_token.pocketId }
-        console.log(this_token.resizeData)
+        //console.log(this_token.resizeData)
         dbpushToken.type = "set"
         break
       }

@@ -31,7 +31,7 @@ export const useSignup = () => {
         name: signupInput.name,
         iconUrl: ""
       }
-      console.log(user,)
+      //console.log(user,)
       userStore.setUserInfo(user)
       userAuthstore.login(userId, signupInput.email, token)
       return res

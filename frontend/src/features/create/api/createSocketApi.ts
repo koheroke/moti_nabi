@@ -20,7 +20,7 @@ export type server_alterationToken = {
 export const useSocketApi = () => {
   socket.off("work:kicked");
   const sendAlteration = (token: { alterationToken: alterationToken, sendDbToken: server_alterationToken }) => {
-    console.log("sendAlteration", token)
+    //console.log("sendAlteration", token)
     socket.emit("work:alteration", token);
   };
   const leaveRoom = () => {
@@ -55,10 +55,10 @@ export const getAlteration = () => {
     applyCreateAction.alterationData(token, true);
   });
   socket.on("work:userJoin", () => {
-    console.log("join");
+    //console.log("join");
   });
   socket.on("work:userLeave", () => {
-    console.log("leave");
+    //console.log("leave");
   })
   socket.on("work:kicked", (kickedUserId: string) => {
     if (kickedUserId == userAuthstore.userIdGetter) {

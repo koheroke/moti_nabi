@@ -52,7 +52,7 @@ authRouter.post('/session/getToken', async (c) => {
 
 authRouter.post('/session/verificationToken', async (c) => {
   const body = await c.req.json();
-  console.log("verificationToken", body)
+  //console.log("verificationToken", body)
   const userData = await this_session.verificationSessionToken(c, body.token);
   return c.json(userData);
 });

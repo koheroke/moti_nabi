@@ -38,7 +38,7 @@ const startReMove = (event: PointerEvent) => {
 
 const stopResize = () => {
   if (!stop) {
-    console.log("stopResize");
+    //console.log("stopResize");
     createWork.confirmedRemovePocket(props.caseId, props.pocketId);
     isRemoveing = false;
     stop = true;

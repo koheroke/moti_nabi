@@ -51,7 +51,7 @@ const icon = iconMap[props.item.iconId] ?? "📦";
 const categoryColor = categoryColorMap[props.item.category[0]] ?? "#64748b";
 
 function onDragStart(event: DragEvent) {
-  console.log(props.item);
+  //console.log(props.item);
   event.dataTransfer?.setData("itemId", props.item.id);
 }
 const onBookMark = () => {

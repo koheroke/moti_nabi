@@ -30,7 +30,7 @@ const onLogin = async () => {
     { email: email.value, password: password.value },
     token,
   );
-  console.log("res", res);
+  //console.log("res", res);
   if (res != null) {
     router.push("/home");
   }

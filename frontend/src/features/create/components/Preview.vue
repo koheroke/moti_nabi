@@ -13,11 +13,7 @@
       </div>
     </div>
     <section class="pocketModal">
-      <PocketModal
-        v-if="selectedPocket"
-        :pocket="selectedPocket"
-        @close="selectedPocket = null"
-      />
+      <PocketModal />
     </section>
   </div>
 </template>
@@ -25,30 +21,12 @@
 <script setup lang="ts">
 import PocketModal from "./PocketModal.vue";
 import dropCaseArea from "./sideBar/caseBar/components/dropCaseArea.vue";
-import { type selectedPocketType } from "@/features/create/components/PocketModal.vue";
+import Case from "./svgUi/case.vue";
+
 import { watch, ref } from "vue";
 import { storeToRefs } from "pinia";
-import Case from "./svgUi/case.vue";
 import { useCreateStore } from "../store/createStore";
-
-import { usePocketStore } from "../store/pocketStore.ts";
-const pocketStore = usePocketStore();
-const selectedPocket = ref<selectedPocketType | null>(null);
-
-const { getSelectedPocketId } = storeToRefs(pocketStore);
 const createStore = useCreateStore();
-
-watch(getSelectedPocketId, (ids) => {
-  if (ids.id.length != 0 && ids.caseId.length != 0) {
-    const pocket = createStore.previewItemGetter[ids.caseId].pockets[ids.id];
-    selectedPocket.value = {
-      id: pocket.id,
-      name: pocket.name,
-      items: pocket.items,
-      caseId: ids.caseId,
-    };
-  }
-});
 
 const { getPreviewCasesArray: cases } = storeToRefs(createStore);
 </script>

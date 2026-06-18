@@ -17,7 +17,7 @@ import { onMounted } from "vue";
 const dialogStore = useDialogStore();
 onMounted(() => {
   dialogStore.showDialog("タイトル", "テキスト", () => {
-    console.log("OK");
+    //console.log("OK");
   });
 });
 </script>

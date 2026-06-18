@@ -1,27 +1,14 @@
 <template>
   <div class="filteredItems">
-    <section class="category-open">
-      <section class="category-info">
-        {{ "カテゴリーで絞り込む" }}
-      </section>
-      <BaseButton
-        @click="
-          props.categorys?.[props.index]?.id &&
-          onCategory(props.categorys[props.index].id)
-        "
-      >
-        <section class="category-open-button">
-          <div>{{ currentCategory?.name }}</div>
-          <div>{{ currentCategory?.icon }}</div>
-        </section>
-      </BaseButton>
-    </section>
+    <h2>カテゴリーで絞り込む</h2>
+
     <section class="category-list">
       <div v-for="category in props.categorys" :key="category.id">
         <BaseButton
           @click="onCategory(category.id)"
           variant="ghost"
           class="category-item"
+          :class="{ selectItem: category.id === currentCategory?.id }"
         >
           <section class="category-item">
             <div>{{ category.name }}</div>
@@ -65,20 +52,13 @@ import BaseButton from "@/components/ui/form/BaseButton/BaseButton.vue";
   width: 100%;
   transition: transform 0.1s;
 }
-.category-open-button {
-  display: flex;
-  text-wrap: unset;
-  align-items: center;
-  width: 100%;
-}
-.category-open {
-  display: flex;
-  align-items: center;
-  text-align: center;
-  gap: 5px;
-}
+
 .category-item:hover {
   transform: translateX(3%);
+  color: white;
+  background: #5b96f6;
+}
+.selectItem {
   color: white;
   background: #3b82f6;
 }
@@ -94,14 +74,11 @@ import BaseButton from "@/components/ui/form/BaseButton/BaseButton.vue";
   display: flex;
   gap: 10px;
 }
-.category-info {
-  font-size: 10px;
-  border: 1px solid rgba(0, 0, 0, 0.347);
-  border-radius: 10px;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  text-align: center;
-  padding: 5px;
+
+h2 {
+  margin-top: 2px;
+  font-size: 16px;
+  width: 100%;
+  font-weight: 500;
 }
 </style>

@@ -12,7 +12,7 @@ const props = defineProps<{
 
 import { onMounted } from "vue";
 onMounted(() => {
-  console.log("grCode:" + props.otpauthUrl);
+  //console.log("grCode:" + props.otpauthUrl);
 });
 </script>
 <style lang="css" scoped>

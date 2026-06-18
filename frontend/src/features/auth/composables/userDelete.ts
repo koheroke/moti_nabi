@@ -18,7 +18,7 @@ const userDelete = async (password: string) => {
       })
     })
   const res = await data.json()
-  console.log(res)
+  //console.log(res)
   return res
 }
 

@@ -9,7 +9,7 @@ export const setupPersistenceSocket = (io: Server, socket: Socket) => {
   socket.on("work:save", async (data: string, callback) => {
     const queue = JSON.parse(data)
     try {
-      console.log("savqueuee", queue)
+      //console.log("savqueuee", queue)
       await createWork.editWork(queue.workId, queue.data)
       callback({
         success: true

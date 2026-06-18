@@ -1,19 +1,6 @@
 <template>
   <div class="item-bar">
     <section class="list left">
-      <section class="top">
-        <div
-          style="
-            color: white;
-            font-size: 20px;
-            padding-bottom: 12px;
-            font-weight: 500;
-          "
-        >
-          {{ "持ち物を検索" }}
-        </div>
-        <itemSearch class="search"></itemSearch>
-      </section>
       <filteredItems
         v-model:index="index"
         :categorys="categories"
@@ -32,7 +19,7 @@
 </template>
 <script setup lang="ts">
 import ItemList from "./components/ItemList.vue";
-import itemSearch from "./components/itemSearch.vue";
+// import itemSearch from "./components/itemSearch.vue";
 import filteredItems from "./components/filteredItems.vue";
 import { ref, watch, onMounted } from "vue";
 // import { useItemListWork } from "../../composables/itemList";

@@ -4,7 +4,7 @@
       <BaseInput
         v-model="modelValue"
         class="gallery-search"
-        placeholder="プレビュー内を検索"
+        :placeholder="placeholder"
         style="flex: 1"
       />
     </div>
@@ -26,13 +26,50 @@ import { UseCreateWork } from "../composables/useCreateWork";
 import { useCreateStore } from "../store/createStore";
 import { BaseInput } from "@/components/ui/form/BaseInput";
 import { usePocketStore } from "../store/pocketStore.ts";
+import { useSearchStore } from "../store/searchStore.ts";
+import { useSideBarStore } from "../store/sideBarStore";
+const placeholder = ref("プレビュー内を検索");
+const searchStore = useSearchStore();
 const pocketStore = usePocketStore();
 const createStore = useCreateStore();
-const { previewItemGetter } = storeToRefs(createStore);
+const { PreviewItemNumberOfChanges, ListItemNumberOfChanges, listItemGetter } =
+  storeToRefs(createStore);
 const createWork = UseCreateWork();
 const modelValue = ref("");
 const candidate = ref<{ name: string; value: any; id: string }[]>([]);
-const onUpdateSearch = (itemPath: {
+const sideBarStore = useSideBarStore();
+const { nowSideBarGetter } = storeToRefs(sideBarStore);
+
+watch(nowSideBarGetter, (newSideBarId) => {
+  switch (newSideBarId) {
+    case "template":
+      placeholder.value = "テンプレートを検索";
+      break;
+    case "item":
+      placeholder.value = "持ち物を検索";
+      candidate.value = listCandidate.value;
+      onUpdateSearch.value = listSearch;
+      break;
+    case "case":
+      placeholder.value = "ケースを選択";
+      break;
+    default:
+      placeholder.value = "プレビュー内を検索";
+      candidate.value = previewCandidate.value;
+      onUpdateSearch.value = previewSearch;
+      break;
+  }
+});
+
+const onUpdateSearch = ref((value: any) => {});
+
+watch(modelValue, (newValue) => {
+  if (nowSideBarGetter.value == "item") {
+    createStore.setSearchText(newValue);
+  }
+});
+
+const previewSearch = (itemPath: {
   pocketId: string;
   caseId: string;
   itemId: string;
@@ -42,16 +79,42 @@ const onUpdateSearch = (itemPath: {
     id: itemPath.pocketId,
     caseId: itemPath.caseId,
   });
-};
-watch(previewItemGetter, () => {
-  candidate.value = Object.values(createWork.buildItemPathMap()).map((item) => {
-    return {
-      id: item.id,
-      value: item.pathData,
-      name: item.name,
-    };
+  searchStore.searchItemSetter({
+    id: itemPath.itemId,
+    parentId: itemPath.parentId,
   });
-  console.log(candidate.value);
+};
+
+const listSearch = (itemName: string) => {
+  modelValue.value = itemName;
+  createStore.setSearchText(itemName);
+};
+
+const previewCandidate = ref<{ name: string; value: any; id: string }[]>([]);
+const listCandidate = ref<{ name: string; value: any; id: string }[]>([]);
+watch(PreviewItemNumberOfChanges, () => {
+  console.log("item");
+  previewCandidate.value = Object.values(createWork.buildItemPathMap()).map(
+    (item) => {
+      return {
+        id: item.id,
+        value: item.pathData,
+        name: item.name,
+      };
+    },
+  );
+});
+
+watch(ListItemNumberOfChanges, () => {
+  if (!listItemGetter.value) return;
+  Object.values(listItemGetter.value).forEach((item) => {
+    listCandidate.value.push({
+      id: item.id,
+      value: item.name,
+      name: item.name,
+    });
+  });
+  //console.log(candidate.value);
 });
 </script>
 <style lang="css" scoped>

@@ -5,19 +5,16 @@
         <section class="flexCanter">
           <div
             class="iconArea flexCanter"
-            @click="
-              onSelect(item.id);
-              selectedId = item.id;
-            "
+            @click="onSelect(item.id)"
             style="flex-direction: column"
           >
             <div
               class="flexCanter icon"
-              :class="{ shadow: selectedId == item.id }"
+              :class="{ shadow: nowSideBarGetter == item.id }"
             >
               <component
                 :is="item.icon"
-                v-if="selectedId == item.id"
+                v-if="nowSideBarGetter == item.id"
                 :fill="item.onColor"
                 :stroke-width="1.5"
                 color="white"
@@ -25,7 +22,7 @@
               />
               <component
                 :is="item.icon"
-                v-if="selectedId != item.id"
+                v-if="nowSideBarGetter != item.id"
                 :stroke-width="1.5"
                 :size="26"
               />
@@ -38,21 +35,28 @@
       </div>
     </div>
     <div class="selectContent">
-      <itemBar v-if="selectedId == 'item'"></itemBar>
-      <caseSelectBar v-if="selectedId == 'case'"></caseSelectBar>
+      <itemBar v-if="nowSideBarGetter == 'item'"></itemBar>
+      <caseSelectBar v-if="nowSideBarGetter == 'case'"></caseSelectBar>
     </div>
   </div>
-  <!-- <itemBar /> -->
 </template>
 
 <script setup lang="ts">
 import { LayoutTemplate, Luggage, Boxes } from "lucide-vue-next";
 import itemBar from "@/features/create/components/sideBar/itemBar/itemBar.vue";
 import caseSelectBar from "@/features/create/components/sideBar/caseBar/caseSelectBar.vue";
-
+import { storeToRefs } from "pinia";
+import { useSideBarStore } from "../../store/sideBarStore";
 import { ref, type Component } from "vue";
-const selectedId = ref<string>("template");
-const onSelect = (id: string) => {};
+const sideBarStore = useSideBarStore();
+const { nowSideBarGetter } = storeToRefs(sideBarStore);
+const onSelect = (id: string) => {
+  if (nowSideBarGetter.value == id) {
+    sideBarStore.nowSideBarSetter("");
+    return;
+  }
+  sideBarStore.nowSideBarSetter(id);
+};
 
 interface SideBar {
   id: string;

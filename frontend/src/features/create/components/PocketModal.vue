@@ -1,7 +1,6 @@
 <template>
   <div
-    class="overlay"
-    :class="['overlay', { close: isClose }]"
+    :class="['overlay', { close: isClose }, { open: !isClose }]"
     @drop="onDrop"
     @drop.stop
     @dragover.prevent="handleDrop"
@@ -9,24 +8,29 @@
     <div class="modal">
       <header class="header">
         <div class="name">
-          {{ "#" + pocket.name }}
+          {{ "#" + selectedPocket.name }}
         </div>
         <div @click="close" class="close-button">
           <X :size="20" color="black" stroke-width="2.5"></X>
         </div>
       </header>
-      <div class="drop-area">
+      <div class="drop-area" ref="previewItems">
         <p
-          v-if="Object.keys(pocket.items).length === 0"
+          v-if="Object.keys(selectedPocket.items).length === 0"
           style="font-size: 12px; text-align: center"
         >
           ここに持ち物をドラッグ
         </p>
-        <div v-for="item in pocket.items" :key="item.id" class="item-card">
+        <div
+          v-for="item in selectedPocket.items"
+          :key="item.id"
+          class="item-card"
+        >
           <PreviewItem
-            :caseId="pocket.caseId"
+            :caseId="selectedPocket.caseId"
             :item="item"
-            :pocketId="pocket.id"
+            :pocketId="selectedPocket.id"
+            :previewItemsDom="previewItems"
           />
         </div>
       </div>
@@ -36,13 +40,50 @@
 
 <script setup lang="ts">
 import { X } from "lucide-vue-next";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { type addPreviewItemToken } from "@/features/create/type/tokens.ts";
 import { UseCreateWork } from "@/features/create/composables/useCreateWork";
+import { useSearchStore } from "../store/searchStore.ts";
 import PreviewItem from "./PreviewItem.vue";
 import type { previewItem } from "../type/casetype.ts";
-const isClose = ref(false);
+import { usePocketStore } from "../store/pocketStore.ts";
+const searchStore = useSearchStore();
+const pocketStore = usePocketStore();
+const isClose = ref(true);
+export interface selectedPocketType {
+  id: string;
+  name: string;
+  items: Record<string, previewItem>;
+  caseId: string;
+}
+
+import { storeToRefs } from "pinia";
+import { useCreateStore } from "../store/createStore";
+
+const selectedPocket = ref<selectedPocketType>({
+  id: "",
+  name: "",
+  items: {},
+  caseId: "",
+});
+
+const { getSelectedPocketId } = storeToRefs(pocketStore);
+watch(getSelectedPocketId, (ids) => {
+  isClose.value = false;
+  if (ids.id.length != 0 && ids.caseId.length != 0) {
+    const pocket = createStore.previewItemGetter[ids.caseId].pockets[ids.id];
+    selectedPocket.value = {
+      id: pocket.id,
+      name: pocket.name,
+      items: pocket.items,
+      caseId: ids.caseId,
+    };
+  }
+});
+const createStore = useCreateStore();
+
 const createWork = UseCreateWork();
+const previewItems = ref<HTMLElement | null>(null);
 
 const emit = defineEmits<{
   (e: "close"): void;
@@ -57,11 +98,12 @@ const onDrop = (event: DragEvent) => {
   const dragged_itemId = event.dataTransfer?.getData("itemId");
   const dragged_id = event.dataTransfer?.getData("positionChangeData");
   if (!dragged_itemId && !dragged_id) return;
+  if (!selectedPocket.value) return;
   if (dragged_itemId) {
     const addPreviewItemToken: addPreviewItemToken = {
       itemId: dragged_itemId,
-      pocketId: props.pocket.id,
-      caseId: props.pocket.caseId,
+      pocketId: selectedPocket.value.id,
+      caseId: selectedPocket.value.caseId,
       id: null,
     };
     createWork.addItemToPreview(addPreviewItemToken);
@@ -79,17 +121,6 @@ const onDrop = (event: DragEvent) => {
   // }
 };
 const handleDrop = () => {};
-
-export interface selectedPocketType {
-  id: string;
-  name: string;
-  items: Record<string, previewItem>;
-  caseId: string;
-}
-
-const props = defineProps<{
-  pocket: selectedPocketType;
-}>();
 </script>
 <style lang="css" scoped>
 .drop-area {
@@ -115,7 +146,6 @@ const props = defineProps<{
   background-color: rgb(255, 255, 255);
   overflow-y: auto;
   overflow-x: hidden;
-  animation: modalOpen 0.25s ease-out forwards;
 }
 
 @keyframes modalOpen {
@@ -140,6 +170,10 @@ const props = defineProps<{
     opacity: 0;
     max-height: 0px;
   }
+}
+
+.open {
+  animation: modalOpen 0.25s ease-out forwards;
 }
 
 .close {

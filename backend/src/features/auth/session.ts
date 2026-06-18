@@ -8,7 +8,7 @@ import { prisma } from "@/lib/prisma/prisma"
 export const useSession = () => {
   const getLoginSession = async (c: Context) => {
     const cookie = getCookie(c, "auth_token")
-    console.log("cookie", cookie)
+    //console.log("cookie", cookie)
     if (!cookie) {
       return undefined
     }

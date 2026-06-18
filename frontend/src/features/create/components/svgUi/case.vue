@@ -36,6 +36,11 @@
           :height="pocket.size.height"
           rx="14"
           class="pocket"
+          :class="{
+            lightning:
+              id === getSelectedPocketId.caseId &&
+              pocket.id === getSelectedPocketId.id,
+          }"
         />
 
         <text
@@ -79,8 +84,11 @@ import type { Pocket, previewItem, Case } from "../../type/casetype";
 import SvgResizeHandle from "./svgResizeHandle.vue";
 import SvgRemoveHandle from "./SvgRemoveHandle.vue";
 import { usePocketStore } from "../../store/pocketStore.ts";
+import { storeToRefs } from "pinia";
 const pocketStore = usePocketStore();
 const props = defineProps<Case>();
+const { getSelectedPocketId } = storeToRefs(pocketStore);
+
 const pockets = computed(() => {
   return Object.values(props.pockets).map((pocket) => {
     if (pocket.items) return pocket;
@@ -170,5 +178,11 @@ function openPocket(pocket: Pocket) {
 
 .svg-removehandle {
   display: none;
+}
+
+.lightning {
+  display: block;
+  fill: #e0f2fe;
+  stroke: #0284c7;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="topBar">
     <div class="left">
-      <h2 style="margin-right: 20px">タイトルを入力</h2>
+      <h2 style="margin-right: 20px">{{ createStore.workNameGetter }}</h2>
       <div style="gap: 10px; display: flex; margin-left: auto">
         <CornerUpLeft @click="back" />
         <CornerUpRight @click="forward" />

@@ -62,7 +62,7 @@ export const UseCreateWork = () => {
     vueItemList = response.vueItemList
     addItemCounter = response.addItemCounter
     try {
-      console.log("newWork", newWork)
+      //console.log("newWork", newWork)
       if (newWork == null) return "damagedData"
       const createAction = useApplyCreateAction()
       await createAction.initCreateStaticData()
@@ -436,13 +436,13 @@ export const UseCreateWork = () => {
         name: string;
       }
     > = {};
-    console.log("cases", cases)
+    //console.log("cases", cases)
     Object.entries(cases).forEach(([caseId, caseData]) => {
-      console.log("caseId", caseData)
+      //console.log("caseId", caseData)
       Object.entries(caseData.pockets).forEach(([pocketId, pocketData]) => {
-        console.log("pocketId", pocketData)
+        //console.log("pocketId", pocketData)
         Object.entries(pocketData.items).forEach(([parentItemId, parentItem]) => {
-          console.log("parentItemId", parentItem)
+          //console.log("parentItemId", parentItem)
           itemPathMap[parentItemId] = {
             id: parentItemId,
             pathData: {
@@ -452,7 +452,7 @@ export const UseCreateWork = () => {
             },
             name: parentItem.name,
           };
-          console.log("itemPathMap", itemPathMap)
+          // //console.log("itemPathMap", itemPathMap)
 
           if (parentItem.innerItems) {
             Object.entries(parentItem.innerItems).forEach(([itemId, item]) => {
@@ -471,7 +471,7 @@ export const UseCreateWork = () => {
         });
       });
     });
-    console.log("itemPathMap__", itemPathMap)
+    //console.log("itemPathMap__", itemPathMap)
     return itemPathMap;
   };
 
