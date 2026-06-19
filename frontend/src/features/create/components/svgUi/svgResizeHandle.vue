@@ -92,7 +92,8 @@ const props = defineProps<{
   caseId: string;
   pocketId: string;
 }>();
-
+const minWidth = 10;
+const minHeight = 10;
 let isResizing = false;
 let resizeDirection = { x: 0, y: 0 };
 let lastX = 0;
@@ -121,23 +122,31 @@ const handlePointerMove = (event: PointerEvent) => {
 
   const diffX = event.clientX - lastX;
   const diffY = event.clientY - lastY;
-
   lastX = event.clientX;
   lastY = event.clientY;
-
-  const moveX = resizeDirection.x === -1 ? diffX : 0;
-  const moveY = resizeDirection.y === -1 ? diffY : 0;
-
+  let moveX = resizeDirection.x === -1 ? diffX : 0;
+  let moveY = resizeDirection.y === -1 ? diffY : 0;
+  let width = props.pocket.size.width + diffX * resizeDirection.x;
+  let height = props.pocket.size.height + diffY * resizeDirection.y;
+  if (width < minWidth) {
+    width = minWidth;
+    moveX = 0;
+  }
+  if (height < minHeight) {
+    height = minHeight;
+    moveY = 0;
+  }
   createWork.provisionalResizePocket(
     {
       x: props.pocket.pos.x + moveX,
       y: props.pocket.pos.y + moveY,
-      width: props.pocket.size.width + diffX * resizeDirection.x,
-      height: props.pocket.size.height + diffY * resizeDirection.y,
+      width: width,
+      height: height,
     },
     props.pocketId,
     props.caseId,
   );
+  createWork.changePriorityPocket(props.caseId, props.pocketId, 1);
 };
 
 onMounted(() => {

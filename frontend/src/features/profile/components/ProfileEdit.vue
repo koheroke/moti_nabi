@@ -40,7 +40,7 @@
           </BaseButton>
         </div>
         <div class="profile-description">
-          {{ "自己紹介 :" }}
+          {{ "自己紹介" }}
           <div class="bio">
             <BaseTextArea
               v-model="editProfile.bio"

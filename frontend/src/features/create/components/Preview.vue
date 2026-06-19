@@ -1,16 +1,10 @@
 <template>
   <div class="preview-area">
-    <div class="preview">
+    <div class="preview" ref="previewArea">
       <dropCaseArea class="drop-area"></dropCaseArea>
-      <div v-for="caseItem in cases" :key="caseItem.id">
-        <Case
-          :pockets="caseItem.data.pockets"
-          :case="caseItem.data.case"
-          :name="caseItem.data.name"
-          :handle="caseItem.data.handle"
-          :id="caseItem.id"
-        />
-      </div>
+      <svg :viewBox="viewBox" class="viewBox">
+        <Case />
+      </svg>
     </div>
     <section class="pocketModal">
       <PocketModal />
@@ -22,13 +16,18 @@
 import PocketModal from "./PocketModal.vue";
 import dropCaseArea from "./sideBar/caseBar/components/dropCaseArea.vue";
 import Case from "./svgUi/case.vue";
+import { ref, onMounted } from "vue";
+const contentWidth = 3500;
+const contentHeight = 1800;
+const viewBox = ref<string>();
 
-import { watch, ref } from "vue";
-import { storeToRefs } from "pinia";
-import { useCreateStore } from "../store/createStore";
-const createStore = useCreateStore();
+const previewArea = ref<HTMLElement | null>(null);
+onMounted(() => {
+  const this_viewBox = [0, 0, contentWidth, contentHeight];
 
-const { getPreviewCasesArray: cases } = storeToRefs(createStore);
+  console.log(this_viewBox);
+  viewBox.value = this_viewBox.join(" ");
+});
 </script>
 <style lang="css" scoped>
 .pocketModal {
@@ -38,6 +37,14 @@ const { getPreviewCasesArray: cases } = storeToRefs(createStore);
   bottom: 0%;
 }
 
+.viewBox {
+  width: 2000px;
+  height: 1200px;
+  display: block;
+}
+.drop-area {
+  z-index: 20;
+}
 .preview {
   position: relative;
   width: 100%;

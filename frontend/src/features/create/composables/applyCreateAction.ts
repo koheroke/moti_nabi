@@ -1,5 +1,5 @@
 
-import type { provisionalResizePocket, confirmedRemovePocketToken, provisionalRemovePocket, confirmedResizePocketToken, deletePreviewCaseToken, addPreviewCaseToken, addPreviewItemToken, addItemCountToken, addBookmarkToken, addListItemToken, deletePreviewItemToken } from "@/features/create/type/tokens";
+import type { changePriorityPocket, provisionalResizePocket, confirmedRemovePocketToken, provisionalRemovePocket, confirmedResizePocketToken, deletePreviewCaseToken, addPreviewCaseToken, addPreviewItemToken, addItemCountToken, addBookmarkToken, addListItemToken, deletePreviewItemToken } from "@/features/create/type/tokens";
 import { useCreateStore } from "../store/createStore";
 import type { server_alterationTokenType } from "../api/createSocketApi"
 import type { Case } from "@/features/create/type/casetype";
@@ -18,9 +18,10 @@ export type alterationType = "previewItems_additem"
   | "previewCases_deleteCase"
   | "confirmed_resizePocket"
   | "confirmed_removePocket"
+  | "changePriorityPocket"
 
 
-type allToken = confirmedRemovePocketToken | provisionalRemovePocket | provisionalResizePocket | confirmedResizePocketToken | deletePreviewCaseToken | addPreviewCaseToken | addPreviewItemToken | addItemCountToken | addBookmarkToken | addListItemToken | deletePreviewItemToken
+type allToken = changePriorityPocket | confirmedRemovePocketToken | provisionalRemovePocket | provisionalResizePocket | confirmedResizePocketToken | deletePreviewCaseToken | addPreviewCaseToken | addPreviewItemToken | addItemCountToken | addBookmarkToken | addListItemToken | deletePreviewItemToken
 
 export interface alterationToken {
   token: allToken
@@ -127,6 +128,7 @@ const useApplyCreateAction = () => {
             },
             id: pocket.id,
             name: pocket.name,
+            priority: edit?.priority ?? 0
           }
           let items;
           if (luggage.pockets != undefined) {
@@ -294,6 +296,16 @@ const useApplyCreateAction = () => {
         dbpushToken.type = "set"
         break
       }
+
+      case 'changePriorityPocket': {
+        createStore.changePriorityPocket(token.token as changePriorityPocket)
+        const this_token = token.token as changePriorityPocket
+        dbpushToken.path = ["previewDatas", "mainLuggage", this_token.caseId, "poketSvgEdit", this_token.pocketId]
+        dbpushToken.value = { priority: this_token.priority }
+        dbpushToken.type = "set"
+        break
+      }
+
       case 'confirmed_resizePocket': {
         const this_token = token.token as provisionalResizePocket
         createStore.reSizePocket(token.token as provisionalResizePocket)

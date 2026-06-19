@@ -39,7 +39,9 @@ const sendOtp = async (otp: string) => {
 };
 
 onMounted(async () => {
-  if (!userAuthstore.isAuthenticated || userAuthstore.isTempAuthenticated) {
+  if (!userAuthstore.isAuthenticated) {
+    router.push("/login");
+    alertStore.showAlert("ログイン情報の取得に失敗しました", true);
     return;
   }
   use2faResponse.value = await this_2fa.setup();

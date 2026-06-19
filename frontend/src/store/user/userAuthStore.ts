@@ -58,6 +58,7 @@ export const useUserAuthStore = defineStore('userAuth', {
     },
 
     set2fa() {
+      console.log("set2fa")
       this.isTempAuthenticated = true
       this.isAuthenticated = false
     },

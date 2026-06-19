@@ -30,6 +30,7 @@ type Pocket = {
     width: number;
     height: number;
   }
+  priority: number
   items: Record<string, previewItem>;
 }
 type CaseEdit = {
@@ -38,6 +39,7 @@ type CaseEdit = {
   width?: number;
   height?: number;
   id: string
+  priority: number
 }
 
 type Category = {

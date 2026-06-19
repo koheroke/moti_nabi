@@ -1,0 +1,2 @@
+import{s as e}from"./index-DZqxE2b3.js";var t=e(`user`,{state:()=>({userInfos:{}}),getters:{getUserInfo:e=>t=>e.userInfos[t],getIconUrl:e=>t=>e.userInfos[t]?.iconUrl??``,getName:e=>t=>e.userInfos[t]?.name??``},actions:{setUserInfo(e){this.userInfos[e.userId]=e},setIconUrl(e,t){this.userInfos[e]&&(this.userInfos[e].iconUrl=t)},setName(e,t){this.userInfos[e]&&(this.userInfos[e].name=t)},removeUser(e){delete this.userInfos[e]},resetUsers(){this.userInfos={}}}});export{t};
+//# sourceMappingURL=userIconStore-BVE9GkGr.js.map

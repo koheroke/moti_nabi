@@ -5,16 +5,30 @@ import type { CategoryId } from "@/features/create/type/categoryType";
 import type { iconInfomation, UserLuggage_SaveDBData } from "@/features/create/type/apiType";
 import { type Category, } from "@/features/create/type/categoryType";
 import type { CaseType } from "@/features/create/type/itemType";
-import type { provisionalRemovePocket, provisionalResizePocket, addPreviewCaseToken, deletePreviewCaseToken, addPreviewItemToken, addItemCountToken, addBookmarkToken, deletePreviewItemToken, addListItemToken } from "@/features/create/type/tokens";
+import type { changePriorityPocket, provisionalRemovePocket, provisionalResizePocket, addPreviewCaseToken, deletePreviewCaseToken, addPreviewItemToken, addItemCountToken, addBookmarkToken, deletePreviewItemToken, addListItemToken } from "@/features/create/type/tokens";
 import { useSideBarStore } from './sideBarStore';
 import { useSearchStore } from './searchStore';
 const sideBarStore = useSideBarStore()
 const searchStore = useSearchStore()
 import { type menber } from '../type/infoType';
+import { id } from 'vuetify/locale';
+import type { Pocket, part } from '../type/casetype';
 export interface caseArray {
   id: string;
   data: Case
 }
+export interface previewSvgCase {
+  id: string;
+  data: {
+    pockets: Pocket[];
+    case: part;
+    handle: part;
+    name: string;
+    id: string
+  }
+}
+
+
 
 export const useCreateStore = defineStore("create", {
   state: () => ({
@@ -60,11 +74,19 @@ export const useCreateStore = defineStore("create", {
         data: value,
       })),
 
-    getPreviewCasesArray: (state): caseArray[] =>
-      Object.entries(state.previewCase).map(([key, value]) => ({
+    getPreviewCasesArray: (state): previewSvgCase[] => {
+      return Object.entries(state.previewCase).map(([key, value]) => ({
         id: key,
-        data: value,
-      })),
+        data: {
+          id: value.id,
+          name: value.name,
+          case: value.case,
+          handle: value.handle,
+          pockets: Object.values(value.pockets).sort((a, b) => a.priority - b.priority)
+        },
+      }))
+    },
+
 
     getBlockEdit: (state): boolean => {
       //console.log("state.role", state.role)
@@ -203,7 +225,7 @@ export const useCreateStore = defineStore("create", {
       return { data: innerItem.count, parent: token.parentId }
     },
     pushpreviewItem(token: addPreviewItemToken) {
-      if (!this.previewCase || !this.listItem || this.addItemCounter == null) { return }
+      if (!this.previewCase || !this.listItem || this.addItemCounter == null || !token.caseId) { return }
       const pocket = this.previewCase[token.caseId].pockets[token.pocketId]
       this.addItemCounter++
       const { id, ...listItemData } = this.listItem[token.itemId]
@@ -267,6 +289,8 @@ export const useCreateStore = defineStore("create", {
       this.PreviewItemNumberOfChanges++
     },
 
+
+
     addPreviewCase(token: addPreviewCaseToken) {
       if (token.reverse) {
         const this_case = token.case as Case
@@ -298,6 +322,11 @@ export const useCreateStore = defineStore("create", {
       pocket.pos.x = token.removeData.x
       pocket.pos.y = token.removeData.y
       return pocket.pos
+    },
+
+    changePriorityPocket(token: changePriorityPocket) {
+      const pocket = this.previewCase[token.caseId].pockets[token.pocketId]
+      pocket.priority = token.priority
     }
   }
 })

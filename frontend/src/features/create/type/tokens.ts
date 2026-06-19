@@ -66,13 +66,18 @@ export interface provisionalRemovePocket {
   pocketId: string,
   removeData: { x: number, y: number, width: number, height: number }
 }
-
+export interface changePriorityPocket {
+  caseId: string,
+  pocketId: string,
+  priority: number
+}
 
 export interface confirmedRemovePocketToken {
   removeData: { x: number, y: number, width: number, height: number }
   caseId: string,
   pocketId: string
 }
+
 //リスト
 export interface addListItemToken {
   name: string

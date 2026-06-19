@@ -1,0 +1,2 @@
+import{s as e}from"./index-C-u_bpzk.js";var t=e(`workDetailEdit`,{state:()=>({about:{name:``,bio:``,tags:[],thumbnailUrl:``,public:!1},edit:{}}),getters:{AboutGetter:e=>e.about,EditGetter:e=>e.edit},actions:{setAbout(e){this.about={...this.about,...e}},addEdit(e){this.about={...this.about,...e},this.edit={...this.edit,...e}}}});export{t};
+//# sourceMappingURL=useworkDetail-B_WvrQ_o.js.map

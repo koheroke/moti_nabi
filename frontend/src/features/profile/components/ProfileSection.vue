@@ -76,6 +76,7 @@ const showRePassward = ref(false);
 const userAuthStore = useUserAuthStore();
 const userProfileStore = useUserProfileStore();
 const { getUserProfile } = storeToRefs(userProfileStore);
+
 const editbool =
   userAuthStore.userId === userProfileStore.selectedUserId ? true : false;
 
@@ -92,6 +93,7 @@ const rePassward = async (text: string) => {
   if (passwordBool) {
     const res = await userDelete(password);
     if (res.success == true) {
+      userAuthStore.logout();
       router.push("/login");
     }
   }

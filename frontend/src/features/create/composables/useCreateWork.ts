@@ -13,7 +13,8 @@ import type {
   provisionalRemovePocket,
   addListItemToken,
   addBookmarkToken,
-  confirmedRemovePocketToken
+  confirmedRemovePocketToken,
+  changePriorityPocket
 } from "@/features/create/type/tokens";
 import { type menber } from "../type/infoType";
 import { useApplyCreateAction } from "./applyCreateAction";
@@ -512,6 +513,42 @@ export const UseCreateWork = () => {
     applyCreateAction.alterationData(token)
   }
 
+  const changePriorityPocket = (caseId: string, pocketId: string, addPriority: number) => {
+
+    const this_priority = createStore.previewItemGetter[caseId].pockets[pocketId].priority
+
+    const confirmedToken: changePriorityPocket = {
+      priority: this_priority + addPriority,
+      caseId: caseId,
+      pocketId: pocketId,
+    }
+    const reverseConfirmedToken: changePriorityPocket = {
+      priority: this_priority - addPriority,
+      caseId,
+      pocketId,
+    }
+
+    const token: alterationToken = {
+      alterationType: "confirmed_removePocket",
+      token: confirmedToken,
+      user: userAuthstore.userId,
+    }
+
+    const reverseToken: alterationToken = {
+      alterationType: "confirmed_removePocket",
+      token: reverseConfirmedToken,
+      user: userAuthstore.userId,
+    }
+
+    alterationLog.saveState({
+      forwardToken: token,
+      reverseToken,
+    })
+
+    applyCreateAction.alterationData(token)
+
+  }
+
   // const positionChangeItemToPreview = (token: positionChangePreviewItemToken) => {
   //   const target_item = createStore.previewCase[token.popCaseId].pockets[token.popPocketId].items.
   //     if(!target_item) return
@@ -519,5 +556,5 @@ export const UseCreateWork = () => {
   //   push_target.set(target_item, target_item)
   // }
 
-  return { buildItemPathMap, createNewwork, confirmedRemovePocket, provisionalRemovePocket, provisionalResizePocket, confirmedResizePocket, loadWork, addItemToPreview, addItemCount, addBookmark, deletePreviewItem, addListItem, addCase, deleteCase, setCreatePageWork }
+  return { changePriorityPocket, buildItemPathMap, createNewwork, confirmedRemovePocket, provisionalRemovePocket, provisionalResizePocket, confirmedResizePocket, loadWork, addItemToPreview, addItemCount, addBookmark, deletePreviewItem, addListItem, addCase, deleteCase, setCreatePageWork }
 }

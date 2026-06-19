@@ -41,6 +41,7 @@ const sideBarStore = useSideBarStore();
 const { nowSideBarGetter } = storeToRefs(sideBarStore);
 
 watch(nowSideBarGetter, (newSideBarId) => {
+  createStore.setSearchText("");
   switch (newSideBarId) {
     case "template":
       placeholder.value = "テンプレートを検索";

@@ -99,6 +99,7 @@ const onDrop = (event: DragEvent) => {
   const dragged_id = event.dataTransfer?.getData("positionChangeData");
   if (!dragged_itemId && !dragged_id) return;
   if (!selectedPocket.value) return;
+  console.log("caseId", selectedPocket.value.caseId);
   if (dragged_itemId) {
     const addPreviewItemToken: addPreviewItemToken = {
       itemId: dragged_itemId,

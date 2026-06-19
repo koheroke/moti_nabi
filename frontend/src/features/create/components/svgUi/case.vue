@@ -1,121 +1,133 @@
 <template>
-  <div class="suitcase-wrap">
-    <svg viewBox="0 0 400 560" class="suitcase">
-      <!-- 外枠 -->
+  <g
+    v-for="(caseItem, index) in cases"
+    :key="caseItem.id"
+    :transform="`translate(${index * (caseItem.data.case.width + caseGap)}, 0)`"
+  >
+    <!-- 外枠 -->
+    <rect
+      :x="caseItem.data.case.x"
+      :y="caseItem.data.case.y"
+      :width="caseItem.data.case.width"
+      :height="caseItem.data.case.height"
+      class="case-body"
+      rx="14"
+    />
+
+    <!-- 持ち手 -->w
+    <rect
+      :x="caseItem.data.handle.x"
+      :y="caseItem.data.handle.y"
+      :width="caseItem.data.handle.width"
+      :height="caseItem.data.handle.height"
+      rx="12"
+      class="handle"
+    />
+    <!-- ポケット -->
+    <g
+      v-for="pocket in caseItem.data.pockets"
+      :key="pocket.id"
+      class="pocket-group"
+      @dblclick="openPocket(pocket.id, caseItem.id)"
+      @drop="addPreviewItem($event, pocket.id, caseItem.data.id)"
+      @drop.stop
+      @dragover.prevent=""
+    >
       <rect
-        :x="props.case.x"
-        :y="props.case.y"
-        :width="props.case.width"
-        :height="props.case.height"
-        class="case-body"
+        :x="pocket.pos.x"
+        :y="pocket.pos.y"
+        :width="pocket.size.width"
+        :height="pocket.size.height"
         rx="14"
+        class="pocket"
+        :class="{
+          lightning:
+            caseItem.id === getSelectedPocketId.caseId &&
+            pocket.id === getSelectedPocketId.id,
+        }"
       />
 
-      <!-- 持ち手 -->
-      <rect
-        :x="props.handle.x"
-        :y="props.handle.y"
-        :width="props.handle.width"
-        :height="props.handle.height"
-        rx="12"
-        class="handle"
-      />
-
-      <!-- ポケット -->
-
-      <g
-        v-for="pocket in pockets"
-        :key="pocket.id"
-        class="pocket-group"
-        @dblclick="openPocket(pocket)"
+      <text
+        :x="pocket.pos.x + pocket.size.width / 2"
+        :y="pocket.pos.y + pocket.size.height / 2"
+        text-anchor="middle"
+        dominant-baseline="middle"
+        class="pocket-label"
       >
-        <rect
-          :x="pocket.pos.x"
-          :y="pocket.pos.y"
-          :width="pocket.size.width"
-          :height="pocket.size.height"
-          rx="14"
-          class="pocket"
-          :class="{
-            lightning:
-              id === getSelectedPocketId.caseId &&
-              pocket.id === getSelectedPocketId.id,
-          }"
-        />
+        {{ pocket.name }}
+      </text>
 
-        <text
-          :x="pocket.pos.x + pocket.size.width / 2"
-          :y="pocket.pos.y + pocket.size.height / 2"
-          text-anchor="middle"
-          dominant-baseline="middle"
-          class="pocket-label"
-        >
-          {{ pocket.name }}
-        </text>
+      <SvgRemoveHandle
+        class="svg-removehandle"
+        :pocket="pocket"
+        :caseId="caseItem.id"
+        :pocketId="pocket.id"
+      ></SvgRemoveHandle>
 
-        <SvgRemoveHandle
-          class="svg-removehandle"
-          :pocket="pocket"
-          :caseId="id"
-          :pocketId="pocket.id"
-        ></SvgRemoveHandle>
-
-        <text
-          :x="pocket.pos.x + pocket.size.width - 12"
-          :y="pocket.pos.y + 22"
-          text-anchor="end"
-          class="pocket-count"
-        >
-          {{ pocket.items?.size }}
-        </text>
-        <SvgResizeHandle
-          :pocket="pocket"
-          :caseId="id"
-          :pocketId="pocket.id"
-          class="svg-resizehandle"
-        />
-      </g>
-    </svg>
-  </div>
+      <text
+        :x="pocket.pos.x + pocket.size.width - 12"
+        :y="pocket.pos.y + 22"
+        text-anchor="end"
+        class="pocket-count"
+      >
+        {{ pocket.items?.size }}
+      </text>
+      <SvgResizeHandle
+        :pocket="pocket"
+        :caseId="caseItem.id"
+        :pocketId="pocket.id"
+        class="svg-resizehandle"
+      />
+    </g>
+  </g>
 </template>
 <script setup lang="ts">
-import { computed } from "vue";
-import type { Pocket, previewItem, Case } from "../../type/casetype";
 import SvgResizeHandle from "./svgResizeHandle.vue";
 import SvgRemoveHandle from "./SvgRemoveHandle.vue";
 import { usePocketStore } from "../../store/pocketStore.ts";
 import { storeToRefs } from "pinia";
 const pocketStore = usePocketStore();
-const props = defineProps<Case>();
 const { getSelectedPocketId } = storeToRefs(pocketStore);
+import { useCreateStore } from "../../store/createStore";
+import { type addPreviewItemToken } from "../../type/tokens.ts";
+import { UseCreateWork } from "../../composables/useCreateWork.ts";
+const createWork = UseCreateWork();
+const createStore = useCreateStore();
+const caseGap = 20;
+const { getPreviewCasesArray: cases } = storeToRefs(createStore);
 
-const pockets = computed(() => {
-  return Object.values(props.pockets).map((pocket) => {
-    if (pocket.items) return pocket;
-    return {
-      ...pocket,
-      items: {},
-    };
-  });
-});
-const emit = defineEmits<{
-  (
-    e: "update:selectedPocket",
-    payload: {
-      items: Record<string, previewItem>;
-      id: string;
-      name: string;
-      caseId: string;
-    },
-  ): void;
-}>();
+// import { computed } from "vue";
+// import type { Pocket, previewItem, Case } from "../../type/casetype";
+// const pockets = computed(() => {
+//   return Object.values(props.pockets).map((pocket) => {
+//     if (pocket.items) return pocket;
+//     return {
+//       ...pocket,
+//       items: {},
+//     };
+//   });
+// });
 
-function openPocket(pocket: Pocket) {
+function openPocket(pocketId: string, caseId: string) {
   pocketStore.setSelectedPocketId({
-    id: pocket.id,
-    caseId: props.id,
+    id: pocketId,
+    caseId: caseId,
   });
 }
+const addPreviewItem = (event: DragEvent, pocketId: string, caseId: string) => {
+  const dragged_itemId = event.dataTransfer?.getData("itemId");
+  const dragged_id = event.dataTransfer?.getData("positionChangeData");
+  if (!dragged_itemId && !dragged_id) return;
+  if (dragged_itemId) {
+    const addPreviewItemToken: addPreviewItemToken = {
+      itemId: dragged_itemId,
+      pocketId: pocketId,
+      caseId: caseId,
+      id: null,
+    };
+    createWork.addItemToPreview(addPreviewItemToken);
+  }
+};
 </script>
 
 <style scoped>
@@ -125,6 +137,7 @@ function openPocket(pocket: Pocket) {
 
 .suitcase {
   width: 100%;
+  background-color: #1b57ac;
 }
 
 .case-body {

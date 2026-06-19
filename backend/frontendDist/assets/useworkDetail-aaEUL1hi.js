@@ -1,0 +1,2 @@
+import{s as e}from"./index-D5FqtXgc.js";var t=e(`workDetailEdit`,{state:()=>({about:{name:``,bio:``,tags:[],thumbnailUrl:``,public:!1},edit:{}}),getters:{AboutGetter:e=>e.about,EditGetter:e=>e.edit},actions:{setAbout(e){this.about={...this.about,...e}},addEdit(e){this.about={...this.about,...e},this.edit={...this.edit,...e}}}});export{t};
+//# sourceMappingURL=useworkDetail-aaEUL1hi.js.map

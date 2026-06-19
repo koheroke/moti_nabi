@@ -15,6 +15,9 @@
 import { type Pocket } from "@/features/create/type/casetype";
 import { UseCreateWork } from "../../composables/useCreateWork";
 import { onMounted, onUnmounted } from "vue";
+import { useCreateStore } from "../../store/createStore";
+const createStore = useCreateStore();
+
 let stop = true;
 const createWork = UseCreateWork();
 const props = defineProps<{
@@ -47,10 +50,19 @@ const stopResize = () => {
 
 const handlePointerMove = (event: PointerEvent) => {
   if (!isRemoveing) return;
-  const diffX = event.clientX - lastX;
-  const diffY = event.clientY - lastY;
+  let diffX = event.clientX - lastX;
+  let diffY = event.clientY - lastY;
   lastX = event.clientX;
   lastY = event.clientY;
+
+  const endPos = {
+    x: props.pocket.pos.x + diffX,
+    y: props.pocket.pos.y + diffY,
+  };
+
+  const this_case = createStore.previewItemGetter[props.caseId];
+  const max_x = this_case.case.width;
+  const max_y = this_case.case.height;
 
   createWork.provisionalRemovePocket(
     {
@@ -62,6 +74,7 @@ const handlePointerMove = (event: PointerEvent) => {
     props.pocketId,
     props.caseId,
   );
+  createWork.changePriorityPocket(props.caseId, props.pocketId, 1);
 };
 
 onMounted(() => {

@@ -80,6 +80,7 @@ import { useLogout } from "@/features/auth/composables/useLogout";
 const onLogout = async () => {
   const res = await useLogout();
   if (res == "success") {
+    userAuthStore.logout();
     router?.push("/login");
   }
 };
