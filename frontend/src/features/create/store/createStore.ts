@@ -5,13 +5,12 @@ import type { CategoryId } from "@/features/create/type/categoryType";
 import type { iconInfomation, UserLuggage_SaveDBData } from "@/features/create/type/apiType";
 import { type Category, } from "@/features/create/type/categoryType";
 import type { CaseType } from "@/features/create/type/itemType";
-import type { changePriorityPocket, provisionalRemovePocket, provisionalResizePocket, addPreviewCaseToken, deletePreviewCaseToken, addPreviewItemToken, addItemCountToken, addBookmarkToken, deletePreviewItemToken, addListItemToken } from "@/features/create/type/tokens";
+import type { pocketLogicalDeleteToken, caseLogicalDeleteToken, changePriorityPocket, provisionalRemovePocket, provisionalResizePocket, addPreviewCaseToken, deletePreviewCaseToken, addPreviewItemToken, addItemCountToken, addBookmarkToken, deletePreviewItemToken, addListItemToken } from "@/features/create/type/tokens";
 import { useSideBarStore } from './sideBarStore';
 import { useSearchStore } from './searchStore';
 const sideBarStore = useSideBarStore()
 const searchStore = useSearchStore()
 import { type menber } from '../type/infoType';
-import { id } from 'vuetify/locale';
 import type { Pocket, part } from '../type/casetype';
 export interface caseArray {
   id: string;
@@ -25,6 +24,7 @@ export interface previewSvgCase {
     handle: part;
     name: string;
     id: string
+    logicalDelete: boolean;
   }
 }
 
@@ -50,12 +50,14 @@ export const useCreateStore = defineStore("create", {
     leave: false,
     role: "viewer" as "owner" | "editor" | "viewer",
     PreviewItemNumberOfChanges: 0,
-    ListItemNumberOfChanges: 0
+    ListItemNumberOfChanges: 0,
+    indexChangeCounter: 0
   }),
   getters: {
     leaveGetter: (state) => state.leave,
     staticCasesGetter: (state) => state.staticCases,
     workNameGetter: (state) => state.workName,
+    indexChangeCounterGetter: (state) => state.indexChangeCounter,
     categorys: (state) => state.categories,
     iconMapGetter: (state) => state.iconMap,
     categoryColorGetter: (state) => state.categoryColor,
@@ -75,6 +77,7 @@ export const useCreateStore = defineStore("create", {
       })),
 
     getPreviewCasesArray: (state): previewSvgCase[] => {
+
       return Object.entries(state.previewCase).map(([key, value]) => ({
         id: key,
         data: {
@@ -82,9 +85,11 @@ export const useCreateStore = defineStore("create", {
           name: value.name,
           case: value.case,
           handle: value.handle,
-          pockets: Object.values(value.pockets).sort((a, b) => a.priority - b.priority)
+          pockets: Object.values(value.pockets).sort((a, b) => a.priority - b.priority).filter((thisPocket) => !thisPocket.logicalDelete),
+          logicalDelete: value.logicalDelete
         },
-      }))
+      })).filter((thisCase) => !thisCase.data.logicalDelete);
+
     },
 
 
@@ -140,6 +145,10 @@ export const useCreateStore = defineStore("create", {
       this.ListItemNumberOfChanges = 0
       sideBarStore.nowSideBarSetter("")
       searchStore.searchItemSetter({ parentId: undefined, id: "" })
+
+    },
+    indexChangeCounterSetter(count: number) {
+      this.indexChangeCounter = count
     },
 
 
@@ -298,8 +307,16 @@ export const useCreateStore = defineStore("create", {
         this.previewCase[this_case.id] = this_case
         return this_case
       } else {
-        const this_case = token.case as { caseId: string, caseType: CaseType }
-        this.previewCase[this_case.caseId] = this.staticCasesGetter[this_case.caseType]
+        const this_case = token.case as { caseId: string; caseType: CaseType }
+
+        const staticCase = JSON.parse(JSON.stringify(this.staticCasesGetter[this_case.caseType]));
+        if (!staticCase) return
+
+        this.previewCase[this_case.caseId] = {
+          ...staticCase,
+          id: this_case.caseId,
+        }
+
         return this_case
       }
     },
@@ -327,6 +344,25 @@ export const useCreateStore = defineStore("create", {
     changePriorityPocket(token: changePriorityPocket) {
       const pocket = this.previewCase[token.caseId].pockets[token.pocketId]
       pocket.priority = token.priority
+    },
+
+    logicalDeletePocket(token: pocketLogicalDeleteToken) {
+
+      this.previewCase[token.caseId].pockets[token.pocketId].logicalDelete = token.type == "cancel" ? false : true
+      console.log("logicalDeletePocket", this.previewCase[token.caseId].pockets[token.pocketId])
+      return token
+    },
+    logicalDeleteCase(token: caseLogicalDeleteToken) {
+      this.previewCase[token.caseId].logicalDelete = token.type == "cancel" ? false : true
+      return token
+    },
+
+    hardDeleteCase(token: caseLogicalDeleteToken) {
+      delete this.previewCase[token.caseId]
+    },
+
+    hardDeletePocket(token: pocketLogicalDeleteToken) {
+      delete this.previewCase[token.caseId].pockets[token.pocketId]
     }
   }
 })

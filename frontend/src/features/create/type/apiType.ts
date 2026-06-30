@@ -2,7 +2,7 @@ import type { CaseType } from "./itemType";
 import type { CategoryId } from "./categoryType";
 import type { Bookmarks } from "./itemType";
 import type { CaseEdit } from "./casetype";
-import type { Pocket } from "./casetype";
+import type { pocketLogicalDeleteToken, caseLogicalDeleteToken } from "./tokens"
 interface innerItems {
   itemId: string,
   count: number;
@@ -16,14 +16,17 @@ interface saveDBprevieItems {
   count: number;
   id: string;
 }
+
+interface pocket {
+  items?: saveDBprevieItems
+  poketSvgEdit?: CaseEdit
+}
+
 interface saveDBpreviewData {
-  pockets?: Record<string, saveDBprevieItems>
+  pockets?: Record<string, pocket>
   id: string
   addItemCounter?: number,
   caseType: CaseType
-  poketSvgEdit?: Record<string, CaseEdit>
-  pocketAdd?: Pocket[]
-  poketDelete?: string[]
 }
 
 
@@ -49,7 +52,8 @@ interface UserLuggage_SaveDBData {
   },
   previewDatas: {
     mainLuggage: Record<string, saveDBpreviewData>
-    addItemCounter: number
+    caseLogicalDelete?: caseLogicalDeleteToken[]
+    pocketLogicalDelete: pocketLogicalDeleteToken[]
   }
 };
 interface iconInfomation { src: string, category: CategoryId, }
@@ -57,4 +61,4 @@ interface iconInfomation { src: string, category: CategoryId, }
 
 
 
-export type { saveDBprevieItems, iconInfomation, UserLuggage_SaveDBData, CategoryId, saveDBaddedItem, saveDBpreviewData, innerItems }
+export type { pocket, saveDBprevieItems, iconInfomation, UserLuggage_SaveDBData, CategoryId, saveDBaddedItem, saveDBpreviewData, innerItems }

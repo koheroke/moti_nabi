@@ -10,13 +10,9 @@
 
     <div class="body">
       <h3 class="title">{{ work.name }}</h3>
-
       <div class="meta">
         <span>{{ work.createdAt }}</span>
-        <span
-          ><ThumbsUp :size="16" color="green" fill="yellowgreen"></ThumbsUp
-          >{{ " " + work.likes }}</span
-        >
+        <likeBotton v-if="publicWork"></likeBotton>
       </div>
     </div>
   </article>
@@ -24,8 +20,8 @@
 
 <script setup lang="ts">
 import type { workPackage } from "@/features/work/types/work";
-import { ThumbsUp } from "lucide-vue-next";
 import { useWorkPackageStore } from "../store/workPackageStore";
+import likeBotton from "./likeBotton.vue";
 const workPackageStore = useWorkPackageStore();
 
 const emit = defineEmits<{
@@ -34,6 +30,7 @@ const emit = defineEmits<{
 
 const props = defineProps<{
   work: workPackage;
+  publicWork: boolean;
 }>();
 
 const setSelectPackage = () => {
@@ -80,5 +77,6 @@ const setSelectPackage = () => {
   justify-content: space-between;
   font-size: 12px;
   color: #666;
+  height: 30px;
 }
 </style>

@@ -2,9 +2,6 @@ import { prisma } from "@/lib/prisma/prisma"
 import { editWorkPackageApi } from "@/features/work/types"
 import { type server_alterationToken } from "./saveQueue"
 import { publichTokenType } from "./types/index"
-
-
-
 const workData = new Map()
 
 const useWork = () => {
@@ -151,7 +148,8 @@ const useWork = () => {
       }
     });
     if (!work) return
-    return work
+    if (work)
+      return work
   }
 
 
@@ -348,6 +346,7 @@ const useWork = () => {
       return { success: false }
     }
   }
+
 
   return {
     createNewWork, getWork, editWorkPackage, editWork

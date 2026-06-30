@@ -56,11 +56,12 @@ const openLabel = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 10px;
+
   color: rgb(56, 54, 54);
   font-weight: 400;
   border: none;
   font-size: 15px;
+  padding: 10px;
 }
 .option:hover {
   background-color: rgba(244, 244, 244, 0.953);
@@ -69,9 +70,8 @@ const openLabel = () => {
   position: absolute;
   background-color: rgb(250, 250, 250);
   width: 100%;
-  margin-top: 5px;
   border-radius: 10px;
-  padding: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   box-sizing: border-box;
 }
 .dropdown {

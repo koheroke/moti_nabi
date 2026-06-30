@@ -1,5 +1,5 @@
 
-import type { changePriorityPocket, provisionalResizePocket, confirmedRemovePocketToken, provisionalRemovePocket, confirmedResizePocketToken, deletePreviewCaseToken, addPreviewCaseToken, addPreviewItemToken, addItemCountToken, addBookmarkToken, addListItemToken, deletePreviewItemToken } from "@/features/create/type/tokens";
+import type { caseLogicalDeleteToken, pocketLogicalDeleteToken, changePriorityPocket, provisionalResizePocket, confirmedRemovePocketToken, provisionalRemovePocket, confirmedResizePocketToken, deletePreviewCaseToken, addPreviewCaseToken, addPreviewItemToken, addItemCountToken, addBookmarkToken, addListItemToken, deletePreviewItemToken } from "@/features/create/type/tokens";
 import { useCreateStore } from "../store/createStore";
 import type { server_alterationTokenType } from "../api/createSocketApi"
 import type { Case } from "@/features/create/type/casetype";
@@ -7,6 +7,7 @@ import type { UserLuggage_SaveDBData, saveDBpreviewData, saveDBprevieItems } fro
 import type { previewItem } from "@/features/create/type/casetype";
 import { useSocketApi } from "@/features/create/api/createSocketApi"
 import { useUserAuthStore } from "@/store/user/userAuthStore";
+import { LucideBaggageClaim } from "lucide-vue-next";
 const userAuthstore = useUserAuthStore()
 const api = useSocketApi()
 export type alterationType = "previewItems_additem"
@@ -19,9 +20,14 @@ export type alterationType = "previewItems_additem"
   | "confirmed_resizePocket"
   | "confirmed_removePocket"
   | "changePriorityPocket"
+  | "pocket_hardDelete"
+  | "pocket_logicalDelete"
+  | "case_logicalDelete"
+  | "case_hardDelete"
+  | "pocket_add"
 
 
-type allToken = changePriorityPocket | confirmedRemovePocketToken | provisionalRemovePocket | provisionalResizePocket | confirmedResizePocketToken | deletePreviewCaseToken | addPreviewCaseToken | addPreviewItemToken | addItemCountToken | addBookmarkToken | addListItemToken | deletePreviewItemToken
+type allToken = pocketLogicalDeleteToken | caseLogicalDeleteToken | changePriorityPocket | confirmedRemovePocketToken | provisionalRemovePocket | provisionalResizePocket | confirmedResizePocketToken | deletePreviewCaseToken | addPreviewCaseToken | addPreviewItemToken | addItemCountToken | addBookmarkToken | addListItemToken | deletePreviewItemToken
 
 export interface alterationToken {
   token: allToken
@@ -59,8 +65,12 @@ const useApplyCreateAction = () => {
     //console.log("hydrateCreateState_data", data)
 
     const staticItemData = createStore.staticItemData
-    const caseData = createStore.staticCases
+    const caseData = createStore.staticCasesGetter
     const { previewDatas, itemListDatas } = data
+    console.log("previewDatas", previewDatas)
+    const pocketLogicalDeletes = previewDatas.pocketLogicalDelete
+    const caseLogicalDeletes = previewDatas.caseLogicalDelete
+    console.log("pocketLogicalDeletes", pocketLogicalDeletes)
     const synthesis = {
       ...staticItemData,
       ...itemListDatas.addedItems,
@@ -105,18 +115,24 @@ const useApplyCreateAction = () => {
       );
     };
 
+    let indexChangeCounter = 0
 
     const pocketParse = (luggage: saveDBpreviewData, staticCase: Case) => {
 
       const buildPockets = Object.fromEntries(
         Object.entries(staticCase.pockets).map(([id, pocket]) => {
           let edit;
-          const poketSvgEdit = luggage.poketSvgEdit
-          if (poketSvgEdit != undefined) {
-            edit = Object.values(poketSvgEdit)?.find(
-              (e) => e.id === pocket.id
-            )
+          console.log("luggage", luggage.pockets)
+          console.log("id", id)
+          if (luggage.pockets) {
+            if (luggage.pockets[id]) {
+              const poketSvgEdit = luggage.pockets[id].poketSvgEdit
+              if (poketSvgEdit) {
+                edit = poketSvgEdit
+              }
+            }
           }
+
           const pocketSvgData = {
             size: {
               width: edit?.width ?? pocket.size.width,
@@ -133,49 +149,58 @@ const useApplyCreateAction = () => {
           let items;
           if (luggage.pockets != undefined) {
             items = getItemDatra(
-              luggage.pockets[pocket.id]?.innerItems ?? {}
+              luggage.pockets[pocket.id]?.items?.innerItems ?? {}
             )
           } else {
             items = {}
           }
+
           return [
             pocket.id,
             {
               ...pocket,
               ...pocketSvgData,
-              items: items
+              items: items,
+              logicalDelete: !!pocketLogicalDeletes?.find(
+                (deleteData) => deleteData.caseId === luggage.id && deleteData.pocketId == pocket.id
+              )
             },
           ]
         })
       );
 
 
-      const basePockets = Object.fromEntries(
-        Object.entries(buildPockets).filter(
-          ([_, pocket]) =>
-            !(luggage.poketDelete ?? []).includes(pocket.id)
-        )
-      );
+      // const basePockets = Object.fromEntries(
+      //   Object.entries(buildPockets).filter(
+      //     ([_, pocket]) =>
+      //       !(luggage.pocketLogicalDelete ?? []).includes(pocket.id)
+      //   )
+      // );
+      const basePockets = buildPockets;
 
-      (luggage.pocketAdd ?? []).forEach((pocket) => {
 
-        let items;
-        if (luggage.pockets != undefined) {
-          items = getItemDatra(
-            luggage.pockets[pocket.id]?.innerItems ?? {}
-          )
-        } else {
-          items = {}
-        }
-        basePockets[pocket.id] = {
-          ...pocket,
-          items: items
-        }
-      })
+      // (luggage.pocketAdd ?? []).forEach((pocket) => {
+
+      //   let items;
+      //   if (luggage.pockets != undefined) {
+      //     items = getItemDatra(
+      //       luggage.pockets[pocket.id]?.items?.innerItems ?? {}
+      //     )
+      //   } else {
+      //     items = {}
+      //   }
+      //   basePockets[pocket.id] = {
+      //     ...pocket,
+      //     items: items
+      //   }
+      // })
       return basePockets
     }
 
+
+
     //console.log("previewDatas.mainLuggage", previewDatas.mainLuggage)
+    console.log("caseLogicalDeletes", caseLogicalDeletes)
     const vuepreviewData: Record<string, Case> = Object.fromEntries(
       Object.entries(previewDatas.mainLuggage).map(([luggageId, luggage]) => {
         const staticCase = caseData[luggage.caseType];
@@ -187,12 +212,15 @@ const useApplyCreateAction = () => {
             handle: staticCase.handle,
             name: staticCase.name,
             pockets: pocketParse(luggage, staticCase),
-          },
+            logicalDelete: !!caseLogicalDeletes?.find(
+              (pocket) => pocket.caseId === luggageId
+            )
+          }
         ];
       }),
     );
-
-    return { vuepreviewData: vuepreviewData, vueItemList: vueItemList, addItemCounter: previewDatas.addItemCounter }
+    console.log("vuepreviewData", vuepreviewData)
+    return { vuepreviewData: vuepreviewData, vueItemList: vueItemList, indexChangeCounter: indexChangeCounter }
   }
 
   const alterationData = (token: alterationToken, socketResponse?: boolean) => {
@@ -213,7 +241,7 @@ const useApplyCreateAction = () => {
         const res: previewItems_additemRes | undefined = createStore.pushpreviewItem(token.token as addPreviewItemToken)
         const this_token = token.token as addPreviewItemToken
         if (res == undefined || res.item == undefined) { return }
-        dbpushToken.path = ["previewDatas", "mainLuggage", this_token.caseId, "pockets", this_token.pocketId, "innerItems"]
+        dbpushToken.path = ["previewDatas", "mainLuggage", this_token.caseId, "pockets", this_token.pocketId, "items", "innerItems"]
         if (res.parent != undefined) {
           dbpushToken.path.push(res.parent)
         }
@@ -222,6 +250,46 @@ const useApplyCreateAction = () => {
         break
       }
 
+      case 'case_logicalDelete': {
+        const this_token = token.token as caseLogicalDeleteToken
+        if (!this_token) return
+        createStore.logicalDeleteCase(this_token)
+        dbpushToken.path = ["previewDatas", "caseLogicalDelete"]
+        dbpushToken.value = this_token
+        dbpushToken.type = "arrayPush"
+        break
+      }
+
+      case 'pocket_logicalDelete': {
+        const this_token = token.token as pocketLogicalDeleteToken
+        console.log("pocket_logicalDelete", this_token)
+        if (!this_token) return
+
+        createStore.logicalDeletePocket(this_token)
+        dbpushToken.path = ["previewDatas", "pocketLogicalDelete"]
+        dbpushToken.value = this_token
+        dbpushToken.type = "arrayPush"
+        break
+      }
+
+
+      case 'case_hardDelete': {
+        const this_token = token.token as caseLogicalDeleteToken
+        createStore.hardDeleteCase(this_token)
+        break
+      }
+
+      case 'pocket_hardDelete': {
+        const this_token = token.token as pocketLogicalDeleteToken
+        createStore.hardDeletePocket(this_token)
+        break
+      }
+
+      case 'pocket_add': {
+        const this_token = token.token as caseLogicalDeleteToken
+        createStore.hardDeleteCase(this_token)
+        break
+      }
 
 
       case 'previewItems_addcount': { //完了
@@ -233,7 +301,7 @@ const useApplyCreateAction = () => {
         const res: previewItems_addcountRes | undefined = createStore.addCount(token.token as addItemCountToken)
         if (res == undefined || res.data == undefined) { return }
         const this_token = token.token as addItemCountToken
-        dbpushToken.path = ["previewDatas", "mainLuggage", this_token.caseId, "pockets", this_token.pocketId, "innerItems", this_token.id]
+        dbpushToken.path = ["previewDatas", "mainLuggage", this_token.caseId, "pockets", this_token.pocketId, "items", "innerItems", this_token.id]
         if (res.parent != undefined) {
           dbpushToken.path.push(res.parent)
         }
@@ -259,7 +327,7 @@ const useApplyCreateAction = () => {
         const res: previewItems_deleteRes | undefined = createStore.deletepreviewItem(token.token as deletePreviewItemToken)
         const this_token = token.token as deletePreviewItemToken
         if (res == undefined || res.id == undefined) { return }
-        dbpushToken.path = ["previewDatas", "mainLuggage", this_token.caseId, "pockets", this_token.pocketId, "innerItems"]
+        dbpushToken.path = ["previewDatas", "mainLuggage", this_token.caseId, "pockets", this_token.pocketId, "items", "innerItems"]
         dbpushToken.value = res
         if (res.parent != undefined) {
           dbpushToken.path.push(res.parent)
@@ -290,7 +358,7 @@ const useApplyCreateAction = () => {
       case 'confirmed_removePocket': {
         createStore.reMovePocket(token.token as provisionalRemovePocket)
         const this_token = token.token as provisionalRemovePocket
-        dbpushToken.path = ["previewDatas", "mainLuggage", this_token.caseId, "poketSvgEdit", this_token.pocketId]
+        dbpushToken.path = ["previewDatas", "mainLuggage", this_token.caseId, "pockets", this_token.pocketId, "poketSvgEdit"]
         dbpushToken.value = { ...this_token.removeData, id: this_token.pocketId }
         //console.log("dbpushToken.value", dbpushToken.value)
         dbpushToken.type = "set"
@@ -298,9 +366,11 @@ const useApplyCreateAction = () => {
       }
 
       case 'changePriorityPocket': {
-        createStore.changePriorityPocket(token.token as changePriorityPocket)
+        const getToken = token.token as changePriorityPocket
+        createStore.changePriorityPocket(getToken)
+        createStore.indexChangeCounterSetter(getToken.priority + 1)
         const this_token = token.token as changePriorityPocket
-        dbpushToken.path = ["previewDatas", "mainLuggage", this_token.caseId, "poketSvgEdit", this_token.pocketId]
+        dbpushToken.path = ["previewDatas", "mainLuggage", this_token.caseId, "pockets", this_token.pocketId, "poketSvgEdit"]
         dbpushToken.value = { priority: this_token.priority }
         dbpushToken.type = "set"
         break
@@ -310,7 +380,7 @@ const useApplyCreateAction = () => {
         const this_token = token.token as provisionalResizePocket
         createStore.reSizePocket(token.token as provisionalResizePocket)
 
-        dbpushToken.path = ["previewDatas", "mainLuggage", this_token.caseId, "poketSvgEdit", this_token.pocketId]
+        dbpushToken.path = ["previewDatas", "mainLuggage", this_token.caseId, "pockets", this_token.pocketId, "poketSvgEdit"]
         dbpushToken.value = { ...this_token.resizeData, id: this_token.pocketId }
         //console.log(this_token.resizeData)
         dbpushToken.type = "set"

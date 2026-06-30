@@ -1,7 +1,7 @@
 {
   "search.exclude": {
     "**/node_modules": true,
-    "**/dist": true,
+    // "**/dist": true,
     "**/build": true,
     "**/.vite": true,
     "**/coverage": true,
@@ -10,7 +10,7 @@
     "**/*.d.ts": true
   },
   "files.exclude": {
-    "**/dist": true,
+    // "**/dist": true,
     "**/build": true,
     "**/.vite": true
   }

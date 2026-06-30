@@ -9,6 +9,9 @@
     <section class="pocketModal">
       <PocketModal />
     </section>
+
+    <pocketMenu></pocketMenu>
+    <caseMenu></caseMenu>
   </div>
 </template>
 
@@ -16,6 +19,8 @@
 import PocketModal from "./PocketModal.vue";
 import dropCaseArea from "./sideBar/caseBar/components/dropCaseArea.vue";
 import Case from "./svgUi/case.vue";
+import pocketMenu from "@/features/create/components/svgUi/pocketMenu.vue";
+import caseMenu from "./svgUi/caseMenu.vue";
 import { ref, onMounted } from "vue";
 const contentWidth = 3500;
 const contentHeight = 1800;

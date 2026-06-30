@@ -42,7 +42,7 @@
 import { X } from "lucide-vue-next";
 import { ref, watch } from "vue";
 import { type addPreviewItemToken } from "@/features/create/type/tokens.ts";
-import { UseCreateWork } from "@/features/create/composables/useCreateWork";
+import { useCreateWork } from "@/features/create/composables/useCreateWork";
 import { useSearchStore } from "../store/searchStore.ts";
 import PreviewItem from "./PreviewItem.vue";
 import type { previewItem } from "../type/casetype.ts";
@@ -82,7 +82,7 @@ watch(getSelectedPocketId, (ids) => {
 });
 const createStore = useCreateStore();
 
-const createWork = UseCreateWork();
+const createWork = useCreateWork();
 const previewItems = ref<HTMLElement | null>(null);
 
 const emit = defineEmits<{

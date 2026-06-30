@@ -83,9 +83,9 @@
 </template>
 <script setup lang="ts">
 import { type Pocket } from "@/features/create/type/casetype";
-import { UseCreateWork } from "@/features/create/composables/useCreateWork";
+import { useCreateWork } from "@/features/create/composables/useCreateWork";
 import { onMounted, onUnmounted } from "vue";
-const createWork = UseCreateWork();
+const createWork = useCreateWork();
 let stop = true;
 const props = defineProps<{
   pocket: Pocket;
@@ -146,7 +146,6 @@ const handlePointerMove = (event: PointerEvent) => {
     props.pocketId,
     props.caseId,
   );
-  createWork.changePriorityPocket(props.caseId, props.pocketId, 1);
 };
 
 onMounted(() => {

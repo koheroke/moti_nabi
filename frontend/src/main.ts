@@ -14,7 +14,7 @@ app.use(router)
 app.mount('#app')
 
 import { useRouterBlock } from '@/app/router/routerBlock'
-useRouterBlock(router, pinia)
+// useRouterBlock(router, pinia). //テスト環境
 
 
 

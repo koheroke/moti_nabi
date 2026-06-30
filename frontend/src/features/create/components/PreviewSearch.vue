@@ -19,10 +19,10 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 import { storeToRefs } from "pinia";
 import suggest from "@/features/suggest/components/suggest.vue";
-import { UseCreateWork } from "../composables/useCreateWork";
+import { useCreateWork } from "../composables/useCreateWork";
 import { useCreateStore } from "../store/createStore";
 import { BaseInput } from "@/components/ui/form/BaseInput";
 import { usePocketStore } from "../store/pocketStore.ts";
@@ -34,33 +34,48 @@ const pocketStore = usePocketStore();
 const createStore = useCreateStore();
 const { PreviewItemNumberOfChanges, ListItemNumberOfChanges, listItemGetter } =
   storeToRefs(createStore);
-const createWork = UseCreateWork();
+const createWork = useCreateWork();
+const selectedSideBarId = ref("");
 const modelValue = ref("");
-const candidate = ref<{ name: string; value: any; id: string }[]>([]);
+const candidate = computed(() => {
+  return switchAction(selectedSideBarId.value)
+    ? switchAction(selectedSideBarId.value)
+    : [];
+});
+// ref<{ name: string; value: any; id: string }[]>([]);
+
 const sideBarStore = useSideBarStore();
 const { nowSideBarGetter } = storeToRefs(sideBarStore);
 
 watch(nowSideBarGetter, (newSideBarId) => {
   createStore.setSearchText("");
+  selectedSideBarId.value = newSideBarId;
+});
+
+const switchAction = (newSideBarId: string) => {
   switch (newSideBarId) {
     case "template":
       placeholder.value = "テンプレートを検索";
-      break;
+      return [];
+
     case "item":
       placeholder.value = "持ち物を検索";
-      candidate.value = listCandidate.value;
       onUpdateSearch.value = listSearch;
-      break;
+      return listCandidate.value;
+
     case "case":
       placeholder.value = "ケースを選択";
-      break;
-    default:
+      return [];
+
+    case "preview":
       placeholder.value = "プレビュー内を検索";
-      candidate.value = previewCandidate.value;
       onUpdateSearch.value = previewSearch;
-      break;
+      return previewCandidate.value;
+
+    default:
+      return [];
   }
-});
+};
 
 const onUpdateSearch = ref((value: any) => {});
 

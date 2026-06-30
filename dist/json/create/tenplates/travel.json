@@ -1,0 +1,183 @@
+{
+  "itemListDatas": {
+    "addedItems": {},
+    "bookmarks": [],
+    "addItemCounter": 0
+  },
+  "previewDatas": {
+    "mainLuggage": {
+      "caseLogicaldeletion": [],
+      "e2f635b7-c5a5-4218-a577-58cd5247f97b": {
+        "id": "e2f635b7-c5a5-4218-a577-58cd5247f97b",
+        "caseType": "HardSuitcase",
+
+        "poketSvgEdit": {
+          "main": {
+            "x": 70.59765625,
+            "y": 195.4765625,
+            "width": 170,
+            "height": 230,
+            "id": "main"
+          },
+          "side": {
+            "x": 255.12109375,
+            "y": 200.56640625,
+            "width": 75,
+            "height": 224.5546875,
+            "id": "side"
+          },
+          "bottom": {
+            "x": 69.87109375,
+            "y": 444.87109375,
+            "width": 260,
+            "height": 55,
+            "id": "bottom"
+          },
+          "mesh": {
+            "x": 70,
+            "y": 80.37890625,
+            "width": 260,
+            "height": 95,
+            "id": "mesh"
+          }
+        },
+        "pocketLogicaldeletion": [],
+        "pockets": {
+          "main": {
+            "innerItems": {
+              "6ccce662-4b6c-42dd-8743-22f3c43e8206": {
+                "name": "パーカー",
+                "iconId": "hoodie",
+                "category": [
+                  "clothes"
+                ],
+                "isStorage": false,
+                "createType": "default",
+                "bookmark": false,
+                "itemId": "item_8",
+                "count": 1,
+                "innerItems": {},
+                "id": "6ccce662-4b6c-42dd-8743-22f3c43e8206"
+              },
+              "eb4bf118-fa9a-4e9a-856e-f0a24b7dd6a7": {
+                "name": "パーカー",
+                "iconId": "hoodie",
+                "category": [
+                  "clothes"
+                ],
+                "isStorage": false,
+                "createType": "default",
+                "bookmark": false,
+                "itemId": "item_8",
+                "count": 1,
+                "innerItems": {},
+                "id": "eb4bf118-fa9a-4e9a-856e-f0a24b7dd6a7"
+              },
+              "109ebbdd-8b0c-4053-b92b-e15b68e537f1": {
+                "name": "Tシャツ",
+                "iconId": "shirt",
+                "category": [
+                  "clothes"
+                ],
+                "isStorage": false,
+                "createType": "default",
+                "bookmark": false,
+                "itemId": "item_1",
+                "count": 1,
+                "innerItems": {},
+                "id": "109ebbdd-8b0c-4053-b92b-e15b68e537f1"
+              }
+            }
+          },
+          "side": {
+            "innerItems": {
+              "c04d6bc2-58ae-490f-9809-36058593730c": {
+                "name": "歯ブラシ",
+                "iconId": "toothbrush",
+                "category": [
+                  "toiletry"
+                ],
+                "isStorage": false,
+                "createType": "default",
+                "bookmark": false,
+                "itemId": "item_7",
+                "count": 1,
+                "innerItems": {},
+                "id": "c04d6bc2-58ae-490f-9809-36058593730c"
+              }
+            }
+          },
+          "bottom": {
+            "innerItems": {
+              "9bf47031-3e49-4c45-905c-73f7fdd11d6a": {
+                "name": "ジップロック",
+                "iconId": "ziplock",
+                "category": [
+                  "storage"
+                ],
+                "isStorage": true,
+                "createType": "default",
+                "bookmark": false,
+                "itemId": "item_4",
+                "count": 1,
+                "innerItems": {},
+                "id": "9bf47031-3e49-4c45-905c-73f7fdd11d6a"
+              }
+            }
+          },
+          "mesh": {
+            "innerItems": {
+              "87290ef2-187b-4cf3-83fc-5610effcd39a": {
+                "name": "Tシャツ",
+                "iconId": "shirt",
+                "category": [
+                  "clothes"
+                ],
+                "isStorage": false,
+                "createType": "default",
+                "bookmark": false,
+                "itemId": "item_1",
+                "count": 2,
+                "innerItems": {},
+                "id": "87290ef2-187b-4cf3-83fc-5610effcd39a"
+              },
+              "c498c978-4d66-4ec0-bf18-277467c4889c": {
+                "name": "Tシャツ",
+                "iconId": "shirt",
+                "category": [
+                  "clothes"
+                ],
+                "isStorage": false,
+                "createType": "default",
+                "bookmark": false,
+                "itemId": "item_1",
+                "count": 4,
+                "innerItems": {},
+                "id": "c498c978-4d66-4ec0-bf18-277467c4889c"
+              },
+              "89493ba6-e0c4-4945-b6e1-77450410d517": {
+                "name": "Tシャツ",
+                "iconId": "shirt",
+                "category": [
+                  "clothes"
+                ],
+                "isStorage": false,
+                "createType": "default",
+                "bookmark": false,
+                "itemId": "item_1",
+                "count": 1,
+                "innerItems": {},
+                "id": "89493ba6-e0c4-4945-b6e1-77450410d517"
+              }
+            }
+          }
+        }
+      },
+      "ba4a1825-e5ee-4898-8d0d-1fd0797eef76": {
+        "id": "ba4a1825-e5ee-4898-8d0d-1fd0797eef76",
+        "caseType": "NomalSuitcase"
+      }
+    },
+    "addItemCounter": 0
+  }
+}

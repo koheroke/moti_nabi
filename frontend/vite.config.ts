@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [vue()],
   envDir: '../',
   build: {
-    outDir: '../backend/frontendDist',
+    outDir: '../frontend/dist',
     sourcemap: true,
   },
   resolve: {

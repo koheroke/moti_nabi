@@ -71,7 +71,7 @@ import { ref, watch } from "vue";
 import type { Category } from "@/features/create/type/casetype.ts";
 import type { CategoryId } from "@/features/create/type/categoryType.ts";
 import type { addListItemToken } from "@/features/create/type/tokens.ts";
-import { UseCreateWork } from "@/features/create/composables/useCreateWork";
+import { useCreateWork } from "@/features/create/composables/useCreateWork";
 import iconSelect from "./iconSelect.vue";
 import { useCreateStore } from "../../../../store/createStore";
 const createStore = useCreateStore();
@@ -84,7 +84,7 @@ const caseBool = ref<boolean>(false);
 const show = ref<boolean>(false);
 const selectedIcon = ref<string>();
 const selectedIcoSrc = ref<string>();
-const createWork = UseCreateWork();
+const createWork = useCreateWork();
 
 const closeIconSelect = () => {
   iconSelectToggle();

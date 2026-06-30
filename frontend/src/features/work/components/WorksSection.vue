@@ -12,6 +12,7 @@
         :key="work.id"
         :work="work"
         @onWorkCard="onWorkCard(work.id)"
+        :publicWork="publicWork"
       />
     </div>
     <div v-if="works.length === 0" class="empty">作品がありません</div>
@@ -25,10 +26,12 @@ withDefaults(
   defineProps<{
     works: workPackage[];
     wrap?: boolean;
+    publicWork?: boolean;
     onWorkCard: (cardId: string) => void;
   }>(),
   {
     wrap: false,
+    public: false,
   },
 );
 </script>

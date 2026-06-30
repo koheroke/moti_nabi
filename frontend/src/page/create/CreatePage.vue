@@ -19,7 +19,7 @@
 import TopBar from "@/features/create/components/TopBar.vue";
 import Preview from "@/features/create/components/Preview.vue";
 import sideBar from "@/features/create/components/sideBar/sideBar.vue";
-import { UseCreateWork } from "@/features/create/composables/useCreateWork";
+import { useCreateWork } from "@/features/create/composables/useCreateWork";
 import { onMounted, onUnmounted } from "vue";
 import { useCreateStore } from "@/features/create/store/createStore";
 import { watch } from "vue";
@@ -28,7 +28,7 @@ import { useApplyCreateAction } from "@/features/create/composables/applyCreateA
 const applyCreateAction = useApplyCreateAction();
 const createStore = useCreateStore();
 const { leaveGetter } = storeToRefs(createStore);
-const createWork = UseCreateWork();
+const createWork = useCreateWork();
 import { useRouter } from "vue-router";
 const router = useRouter();
 createStore.setleave(false);

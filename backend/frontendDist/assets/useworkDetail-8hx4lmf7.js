@@ -1,2 +1,0 @@
-import{s as e}from"./index-ZSL4qzbp.js";var t=e(`workDetailEdit`,{state:()=>({about:{name:``,bio:``,tags:[],thumbnailUrl:``,public:!1},edit:{}}),getters:{AboutGetter:e=>e.about,EditGetter:e=>e.edit},actions:{setAbout(e){console.log(`aboutStore setAbout_log`,e),this.about={...this.about,...e}},addEdit(e){this.about={...this.about,...e},this.edit={...this.edit,...e}}}});export{t};
-//# sourceMappingURL=useworkDetail-8hx4lmf7.js.map

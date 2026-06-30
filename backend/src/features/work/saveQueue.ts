@@ -8,6 +8,10 @@ export type alterationType = "previewItems_additem"
   | "previewCases_deleteCase"
   | "confirmed_resizePocket"
   | "confirmed_removePocket"
+  | "pocket_hardDelete"
+  | "pocket_LogicalDelete"
+  | "case_hardDelete"
+  | "case_LogicalDelete"
 
 
 
@@ -37,6 +41,8 @@ export const useSaveQueue = () => {
   const timers = new Map<string, ReturnType<typeof setTimeout>>()
 
   const getQueue = (workId: string) => {
+    console.log("queues", queues)
+    console.log("timers", timers)
     if (!queues.has(workId)) {
       queues.set(workId, [])
     }

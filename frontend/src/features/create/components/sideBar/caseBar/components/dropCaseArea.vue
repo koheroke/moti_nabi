@@ -33,9 +33,9 @@ h1 {
 <script setup lang="ts">
 import { useCaseDragStore } from "../store/onDrag.ts";
 import { storeToRefs } from "pinia";
-import { UseCreateWork } from "@/features/create/composables/useCreateWork.ts";
+import { useCreateWork } from "@/features/create/composables/useCreateWork.ts";
 import { type CaseType } from "@/features/create/type/itemType.ts";
-const createWork = UseCreateWork();
+const createWork = useCreateWork();
 const casecardDragStore = useCaseDragStore();
 const { isDrag } = storeToRefs(casecardDragStore);
 const handleDrop = () => {};

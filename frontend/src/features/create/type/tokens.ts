@@ -78,6 +78,16 @@ export interface confirmedRemovePocketToken {
   pocketId: string
 }
 
+export interface pocketLogicalDeleteToken {
+  pocketId: string,
+  caseId: string,
+  type: "cancel" | "push"
+}
+
+export interface caseLogicalDeleteToken {
+  caseId: string,
+  type: "cancel" | "push"
+}
 //リスト
 export interface addListItemToken {
   name: string

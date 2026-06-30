@@ -1,2 +1,0 @@
-import{a as e}from"./index-CHgrgPDU.js";var t=e(`search`,[[`path`,{d:`m21 21-4.34-4.34`,key:`14j7rj`}],[`circle`,{cx:`11`,cy:`11`,r:`8`,key:`4ej97u`}]]);export{t};
-//# sourceMappingURL=search-CI_hdE-m.js.map

@@ -6,8 +6,19 @@ interface Case {
   case: part;
   handle: part;
   name: string;
-  id: string
+  id: string;
+  logicalDelete: boolean;
 }
+
+
+interface listCase {
+  pockets: Record<string, Pocket>;
+  case: part;
+  handle: part;
+  name: string;
+  id: string;
+}
+
 
 interface previewItem {
   id: string;
@@ -32,6 +43,7 @@ type Pocket = {
   }
   priority: number
   items: Record<string, previewItem>;
+  logicalDelete: boolean;
 }
 type CaseEdit = {
   x?: number;
@@ -55,4 +67,4 @@ interface part {
   height: number;
   radius: number;
 }
-export type { Category, previewItem, Pocket, part, Case, CaseEdit }
+export type { Category, previewItem, Pocket, part, Case, CaseEdit, listCase }

@@ -1,7 +1,10 @@
 import { Hono } from 'hono';
 import { useWork } from '@/features/work/work';
+import { useLogicalDelete } from "@/features/work/logicalDelete"
+const logicalDelete = useLogicalDelete()
 const createWork = useWork()
 export const workRouter = new Hono();
+
 workRouter.post('/editWorkPackage', async (c) => {
   const body = await c.req.json();
   const res = await createWork.editWorkPackage(body.workId, body.data)
@@ -36,6 +39,13 @@ workRouter.post('/getWork', async (c) => {
   const data = await c.req.json();
   //console.log("getWork", data)
   const res = await createWork.getWork(data.theWorkId)
+  if (res) {
+    const logicalDeleteData = logicalDelete.getLogicalDelete
+    if (!logicalDeleteData.length) {
+      const data = JSON.parse(res.data)
+      logicalDelete.setLogicalDelete(data.theWorkId, data.previewDatas.caseLogicalDelete, data.previewDatas.pocketLogicalDeleteToken)
+    }
+  }
   return c.json(res);
 });
 

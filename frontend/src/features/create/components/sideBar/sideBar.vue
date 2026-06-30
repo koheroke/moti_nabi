@@ -50,9 +50,10 @@ import { useSideBarStore } from "../../store/sideBarStore";
 import { ref, type Component } from "vue";
 const sideBarStore = useSideBarStore();
 const { nowSideBarGetter } = storeToRefs(sideBarStore);
+sideBarStore.nowSideBarSetter("preview");
 const onSelect = (id: string) => {
   if (nowSideBarGetter.value == id) {
-    sideBarStore.nowSideBarSetter("");
+    sideBarStore.nowSideBarSetter("preview");
     return;
   }
   sideBarStore.nowSideBarSetter(id);

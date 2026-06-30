@@ -3,6 +3,7 @@
     v-for="(caseItem, index) in cases"
     :key="caseItem.id"
     :transform="`translate(${index * (caseItem.data.case.width + caseGap)}, 0)`"
+    @contextmenu.prevent="caseStore.setSelectedCase(caseItem.id)"
   >
     <!-- 外枠 -->
     <rect
@@ -26,12 +27,17 @@
     <!-- ポケット -->
     <g
       v-for="pocket in caseItem.data.pockets"
+      :v-if="!pocket.logicalDelete"
       :key="pocket.id"
       class="pocket-group"
       @dblclick="openPocket(pocket.id, caseItem.id)"
       @drop="addPreviewItem($event, pocket.id, caseItem.data.id)"
+      @contextmenu.preven="
+        pocketClick($event, { pocketId: pocket.id, caseId: caseItem.id })
+      "
       @drop.stop
       @dragover.prevent=""
+      @click.stop
     >
       <rect
         :x="pocket.pos.x"
@@ -83,19 +89,33 @@
 </template>
 <script setup lang="ts">
 import SvgResizeHandle from "./svgResizeHandle.vue";
+import { onMounted, onUnmounted } from "vue";
 import SvgRemoveHandle from "./SvgRemoveHandle.vue";
 import { usePocketStore } from "../../store/pocketStore.ts";
 import { storeToRefs } from "pinia";
-const pocketStore = usePocketStore();
-const { getSelectedPocketId } = storeToRefs(pocketStore);
 import { useCreateStore } from "../../store/createStore";
 import { type addPreviewItemToken } from "../../type/tokens.ts";
-import { UseCreateWork } from "../../composables/useCreateWork.ts";
-const createWork = UseCreateWork();
+import { useCreateWork } from "../../composables/useCreateWork.ts";
+import { useCaseStore } from "../../store/caseStore.ts";
+const caseStore = useCaseStore();
+const createWork = useCreateWork();
 const createStore = useCreateStore();
+const pocketStore = usePocketStore();
+const { getSelectedPocketId } = storeToRefs(pocketStore);
 const caseGap = 20;
 const { getPreviewCasesArray: cases } = storeToRefs(createStore);
 
+const handleContextMenu = (event: MouseEvent) => {
+  event.preventDefault();
+};
+
+onMounted(() => {
+  document.addEventListener("contextmenu", handleContextMenu);
+});
+
+onUnmounted(() => {
+  document.removeEventListener("contextmenu", handleContextMenu);
+});
 // import { computed } from "vue";
 // import type { Pocket, previewItem, Case } from "../../type/casetype";
 // const pockets = computed(() => {
@@ -126,6 +146,19 @@ const addPreviewItem = (event: DragEvent, pocketId: string, caseId: string) => {
       id: null,
     };
     createWork.addItemToPreview(addPreviewItemToken);
+  }
+};
+
+const pocketClick = (
+  event: MouseEvent,
+  value: { pocketId: string; caseId: string },
+) => {
+  console.log("button" + event.button);
+  if (event.button === 2) {
+    pocketStore.setOpenMenuPocket({
+      id: value.pocketId,
+      caseId: value.caseId,
+    });
   }
 };
 </script>

@@ -1,2 +1,0 @@
-import{c as e}from"./index-Dlzs7WbQ.js";var t=e(`workDetailEdit`,{state:()=>({about:{name:``,bio:``,tags:[],thumbnailUrl:``,public:!1},edit:{}}),getters:{AboutGetter:e=>e.about,EditGetter:e=>e.edit},actions:{setAbout(e){console.log(`aboutStore setAbout_log`,e),this.about={...this.about,...e}},addEdit(e){this.about={...this.about,...e},this.edit={...this.edit,...e}}}});export{t};
-//# sourceMappingURL=useworkDetail-C0oKQKbh.js.map

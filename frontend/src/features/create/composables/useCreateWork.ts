@@ -14,7 +14,10 @@ import type {
   addListItemToken,
   addBookmarkToken,
   confirmedRemovePocketToken,
-  changePriorityPocket
+  changePriorityPocket,
+  pocketLogicalDeleteToken,
+  caseLogicalDeleteToken
+
 } from "@/features/create/type/tokens";
 import { type menber } from "../type/infoType";
 import { useApplyCreateAction } from "./applyCreateAction";
@@ -27,15 +30,14 @@ import { useWorkPackageStore } from "@/features/work/store/workPackageStore";
 import { useSocketApi } from "../api/createSocketApi";
 import { useAlertStore } from "@/store/feedback/alertStore";
 import { type editAboutType, useWorkDetailEditStore } from "@/features/workDetailEdit/store/useworkDetail";
-import type { Pocket } from "./casetype";
-import type { previewItem } from "./casetype";
+
 
 const workDetailEditStore = useWorkDetailEditStore()
 const alertStore = useAlertStore();
 const api = useSocketApi()
 const workPackageStore = useWorkPackageStore();
 
-export const UseCreateWork = () => {
+export const useCreateWork = () => {
   const createStore = useCreateStore()
   const userAuthstore = useUserAuthStore()
   const alterationLog = useAlterationLogStore()
@@ -61,7 +63,6 @@ export const UseCreateWork = () => {
     const response = applyCreateAction.hydrateCreateState(newWork)
     vuepreviewData = response.vuepreviewData
     vueItemList = response.vueItemList
-    addItemCounter = response.addItemCounter
     try {
       //console.log("newWork", newWork)
       if (newWork == null) return "damagedData"
@@ -70,7 +71,6 @@ export const UseCreateWork = () => {
       const response = applyCreateAction.hydrateCreateState(newWork)
       vuepreviewData = response.vuepreviewData
       vueItemList = response.vueItemList
-      addItemCounter = response.addItemCounter
     } catch (e) {
       return "damagedData"
     }
@@ -87,10 +87,10 @@ export const UseCreateWork = () => {
     let data = null as { parseData: UserLuggage_SaveDBData, menbers: menber[], about: editAboutType } | null
     let vuepreviewData = {} as Record<string, Case>
     let vueItemList = {} as Record<string, itemCard>
-    let addItemCounter = 0 as number
     let parseData = {} as UserLuggage_SaveDBData
     let menbers = [] as menber[]
     let about = {} as editAboutType
+    let indexChangeCounter = 0
     try {
       data = await createApi.getWork(theWorkId)
     } catch (e) {
@@ -103,16 +103,17 @@ export const UseCreateWork = () => {
       const response = applyCreateAction.hydrateCreateState(data.parseData)
       vuepreviewData = response.vuepreviewData
       vueItemList = response.vueItemList
-      addItemCounter = response.addItemCounter
       parseData = data.parseData
       menbers = data.menbers
       about = data.about
+      indexChangeCounter = response.indexChangeCounter
     } catch (e) {
       return "damagedData"
     }
     createStore.setWork(parseData, vuepreviewData, vueItemList)
     createStore.setMenbersSetter(menbers)
     workDetailEditStore.setAbout(about)
+    createStore.indexChangeCounterSetter(indexChangeCounter)
     const user = menbers.find((menber) => menber.userId == userAuthstore.userId);
     createStore.setRole(user?.role ?? "viewer")
     return "none"
@@ -121,10 +122,9 @@ export const UseCreateWork = () => {
 
   const setWorkSocket = async () => {
     const alterationTokens = await api.joinWorkRoom()
-
-    if (!alterationTokens) return "noneNameorWorkId"
+    if (!alterationTokens) return "noneNameorWorkId";
     alterationTokens.forEach((token: alterationToken) => {
-      applyCreateAction.alterationData(token, true)
+      applyCreateAction.alterationData(token)
     })
     return "none";
   }
@@ -513,29 +513,27 @@ export const UseCreateWork = () => {
     applyCreateAction.alterationData(token)
   }
 
-  const changePriorityPocket = (caseId: string, pocketId: string, addPriority: number) => {
-
+  const confirmedChangePriorityPocket = (caseId: string, pocketId: string) => {
     const this_priority = createStore.previewItemGetter[caseId].pockets[pocketId].priority
-
     const confirmedToken: changePriorityPocket = {
-      priority: this_priority + addPriority,
+      priority: this_priority,
       caseId: caseId,
       pocketId: pocketId,
     }
     const reverseConfirmedToken: changePriorityPocket = {
-      priority: this_priority - addPriority,
+      priority: this_priority - 1,
       caseId,
       pocketId,
     }
-
     const token: alterationToken = {
-      alterationType: "confirmed_removePocket",
+      alterationType: "changePriorityPocket",
       token: confirmedToken,
       user: userAuthstore.userId,
     }
+    console.log("changePriorityPocket", token)
 
     const reverseToken: alterationToken = {
-      alterationType: "confirmed_removePocket",
+      alterationType: "changePriorityPocket",
       token: reverseConfirmedToken,
       user: userAuthstore.userId,
     }
@@ -546,7 +544,80 @@ export const UseCreateWork = () => {
     })
 
     applyCreateAction.alterationData(token)
+  }
 
+
+  const provisionaChangePriorityPocket = (caseId: string, pocketId: string) => {
+    const indexChangeCounter = createStore.indexChangeCounterGetter
+
+    const confirmedToken: changePriorityPocket = {
+      priority: indexChangeCounter + 1,
+      caseId: caseId,
+      pocketId: pocketId,
+    }
+    createStore.changePriorityPocket(confirmedToken)
+  }
+
+  const pocketLogicalDelete = (data: pocketLogicalDeleteToken) => {
+    const confirmedToken = data
+    const reverseConfirmedToken: pocketLogicalDeleteToken = { ...data, type: "cancel" }
+
+
+    const token: alterationToken = {
+      alterationType: "pocket_logicalDelete",
+      token: confirmedToken,
+      user: userAuthstore.userId,
+    }
+
+    const reverseToken: alterationToken = {
+      alterationType: "pocket_logicalDelete",
+      token: reverseConfirmedToken,
+      user: userAuthstore.userId,
+    }
+
+    alterationLog.saveState({
+      forwardToken: token,
+      reverseToken,
+    })
+    console.log("pocketLogicalDelete", token)
+
+    applyCreateAction.alterationData(token)
+  }
+
+  const copyPocket = (caseId: string, pocketId: string) => {
+
+  }
+
+  const addPocket = (caseId: string, pocketId: string) => {
+
+
+  }
+
+
+
+  const caseLogicalDelete = (data: caseLogicalDeleteToken) => {
+    const confirmedToken = data
+    const reverseConfirmedToken: caseLogicalDeleteToken = { ...data, type: "cancel" }
+
+
+    const token: alterationToken = {
+      alterationType: "case_logicalDelete",
+      token: confirmedToken,
+      user: userAuthstore.userId,
+    }
+
+    const reverseToken: alterationToken = {
+      alterationType: "case_logicalDelete",
+      token: reverseConfirmedToken,
+      user: userAuthstore.userId,
+    }
+
+    alterationLog.saveState({
+      forwardToken: token,
+      reverseToken,
+    })
+
+    applyCreateAction.alterationData(token)
   }
 
   // const positionChangeItemToPreview = (token: positionChangePreviewItemToken) => {
@@ -556,5 +627,5 @@ export const UseCreateWork = () => {
   //   push_target.set(target_item, target_item)
   // }
 
-  return { changePriorityPocket, buildItemPathMap, createNewwork, confirmedRemovePocket, provisionalRemovePocket, provisionalResizePocket, confirmedResizePocket, loadWork, addItemToPreview, addItemCount, addBookmark, deletePreviewItem, addListItem, addCase, deleteCase, setCreatePageWork }
+  return { caseLogicalDelete, pocketLogicalDelete, copyPocket, addPocket, provisionaChangePriorityPocket, confirmedChangePriorityPocket, buildItemPathMap, createNewwork, confirmedRemovePocket, provisionalRemovePocket, provisionalResizePocket, confirmedResizePocket, loadWork, addItemToPreview, addItemCount, addBookmark, deletePreviewItem, addListItem, addCase, deleteCase, setCreatePageWork }
 }

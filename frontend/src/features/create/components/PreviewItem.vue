@@ -56,7 +56,7 @@ const props = defineProps<{
   previewItemsDom: HTMLElement | null;
 }>();
 import { CirclePlus, CircleMinus } from "lucide-vue-next";
-import { UseCreateWork } from "../composables/useCreateWork";
+import { useCreateWork } from "../composables/useCreateWork";
 import { BaseButton } from "@/components/ui/form/BaseButton";
 import type {
   deletePreviewItemToken,
@@ -68,7 +68,7 @@ import { usePocketStore } from "../store/pocketStore.ts";
 
 const pocketStore = usePocketStore();
 const createStore = useCreateStore();
-const createWork = UseCreateWork();
+const createWork = useCreateWork();
 const itemDom = ref<HTMLElement | null>(null);
 const iconMap = createStore.iconMap;
 const block = ref(createStore.roleGetter == "owner" || "editor" ? false : true);

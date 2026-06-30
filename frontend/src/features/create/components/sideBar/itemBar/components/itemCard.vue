@@ -34,10 +34,10 @@
 <script setup lang="ts">
 import type { itemCard } from "@/features/create/type/itemType";
 import { Star } from "lucide-vue-next";
-import { UseCreateWork } from "@/features/create/composables/useCreateWork";
+import { useCreateWork } from "@/features/create/composables/useCreateWork";
 import type { addBookmarkToken } from "@/features/create/type/tokens";
 
-const createWork = UseCreateWork();
+const createWork = useCreateWork();
 const props = defineProps<{ item: itemCard }>();
 import type { iconInfomation } from "@/features/create/type/apiType";
 

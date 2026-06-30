@@ -87,18 +87,20 @@
 
         <section class="thumbnail">
           <h2 style="padding-bottom: 10px">サムネイル画像を設定</h2>
-          <img :src="thumbnailImage" class="icon_image" />
-          <div class="icon-edit" @click="editThumbnailShow = true">
-            <Camera fill="white" :size="100" color="#1514143d"></Camera>
+          <div class="thumbnailArea">
+            <img :src="thumbnailImage" class="thumbnail_image" />
+            <div class="thumbnail-edit" @click="editThumbnailShow = true">
+              <Camera fill="white" :size="100" color="#1514143d"></Camera>
+            </div>
+            <imageDropTab
+              v-if="editThumbnailShow"
+              @close="editThumbnailShow = false"
+              :aspectRatio="{ x: 7, y: 5 }"
+              :size="'700x500'"
+              :outputType="'png'"
+              @getNewIcon="thumbnailImage = $event"
+            ></imageDropTab>
           </div>
-          <imageDropTab
-            v-if="editThumbnailShow"
-            @close="editThumbnailShow = false"
-            :aspectRatio="{ x: 7, y: 5 }"
-            :size="'700x500'"
-            :outputType="'png'"
-            @getNewIcon="thumbnailImage = $event"
-          ></imageDropTab>
         </section>
       </li>
       <div class="buttonBox">
@@ -347,7 +349,7 @@ p {
   color: red !important;
 }
 
-.icon-edit {
+.thumbnail-edit {
   position: absolute;
   transform: translate(-50%, -50%);
   top: 50%;
@@ -368,19 +370,24 @@ p {
 .thumbnail {
   position: relative;
   height: 500px;
+  box-sizing: border-box;
 }
-.icon_image {
+.thumbnail_image {
   border-radius: 10px;
   width: 100%;
   height: 100%;
   aspect-ratio: 1/1;
 }
-.icon-edit:hover {
+.thumbnail-edit:hover {
   opacity: 1;
   background-color: rgba(0, 0, 0, 0.145);
 }
 .deleteButton:hover {
   background-color: red;
   color: white;
+}
+.thumbnailArea {
+  position: relative;
+  height: 500px;
 }
 </style>
