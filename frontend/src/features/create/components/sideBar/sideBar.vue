@@ -81,14 +81,14 @@ const sidebar = ref<SideBar[]>([
     name: "持ち物",
     onColor: "orange",
     icon: Boxes,
-    dataTutorial: "sidebar-item-botton",
+    dataTutorial: "sidebar-items-botton",
   },
   {
     id: "case",
     name: "ケース",
     onColor: "green",
     icon: Luggage,
-    dataTutorial: "sidebar-case-botton",
+    dataTutorial: "sidebar-cases-botton",
   },
 ]);
 </script>

@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import './style.css'
 import './styles/base/layout.css'
 import './styles/base/uiColorScheme.css'
+import './styles/variables/popUp.css'
 import App from './App.vue'
 import { createPinia } from 'pinia' // 1. インポート
 import { vuetify } from './lib/vuetify'

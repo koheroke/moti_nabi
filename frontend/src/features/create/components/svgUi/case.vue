@@ -34,7 +34,7 @@
         />
         <!-- ポケット -->
         <g
-          v-for="pocket in caseData.data.pockets"
+          v-for="(pocket, index) in caseData.data.pockets"
           :key="pocket.id"
           class="pocket-group"
           @dblclick="openPocket(pocket.id, caseData.id)"
@@ -45,6 +45,7 @@
           @drop.stop
           @dragover.prevent=""
           @click.stop
+          :data-tutorial="`preview-case${props.index}-pocket${index}`"
         >
           <rect
             :x="pocket.pos.x"
@@ -117,6 +118,7 @@ const { getSelectedPocketId } = storeToRefs(pocketStore);
 
 const props = defineProps<{
   caseData: previewSvgCase;
+  index: number;
 }>();
 
 const { role } = storeToRefs(createStore);
@@ -159,6 +161,7 @@ const pocketClick = (
   value: { pocketId: string; caseId: string },
 ) => {
   console.log("button" + event.button);
+
   if (event.button === 2) {
     pocketStore.setOpenMenuPocket({
       id: value.pocketId,

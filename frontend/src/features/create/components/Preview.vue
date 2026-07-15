@@ -3,8 +3,8 @@
     <div class="preview">
       <dropCaseArea class="drop-area"></dropCaseArea>
       <div class="cases_previewArea">
-        <div v-for="caseItem in cases">
-          <Case :caseData="caseItem" />
+        <div v-for="(caseItem, index) in cases">
+          <Case :caseData="caseItem" :index="index" />
         </div>
       </div>
     </div>

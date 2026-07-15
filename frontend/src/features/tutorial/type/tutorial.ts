@@ -6,6 +6,7 @@ type tutorialData = {
   title: string,
   description: string,
   action: action,
+  direction: direction
 }
 type targetData = {
   top: number,
@@ -13,4 +14,5 @@ type targetData = {
   width: number,
   height: number,
 }
-export type { tutorialType, tutorialData, targetData }
+type direction = "left" | "right" | "top" | "bottom"
+export type { tutorialType, tutorialData, targetData, direction }

@@ -161,36 +161,7 @@ const name = ref<string>("");
   flex-direction: column;
 }
 
-.popup {
-  animation: popup 0.18s ease-out;
-  transform-origin: top center;
-}
 
-.popdown {
-  animation: popdown 0.15s ease-in forwards;
-  transform-origin: top center;
-}
-@keyframes popup {
-  from {
-    opacity: 0;
-    transform: translateY(-8px) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes popdown {
-  from {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-8px) scale(0.96);
-  }
-}
 .icon-select-button {
   transition: transform 0.2s ease;
 }

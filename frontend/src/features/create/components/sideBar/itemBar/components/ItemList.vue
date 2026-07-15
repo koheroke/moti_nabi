@@ -1,6 +1,11 @@
 <template>
   <div class="itemList">
-    <ItemCard v-for="item in filteredListItem" :key="item.id" :item="item" />
+    <ItemCard
+      v-for="(item, index) in filteredListItem"
+      :key="item.id"
+      :item="item"
+      :data-tutorial="`sidebar-items-${index}`"
+    />
   </div>
 </template>
 <script setup lang="ts">

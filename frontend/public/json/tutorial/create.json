@@ -1,9 +1,42 @@
 [
   {   
     "id": "add-case",
-    "target": "[data-tutorial='sidebar-case-botton']",
+    "target": "[data-tutorial='sidebar-cases-botton']",
     "title": "ケースの追加",
-    "description": "まずはプレビューにケースを追加しましょう",
-    "action": "push"
+    "description": "まずはケース一覧を開きましょう",
+    "action": "store",
+    "direction": "left"
+  },
+  {   
+    "id": "drop-case",
+    "target":"[data-tutorial='sidebar-cases-case0']",
+    "title": "ケースの追加",
+    "description": "ケースをドラック、ドロップしましょう",
+    "action": "store",
+    "direction": "left"
+  },
+  {   
+    "id": "open-pocket",
+    "target": "[data-tutorial='preview-case0-pocket0']",
+    "title": "ポケットを開く",
+    "description": "ダブルクリックでポケットを開いてみましょう",
+    "action": "store",
+    "direction": "left"
+  },
+  {   
+    "id": "add-item",
+    "target": "[data-tutorial='sidebar-items-botton']",
+    "title": "持ち物の追加",
+    "description": "まずは持ち物一覧を開きましょう",
+    "action": "store",
+    "direction": "left"
+  },
+  {   
+    "id": "drop-item",
+    "target": "[data-tutorial='sidebar-items-item_1']", 
+    "title": "持ち物の追加",
+    "description": "持ち物をドラックし、開いたポケット、またはポケットUIにドロップしましょう",
+    "action": "store",
+    "direction": "left"
   }
 ]

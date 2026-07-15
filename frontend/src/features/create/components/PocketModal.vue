@@ -4,6 +4,7 @@
     @drop="onDrop"
     @drop.stop
     @dragover.prevent="handleDrop"
+    v-show="show"
   >
     <div class="modal">
       <header class="header">
@@ -40,7 +41,7 @@
 
 <script setup lang="ts">
 import { X } from "lucide-vue-next";
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { type addPreviewItemToken } from "@/features/create/type/tokens.ts";
 import { useCreateWork } from "@/features/create/composables/useCreateWork";
 import { useSearchStore } from "../store/searchStore.ts";
@@ -49,6 +50,10 @@ import type { previewItem } from "../type/casetype.ts";
 import { usePocketStore } from "../store/pocketStore.ts";
 const searchStore = useSearchStore();
 const pocketStore = usePocketStore();
+const show = ref(false);
+onMounted(() => {
+  show.value = false;
+});
 const isClose = ref(true);
 export interface selectedPocketType {
   id: string;
@@ -70,6 +75,7 @@ const selectedPocket = ref<selectedPocketType>({
 const { getSelectedPocketId } = storeToRefs(pocketStore);
 watch(getSelectedPocketId, (ids) => {
   isClose.value = false;
+  show.value = true;
   if (ids.id.length != 0 && ids.caseId.length != 0) {
     const pocket = createStore.previewItemGetter[ids.caseId].pockets[ids.id];
     selectedPocket.value = {
@@ -90,6 +96,7 @@ const emit = defineEmits<{
 }>();
 const close = () => {
   isClose.value = true;
+  show.value = true;
   setTimeout(() => {
     emit("close");
   }, 300);

@@ -1,7 +1,7 @@
 <template>
   <div
-    v-if="isOpen && targetDataGetter"
-    class="tutorial-highlight"
+    v-if="!close && targetDataGetter"
+    class="tutorial-highlight lightup"
     :style="{
       top: `${targetDataGetter.top - 6}px`,
       left: `${targetDataGetter.left - 6}px`,
@@ -13,10 +13,17 @@
 <script setup lang="ts">
 import { useTutorialStore } from "../store/tutorial";
 import { storeToRefs } from "pinia";
-import { ref } from "vue";
+import { ref, watch } from "vue";
+const close = ref(true);
 const tutorialStore = useTutorialStore();
 const { targetDataGetter } = storeToRefs(tutorialStore);
-const isOpen = ref(true);
+watch(targetDataGetter, () => {
+  if (targetDataGetter == null) {
+    close.value = true;
+  } else {
+    close.value = false;
+  }
+});
 </script>
 <style scoped>
 .tutorial-highlight {

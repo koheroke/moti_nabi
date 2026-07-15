@@ -1,6 +1,6 @@
 <template>
   <div class="caseView">
-    <div v-for="caseItem in allcase" :key="caseItem.id">
+    <div v-for="(caseItem, index) in allcase" :key="caseItem.id">
       <div class="case">
         <Casecard
           :pockets="caseItem.data.pockets"
@@ -11,11 +11,13 @@
           :id="caseItem.id"
           v-model:selectedPocket="cases"
           style="width: 200px; height: auto"
+          :data-tutorial="`sidebar-cases-case${index}`"
         />
       </div>
     </div>
   </div>
 </template>
+
 <script setup lang="ts">
 import Casecard from "./Casecard.vue";
 import { ref } from "vue";
