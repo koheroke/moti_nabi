@@ -67,21 +67,30 @@
           <p :class="{ error: workDetailEdit.tags.length >= tagMax }">
             制限 : {{ tagMax }}/{{ workDetailEdit.tags.length }}
           </p>
+
           <BaseInput
             placeholder="タグを検索または追加"
             label="名前"
             type="text"
             v-model="tagInput"
             class="tagInput"
+            @focus="suggestClose = false"
             @handleEnter="
               workDetailEdit.tags.push(tagInput);
               workDetailEditStore.addEdit({ tags: workDetailEdit.tags });
             "
           ></BaseInput>
+          <div
+            class="coverWindow"
+            v-if="!suggestClose"
+            @click="closeSuggest"
+          ></div>
           <suggest
+            v-if="!suggestClose"
             v-model:search="tagInput"
             :suggestDatas="allTags"
             @onsuggest="workDetailEdit.tags.push($event)"
+            @close="closeSuggest"
           ></suggest>
         </section>
 
@@ -150,6 +159,10 @@ import { Delete } from "lucide-vue-next";
 import BaseDropdown from "@/components/ui/form/BaseDropdown/BaseDropdown.vue";
 import { useRouter } from "vue-router";
 import { useWork } from "@/features/work/composables/work";
+const suggestClose = ref(true);
+const closeSuggest = () => {
+  suggestClose.value = true;
+};
 const work = useWork();
 const router = useRouter();
 const workDetailEditStore = useWorkDetailEditStore();

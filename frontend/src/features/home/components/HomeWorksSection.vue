@@ -3,7 +3,7 @@
     <div class="box">
       <WorksSection :works="works" :onWorkCard="onWorkCard"></WorksSection>
     </div>
-    <BaseButton variant="text" @click="onMoreClick?.()">
+    <BaseButton variant="text" @click="onMoreClick?.()" class="see-all">
       すべて見る →
     </BaseButton>
   </section>
@@ -48,5 +48,20 @@ defineProps<{
   border: none;
   cursor: pointer;
   padding-left: 10px;
+}
+.see-all {
+  animation: emphasize 2s ease-in-out infinite;
+}
+
+@keyframes emphasize {
+  0% {
+    color: #8d8b8b;
+  }
+  50% {
+    color: #006eff;
+  }
+  100% {
+    color: #8d8b8b;
+  }
 }
 </style>

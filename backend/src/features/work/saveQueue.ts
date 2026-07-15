@@ -11,7 +11,8 @@ export type alterationType = "previewItems_additem"
   | "pocket_hardDelete"
   | "pocket_LogicalDelete"
   | "case_hardDelete"
-  | "case_LogicalDelete"
+  | "case_logicalDelete"
+  | "pocket_logicalDelete"
 
 
 

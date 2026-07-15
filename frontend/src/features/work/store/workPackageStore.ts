@@ -22,6 +22,12 @@ export const useWorkPackageStore = defineStore("package", {
     selectedPackageIdStore(id: string) {
       this.selectedPackageId = id
     },
+    setLike(id: string) {
+      const work = this.WorkPackageStore.find((work) => work.id == id)
+      if (!work) return
+      work.liked = !work.liked
+    },
+
     findPackage(id: string) {
       const allPackage = [... this.userWorkPackageStore, ...this.WorkPackageStore]
       const index = allPackage.findIndex((item) => { item.id == id })

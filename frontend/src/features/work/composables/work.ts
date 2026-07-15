@@ -1,6 +1,8 @@
 import type { workPackage } from "../types/work"
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 import { useWorkPackageStore } from "../store/workPackageStore";
+import { useUserAuthStore } from "@/store/user/userAuthStore";
+const userAuthStore = useUserAuthStore()
 const workPackageStore = useWorkPackageStore()
 const url = `${apiUrl}/work`;
 const useWork = () => {
@@ -23,6 +25,7 @@ const useWork = () => {
 
 
   const getworkPackages = async (): Promise<workPackage[]> => {
+    const userId = userAuthStore.userIdGetter
     const res = await fetch(
       `${url}/getWorkPackages`,
       {
@@ -30,6 +33,9 @@ const useWork = () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        body: JSON.stringify({
+          userId: userId
+        })
       })
     const works = await res.json()
     workPackageStore.setWorkPackageStore(works)
@@ -52,7 +58,22 @@ const useWork = () => {
     return await deleteRes
   }
 
-  return { getworkPackages, getUserworkPackages, deleteWork }
+  const setLike = async (workId: string, userId: string) => {
+    await fetch(
+      `${url}/setLike`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          workId,
+          userId,
+        })
+      })
+  }
+
+  return { getworkPackages, getUserworkPackages, deleteWork, setLike }
 }
 export { useWork }
 

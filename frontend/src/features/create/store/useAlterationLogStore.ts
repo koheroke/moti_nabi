@@ -38,11 +38,15 @@ export const useAlterationLogStore = defineStore("alterationLog", () => {
     applyCreateAction.alterationData(next.forwardToken)
   }
 
-
+  const resetStack = () => {
+    undoStack.length = 0;
+    redoStack.length = 0;
+  }
 
   return {
     undoStack,
     redoStack,
+    resetStack,
     saveState,
     undo,
     redo,

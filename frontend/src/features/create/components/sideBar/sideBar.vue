@@ -7,6 +7,7 @@
             class="iconArea flexCanter"
             @click="onSelect(item.id)"
             style="flex-direction: column"
+            :data-tutorial="item.dataTutorial"
           >
             <div
               class="flexCanter icon"
@@ -64,6 +65,7 @@ interface SideBar {
   name: string;
   onColor: string;
   icon: Component;
+  dataTutorial: string;
 }
 
 const sidebar = ref<SideBar[]>([
@@ -72,18 +74,21 @@ const sidebar = ref<SideBar[]>([
     name: "テンプレート",
     onColor: "blue",
     icon: LayoutTemplate,
+    dataTutorial: "sidebar-template-botton",
   },
   {
     id: "item",
     name: "持ち物",
     onColor: "orange",
     icon: Boxes,
+    dataTutorial: "sidebar-item-botton",
   },
   {
     id: "case",
     name: "ケース",
     onColor: "green",
     icon: Luggage,
+    dataTutorial: "sidebar-case-botton",
   },
 ]);
 </script>

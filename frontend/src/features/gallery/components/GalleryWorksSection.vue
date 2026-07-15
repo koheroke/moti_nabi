@@ -1,7 +1,7 @@
 <template>
   <div class="worksSection">
     <WorksSection
-      :works="workPackageTestData"
+      :works="visibleWorks"
       :wrap="true"
       :onMoreClick="onMoreClick"
       :onWorkCard="onWorkCard"
@@ -9,23 +9,16 @@
     >
       ></WorksSection
     >
-
-    <!-- <WorksSection
-      :works="visibleWorks"
-      :wrap="true"
-      :onMoreClick="onMoreClick"
-      :onWorkCard="onWorkCard"
-    >
-      ></WorksSection
-    > -->
   </div>
 </template>
 <script setup lang="ts">
 import WorksSection from "@/features/work/components/WorksSection.vue";
 import { useGalleryWorks } from "../composables/GalleryWork";
+import { useWorkPackageStore } from "@/features/work/store/workPackageStore";
 import type { ParseSearchQuery, SortType } from "../type";
 import { watch } from "vue";
 import { useRouter } from "vue-router";
+
 const router = useRouter();
 const step = 10;
 const { visibleWorks, more, GalleryWorksSearch, GalleryWorksSort } =

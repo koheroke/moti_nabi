@@ -1,0 +1,20 @@
+{
+  "template":{
+    "onePerson_domestic_LongDistance_stay":{
+    }
+  },
+  "thumbnail":{
+    "onePerson_domestic_LongDistance_stay":{ 
+      "id":"onePerson_domestic_longDistance_stay",
+      "name": "国内一人旅長距離向け",
+      "tags":["onePerson","domestic","longDistance","stay"],
+      "thumbnailJSON":{}
+    }
+  },
+  "thumbnailTags":{
+    "onePerson":"一人",
+    "domestic":"国内",
+    "longDistance":"長距離",
+    "stay":"宿泊"
+  }
+}

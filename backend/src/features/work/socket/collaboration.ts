@@ -5,13 +5,18 @@ import { useLogicalDelete } from "../logicalDelete"
 const pocketDelete = useLogicalDelete()
 const saveQueue = useSaveQueue()
 export const setupCollaborationSocket = (io: Server, socket: Socket) => {
-  socket.on("work:alteration", (token: { alterationToken: alterationToken, sendDbToken: server_alterationToken }) => {
+  socket.on("work:alteration", async (token: { alterationToken: alterationToken, sendDbToken: server_alterationToken }) => {
     const workId = socket.data.workId
     if (workId == undefined) return
-    if (token.alterationToken.alterationType == "pocket_LogicalDelete" || token.alterationToken.alterationType == "case_LogicalDelete") {
-      pocketDelete.pushLogicalDelete({ ...token.alterationToken.token, workId: workId, userId: token.alterationToken.user }, token.alterationToken.alterationType)
+    console.log("alterationToken___", token.alterationToken.alterationType)
+    if (token.alterationToken.alterationType == "pocket_logicalDelete" || token.alterationToken.alterationType == "case_logicalDelete") {
+      console.log("pocket_LogicalDelete|pocket_logicalDelete")
+      const hardDeleteToken = pocketDelete.pushLogicalDelete({ ...token.alterationToken.token, workId: workId, userId: token.alterationToken.user }, token.alterationToken.alterationType)
+      if (hardDeleteToken != null) {
+        io.to(workId).emit("work:alteration", hardDeleteToken);
+        return;
+      }
     }
-
     saveQueue.push(workId, token)
     io.to(workId).emit("work:alteration", token.alterationToken);
   });

@@ -9,10 +9,12 @@
 
 <script setup lang="ts">
 import popMenu from "@/components/ui/form/Menu/popMenu.vue";
-import { ref, watch, onMounted, onUnmounted, nextTick } from "vue";
+import { ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useCaseStore } from "../../store/caseStore.ts";
 import { useCreateWork } from "@/features/create/composables/useCreateWork";
+import { useCreateStore } from "../../store/createStore.ts";
+const createStore = useCreateStore();
 const createWork = useCreateWork();
 const close = ref(true);
 const caseStore = useCaseStore();
@@ -34,9 +36,13 @@ const pocketMenu = ref([
   { id: "paste", name: "貼り付け" },
   { id: "create", name: "新しいポケット" },
 ]);
-
-const onSection = (value: { id: string; name: string }) => {
+let menuPos: { x: number; y: number };
+const onSection = (
+  value: { id: string; name: string },
+  pos: { x: number; y: number },
+) => {
   console.log("value", value);
+  menuPos = pos;
   menuAction(value.id);
 };
 
@@ -53,6 +59,28 @@ const menuAction = (id: string) => {
     case "paste":
       break;
     case "create":
+      const this_priority = createStore.indexChangeCounterGetter;
+      const default_size = 100;
+      if (!menuPos) return;
+      console.log("this_priority");
+      const pos = caseStore.relativeMousePositionGetter;
+
+      createWork.addPocket({
+        caseId: this_pocket.id,
+        pocketData: {
+          id: "",
+          name: "新しいポケット",
+          pos: { x: pos.x - default_size, y: pos.y - default_size },
+          size: {
+            width: default_size,
+            height: default_size,
+          },
+          priority: this_priority + 1,
+          items: {},
+          logicalDelete: false,
+        },
+      });
+      createStore.indexChangeCounterSetter(this_priority + 1);
       break;
     default:
       break;

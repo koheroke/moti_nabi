@@ -105,8 +105,15 @@ const startResize = (event: PointerEvent, x: number, y: number) => {
   resizeDirection = { x, y };
   lastX = event.clientX;
   lastY = event.clientY;
+
+  const width = props.pocket.size.width;
+  const height = props.pocket.size.height;
   const target = event.currentTarget as SVGCircleElement;
   target.setPointerCapture(event.pointerId);
+  createWork.startResizePocket({
+    width: width,
+    height: height,
+  });
 };
 
 const stopResize = () => {
@@ -122,8 +129,16 @@ const handlePointerMove = (event: PointerEvent) => {
 
   const diffX = event.clientX - lastX;
   const diffY = event.clientY - lastY;
+
   lastX = event.clientX;
   lastY = event.clientY;
+
+  if (
+    diffX < Math.abs(resizeDirection.x) &&
+    diffY < Math.abs(resizeDirection.y)
+  ) {
+    return;
+  }
   let moveX = resizeDirection.x === -1 ? diffX : 0;
   let moveY = resizeDirection.y === -1 ? diffY : 0;
   let width = props.pocket.size.width + diffX * resizeDirection.x;
@@ -136,6 +151,7 @@ const handlePointerMove = (event: PointerEvent) => {
     height = minHeight;
     moveY = 0;
   }
+
   createWork.provisionalResizePocket(
     {
       x: props.pocket.pos.x + moveX,

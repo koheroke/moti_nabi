@@ -1,6 +1,7 @@
 import { type UserLuggage_SaveDBData } from "../type/apiType";
 import { type menber } from "../type/infoType";
 import { type editAboutType } from "@/features/workDetailEdit/store/useworkDetail";
+import type { Case } from "../type/casetype";
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 const url = `${apiUrl}/work`;
@@ -66,6 +67,23 @@ const useCreateApi = () => {
     return workData
   }
 
+  const getStaticCases = async (ids: string[]): Promise<Record<string, Case>> => {
+    const data = await fetch(
+      `${url}/getStaticCases`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ids: ids
+        })
+      }
+    )
+    return await data.json()
+  }
+
+
 
   const addMenber = async (token: { workId: string, role: string, userId: string }): Promise<string> => {
     const data = await fetch(
@@ -98,7 +116,7 @@ const useCreateApi = () => {
     return await data.json()
   }
 
-  return { getWork, createNewWork, addMenber, deleteMenber }
+  return { getWork, createNewWork, addMenber, deleteMenber, getStaticCases }
 }
 export { useCreateApi }
 

@@ -1,0 +1,9 @@
+[
+  {   
+    "id": "add-case",
+    "target": "[data-tutorial='sidebar-case-botton']",
+    "title": "ケースの追加",
+    "description": "まずはプレビューにケースを追加しましょう",
+    "action": "push"
+  }
+]

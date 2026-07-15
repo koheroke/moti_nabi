@@ -9,7 +9,7 @@
       <BaseMenu
         :values="pocketMenu"
         @close="handleClose"
-        @onSection="onSection"
+        @onSection="onMenuSection"
       ></BaseMenu>
     </div>
   </div>
@@ -17,10 +17,18 @@
 <script setup lang="ts">
 import BaseMenu from "./BaseMenu.vue";
 import { ref, watch, onMounted, onUnmounted, nextTick } from "vue";
+let mousePos = { x: 0, y: 0 };
+let menuPos = { x: 0, y: 0 };
+const onMenuSection = (value: { id: string; name: string }) => {
+  props.onSection(value, menuPos);
+};
 const props = defineProps<{
   close: boolean;
   pocketMenu: { id: string; name: string }[];
-  onSection: (value: { id: string; name: string }) => void;
+  onSection: (
+    value: { id: string; name: string },
+    pos: { x: number; y: number },
+  ) => void;
 }>();
 const emit = defineEmits<{
   (e: "close"): void;
@@ -32,7 +40,6 @@ const handleClose = () => {
 };
 
 const MenuBoxDom = ref<HTMLDivElement | null>(null);
-let mousePos = { x: 0, y: 0 };
 
 const moveMenu = async () => {
   await nextTick();
@@ -40,6 +47,7 @@ const moveMenu = async () => {
   console.log("mousePos", mousePos);
   MenuBoxDom.value.style.top = `${mousePos.y}px`;
   MenuBoxDom.value.style.left = `${mousePos.x}px`;
+  menuPos = mousePos;
   console.log("style", MenuBoxDom.value.style);
 };
 

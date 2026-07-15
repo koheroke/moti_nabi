@@ -89,7 +89,7 @@ const onDrop = (event: DragEvent) => {
     pocketId: props.pocketId,
     parentId: props.item.id,
     caseId: props.caseId,
-    id: props.item.id,
+    id: null,
   };
   createWork.addItemToPreview(addPreviewItemToken);
 };

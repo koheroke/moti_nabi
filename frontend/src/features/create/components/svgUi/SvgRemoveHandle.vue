@@ -17,7 +17,11 @@ import { useCreateWork } from "../../composables/useCreateWork";
 import { onMounted, onUnmounted } from "vue";
 import { useCreateStore } from "../../store/createStore";
 const createStore = useCreateStore();
-
+const minRemove = 0.5;
+const maxRemove = {
+  x: 0,
+  y: 0,
+};
 let stop = true;
 const createWork = useCreateWork();
 const props = defineProps<{
@@ -32,20 +36,26 @@ let lastY = 0;
 
 const startReMove = (event: PointerEvent) => {
   stop = false;
+  console.log("startReMove");
   isRemoveing = true;
   lastX = event.clientX;
   lastY = event.clientY;
   const target = event.currentTarget as SVGCircleElement;
   target.setPointerCapture(event.pointerId);
+  createWork.startRemovePocket({
+    x: props.pocket.pos.x,
+    y: props.pocket.pos.y,
+  });
 };
 
 const stopResize = () => {
   if (!stop) {
-    //console.log("stopResize");
-    createWork.confirmedRemovePocket(props.caseId, props.pocketId);
-    createWork.confirmedChangePriorityPocket(props.caseId, props.pocketId);
+    console.log("stopResize");
+    const res = createWork.confirmedRemovePocket(props.caseId, props.pocketId);
     isRemoveing = false;
     stop = true;
+    if (res == "blockEdit") return;
+    createWork.confirmedChangePriorityPocket(props.caseId, props.pocketId);
   }
 };
 
@@ -55,20 +65,32 @@ const handlePointerMove = (event: PointerEvent) => {
   let diffY = event.clientY - lastY;
   lastX = event.clientX;
   lastY = event.clientY;
+  if (Math.abs(diffX) < minRemove && Math.abs(diffY) < minRemove) {
+    return;
+  }
 
   const endPos = {
     x: props.pocket.pos.x + diffX,
     y: props.pocket.pos.y + diffY,
   };
 
-  const this_case = createStore.previewItemGetter[props.caseId];
-  const max_x = this_case.case.width;
-  const max_y = this_case.case.height;
+  const pocketSize = {
+    width: props.pocket.size.width,
+    height: props.pocket.size.height,
+  };
+  if (
+    endPos.x > maxRemove.x - pocketSize.width ||
+    endPos.y > maxRemove.y - pocketSize.height ||
+    endPos.y < 0 ||
+    endPos.x < 0
+  ) {
+    return;
+  }
   createWork.provisionaChangePriorityPocket(props.caseId, props.pocketId);
   createWork.provisionalRemovePocket(
     {
-      x: props.pocket.pos.x + diffX,
-      y: props.pocket.pos.y + diffY,
+      x: endPos.x,
+      y: endPos.y,
       width: props.pocket.size.width,
       height: props.pocket.size.height,
     },
@@ -80,6 +102,8 @@ const handlePointerMove = (event: PointerEvent) => {
 onMounted(() => {
   window.addEventListener("pointermove", handlePointerMove);
   window.addEventListener("pointerup", stopResize);
+  maxRemove.x = createStore.previewItemGetter[props.caseId].canvas.width;
+  maxRemove.y = createStore.previewItemGetter[props.caseId].canvas.height;
 });
 
 onUnmounted(() => {

@@ -1,17 +1,19 @@
 <template>
   <div class="preview-area">
-    <div class="preview" ref="previewArea">
+    <div class="preview">
       <dropCaseArea class="drop-area"></dropCaseArea>
-      <svg :viewBox="viewBox" class="viewBox">
-        <Case />
-      </svg>
+      <div class="cases_previewArea">
+        <div v-for="caseItem in cases">
+          <Case :caseData="caseItem" />
+        </div>
+      </div>
     </div>
     <section class="pocketModal">
       <PocketModal />
     </section>
 
-    <pocketMenu></pocketMenu>
-    <caseMenu></caseMenu>
+    <pocketMenu v-if="role == 'owner' || role == 'editor'"></pocketMenu>
+    <caseMenu v-if="role == 'owner' || role == 'editor'"></caseMenu>
   </div>
 </template>
 
@@ -21,7 +23,12 @@ import dropCaseArea from "./sideBar/caseBar/components/dropCaseArea.vue";
 import Case from "./svgUi/case.vue";
 import pocketMenu from "@/features/create/components/svgUi/pocketMenu.vue";
 import caseMenu from "./svgUi/caseMenu.vue";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
+import { storeToRefs } from "pinia";
+import { useCreateStore } from "../store/createStore.ts";
+const createStore = useCreateStore();
+const { getPreviewCasesArray: cases } = storeToRefs(createStore);
+const { role } = storeToRefs(createStore);
 const contentWidth = 3500;
 const contentHeight = 1800;
 const viewBox = ref<string>();
@@ -32,6 +39,10 @@ onMounted(() => {
 
   console.log(this_viewBox);
   viewBox.value = this_viewBox.join(" ");
+});
+
+onUnmounted(() => {
+  createStore.selectedMenuReset();
 });
 </script>
 <style lang="css" scoped>
@@ -55,18 +66,13 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   min-width: 0;
-  min-height: 0;
-  overflow: auto;
-  display: grid;
   background-color: rgb(68, 68, 68);
   background-repeat: repeat;
   background-image: radial-gradient(circle, #dfdddd 1px, transparent 1px);
   background-size: 20px 20px;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  grid-template-columns: repeat(3, 1fr);
   align-content: start;
-  gap: 20px;
   position: relative;
   box-sizing: border-box;
 }
@@ -74,5 +80,17 @@ onMounted(() => {
   position: relative;
   width: 100%;
   height: 100%;
+}
+.caseSvg {
+  height: 100%;
+  width: auto;
+}
+.cases_previewArea {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  gap: 30px;
+  overflow-x: auto;
 }
 </style>

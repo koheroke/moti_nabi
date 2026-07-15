@@ -1,6 +1,7 @@
 import type { CategoryId } from "../type/categoryType";
-import type { Case } from "../type/casetype";
+import type { Case, Pocket } from "../type/casetype";
 import type { CaseType } from "../type/itemType";
+import type { pocket } from "./apiType";
 export type loadResponse = "noneNameorWorkId" | "fallLoadData" | "damagedData" | "none"
 export type addItemToPreviewResponse = "nonePreview" | "addPreview" | "noneItem" | "isRegulatedAction" | "blockEdit"
 export type createdType = "default" | "userCreated" | "othersUserCreated"
@@ -13,6 +14,12 @@ export interface addItemCountToken {
   pocketId: string
   parentId: string | undefined
   pulse: number;
+}
+
+export interface addPreviewPocketToken {
+  pocketId: string
+  caseId: string
+  pocketData: Pocket
 }
 
 export interface deletePreviewItemToken {
@@ -44,7 +51,12 @@ export interface addPreviewCaseToken {
   case: Case | {
     caseId: string,
     caseType: CaseType
+    pockets?: Record<string, {
+      id: string,
+      initialPocketId: string
+    }>,
   }
+
   reverse: boolean
 }
 export interface deletePreviewCaseToken {

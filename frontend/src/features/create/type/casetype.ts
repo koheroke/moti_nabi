@@ -7,9 +7,15 @@ interface Case {
   handle: part;
   name: string;
   id: string;
+  canvas: caseCanvas;
   logicalDelete: boolean;
 }
 
+
+interface caseCanvas {
+  width: number;
+  height: number;
+}
 
 interface listCase {
   pockets: Record<string, Pocket>;
@@ -17,6 +23,7 @@ interface listCase {
   handle: part;
   name: string;
   id: string;
+  canvas: caseCanvas;
 }
 
 
@@ -30,9 +37,7 @@ interface previewItem {
   innerItems?: Record<string, previewItem>;
   count: number;
 }
-type Pocket = {
-  id: string;
-  name: string;
+type pocketSvgData = {
   pos: {
     x: number;
     y: number;
@@ -42,15 +47,20 @@ type Pocket = {
     height: number;
   }
   priority: number
+}
+
+type Pocket = pocketSvgData & {
+  id: string;
+  name: string;
+  priority: number
   items: Record<string, previewItem>;
   logicalDelete: boolean;
 }
-type CaseEdit = {
+type pocketEdit = {
   x?: number;
   y?: number;
   width?: number;
   height?: number;
-  id: string
   priority: number
 }
 
@@ -67,4 +77,4 @@ interface part {
   height: number;
   radius: number;
 }
-export type { Category, previewItem, Pocket, part, Case, CaseEdit, listCase }
+export type { Category, previewItem, Pocket, part, Case, pocketEdit, listCase, pocketSvgData, caseCanvas }

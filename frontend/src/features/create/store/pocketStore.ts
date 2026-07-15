@@ -17,6 +17,12 @@ export const usePocketStore = defineStore("pocket", {
     setSelectedPocketId(ids: { id: string; caseId: string }) {
       this.selectedPocket = { id: ids.id, caseId: ids.caseId };
     },
+    reset() {
+      this.selectedPocket = { caseId: "", id: "" };
+      this.selectedPocketScroll = { x: 0, y: 0 };
+      this.openMenuPocket = { caseId: "", id: "" };
+      this.savePocket = { items: [] };
+    },
 
     setOpenMenuPocket(ids: { id: string; caseId: string }) {
       console.log("setOpenMenuPocket", ids);

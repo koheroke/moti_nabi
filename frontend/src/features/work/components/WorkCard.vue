@@ -12,7 +12,11 @@
       <h3 class="title">{{ work.name }}</h3>
       <div class="meta">
         <span>{{ work.createdAt }}</span>
-        <likeBotton v-if="publicWork"></likeBotton>
+        <likeBotton
+          v-if="publicWork"
+          :liked="work.liked"
+          :workId="work.id"
+        ></likeBotton>
       </div>
     </div>
   </article>

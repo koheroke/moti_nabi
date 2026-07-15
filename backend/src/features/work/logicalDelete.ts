@@ -4,67 +4,121 @@ const saveQueue = useSaveQueue()
 interface pocletDeleteInfo { pocketId: string, caseId: string, userId: string, workId: string }
 interface caseDeleteInfo { pocketId: string, caseId: string, userId: string, workId: string }
 type deleteInfo = pocletDeleteInfo | caseDeleteInfo
-export type type = "pocket_LogicalDelete" | "case_LogicalDelete"
+export type type = "pocket_logicalDelete" | "case_logicalDelete"
 
 const useLogicalDelete = () => {
   const logicalDelete = new Map<string, { pocketDeleteInfo: pocletDeleteInfo[], caseDeleteInfo: caseDeleteInfo[] }>()
-  const maxlogicalDelete = 5
+  const maxPocketDelete = 7;
+  const maxCaseDelete = 3;
 
   const getLogicalDelete = (workId: string) => {
     return logicalDelete.get(workId)
   }
 
   const setLogicalDelete = (workId: string, pocketDeleteInfo: pocletDeleteInfo[], caseDeleteInfo: caseDeleteInfo[]) => {
-    logicalDelete.set(workId, { pocketDeleteInfo: pocketDeleteInfo, caseDeleteInfo: caseDeleteInfo })
+    return logicalDelete.set(workId, { pocketDeleteInfo: pocketDeleteInfo, caseDeleteInfo: caseDeleteInfo })
   }
 
 
   const pushLogicalDelete = (deleteInfo: deleteInfo, type: type) => {
+    console.log("pushLogicalDelete__", deleteInfo)
     if (!logicalDelete.get(deleteInfo.workId)) {
       logicalDelete.set(deleteInfo.workId, { pocketDeleteInfo: [], caseDeleteInfo: [] })
     }
     const this_logicalDeletes = logicalDelete.get(deleteInfo.workId)
     if (!this_logicalDeletes) return;
     switch (type) {
-      case "pocket_LogicalDelete":
+      case "pocket_logicalDelete":
+
         this_logicalDeletes.pocketDeleteInfo.push(deleteInfo as pocletDeleteInfo)
-        if (this_logicalDeletes.pocketDeleteInfo.length > maxlogicalDelete) {
-          popLogicalDelete(this_logicalDeletes.pocketDeleteInfo)
+        console.log("logicalDelete__,", this_logicalDeletes.pocketDeleteInfo)
+        if (this_logicalDeletes.pocketDeleteInfo.length > maxPocketDelete) {
+          return popLogicalDelete(this_logicalDeletes.pocketDeleteInfo, type)
         }
         break;
-      case "case_LogicalDelete":
+      case "case_logicalDelete":
         this_logicalDeletes.caseDeleteInfo.push(deleteInfo as caseDeleteInfo)
-        popLogicalDelete(this_logicalDeletes.caseDeleteInfo)
+        if (this_logicalDeletes.pocketDeleteInfo.length > maxCaseDelete) {
+          return popLogicalDelete(this_logicalDeletes.caseDeleteInfo, type)
+        }
         break
     }
   }
-  const popLogicalDelete = (deleteInfo: deleteInfo[]) => {
-    const popDdta = deleteInfo.pop()
+  const popLogicalDelete = (deleteInfo: deleteInfo[], type: string) => {
+    const popDdta = deleteInfo.shift()
     if (!popDdta) return;
 
-    hardDelete(popDdta)
+    hardDelete(popDdta, type)
   }
-  const hardDelete = (deleteInfo: deleteInfo) => {
-    const path = ["previewDatas", "mainLuggage", deleteInfo.caseId, "pockets"]
-    const token = {
-      type: "objectRemove" as server_alterationTokenType,
-      value: { id: deleteInfo.pocketId },
+  const hardDelete = (deleteInfo: deleteInfo, type: string) => {
+    let token;
+    let alterationToken;
+    const pocketLogicalDelete_path = ["previewDatas", "pocketLogicalDelete"]
+    const caseLogicalDelete_path = ["previewDatas", "caseLogicalDelete"]
+    let LogicalDelete_path;
+    let LogicalDelete_id;
+    console.log("hardDelete__", type)
+    switch (type) {
+      case "pocket_logicalDelete":
+        const pocket_path = ["previewDatas", "mainLuggage", deleteInfo.caseId, "pockets"]
+        LogicalDelete_path = pocketLogicalDelete_path
+        LogicalDelete_id = deleteInfo.pocketId
+        token = {
+          type: "objectRemove" as server_alterationTokenType,
+          value: { id: deleteInfo.pocketId },
+          createdAt: Date.now(),
+          path: pocket_path
+        }
+
+        const pocketToken = {
+          pocketId: deleteInfo.pocketId,
+          caseId: deleteInfo.caseId,
+        }
+        alterationToken = {
+          alterationType: "pocket_hardDelete" as alterationType,
+          token: pocketToken,
+          user: "",
+        }
+        break;
+      case "case_logicalDelete":
+        const case_path = ["previewDatas", "mainLuggage"]
+        LogicalDelete_id = deleteInfo.caseId
+        LogicalDelete_path = caseLogicalDelete_path
+        token = {
+          type: "objectRemove" as server_alterationTokenType,
+          value: { id: deleteInfo.caseId },
+          createdAt: Date.now(),
+          path: case_path
+        }
+        const caseToken = {
+          caseId: deleteInfo.caseId,
+        }
+        alterationToken = {
+          alterationType: "case_hardDelete" as alterationType,
+          token: caseToken,
+          user: ""
+        }
+        break
+    }
+
+    const logicalListDbToken = {
+      type: "arrayRemove" as server_alterationTokenType,
+      value: { id: LogicalDelete_id },
       createdAt: Date.now(),
-      path: path
+      path: LogicalDelete_path ? LogicalDelete_path : []
     }
 
-    const newToken = {
-      pocketId: deleteInfo.pocketId,
-      caseId: deleteInfo.caseId,
-
-    }
-    const alterationToken = {
-      alterationType: "previewItems_additem" as alterationType,
-      token: newToken,
+    const logicalListToken = {
+      alterationType: "case_hardDelete" as alterationType,
+      token: logicalListDbToken,
       user: deleteInfo.userId,
     }
 
+    if (!token || !alterationToken) return null;
+    console.log("deleteInfo.workId, { sendDbToken: token, alterationToken: alterationToken }", token)
     saveQueue.push(deleteInfo.workId, { sendDbToken: token, alterationToken: alterationToken })
+    saveQueue.push(deleteInfo.workId, { sendDbToken: logicalListDbToken, alterationToken: logicalListToken })
+    return alterationToken
   }
   return { pushLogicalDelete, popLogicalDelete, getLogicalDelete, setLogicalDelete }
 }

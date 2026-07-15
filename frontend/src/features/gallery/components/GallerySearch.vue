@@ -7,13 +7,17 @@
           v-model="modelValue"
           class="gallery-search"
           placeholder="#タグまたは名前で検索"
+          @focus="suggestClose = false"
         />
       </div>
+      <div class="coverWindow" v-if="!suggestClose" @click="closeSuggest"></div>
       <suggest
+        v-if="!suggestClose"
         v-model:search="nowInput"
         :suggestDatas="candidate"
         @onsuggest="onsuggest"
         class="suggest"
+        @close="closeSuggest"
       ></suggest>
     </div>
     <section class="tags">
@@ -29,6 +33,10 @@ import suggest from "@/features/suggest/components/suggest.vue";
 import { useWorkPackageStore } from "@/features/work/store/workPackageStore";
 import { Search } from "lucide-vue-next";
 const emit = defineEmits(["update:modelValue"]);
+const suggestClose = ref(true);
+const closeSuggest = () => {
+  suggestClose.value = true;
+};
 const workPackageStore = useWorkPackageStore();
 const allNames = ref<string[]>([]);
 const candidate = ref<{ name: string; value: any; id: string }[]>([]);
@@ -123,6 +131,7 @@ const onsuggest = (word: string) => {
 }
 .suggest {
   width: 100%;
+  z-index: 2;
 }
 .search-area {
   width: 100%;

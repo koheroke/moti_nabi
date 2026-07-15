@@ -2,16 +2,22 @@ import { defineStore } from 'pinia'
 import type { Case, previewItem } from '../type/casetype';
 import type { itemCard } from '../type/itemType';
 import type { CategoryId } from "@/features/create/type/categoryType";
-import type { iconInfomation, UserLuggage_SaveDBData } from "@/features/create/type/apiType";
+import type { iconInfomation, staticCase, UserLuggage_SaveDBData } from "@/features/create/type/apiType";
 import { type Category, } from "@/features/create/type/categoryType";
 import type { CaseType } from "@/features/create/type/itemType";
-import type { pocketLogicalDeleteToken, caseLogicalDeleteToken, changePriorityPocket, provisionalRemovePocket, provisionalResizePocket, addPreviewCaseToken, deletePreviewCaseToken, addPreviewItemToken, addItemCountToken, addBookmarkToken, deletePreviewItemToken, addListItemToken } from "@/features/create/type/tokens";
+import type { addPreviewPocketToken, pocketLogicalDeleteToken, caseLogicalDeleteToken, changePriorityPocket, provisionalRemovePocket, provisionalResizePocket, addPreviewCaseToken, deletePreviewCaseToken, addPreviewItemToken, addItemCountToken, addBookmarkToken, deletePreviewItemToken, addListItemToken } from "@/features/create/type/tokens";
 import { useSideBarStore } from './sideBarStore';
 import { useSearchStore } from './searchStore';
 const sideBarStore = useSideBarStore()
 const searchStore = useSearchStore()
 import { type menber } from '../type/infoType';
 import type { Pocket, part } from '../type/casetype';
+import { usePocketStore } from './pocketStore';
+import { useCaseStore } from './caseStore';
+import type { caseCanvas } from '../type/casetype';
+const pocketStore = usePocketStore()
+const caseStore = useCaseStore()
+
 export interface caseArray {
   id: string;
   data: Case
@@ -25,6 +31,7 @@ export interface previewSvgCase {
     name: string;
     id: string
     logicalDelete: boolean;
+    canvas: caseCanvas
   }
 }
 
@@ -77,13 +84,13 @@ export const useCreateStore = defineStore("create", {
       })),
 
     getPreviewCasesArray: (state): previewSvgCase[] => {
-
       return Object.entries(state.previewCase).map(([key, value]) => ({
         id: key,
         data: {
           id: value.id,
           name: value.name,
           case: value.case,
+          canvas: value.canvas,
           handle: value.handle,
           pockets: Object.values(value.pockets).sort((a, b) => a.priority - b.priority).filter((thisPocket) => !thisPocket.logicalDelete),
           logicalDelete: value.logicalDelete
@@ -145,10 +152,18 @@ export const useCreateStore = defineStore("create", {
       this.ListItemNumberOfChanges = 0
       sideBarStore.nowSideBarSetter("")
       searchStore.searchItemSetter({ parentId: undefined, id: "" })
-
+      pocketStore.reset()
+      return true;
     },
     indexChangeCounterSetter(count: number) {
       this.indexChangeCounter = count
+    },
+
+    selectedMenuReset() {
+      sideBarStore.nowSideBarSetter("")
+      searchStore.searchItemSetter({ parentId: undefined, id: "" })
+      pocketStore.reset()
+      caseStore.setSelectedCase("")
     },
 
 
@@ -160,6 +175,8 @@ export const useCreateStore = defineStore("create", {
       this.setWorkName(parseData.workName)
       this.PreviewItemNumberOfChanges++
       this.ListItemNumberOfChanges++
+
+      console.log("vuepreviewData__", vuepreviewData)
     },
     setleave(state: boolean) {
       this.leave = state
@@ -233,7 +250,7 @@ export const useCreateStore = defineStore("create", {
       if (innerItem) innerItem.count += token.pulse
       return { data: innerItem.count, parent: token.parentId }
     },
-    pushpreviewItem(token: addPreviewItemToken) {
+    addPreviewItem(token: addPreviewItemToken) {
       if (!this.previewCase || !this.listItem || this.addItemCounter == null || !token.caseId) { return }
       const pocket = this.previewCase[token.caseId].pockets[token.pocketId]
       this.addItemCounter++
@@ -246,7 +263,9 @@ export const useCreateStore = defineStore("create", {
         pocket.items[cardItem.id] = cardItem
       } else {
         const innnerItem = pocket.items[token.parentId]?.innerItems
+        console.log("innnerItems__", innnerItem)
         if (innnerItem) {
+          console.log("cardItem__", cardItem)
           innnerItem[cardItem.id] = cardItem
           return { item: innnerItem[cardItem.id], parent: token.parentId }
         }
@@ -307,16 +326,35 @@ export const useCreateStore = defineStore("create", {
         this.previewCase[this_case.id] = this_case
         return this_case
       } else {
-        const this_case = token.case as { caseId: string; caseType: CaseType }
-
-        const staticCase = JSON.parse(JSON.stringify(this.staticCasesGetter[this_case.caseType]));
+        const this_case = token.case as {
+          caseId: string; caseType: CaseType, pockets: Record<string, {
+            id: string,
+            initialPocketId: string
+          }>
+        }
+        const previewCaseSetPocket: Record<string, Pocket> = {} as Record<string, Pocket>;
+        const staticCase: Case = JSON.parse(JSON.stringify(this.staticCasesGetter[this_case.caseType]));
         if (!staticCase) return
+        console.log("staticCase.pockets", staticCase.pockets)
+        Object.values(staticCase.pockets).forEach((pocket: Pocket) => {
+          const this_id = crypto.randomUUID()
+          this_case.pockets[this_id] = {
+            id: this_id,
+            initialPocketId: pocket.id
+          }
+          previewCaseSetPocket[this_id] = {
+            ...pocket,
+            id: this_id,
+            priority: pocket.priority ?? 0
+          }
+        })
+
 
         this.previewCase[this_case.caseId] = {
           ...staticCase,
           id: this_case.caseId,
+          pockets: previewCaseSetPocket
         }
-
         return this_case
       }
     },
@@ -363,6 +401,28 @@ export const useCreateStore = defineStore("create", {
 
     hardDeletePocket(token: pocketLogicalDeleteToken) {
       delete this.previewCase[token.caseId].pockets[token.pocketId]
+    },
+    addPreviewPocket(token: addPreviewPocketToken) {
+      const data = token.pocketData;
+      const this_case = this.previewCase[token.caseId].pockets;
+      if (!this_case[token.pocketId]) {
+        this_case[token.pocketId] = token.pocketData;
+
+        return {
+          items: data.items,
+          id: data.id,
+          name: data.name,
+          poketSvgEdit: {
+            x: data.pos.x,
+            y: data.pos.y,
+            width: data.size.width,
+            height: data.size.height,
+            priority: data.priority
+          }
+        }
+      }
     }
   }
 })
+
+

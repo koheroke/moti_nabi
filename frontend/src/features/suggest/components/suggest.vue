@@ -5,7 +5,8 @@
         <div class="wordBox">
           <Tag :size="17"></Tag>
 
-          {{ word.name }}
+          <p style="margin-right: auto">{{ word.name }}</p>
+          <p>{{ word.detail }}</p>
         </div>
       </div>
     </div>
@@ -14,17 +15,27 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { Tag } from "lucide-vue-next";
-
 const props = defineProps<{
-  suggestDatas: { name: string; value: any; id: string }[];
+  suggestDatas: { name: string; value: any; id: string; detail?: string }[];
   search: string;
+  filterBool?: boolean;
 }>();
-const emit = defineEmits(["onsuggest"]);
-const onsuggest = (word: string) => {
+
+const emit = defineEmits<{
+  (e: "onsuggest", word: string): void;
+  (e: "close"): void;
+}>();
+
+const onsuggest = (word: any) => {
   emit("onsuggest", word);
+  emit("close");
 };
 const narrowDownData = computed(() => {
-  if (!props.search) return [];
+  if (props.filterBool) {
+    if (props.search.length == 0) {
+      return props.suggestDatas;
+    }
+  }
   return props.suggestDatas.filter((data) => data.name.includes(props.search));
 });
 </script>
@@ -39,6 +50,7 @@ const narrowDownData = computed(() => {
   gap: 15px;
   max-height: 300px;
   overflow-y: auto;
+  z-index: 2;
 }
 .wordBox:hover {
   background-color: #dbd8d867;

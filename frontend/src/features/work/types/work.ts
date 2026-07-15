@@ -7,7 +7,7 @@ export interface workPackage {
   tags: string[],
   copies: number,
   createdAt: string,
-  userLike?: boolean
+  liked: boolean
 }
 
 

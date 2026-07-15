@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { useWork } from '@/features/work/work';
 import { useLogicalDelete } from "@/features/work/logicalDelete"
+
 const logicalDelete = useLogicalDelete()
 const createWork = useWork()
 export const workRouter = new Hono();
@@ -32,6 +33,11 @@ workRouter.post('/deleteMenber', async (c) => {
   return c.json(res);
 });
 
+workRouter.post('/setLike', async (c) => {
+  const value = await c.req.json();
+  const res = await createWork.setLike(value.workId, value.userId)
+  return c.json(res);
+})
 
 
 workRouter.post('/getWork', async (c) => {
@@ -68,10 +74,24 @@ workRouter.post('/getWorkDetail', async (c) => {
 });
 
 workRouter.post('/getWorkPackages', async (c) => {
-
-  const res = await createWork.getWorkPackages()
+  const data = await c.req.json();
+  const res = await createWork.getWorkPackages(data.userId)
   return c.json(res);
 });
+//作成中
+workRouter.post('/getStaticCases', async (c) => {
+  console.log(c)
+  const res = createWork.getStaticCases()
+  return c.json(res);
+});
+
+
+workRouter.post('/getTemplatePackages', async (c) => {
+  const res = createWork.getTemplatePackages()
+  return c.json(res);
+});
+//
+
 
 workRouter.post('/getUserWorkPackages', async (c) => {
   const body = await c.req.json();

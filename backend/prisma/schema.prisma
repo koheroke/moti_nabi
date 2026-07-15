@@ -22,6 +22,7 @@ model User {
   accounts  Account[]
   profile   UserProfile?
   auth      UserAuth?
+  likedUsers WorkLike[]
   @@map("users")
 }
 
@@ -85,10 +86,20 @@ model Work {
   thumbnailUrl  String
   data          String
   public        Boolean
-  likes         Int      @default(0)
   tags          String[]
-  copies        Int      @default(0)
   members       SiteMember[]
+  likes   Int @default(0)
+  likedUsers WorkLike[]
   @@map("works")
 }
 
+
+model WorkLike {
+  userId String
+  workId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  work Work @relation(fields: [workId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  @@id([userId, workId]) 
+  @@map("work_likes")
+}

@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import BaseAlert from "@components/feedback/alert/baseAlert/BaseAlert.vue";
 import baseDialog from "./components/feedback/dialog/baseDialog/baseDialog.vue";
+import tutorialDialog from "./features/tutorial/components/tutorialDialog.vue";
+import target from "./features/tutorial/components/target.vue";
 </script>
 <template>
   <v-app>
     <baseDialog></baseDialog>
     <BaseAlert></BaseAlert>
     <router-view />
+    <target></target>
+    <tutorialDialog></tutorialDialog>
   </v-app>
 </template>
 

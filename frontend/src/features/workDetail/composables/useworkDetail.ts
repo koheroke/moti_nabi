@@ -31,6 +31,7 @@ const usePreviewWork = () => {
     }
     try {
       if (data == null) throw new Error()
+      await applyCreateAction.getStaticCases()
       const createAction = useApplyCreateAction()
       await createAction.initCreateStaticData()
       const response = applyCreateAction.hydrateCreateState(data.data)

@@ -2,8 +2,11 @@ import { prisma } from "@/lib/prisma/prisma"
 import { editWorkPackageApi } from "@/features/work/types"
 import { type server_alterationToken } from "./saveQueue"
 import { publichTokenType } from "./types/index"
-const workData = new Map()
+import cases from "./jsonData/case/case.json";
 
+const workData = new Map()
+export type setValue = "like" | "commit"
+export type caseIds = "NormalSuitcase" | "HardSuitcase"
 const useWork = () => {
 
   const createNewWork = async (userId: string) => {
@@ -31,7 +34,6 @@ const useWork = () => {
         likes: 0,
         tags: [],
         bio: "",
-        copies: 0,
         members: {
           create: {
             userId: userId,
@@ -49,6 +51,18 @@ const useWork = () => {
     return { workName: work.name, workId: work.id, data: work.data }
   }
 
+  const getStaticCases = (caseIds?: caseIds[]) => {
+    if (!caseIds) {
+      return cases;
+    }
+    return Object.fromEntries(
+      caseIds.map((id) => [id, cases[id]])
+    );
+  }
+
+  const getTemplatePackages = () => {
+
+  }
   const getWorkDetail = async (workId: string) => {
     const work = await prisma.work.findFirst({
       where: {
@@ -61,7 +75,6 @@ const useWork = () => {
         bio: true,
         likes: true,
         tags: true,
-        copies: true,
         createdAt: true,
         members: {
           select: {
@@ -124,6 +137,60 @@ const useWork = () => {
     }
   }
 
+  const setLike = async (workId: string, userId: string) => {
+
+    const like = await prisma.workLike.findUnique({
+      where: {
+        userId_workId: {
+          userId,
+          workId,
+        },
+      },
+    });
+    console.log("setLike")
+
+    if (like) {
+      await prisma.$transaction(async (tx) => {
+        await tx.workLike.delete({
+          where: {
+            userId_workId: {
+              userId,
+              workId,
+            },
+          },
+        });
+
+        await tx.work.update({
+          where: { id: workId },
+          data: {
+            likes: {
+              decrement: 1,
+            },
+          },
+        });
+      });
+
+    } else {
+      await prisma.$transaction(async (tx) => {
+        await tx.workLike.create({
+          data: {
+            userId,
+            workId,
+          },
+        });
+
+        await tx.work.update({
+          where: { id: workId },
+          data: {
+            likes: {
+              increment: 1,
+            },
+          },
+        });
+      });
+    }
+
+  }
 
 
   const getWork = async (workId: string) => {
@@ -189,7 +256,7 @@ const useWork = () => {
         }
         parent = parent[key];
       });
-
+      console.log("edit_work__", token.type)
       switch (token.type) {
         case "set":
           //console.log("token.value", token.value)
@@ -274,10 +341,11 @@ const useWork = () => {
     return { success: true };
   };
 
-  const getWorkPackages = async () => {
+  const getWorkPackages = async (userId: string) => {
+    console.log("userId", userId)
     const packages = await prisma.work.findMany({
       where: {
-        public: true
+        public: true,
       },
       select: {
         id: true,
@@ -286,13 +354,32 @@ const useWork = () => {
         public: true,
         likes: true,
         tags: true,
-        copies: true,
         createdAt: true,
+
+        likedUsers: userId
+          ? {
+            where: {
+              userId,
+            },
+            select: {
+              userId: true,
+            },
+          }
+          : false,
       },
-      orderBy: { likes: "desc", },
+      orderBy: {
+        likes: "desc",
+      },
     });
-    return packages
-  }
+    console.log("packages", packages)
+    const res = packages.map((work) => ({
+      ...work,
+      liked: userId ? work.likedUsers.length > 0 : false,
+      likedUsers: undefined,
+    }));
+
+    return res;
+  };
 
   const getUserWorkPackages = async (userId: string) => {
     const packages = await prisma.work.findMany({
@@ -310,7 +397,6 @@ const useWork = () => {
         public: true,
         likes: true,
         tags: true,
-        copies: true,
         createdAt: true,
       },
     });
@@ -349,9 +435,9 @@ const useWork = () => {
 
 
   return {
-    createNewWork, getWork, editWorkPackage, editWork
+    createNewWork, getWork, editWorkPackage, editWork, getTemplatePackages, getStaticCases
     , getWorkPackages, getUserWorkPackages
-    , getWorkDetail, addMenber, deleteMenber, publicWork, deleteWork
+    , getWorkDetail, addMenber, deleteMenber, publicWork, deleteWork, setLike
   }
 }
 

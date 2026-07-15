@@ -1,5 +1,5 @@
 import type { UserLuggage_SaveDBData } from "../type/apiType";
-import type { Case } from "../type/casetype";
+import type { Case, Pocket } from "../type/casetype";
 import type { itemCard, CaseType } from "../type/itemType";
 import type {
   loadResponse, addItemToPreviewResponse,
@@ -32,6 +32,7 @@ import { useAlertStore } from "@/store/feedback/alertStore";
 import { type editAboutType, useWorkDetailEditStore } from "@/features/workDetailEdit/store/useworkDetail";
 
 
+
 const workDetailEditStore = useWorkDetailEditStore()
 const alertStore = useAlertStore();
 const api = useSocketApi()
@@ -43,6 +44,8 @@ export const useCreateWork = () => {
   const alterationLog = useAlterationLogStore()
   const createApi = useCreateApi()
   const applyCreateAction = useApplyCreateAction()
+  let saveRemovePocket: { x: number, y: number } = { x: 0, y: 0 }
+  let saveResizePocket: { width: number, height: number } = { width: 0, height: 0 }
 
 
 
@@ -78,11 +81,16 @@ export const useCreateWork = () => {
     createStore.setWork(newWork, vuepreviewData, vueItemList)
     workPackageStore.selectedPackageIdStore(newWork.workId)
     await api.joinWorkRoom()
+    await applyCreateAction.getStaticCases()
     return "none"
   }
 
+
+
   const loadWork = async (): Promise<loadResponse> => {
     const theWorkId: string = workPackageStore.selectedPackageIdGetter
+    const staticCases = await applyCreateAction.getStaticCases()
+    console.log("staticCases", staticCases)
     if (!theWorkId) return "noneNameorWorkId"
     let data = null as { parseData: UserLuggage_SaveDBData, menbers: menber[], about: editAboutType } | null
     let vuepreviewData = {} as Record<string, Case>
@@ -276,10 +284,13 @@ export const useCreateWork = () => {
     const addToken: addPreviewCaseToken = {
       case: {
         caseType: caseType as CaseType,
-        caseId: id
+        caseId: id,
+        pockets: {}
       },
       reverse: false
     }
+
+
 
     const forwardToken: alterationToken = {
       alterationType: "previewCases_addCase",
@@ -332,13 +343,14 @@ export const useCreateWork = () => {
   let provisionalpocket = false
   let sevePocket: { x: number, y: number, width: number, height: number } = { x: 0, y: 0, width: 0, height: 0 }
   const provisionalResizePocket = (resizeData: { x: number, y: number, width: number, height: number }, pocketId: string, caseId: string) => {
-    if (createStore.getBlockEdit) return "blockEdit"
+    const pockets = createStore.previewCase[caseId].pockets
+    if (createStore.getBlockEdit || !pockets) return "blockEdit"
     if (!provisionalpocket) {
       provisionalpocket = true
       const { x, y } =
-        createStore.previewCase[caseId].pockets[pocketId].pos
+        pockets[pocketId].pos
       const { width, height } =
-        createStore.previewCase[caseId].pockets[pocketId].size
+        pockets[pocketId].size
       sevePocket = { x: x, y: y, width: width, height: height }
     }
     const token: provisionalResizePocket = {
@@ -349,12 +361,18 @@ export const useCreateWork = () => {
     createStore.reSizePocket(token) //userのみの変更で合ってる
   }
   const confirmedResizePocket = (caseid: string, pocketId: string) => {
-    if (createStore.getBlockEdit) return "blockEdit"
+    const pockets = createStore.previewCase[caseid].pockets
+    if (createStore.getBlockEdit || !pockets) return "blockEdit"
     const { x, y } =
-      createStore.previewCase[caseid].pockets[pocketId].pos
+      pockets[pocketId].pos
     const { width, height } =
-      createStore.previewCase[caseid].pockets[pocketId].size
+      pockets[pocketId].size
 
+    if (width == saveResizePocket.width && height == saveResizePocket.height) {
+      console.log("blockEdit")
+      return "blockEdit";
+    }
+    console.log("confirmed")
     const confirmedToken: confirmedResizePocketToken = {
       resizeData: { x: x, y: y, width: width, height: height },
       caseId: caseid,
@@ -393,22 +411,20 @@ export const useCreateWork = () => {
     height: 0,
   }
 
-
-
-
   const provisionalRemovePocket = (
     moveData: { x: number; y: number, width: number, height: number },
     pocketId: string,
     caseId: string
   ) => {
-    if (createStore.getBlockEdit) return "blockEdit"
+    const pockets = createStore.previewCase[caseId].pockets
+    if (createStore.getBlockEdit || !pockets) return "blockEdit";
     if (!provisionalPocket) {
       provisionalPocket = true
 
       const { x, y } =
-        createStore.previewCase[caseId].pockets[pocketId].pos
+        pockets[pocketId].pos
       const { width, height } =
-        createStore.previewCase[caseId].pockets[pocketId].size
+        pockets[pocketId].size
 
       savePocket = { x, y, width, height }
     }
@@ -434,12 +450,14 @@ export const useCreateWork = () => {
           itemId: string;
           parentId?: string;
         };
+        detail: string;
         name: string;
       }
     > = {};
     //console.log("cases", cases)
     Object.entries(cases).forEach(([caseId, caseData]) => {
       //console.log("caseId", caseData)
+      if (!caseData.pockets) return
       Object.entries(caseData.pockets).forEach(([pocketId, pocketData]) => {
         //console.log("pocketId", pocketData)
         Object.entries(pocketData.items).forEach(([parentItemId, parentItem]) => {
@@ -451,6 +469,7 @@ export const useCreateWork = () => {
               caseId,
               itemId: parentItemId,
             },
+            detail: `/${caseData.name}/${pocketData.name}/${parentItem.name}`,
             name: parentItem.name,
           };
           // //console.log("itemPathMap", itemPathMap)
@@ -466,6 +485,7 @@ export const useCreateWork = () => {
                   parentId: parentItemId,
                 },
                 name: item.name,
+                detail: `/${caseData.name}/${pocketData.name}/${parentItem.name}/${item.name}`
               };
             });
           }
@@ -476,10 +496,28 @@ export const useCreateWork = () => {
     return itemPathMap;
   };
 
+  const startRemovePocket = (data: { x: number, y: number }) => {
+    saveRemovePocket = data
+  }
+  const startResizePocket = (data: { width: number, height: number }) => {
+    saveResizePocket = data
+  }
   const confirmedRemovePocket = (caseId: string, pocketId: string) => {
-    if (createStore.getBlockEdit) return "blockEdit"
+    const pockets = createStore.previewCase[caseId].pockets
+    if (createStore.getBlockEdit || !pockets) return "blockEdit"
+
     const nowpos =
-      { ...createStore.previewCase[caseId].pockets[pocketId].pos, ...createStore.previewCase[caseId].pockets[pocketId].size }
+      { ...pockets[pocketId].pos, ...pockets[pocketId].size }
+
+    console.log("nowpos__", nowpos)
+    console.log("saveRemovePocket__", saveRemovePocket)
+    if (nowpos.x == saveRemovePocket.x && nowpos.y == saveRemovePocket.y) {
+      console.log("blockEdit")
+      return "blockEdit"
+    }
+    console.log("confirmed")
+
+
 
     const confirmedToken: confirmedRemovePocketToken = {
       removeData: nowpos,
@@ -514,7 +552,9 @@ export const useCreateWork = () => {
   }
 
   const confirmedChangePriorityPocket = (caseId: string, pocketId: string) => {
-    const this_priority = createStore.previewItemGetter[caseId].pockets[pocketId].priority
+    const pockets = createStore.previewItemGetter[caseId].pockets
+    if (!pockets) return
+    const this_priority = pockets[pocketId].priority
     const confirmedToken: changePriorityPocket = {
       priority: this_priority,
       caseId: caseId,
@@ -530,7 +570,6 @@ export const useCreateWork = () => {
       token: confirmedToken,
       user: userAuthstore.userId,
     }
-    console.log("changePriorityPocket", token)
 
     const reverseToken: alterationToken = {
       alterationType: "changePriorityPocket",
@@ -548,7 +587,7 @@ export const useCreateWork = () => {
 
 
   const provisionaChangePriorityPocket = (caseId: string, pocketId: string) => {
-    const indexChangeCounter = createStore.indexChangeCounterGetter
+    const indexChangeCounter = createStore.indexChangeCounterGetter;
 
     const confirmedToken: changePriorityPocket = {
       priority: indexChangeCounter + 1,
@@ -588,9 +627,41 @@ export const useCreateWork = () => {
 
   }
 
-  const addPocket = (caseId: string, pocketId: string) => {
 
 
+  const addPocket = (value: { caseId: string, pocketData: Pocket, pocketId?: string }) => {
+    const { pocketId, caseId, pocketData } = value
+
+    const this_pocketId = pocketId ? pocketId : crypto.randomUUID();
+    const data = { ...pocketData, id: this_pocketId }
+    const confirmedToken = {
+      caseId: caseId,
+      pocketId: this_pocketId,
+      pocketData: data
+    }
+    const reverseConfirmedToken: pocketLogicalDeleteToken = {
+      caseId: caseId,
+      pocketId: this_pocketId,
+      type: "push",
+    }
+
+    const token: alterationToken = {
+      alterationType: "pocket_add",
+      token: confirmedToken,
+      user: userAuthstore.userId,
+    }
+
+    const reverseToken: alterationToken = {
+      alterationType: "pocket_logicalDelete",
+      token: reverseConfirmedToken,
+      user: userAuthstore.userId,
+    }
+    alterationLog.saveState({
+      forwardToken: token,
+      reverseToken,
+    })
+
+    applyCreateAction.alterationData(token)
   }
 
 
@@ -627,5 +698,5 @@ export const useCreateWork = () => {
   //   push_target.set(target_item, target_item)
   // }
 
-  return { caseLogicalDelete, pocketLogicalDelete, copyPocket, addPocket, provisionaChangePriorityPocket, confirmedChangePriorityPocket, buildItemPathMap, createNewwork, confirmedRemovePocket, provisionalRemovePocket, provisionalResizePocket, confirmedResizePocket, loadWork, addItemToPreview, addItemCount, addBookmark, deletePreviewItem, addListItem, addCase, deleteCase, setCreatePageWork }
+  return { startRemovePocket, startResizePocket, caseLogicalDelete, pocketLogicalDelete, copyPocket, addPocket, provisionaChangePriorityPocket, confirmedChangePriorityPocket, buildItemPathMap, createNewwork, confirmedRemovePocket, provisionalRemovePocket, provisionalResizePocket, confirmedResizePocket, loadWork, addItemToPreview, addItemCount, addBookmark, deletePreviewItem, addListItem, addCase, deleteCase, setCreatePageWork }
 }

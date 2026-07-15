@@ -1,7 +1,7 @@
 import type { CaseType } from "./itemType";
 import type { CategoryId } from "./categoryType";
 import type { Bookmarks } from "./itemType";
-import type { CaseEdit } from "./casetype";
+import type { pocketEdit, part } from "./casetype";
 import type { pocketLogicalDeleteToken, caseLogicalDeleteToken } from "./tokens"
 interface innerItems {
   itemId: string,
@@ -10,22 +10,34 @@ interface innerItems {
 }
 
 
-interface saveDBprevieItems {
+interface saveDBprevieItem {
   itemId: string,
   innerItems?: Record<string, innerItems>;
   count: number;
   id: string;
 }
 
-interface pocket {
-  items?: saveDBprevieItems
-  poketSvgEdit?: CaseEdit
+interface BasePocket {
+  items?: Record<string, saveDBprevieItem>;
+  name: string;
+  id: string;
 }
 
-interface saveDBpreviewData {
-  pockets?: Record<string, pocket>
-  id: string
-  addItemCounter?: number,
+interface InitialPocket extends BasePocket {
+  initialPocketId: string;
+  poketSvgEdit?: pocketEdit;
+}
+
+interface CustomPocket extends BasePocket {
+  initialPocketId?: undefined;
+  poketSvgEdit: pocketEdit;
+}
+
+type pocket = InitialPocket | CustomPocket;
+
+interface BeforeParsingCaseData {
+  pockets: Record<string, pocket>
+  id: string,
   caseType: CaseType
 }
 
@@ -48,17 +60,28 @@ interface UserLuggage_SaveDBData {
   itemListDatas: {
     addedItems: Record<string, saveDBaddedItem>
     bookmarks: Bookmarks
-    addItemCounter: number,
   },
   previewDatas: {
-    mainLuggage: Record<string, saveDBpreviewData>
+    mainLuggage: Record<string, BeforeParsingCaseData>
     caseLogicalDelete?: caseLogicalDeleteToken[]
     pocketLogicalDelete: pocketLogicalDeleteToken[]
   }
 };
+
+
+
+
+interface staticCase {
+  pockets: Record<string, pocket>,
+  case: part;
+  handle: part;
+  name: string;
+  id: string;
+}
+
 interface iconInfomation { src: string, category: CategoryId, }
 
 
 
 
-export type { pocket, saveDBprevieItems, iconInfomation, UserLuggage_SaveDBData, CategoryId, saveDBaddedItem, saveDBpreviewData, innerItems }
+export type { pocketEdit, staticCase, pocket, saveDBprevieItem, iconInfomation, UserLuggage_SaveDBData, CategoryId, saveDBaddedItem, BeforeParsingCaseData, innerItems }

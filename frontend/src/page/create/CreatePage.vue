@@ -24,26 +24,47 @@ import { onMounted, onUnmounted } from "vue";
 import { useCreateStore } from "@/features/create/store/createStore";
 import { watch } from "vue";
 import { storeToRefs } from "pinia";
+import { onBeforeRouteLeave } from "vue-router";
 import { useApplyCreateAction } from "@/features/create/composables/applyCreateAction";
+import { useRouter } from "vue-router";
+import { useAlterationLogStore } from "@/features/create/store/useAlterationLogStore";
+import { useTutorial } from "@/features/tutorial/composables/tutorial";
+const tutorial = useTutorial();
+const alterationLog = useAlterationLogStore();
+const router = useRouter();
 const applyCreateAction = useApplyCreateAction();
 const createStore = useCreateStore();
 const { leaveGetter } = storeToRefs(createStore);
 const createWork = useCreateWork();
-import { useRouter } from "vue-router";
-const router = useRouter();
 createStore.setleave(false);
+
+let before = false;
 
 onMounted(async () => {
   createWork.setCreatePageWork();
+  tutorial.start("create");
+  before = true;
 });
 onUnmounted(async () => {
   applyCreateAction.leaveWork();
+  alterationLog.resetStack();
 });
 
 watch(leaveGetter, (value) => {
   if (value == true) {
     router.push("/home");
     createStore.setleave(false);
+  }
+});
+
+onBeforeRouteLeave((to) => {
+  if (before) {
+    if (to.name !== "publishReady") {
+      before = false;
+      const res = createStore.leaveWork();
+      console.log("leave");
+    }
+    return true;
   }
 });
 </script>

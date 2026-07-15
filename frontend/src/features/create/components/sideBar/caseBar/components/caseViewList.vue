@@ -4,6 +4,7 @@
       <div class="case">
         <Casecard
           :pockets="caseItem.data.pockets"
+          :canvas="caseItem.data.canvas"
           :case="caseItem.data.case"
           :handle="caseItem.data.handle"
           :name="caseItem.data.name"
@@ -27,9 +28,12 @@ const cases = ref<Pocket[]>();
 <style lang="css" scoped>
 .caseView {
   display: grid;
-  grid-template-columns: repeat(3, 2fr);
+  flex-direction: column;
+  grid-template-columns: repeat(2, 2fr);
   gap: 15px;
+  min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
+  height: 100%;
 }
 </style>
