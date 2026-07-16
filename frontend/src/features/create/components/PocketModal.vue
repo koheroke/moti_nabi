@@ -15,7 +15,11 @@
           <X :size="20" color="black" stroke-width="2.5"></X>
         </div>
       </header>
-      <div class="drop-area" ref="previewItems">
+      <div
+        class="drop-area"
+        ref="previewItems"
+        data-tutorial="preview-PocketModal-dropArea"
+      >
         <p
           v-if="Object.keys(selectedPocket.items).length === 0"
           style="font-size: 12px; text-align: center"
@@ -102,6 +106,7 @@ const close = () => {
   }, 300);
 };
 const onDrop = (event: DragEvent) => {
+  createStore.draggedItemIdSetter("");
   const dragged_itemId = event.dataTransfer?.getData("itemId");
   const dragged_id = event.dataTransfer?.getData("positionChangeData");
   if (!dragged_itemId && !dragged_id) return;

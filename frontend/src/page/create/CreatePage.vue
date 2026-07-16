@@ -29,6 +29,8 @@ import { useApplyCreateAction } from "@/features/create/composables/applyCreateA
 import { useRouter } from "vue-router";
 import { useAlterationLogStore } from "@/features/create/store/useAlterationLogStore";
 import { useTutorial } from "@/features/tutorial/composables/tutorial";
+import { useDialogStore } from "@/store/feedback/dialogStore";
+const dialogStore = useDialogStore();
 const tutorial = useTutorial();
 const alterationLog = useAlterationLogStore();
 const router = useRouter();
@@ -39,10 +41,19 @@ const createWork = useCreateWork();
 createStore.setleave(false);
 
 let before = false;
+let firstTimeCreate = true;
 
 onMounted(async () => {
   createWork.setCreatePageWork();
-  tutorial.start("create");
+  if (firstTimeCreate) {
+    dialogStore.showDialog(
+      "チュートリアルを行いますか",
+      "チュートリアルはチュートリアルボタンからいつでも受けることができます",
+      () => {
+        tutorial.start("create");
+      },
+    );
+  }
   before = true;
 });
 onUnmounted(async () => {

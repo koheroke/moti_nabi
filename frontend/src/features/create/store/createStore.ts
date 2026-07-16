@@ -42,6 +42,7 @@ export const useCreateStore = defineStore("create", {
     workId: "" as string,
     workName: "" as string,
     userLuggage_SaveDBData: null as UserLuggage_SaveDBData | null,
+    draggedItemId: "" as string,
     listItem: null as Record<string, itemCard> | null,
     previewCase: {} as Record<string, Case>,
     searchText: "",
@@ -63,6 +64,7 @@ export const useCreateStore = defineStore("create", {
   getters: {
     leaveGetter: (state) => state.leave,
     staticCasesGetter: (state) => state.staticCases,
+    addItemCounterGetter: (state) => state.addItemCounter,
     workNameGetter: (state) => state.workName,
     indexChangeCounterGetter: (state) => state.indexChangeCounter,
     categorys: (state) => state.categories,
@@ -72,6 +74,7 @@ export const useCreateStore = defineStore("create", {
     previewItemGetter: (state) => state.previewCase,
     workIdGetter: (state) => state.workId,
     roleGetter: (state) => state.role,
+    draggedItemIdGetter: (state) => state.draggedItemId,
     menbersGetter: (state) => {
       return state.menbers
     },
@@ -165,7 +168,9 @@ export const useCreateStore = defineStore("create", {
       pocketStore.reset()
       caseStore.setSelectedCase("")
     },
-
+    draggedItemIdSetter(id: string) {
+      this.draggedItemId = id
+    },
 
     setWork(parseData: UserLuggage_SaveDBData, vuepreviewData: Record<string, Case>, vueItemList: Record<string, itemCard>) {
       this.setSaveDBData(parseData)

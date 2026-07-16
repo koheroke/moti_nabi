@@ -10,7 +10,7 @@
       <div class="title">{{ "持ち物一覧" }}</div>
       <addItem
         :categories="categories"
-        v-model:add-item="returnAddItem"
+        v-model:open-sidebar-item="returnAddItem"
       ></addItem>
 
       <ItemList></ItemList>

@@ -10,6 +10,38 @@
 @keyframes popup {
   from {
     opacity: 0;
+    transform: translateX(0%) translateY(-8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0%) translateY(0) scale(1);
+  }
+}
+
+@keyframes popdown {
+  from {
+    opacity: 1;
+    transform: translateX(0%) translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(0%) translateY(-8px) scale(0.96);
+  }
+}
+
+
+.canterPopup {
+  animation: canterPopup 0.18s ease-out;
+  transform-origin: top center;
+}
+
+.canterPopdown {
+  animation: canterPopdown 0.15s ease-in forwards;
+  transform-origin: top center;
+}
+@keyframes canterPopup {
+  from {
+    opacity: 0;
     transform: translateX(-50%) translateY(-8px) scale(0.96);
   }
   to {
@@ -18,7 +50,7 @@
   }
 }
 
-@keyframes popdown {
+@keyframes canterPopdown {
   from {
     opacity: 1;
     transform: translateX(-50%) translateY(0) scale(1);
@@ -26,5 +58,23 @@
   to {
     opacity: 0;
     transform: translateX(-50%) translateY(-8px) scale(0.96);
+  }
+}
+
+
+.floating {
+  animation: floatingEmphasize 2s ease-in-out infinite;
+}
+@keyframes floatingEmphasize {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+
+  50% {
+    transform: translateY(2px) scale(0.98);
+  }
+
+  100% {
+    transform: translateY(0) scale(1);
   }
 }

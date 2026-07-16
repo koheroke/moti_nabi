@@ -13,12 +13,11 @@
         class="buttons"
         style="margin-left: auto; display: flex; align-items: center; gap: 10px"
       >
-        <UserIcon
-          size="medium"
-          userid="a"
-          :thumbnailUrl="userIconInfo.iconUrl"
+        <CircleQuestionMark
+          data-tutorial="start-tutorial-botton"
           style="margin-right: 20px"
-        ></UserIcon>
+          @click="startTutorial"
+        ></CircleQuestionMark>
         <div class="wrapper">
           <BaseButton
             variant="ghost"
@@ -43,6 +42,7 @@
         </div>
         <BaseButton
           @click="onpublich"
+          data-tutorial="setting-botton"
           :class="{ blockBotton: createStore.roleGetter != 'owner' }"
           >設定</BaseButton
         >
@@ -53,7 +53,6 @@
 <script setup lang="ts">
 import BaseButton from "@/components/ui/form/BaseButton/BaseButton.vue";
 import { CornerUpLeft, CornerUpRight } from "lucide-vue-next";
-import UserIcon from "@/features/profile/components/UserIcon.vue";
 import { useAlterationLogStore } from "../store/useAlterationLogStore";
 import { useCreateStore } from "../store/createStore";
 import { useRouter } from "vue-router";
@@ -61,20 +60,23 @@ import { onMounted, ref } from "vue";
 import addMenber from "@/features/create/components/addMenber.vue";
 import { useUserAuthStore } from "@/store/user/userAuthStore";
 import { useCreateApi } from "@/features/create/api/createApi";
-const createApi = useCreateApi();
 import { useAlertStore } from "@/store/feedback/alertStore";
-import { BaseInput } from "@/components/ui/form/BaseInput";
+import { useTutorial } from "@/features/tutorial/composables/tutorial.ts";
+import { CircleQuestionMark } from "lucide-vue-next";
 import PreviewSearch from "./PreviewSearch.vue";
+import { useUserStore, type UserInfo } from "@/store/user/userIconStore";
+const createApi = useCreateApi();
+const tutorial = useTutorial();
 const alertStore = useAlertStore();
-
 const userAuthStore = useUserAuthStore();
 const addMenberShow = ref(false);
 const router = useRouter();
 const createStore = useCreateStore();
 const alterationLog = useAlterationLogStore();
-import { useUserStore, type UserInfo } from "@/store/user/userIconStore";
 const userStore = useUserStore();
-const searchPreview = ref("");
+const startTutorial = () => {
+  tutorial.start("create");
+};
 const userIconInfo = ref<UserInfo>({
   userId: "",
   iconUrl: "",

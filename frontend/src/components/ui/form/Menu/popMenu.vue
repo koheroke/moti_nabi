@@ -84,4 +84,35 @@ onUnmounted(() => {
 .MenuBox {
   position: absolute;
 }
+
+.popup {
+  animation: popup 0.18s ease-out;
+  transform-origin: top center;
+}
+
+.popdown {
+  animation: popdown 0.15s ease-in forwards;
+  transform-origin: top center;
+}
+@keyframes popup {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+@keyframes popdown {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-8px) scale(0.96);
+  }
+}
 </style>

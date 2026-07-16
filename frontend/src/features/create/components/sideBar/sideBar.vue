@@ -74,21 +74,21 @@ const sidebar = ref<SideBar[]>([
     name: "テンプレート",
     onColor: "blue",
     icon: LayoutTemplate,
-    dataTutorial: "sidebar-template-botton",
+    dataTutorial: "sidebar-botton-template",
   },
   {
     id: "item",
     name: "持ち物",
     onColor: "orange",
     icon: Boxes,
-    dataTutorial: "sidebar-items-botton",
+    dataTutorial: "sidebar-botton-items",
   },
   {
     id: "case",
     name: "ケース",
     onColor: "green",
     icon: Luggage,
-    dataTutorial: "sidebar-cases-botton",
+    dataTutorial: "sidebar-botton-cases",
   },
 ]);
 </script>

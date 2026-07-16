@@ -5,7 +5,7 @@
         >+ 新しく持ち物を追加</BaseButton
       >
       <section
-        class="add-item-setting"
+        class="open-sidebar-item-setting"
         v-show="show"
         :class="{
           popup: open,
@@ -76,7 +76,7 @@ import iconSelect from "./iconSelect.vue";
 import { useCreateStore } from "../../../../store/createStore";
 const createStore = useCreateStore();
 const iconMap = createStore.iconMap;
-const emit = defineEmits(["update:add-item"]);
+const emit = defineEmits(["update:open-sidebar-item"]);
 const props = defineProps<{ categories: Category[] | undefined }>();
 const open = ref<boolean>(false);
 const selectedCategory = ref<CategoryId>();
@@ -147,7 +147,7 @@ const toggle = () => {
 const name = ref<string>("");
 </script>
 <style lang="css" scoped>
-.add-item-setting {
+.open-sidebar-item-setting {
   margin-top: 10px;
   display: flex;
   flex-direction: column;

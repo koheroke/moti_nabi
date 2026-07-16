@@ -9,15 +9,17 @@
       height: `${targetDataGetter.height + 12}px`,
     }"
   />
+  <finishTutorialBotton class="finishTutorialBotton"></finishTutorialBotton>
 </template>
 <script setup lang="ts">
 import { useTutorialStore } from "../store/tutorial";
+import finishTutorialBotton from "./finishTutorialBotton.vue";
 import { storeToRefs } from "pinia";
 import { ref, watch } from "vue";
 const close = ref(true);
 const tutorialStore = useTutorialStore();
-const { targetDataGetter } = storeToRefs(tutorialStore);
-watch(targetDataGetter, () => {
+const { targetDataGetter, tutorialIdGetter } = storeToRefs(tutorialStore);
+watch(tutorialIdGetter, () => {
   if (targetDataGetter == null) {
     close.value = true;
   } else {
@@ -39,5 +41,11 @@ watch(targetDataGetter, () => {
     left 0.25s,
     width 0.25s,
     height 0.25s;
+}
+.finishTutorialBotton {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  z-index: 100;
 }
 </style>

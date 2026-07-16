@@ -7,6 +7,7 @@
         :placeholder="placeholder"
         style="flex: 1"
         @focus="suggestClose = false"
+        data-tutorial="preview-search"
       />
     </div>
     <div class="coverWindow" v-if="!suggestClose" @click="closeSuggest"></div>

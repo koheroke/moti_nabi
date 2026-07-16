@@ -5,6 +5,7 @@
     :class="{ storage: item.isStorage }"
     :draggable="!createStore.getBlockEdit"
     @dragstart="onDragStart"
+    @dragend="onDragEnd"
   >
     <div class="on-bookmark-area">
       <Star
@@ -50,10 +51,14 @@ const categoryColorMap: iconColorType = createStore.categoryColor;
 const icon = iconMap[props.item.iconId] ?? "📦";
 const categoryColor = categoryColorMap[props.item.category[0]] ?? "#64748b";
 
-function onDragStart(event: DragEvent) {
+const onDragStart = (event: DragEvent) => {
   //console.log(props.item);
+  createStore.draggedItemIdSetter(props.item.id);
   event.dataTransfer?.setData("itemId", props.item.id);
-}
+};
+const onDragEnd = () => {
+  createStore.draggedItemIdSetter("");
+};
 const onBookMark = () => {
   const token: addBookmarkToken = {
     itemId: props.item.id,

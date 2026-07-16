@@ -1,6 +1,6 @@
-import type { tutorialType, tutorialData } from '../type/tutorial'
+import type { tutorialType } from '../type/tutorial'
 import { useTutorialStore } from '../store/tutorial'
-import { watchSideBarStore, watchCaseLength, watchPocketStore } from "./watchData"
+import { watchSideBarStore, watchCaseLength, watchPocketStore, watchDraggedItem, watchItemCounter, watchNext } from "./watchData"
 import { nextTick } from 'vue';
 const tutorialStore = useTutorialStore()
 const useTutorial = () => {
@@ -8,11 +8,10 @@ const useTutorial = () => {
     await tutorialStore.setTutorialData(type)
     next()
   }
-  const next = async () => {
-    await nextTick()
-    const dataId = tutorialStore.next()
+
+  const setWatch = (dataId: string) => {
     switch (dataId) {
-      case "add-case":
+      case "open-sidebar-case":
         watchSideBarStore(next, "case")
         break;
       case "drop-case":
@@ -21,15 +20,52 @@ const useTutorial = () => {
       case "open-pocket":
         watchPocketStore(next)
         break
-      case "add-item":
+      case "open-sidebar-item":
         watchSideBarStore(next, "item")
         break;
-      case "drop-item":
-
+      case "drag-item":
+        watchDraggedItem(next)
         break;
-
+      case "drop-item":
+        const incomplete = () => {
+          previous()
+        }
+        watchItemCounter(next, incomplete)
+        break;
+      case "close-sidebar":
+        watchSideBarStore(next, "preview")
+        break;
     }
   }
-  return { start }
+  const next = async () => {
+    await nextTick()
+    tutorialStore.onNextBottonSetter(false);
+    const data = tutorialStore.next()
+    if (!data) return;
+    switch (data.action as string) {
+      case "store":
+        setWatch(data?.id)
+        break;
+      case "botton":
+        watchNext(next)
+        break;
+    }
+  }
+
+  const previous = async () => {
+    await nextTick()
+    const data = tutorialStore.previous()
+    if (!data) return;
+    switch (data.action as string) {
+      case "store":
+        setWatch(data?.id)
+        break;
+      case "botton":
+        watchNext(next)
+        break;
+    }
+  }
+
+  return { start, previous }
 }
 export { useTutorial }

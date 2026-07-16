@@ -1,7 +1,7 @@
 <template>
   <div
-    v-show="show"
-    class="dialog lightup"
+    v-show="show && tutorialShowGetter"
+    class="dialog floating"
     :class="{
       popup: !close,
       popdown: close,
@@ -14,23 +14,37 @@
   >
     <h2>{{ tutorialDialogDataGetter.title }}</h2>
     <p>{{ tutorialDialogDataGetter.description }}</p>
+
+    <BaseButton
+      v-if="tutorialDialogDataGetter.action === 'botton'"
+      style="margin-top: 10px; margin-left: auto"
+      class="lightup"
+      @click="onNext"
+      >次に進む
+    </BaseButton>
   </div>
 </template>
 <script setup lang="ts">
 import { useTutorialStore } from "../store/tutorial";
+import { BaseButton } from "@/components/ui/form/BaseButton";
 import { storeToRefs } from "pinia";
-import { ref, onMounted, watch, computed } from "vue";
+import { ref, watch, nextTick } from "vue";
 const show = ref(false);
 const dialog = ref<HTMLElement | null>(null);
-onMounted(() => {
-  show.value = false;
-});
 const close = ref(true);
 const tutorialStore = useTutorialStore();
-const { targetDataGetter } = storeToRefs(tutorialStore);
-const { tutorialDialogDataGetter } = storeToRefs(tutorialStore);
+const {
+  targetDataGetter,
+  tutorialDialogDataGetter,
+  tutorialShowGetter,
+  tutorialIdGetter,
+} = storeToRefs(tutorialStore);
 
-const pos = computed(() => {
+const onNext = () => {
+  tutorialStore.onNextBottonSetter(true);
+};
+
+const getpos = async () => {
   const direction = tutorialDialogDataGetter.value.direction;
   const margin = 20;
   let top;
@@ -38,43 +52,57 @@ const pos = computed(() => {
   const target = targetDataGetter.value;
   if (!target) return;
   switch (direction) {
-    case "left":
+    case "right":
       top = target.top;
       left = target.left + target.width + margin;
       break;
-    case "right":
+    case "left":
       let dialogWidth = 0;
+      await nextTick();
       if (dialog.value) {
         dialogWidth = dialog.value.getBoundingClientRect().width;
       }
       top = target.top;
-      left = target.left - dialogWidth - margin;
+      left = target.left - dialogWidth - margin - target.width;
       break;
-    case "top":
+    case "bottom":
       top = target.top + target.height + margin;
       left = target.left;
       break;
     case "top":
-      top = target.top - target.height - margin;
+      let dialogheight = 0;
+      await nextTick();
+      if (dialog.value) {
+        dialogheight = dialog.value.getBoundingClientRect().height;
+      }
+
+      top = target.top - margin - dialogheight - target.height;
       left = target.left;
       break;
   }
   return { top: top, left: left };
-});
+};
 
-watch(tutorialDialogDataGetter, async () => {
+const pos = ref();
+
+watch(tutorialIdGetter, async () => {
   show.value = true;
   close.value = false;
+  pos.value = await getpos();
 });
 </script>
 <style lang="css" scoped>
 .dialog {
   position: fixed;
   background-color: white;
+  display: flex;
+  flex-direction: column;
   border-radius: 10px;
   padding: 10px;
   box-sizing: border-box;
   z-index: 1000;
+  width: auto;
+  height: auto;
 }
 .dialog h2 {
   font-weight: 600;
@@ -84,51 +112,20 @@ watch(tutorialDialogDataGetter, async () => {
   color: rgb(52, 52, 52);
 }
 
-.popup {
-  animation: popup 1s ease-out;
-  transform-origin: top center;
-}
-
-.popdown {
-  animation: popdown 1s ease-in forwards;
-  transform-origin: top center;
-}
-@keyframes popup {
-  from {
-    opacity: 0;
-    transform: translateX(0%) translateY(-8px) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0%) translateY(0) scale(1);
-  }
-}
-
-@keyframes popdown {
-  from {
-    opacity: 1;
-    transform: translateX(0%) translateY(0) scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: translateX(0%) translateY(-8px) scale(0.96);
-  }
-}
-
 .lightup {
-  animation: emphasize 2s ease-in-out infinite;
+  animation: lightupEmphasize 2s ease-in-out infinite;
 }
-@keyframes emphasize {
+@keyframes lightupEmphasize {
   0% {
-    transform: translateY(0) scale(1);
+    background: #3b82f6;
   }
 
   50% {
-    transform: translateY(2px) scale(0.98);
+    background: #1b66e0;
   }
 
   100% {
-    transform: translateY(0) scale(1);
+    background: #3b82f6;
   }
 }
 </style>

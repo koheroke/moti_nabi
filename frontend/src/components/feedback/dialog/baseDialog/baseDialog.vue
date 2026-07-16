@@ -1,5 +1,9 @@
 <template>
-  <div class="dialog" :class="{ popup: popup, popdown: !popup }" v-show="show">
+  <div
+    class="dialog"
+    :class="{ canterPopup: popup, canterPopdown: !popup }"
+    v-show="show"
+  >
     <section class="top-area">
       <h1>{{ title }}</h1>
       <p>{{ text }}</p>
@@ -79,6 +83,9 @@ watch(
   flex-direction: column;
   gap: 10px;
   border-radius: 10px;
+}
+.closeArea {
+  background-color: rgba(0, 0, 0, 0.472) !important;
 }
 
 .top-area {

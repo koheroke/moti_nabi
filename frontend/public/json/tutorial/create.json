@@ -1,42 +1,106 @@
 [
-  {   
-    "id": "add-case",
-    "target": "[data-tutorial='sidebar-cases-botton']",
+  {
+    "id": "open-sidebar-case",
+    "target": "[data-tutorial='sidebar-botton-cases']",
     "title": "ケースの追加",
     "description": "まずはケース一覧を開きましょう",
     "action": "store",
-    "direction": "left"
+    "direction": "right"
   },
-  {   
+  {
     "id": "drop-case",
-    "target":"[data-tutorial='sidebar-cases-case0']",
+    "target": "[data-tutorial='sidebar-cases-case0']",
     "title": "ケースの追加",
     "description": "ケースをドラック、ドロップしましょう",
     "action": "store",
-    "direction": "left"
+    "direction": "right"
   },
-  {   
+  {
     "id": "open-pocket",
     "target": "[data-tutorial='preview-case0-pocket0']",
     "title": "ポケットを開く",
     "description": "ダブルクリックでポケットを開いてみましょう",
     "action": "store",
-    "direction": "left"
+    "direction": "right"
   },
-  {   
-    "id": "add-item",
-    "target": "[data-tutorial='sidebar-items-botton']",
+  {
+    "id": "open-sidebar-item",
+    "target": "[data-tutorial='sidebar-botton-items']",
     "title": "持ち物の追加",
     "description": "まずは持ち物一覧を開きましょう",
     "action": "store",
+    "direction": "right"
+  },
+  {
+    "id": "drag-item",
+    "target": "[data-tutorial='sidebar-items-item_1']",
+    "title": "持ち物の追加",
+    "description": "持ち物をドラックしましょう",
+    "action": "store",
+    "direction": "right"
+  },
+  {
+    "id": "drop-item",
+    "target": "[data-tutorial='preview-case0-pocket0']",
+    "title": "持ち物の追加",
+    "description": "ポケット、または開いたポケットUIにドロップしましょう",
+    "action": "store",
+    "direction": "bottom"
+  },
+  {
+    "id": "open-search",
+    "target": "[data-tutorial='preview-search']",
+    "title": "検索を開く",
+    "description": "上部の検索バーから開いているサイドバーに応じた検索ができます",
+    "action": "botton",
+    "direction": "bottom"
+  },
+  {
+    "id": "close-sidebar",
+    "target": "[data-tutorial='sidebar-botton-items']",
+    "title": "サイドバーを閉じる",
+    "description": "開いているサイドバーをもう一度開こうとすると閉じることができます",
+    "action": "store",
+    "direction": "bottom"
+  },
+  {
+    "id": "search-preview-item",
+    "target": "[data-tutorial='preview-search']",
+    "title": "持ち物を検索",
+    "description": "サイドバーを閉じている状態だと、プレビュー内の持ち物を検索できます",
+    "action": "botton",
+    "direction": "bottom"
+  },
+  {
+    "id": "publish",
+    "target": "[data-tutorial='setting-botton']",
+    "title": "リストを公開",
+    "description": "設定からリストの公開が行えます",
+    "action": "botton",
     "direction": "left"
   },
-  {   
-    "id": "drop-item",
-    "target": "[data-tutorial='sidebar-items-item_1']", 
-    "title": "持ち物の追加",
-    "description": "持ち物をドラックし、開いたポケット、またはポケットUIにドロップしましょう",
-    "action": "store",
+  {
+    "id": "publish-detale",
+    "target": "[data-tutorial='setting-botton']",
+    "title": "リストを公開",
+    "description": "リストを公開するとギャラリーから誰でも見れるようになり提携しているSNSアカウントの宣伝などが行えます",
+    "action": "botton",
     "direction": "left"
+  },
+  {
+    "id": "show-tutorial-botton",
+    "target": "[data-tutorial='start-tutorial-botton']",
+    "title": "理解できましたか？",
+    "description": "上部のボタンから何度でもチュートリアルを見直すことができます",
+    "action": "botton",
+    "direction": "bottom"
+  },
+  {
+    "id": "push-finishTutorial-botton",
+    "target": "[data-tutorial='finish-tutorial-botton']",
+    "title": "お疲れ様です",
+    "description": "チュートリアルは終わりです、早速リストを作りましょう！",
+    "action": "stop",
+    "direction": "top"
   }
 ]

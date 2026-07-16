@@ -1,5 +1,5 @@
 type tutorialType = "create"
-type action = "push"
+type action = "botton | store | stop"
 type tutorialData = {
   id: string,
   target: string,
@@ -15,4 +15,4 @@ type targetData = {
   height: number,
 }
 type direction = "left" | "right" | "top" | "bottom"
-export type { tutorialType, tutorialData, targetData, direction }
+export type { tutorialType, tutorialData, targetData, direction, action }
