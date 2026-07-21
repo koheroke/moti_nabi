@@ -53,8 +53,8 @@ type Pocket = pocketSvgData & {
   id: string;
   name: string;
   priority: number
-  items: Record<string, previewItem>;
   logicalDelete: boolean;
+  items: Record<string, previewItem>;
 }
 type pocketEdit = {
   x?: number;

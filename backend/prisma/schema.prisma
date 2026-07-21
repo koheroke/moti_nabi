@@ -83,7 +83,7 @@ model Work {
   createdAt    DateTime @default(now())
   name          String
   bio           String
-  thumbnailUrl  String
+  thumbnailJson  String
   data          String
   public        Boolean
   tags          String[]

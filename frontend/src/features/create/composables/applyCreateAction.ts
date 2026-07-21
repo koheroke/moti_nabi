@@ -8,9 +8,13 @@ import type { previewItem } from "@/features/create/type/casetype";
 import { useSocketApi } from "@/features/create/api/createSocketApi"
 import { useUserAuthStore } from "@/store/user/userAuthStore";
 import { useCreateApi } from "../api/createApi";
+import type { thumbnail, BeforeParsingThumbnail } from "../type/templateType";
+import { useTemplateBarStore } from "../store/templateBar";
+import { useThumbnail } from "./thumbnail";
 const createApi = useCreateApi()
 const userAuthstore = useUserAuthStore()
 const api = useSocketApi()
+const usethumbnail = useThumbnail()
 export type alterationType = "previewItems_additem"
   | "previewItems_addcount"
   | "itemlistItems_bookmark"
@@ -42,6 +46,7 @@ export interface alterationToken {
 
 const useApplyCreateAction = () => {
   const createStore = useCreateStore()
+  const templateBarStore = useTemplateBarStore()
 
 
   const initCreateStaticData = async () => {
@@ -62,20 +67,37 @@ const useApplyCreateAction = () => {
   const leaveWork = () => {
     // api.leaveRoom()
   }
-  const getStaticCases = async (ids?: caseIds[]) => {
-    const this_ids = ids as string[]
+  const getStaticCases = async () => {
     const cases = createStore.staticCasesGetter
-    const keys = Object.keys(cases)
-    let newIds = this_ids
-    if (!this_ids) {
-      newIds = Object.values(caseIds)
+    if (Object.keys(cases).length != 0) return;
+    const getCaseDatas = await createApi.getStaticCases()
+    createStore.setStaticCases(getCaseDatas)
+  }
+
+
+  const getTemplateThumbnails = async () => {
+    if (Object.keys(templateBarStore.templateThumbnailsGetter).length != 0) {
+      return
     }
-    newIds = newIds.filter((id) => !keys.includes(id));
-    if (newIds.length == 0) return;
-    console.log("ids__", newIds)
-    const getCaseDatas = await createApi.getStaticCases(newIds)
-    console.log("getCaseDatas", getCaseDatas)
-    createStore.setStaticCases({ ...cases, ...getCaseDatas })
+    const TemplateThumbnails: Record<string, BeforeParsingThumbnail> = await createApi.getTemplateThumbnails()
+
+    const parseTemplateThumbnails = Object.fromEntries(
+      Object.values(TemplateThumbnails).map((templateThumbnail) => {
+        return [templateThumbnail.id, {
+          ...templateThumbnail,
+          thumbnailJson: usethumbnail.parse(templateThumbnail.thumbnailJson)
+        }]
+      }
+      ))
+    console.log("TemplateThumbnails", TemplateThumbnails)
+    templateBarStore.templateThumbnailsSetter(parseTemplateThumbnails)
+  }
+
+
+  const getTemplate = async (id: string) => {
+
+    const tempplate: Record<string, UserLuggage_SaveDBData> = await createApi.getTemplate(id)
+    // createStore.templateSetter(tempplate)
   }
 
   const hydrateCreateState = (data: UserLuggage_SaveDBData) => {
@@ -230,8 +252,9 @@ const useApplyCreateAction = () => {
     let dbpushToken: {
       type: server_alterationTokenType,
       path: string[],
-      value: any
-    } = { type: "arrayPush", path: [], value: null }
+      value: any,
+      thumbnailEdit: boolean
+    } = { type: "arrayPush", path: [], value: null, thumbnailEdit: false }
     if (token.user == userAuthstore.userId && socketResponse == true) return;
     switch (token.alterationType) {
       case 'previewItems_additem': { //完了
@@ -297,9 +320,10 @@ const useApplyCreateAction = () => {
         const res: previewItems_addcountRes | undefined = createStore.addCount(token.token as addItemCountToken)
         if (res == undefined || res.data == undefined) { return }
         const this_token = token.token as addItemCountToken
-        dbpushToken.path = ["previewDatas", "mainLuggage", this_token.caseId, "pockets", this_token.pocketId, "items", "innerItems", this_token.id]
+        dbpushToken.path = ["previewDatas", "mainLuggage", this_token.caseId, "pockets", this_token.pocketId, "items", this_token.id]
         if (res.parent != undefined) {
           dbpushToken.path.push(res.parent)
+          dbpushToken.path.push("innerItems")
         }
         dbpushToken.path.push("count")
         dbpushToken.value = res.data
@@ -323,10 +347,11 @@ const useApplyCreateAction = () => {
         const res: previewItems_deleteRes | undefined = createStore.deletepreviewItem(token.token as deletePreviewItemToken)
         const this_token = token.token as deletePreviewItemToken
         if (res == undefined || res.id == undefined) { return }
-        dbpushToken.path = ["previewDatas", "mainLuggage", this_token.caseId, "pockets", this_token.pocketId, "items", "innerItems"]
+        dbpushToken.path = ["previewDatas", "mainLuggage", this_token.caseId, "pockets", this_token.pocketId, "items"]
         dbpushToken.value = res
         if (res.parent != undefined) {
           dbpushToken.path.push(res.parent)
+          dbpushToken.path.push("innerItems")
         }
         dbpushToken.value = { id: res.id }
         dbpushToken.type = "objectRemove"
@@ -354,6 +379,7 @@ const useApplyCreateAction = () => {
         dbpushToken.path = ["previewDatas", "mainLuggage"]
         dbpushToken.value = data
         dbpushToken.type = "objectPush"
+        dbpushToken.thumbnailEdit = true
         break
       }
 
@@ -365,6 +391,7 @@ const useApplyCreateAction = () => {
         dbpushToken.path = ["previewDatas", "mainLuggage", this_token.caseId, "pockets"];
         dbpushToken.value = { poketSvgEdit: poketSvgEdit, items: items, id: id, name: name };
         dbpushToken.type = "objectPush";
+        dbpushToken.thumbnailEdit = true
         break
       }
 
@@ -376,6 +403,7 @@ const useApplyCreateAction = () => {
         dbpushToken.path = ["previewDatas", "mainLuggage", this_token.caseId, "pockets", this_token.pocketId, "poketSvgEdit"]
         dbpushToken.value = { ...this_token.removeData };
         dbpushToken.type = "set";
+        dbpushToken.thumbnailEdit = true
         break
       }
 
@@ -387,6 +415,7 @@ const useApplyCreateAction = () => {
         dbpushToken.path = ["previewDatas", "mainLuggage", this_token.caseId, "pockets", this_token.pocketId, "poketSvgEdit", "priority"]
         dbpushToken.value = this_token.priority
         dbpushToken.type = "set"
+        dbpushToken.thumbnailEdit = true
         break
       }
 
@@ -398,6 +427,7 @@ const useApplyCreateAction = () => {
         dbpushToken.value = { ...this_token.resizeData }
         //console.log(this_token.resizeData)
         dbpushToken.type = "set"
+        dbpushToken.thumbnailEdit = true
         break
       }
       case 'previewCases_deleteCase': {
@@ -411,7 +441,8 @@ const useApplyCreateAction = () => {
           type: dbpushToken.type,
           value: dbpushToken.value,
           createdAt: Date.now(),
-          path: dbpushToken.path
+          path: dbpushToken.path,
+          thumbnailEdit: dbpushToken.thumbnailEdit
         },
         alterationToken: token
       }
@@ -423,7 +454,7 @@ const useApplyCreateAction = () => {
     createStore.leaveWork()
   }
 
-  return { hydrateCreateState, alterationData, initCreateStaticData, leaveWork, kicked, getStaticCases }
+  return { getTemplateThumbnails, hydrateCreateState, alterationData, initCreateStaticData, leaveWork, kicked, getStaticCases }
 }
 export { useApplyCreateAction }
 

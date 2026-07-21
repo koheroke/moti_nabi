@@ -3,7 +3,7 @@ import { RequireAtLeastOne } from "@/types/atLeastOne"
 import { SiteMember } from "@/generated/prisma/client"
 export type editWorkPackageApi = RequireAtLeastOne<{
   name?: String,
-  thumbnailUrl?: String,
+  thumbnailJson?: String,
   data?: String,
   public?: Boolean,
   likes?: number,
@@ -21,7 +21,7 @@ export interface editAboutType {
   name: string;
   bio: string;
   tags: string[];
-  thumbnailUrl: string;
+  thumbnailJson: string;
   public: boolean;
 }
 

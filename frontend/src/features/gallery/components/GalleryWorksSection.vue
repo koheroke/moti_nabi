@@ -53,7 +53,7 @@ const workPackageTestData = ref([
   {
     id: "work-001",
     name: "2泊3日 東京旅行",
-    thumbnailUrl: "",
+    thumbnailJson: "",
     public: true,
     likes: 125,
     tags: ["旅行", "東京", "2泊3日"],
@@ -63,7 +63,7 @@ const workPackageTestData = ref([
   {
     id: "work-002",
     name: "キャンプ持ち物",
-    thumbnailUrl: "",
+    thumbnailJson: "",
     public: true,
     likes: 87,
     tags: ["キャンプ", "アウトドア"],
@@ -78,12 +78,12 @@ const workPackageTestData = ref([
     tags: ["仕事", "出張"],
     copies: 3,
     createdAt: "2026-06-25T14:20:00Z",
-    thumbnailUrl: "",
+    thumbnailJson: "",
   },
   {
     id: "work-004",
     name: "修学旅行",
-    thumbnailUrl: "",
+    thumbnailJson: "",
     public: true,
     likes: 214,
     tags: ["修学旅行", "学校"],
@@ -93,7 +93,7 @@ const workPackageTestData = ref([
   {
     id: "work-005",
     name: "海外旅行（韓国）",
-    thumbnailUrl: "",
+    thumbnailJson: "",
     public: true,
     likes: 156,
     tags: ["海外旅行", "韓国"],

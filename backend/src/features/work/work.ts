@@ -2,7 +2,10 @@ import { prisma } from "@/lib/prisma/prisma"
 import { editWorkPackageApi } from "@/features/work/types"
 import { type server_alterationToken } from "./saveQueue"
 import { publichTokenType } from "./types/index"
-import cases from "./jsonData/case/case.json";
+import jsonCases from "./jsonData/case/case.json";
+import jsonTemplateData from "./jsonData/template/template.json"
+const cases: Record<string, any> = jsonCases
+const templateData: Record<string, any> = jsonTemplateData
 
 const workData = new Map()
 export type setValue = "like" | "commit"
@@ -10,7 +13,6 @@ export type caseIds = "NormalSuitcase" | "HardSuitcase"
 const useWork = () => {
 
   const createNewWork = async (userId: string) => {
-    //console.log("userId", userId)
     if (!userId) return "error"
 
     const newWork = JSON.stringify({
@@ -25,10 +27,11 @@ const useWork = () => {
       }
     });
 
+
     const work = await prisma.work.create({
       data: {
         name: "新しいリスト",
-        thumbnailUrl: "",
+        thumbnailJson: "{}",
         data: newWork,
         public: false,
         likes: 0,
@@ -60,8 +63,17 @@ const useWork = () => {
     );
   }
 
-  const getTemplatePackages = () => {
+  const getTemplateThumbnails = () => {
+    return templateData.thumbnails
+  }
+  const getTemplate = (id: string) => {
+    const data = templateData.templates[id]
 
+    console.log("data", templateData.templates[id])
+    if (data) {
+      return data
+    }
+    return "none"
   }
   const getWorkDetail = async (workId: string) => {
     const work = await prisma.work.findFirst({
@@ -203,7 +215,7 @@ const useWork = () => {
         id: true,
         name: true,
         bio: true,
-        thumbnailUrl: true,
+        thumbnailJson: true,
         tags: true,
         public: true,
         members: {
@@ -235,20 +247,27 @@ const useWork = () => {
 
 
   const editWork = async (workId: string, editDataToken: server_alterationToken[]) => {
-    //console.log("editDataTokens", editDataToken);
     let this_work = workData.get(workId);
     if (!this_work) {
       const work = await getWork(workId);
       if (!work) return;
       work.data = JSON.parse(work.data);
+      work.thumbnailJson = JSON.parse(work.thumbnailJson);
       workData.set(workId, work);
       this_work = work;
     }
 
+
+
+
     editDataToken.forEach((token) => {
       const path = [...token.path];
+      const thumbnailEditPath = path.slice(2);//動かさないで
       const lastKey = path.pop();
+
       let parent: any = this_work.data;
+      let thumbnailData: any = this_work.thumbnailJson;
+
       path.forEach((key) => {
         if (key == undefined) return;
         if (parent[key] == undefined) {
@@ -256,7 +275,19 @@ const useWork = () => {
         }
         parent = parent[key];
       });
-      console.log("edit_work__", token.type)
+
+
+
+      if (token.thumbnailEdit) {
+        thumbnailEditPath.forEach((key) => {
+          if (key == undefined) return;
+          if (thumbnailData[key] == undefined) {
+            thumbnailData[key] = {}
+          }
+          thumbnailData = thumbnailData[key];
+        });
+      }
+
       switch (token.type) {
         case "set":
           //console.log("token.value", token.value)
@@ -325,16 +356,24 @@ const useWork = () => {
           return _exhaustiveCheck;
         }
       }
+
+      if (token.thumbnailEdit) {
+        Object.assign(thumbnailData, parent[lastKey]);
+      }
     });
 
+
+
     const jsonData = JSON.stringify(this_work.data);
+    const thumbnailJson = JSON.stringify(this_work.thumbnailJson);
     //console.log("jsonData", jsonData)
-    const work = await prisma.work.update({
+    await prisma.work.update({
       where: {
         id: workId,
       },
       data: {
         data: jsonData,
+        thumbnailJson: thumbnailJson
       },
     });
 
@@ -350,7 +389,7 @@ const useWork = () => {
       select: {
         id: true,
         name: true,
-        thumbnailUrl: true,
+        thumbnailJson: true,
         public: true,
         likes: true,
         tags: true,
@@ -393,7 +432,7 @@ const useWork = () => {
       select: {
         id: true,
         name: true,
-        thumbnailUrl: true,
+        thumbnailJson: true,
         public: true,
         likes: true,
         tags: true,
@@ -401,7 +440,10 @@ const useWork = () => {
       },
     });
     //console.log("packages", packages)
-    return packages
+    return packages.map((work) => ({
+      ...work,
+      thumbnailJson: JSON.parse(work.thumbnailJson),
+    }));
   }
 
   const publicWork = async (token: publichTokenType) => {
@@ -435,7 +477,7 @@ const useWork = () => {
 
 
   return {
-    createNewWork, getWork, editWorkPackage, editWork, getTemplatePackages, getStaticCases
+    createNewWork, getWork, editWorkPackage, editWork, getTemplateThumbnails, getTemplate, getStaticCases
     , getWorkPackages, getUserWorkPackages
     , getWorkDetail, addMenber, deleteMenber, publicWork, deleteWork, setLike
   }

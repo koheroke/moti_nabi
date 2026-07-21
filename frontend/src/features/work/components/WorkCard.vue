@@ -6,8 +6,9 @@
       emit('onWorkCard');
     "
   >
-    <img class="thumbnail" :src="work.thumbnailUrl" :alt="work.name" />
-
+    <div class="thumbnail-json">
+      <Thumbnail :scale="0.3" :thumbnailJson="work.thumbnailJson"></Thumbnail>
+    </div>
     <div class="body">
       <h3 class="title">{{ work.name }}</h3>
       <div class="meta">
@@ -25,6 +26,7 @@
 <script setup lang="ts">
 import type { workPackage } from "@/features/work/types/work";
 import { useWorkPackageStore } from "../store/workPackageStore";
+import Thumbnail from "@/features/create/components/Thumbnail.vue";
 import likeBotton from "./likeBotton.vue";
 const workPackageStore = useWorkPackageStore();
 
@@ -50,6 +52,8 @@ const setSelectPackage = () => {
   padding: 0px 5px;
   flex: 0 0 auto;
   width: 300px;
+  height: 250px;
+  overflow: hidden;
   cursor: pointer;
   transition: transform 0.2s ease-in-out;
 }
@@ -63,6 +67,12 @@ const setSelectPackage = () => {
   aspect-ratio: 16 / 9;
   object-fit: cover;
   background: #f5f5f5;
+}
+.thumbnail-json {
+  width: 100%;
+  height: 160px;
+  background-color: beige;
+  border-radius: 5px;
 }
 
 .body {

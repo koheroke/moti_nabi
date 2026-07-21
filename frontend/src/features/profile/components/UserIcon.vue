@@ -11,11 +11,11 @@ const router = useRouter();
 const iconImage = ref<string>();
 const props = defineProps<{
   userid: string;
-  thumbnailUrl: string;
+  thumbnailJson: string;
   size: "small" | "medium" | "large";
 }>();
 onMounted(() => {
-  const url = props.thumbnailUrl;
+  const url = props.thumbnailJson;
   iconImage.value = url === "" ? "/images/user/defaultIcon.png" : url;
 });
 

@@ -6,7 +6,7 @@ export interface editAboutType {
   name: string;
   bio: string;
   tags: string[];
-  thumbnailUrl: string;
+  thumbnailJson: string;
   public: boolean;
 }
 
@@ -16,7 +16,7 @@ export const useWorkDetailEditStore = defineStore("workDetailEdit", {
       name: "",
       bio: "",
       tags: [],
-      thumbnailUrl: "",
+      thumbnailJson: "",
       public: false
     } as editAboutType,
     edit: {} as RequireAtLeastOne<editAboutType>

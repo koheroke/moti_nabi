@@ -4,12 +4,32 @@
       <dropCaseArea class="drop-area"></dropCaseArea>
       <div class="cases_previewArea">
         <div v-for="(caseItem, index) in cases">
-          <Case :caseData="caseItem" :index="index" />
+          <Case
+            :caseData="caseItem"
+            :index="index"
+            :role="role"
+            :scale="1"
+            :selectedPocketId="getSelectedPocketId"
+            @onMouseMove="onMouseMove"
+            @pocketClick="pocketClick"
+            @addPreviewItem="addPreviewItem"
+            @openPocket="openPocket"
+            @setSelectedCase="setSelectedCase"
+          />
         </div>
       </div>
     </div>
     <section class="pocketModal">
-      <PocketModal />
+      <PocketModal
+        @onDropPocket="onDropPocket"
+        :selectedPocket="selectedPocket"
+        :close="close"
+        @onClose="
+          {
+            close = true;
+          }
+        "
+      />
     </section>
 
     <pocketMenu v-if="role == 'owner' || role == 'editor'"></pocketMenu>
@@ -23,26 +43,111 @@ import dropCaseArea from "./sideBar/caseBar/components/dropCaseArea.vue";
 import Case from "./svgUi/case.vue";
 import pocketMenu from "@/features/create/components/svgUi/pocketMenu.vue";
 import caseMenu from "./svgUi/caseMenu.vue";
-import { ref, onMounted, onUnmounted } from "vue";
+import { onUnmounted, watch, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useCreateStore } from "../store/createStore.ts";
+import type { addPreviewItemToken } from "../type/tokens.ts";
+import { useCaseStore } from "../store/caseStore.ts";
+import { useCreateWork } from "../composables/useCreateWork.ts";
+import { usePocketStore } from "../store/pocketStore.ts";
+import { type selectedPocketType } from "./PocketModal.vue";
+const close = ref(true);
+const selectedPocket = ref<selectedPocketType>({
+  id: "",
+  name: "",
+  items: {},
+  caseId: "",
+});
+
+const caseStore = useCaseStore();
+const createWork = useCreateWork();
+const pocketStore = usePocketStore();
 const createStore = useCreateStore();
 const { getPreviewCasesArray: cases } = storeToRefs(createStore);
 const { role } = storeToRefs(createStore);
-const contentWidth = 3500;
-const contentHeight = 1800;
-const viewBox = ref<string>();
+const { getSelectedPocketId } = storeToRefs(pocketStore);
 
-const previewArea = ref<HTMLElement | null>(null);
-onMounted(() => {
-  const this_viewBox = [0, 0, contentWidth, contentHeight];
+const setSelectedCase = (id: string) => {
+  caseStore.setSelectedCase(id);
+};
+const openPocket = (pocketId: string, caseId: string) => {
+  pocketStore.setSelectedPocketId({
+    id: pocketId,
+    caseId: caseId,
+  });
+};
+const addPreviewItem = (event: DragEvent, pocketId: string, caseId: string) => {
+  const dragged_itemId = event.dataTransfer?.getData("itemId");
+  const dragged_id = event.dataTransfer?.getData("positionChangeData");
+  if (!dragged_itemId && !dragged_id) return;
+  if (dragged_itemId) {
+    const addPreviewItemToken: addPreviewItemToken = {
+      itemId: dragged_itemId,
+      pocketId: pocketId,
+      caseId: caseId,
+      id: null,
+    };
+    createWork.addItemToPreview(addPreviewItemToken);
+  }
+};
 
-  console.log(this_viewBox);
-  viewBox.value = this_viewBox.join(" ");
-});
+const pocketClick = (
+  event: MouseEvent,
+  value: { pocketId: string; caseId: string },
+) => {
+  console.log("button" + event.button);
+
+  if (event.button === 2) {
+    pocketStore.setOpenMenuPocket({
+      id: value.pocketId,
+      caseId: value.caseId,
+    });
+  }
+};
+
+const onMouseMove = (event: MouseEvent) => {
+  const svg = event.currentTarget as SVGSVGElement;
+
+  const pt = svg.createSVGPoint();
+  pt.x = event.clientX;
+  pt.y = event.clientY;
+
+  const svgPoint = pt.matrixTransform(svg.getScreenCTM()!.inverse());
+  caseStore.relativeMousePositionSetter({ x: svgPoint.x, y: svgPoint.y });
+};
 
 onUnmounted(() => {
   createStore.selectedMenuReset();
+});
+
+const onDropPocket = (event: DragEvent) => {
+  createStore.draggedItemIdSetter("");
+  const dragged_itemId = event.dataTransfer?.getData("itemId");
+  const dragged_id = event.dataTransfer?.getData("positionChangeData");
+  if (!dragged_itemId && !dragged_id) return;
+  if (!getSelectedPocketId) return;
+  if (dragged_itemId) {
+    const addPreviewItemToken: addPreviewItemToken = {
+      itemId: dragged_itemId,
+      pocketId: getSelectedPocketId.value.id,
+      caseId: getSelectedPocketId.value.caseId,
+      id: null,
+    };
+    createWork.addItemToPreview(addPreviewItemToken);
+  }
+};
+
+watch(getSelectedPocketId, (ids) => {
+  if (ids.id.length != 0 && ids.caseId.length != 0) {
+    const pocket = createStore.previewItemGetter[ids.caseId].pockets[ids.id];
+    close.value = false;
+    selectedPocket.value = {
+      id: pocket.id,
+      name: pocket.name,
+      items: pocket.items,
+      caseId: ids.caseId,
+    };
+  }
 });
 </script>
 <style lang="css" scoped>

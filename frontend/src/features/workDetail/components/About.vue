@@ -13,7 +13,7 @@
         <div v-for="member in AboutGetter.members">
           <UserIcon
             :userid="member.user.profile.userId"
-            :thumbnailUrl="member.user.profile.iconUrl"
+            :thumbnailJson="member.user.profile.iconUrl"
             size="medium"
           ></UserIcon>
         </div>

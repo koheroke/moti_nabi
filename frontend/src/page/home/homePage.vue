@@ -4,7 +4,7 @@
       <h1>motinabi</h1>
       <p @click="onLogout" class="logout-button">ログアウト</p>
       <UserIcon
-        :thumbnailUrl="userIconInfo.iconUrl"
+        :thumbnailJson="userIconInfo.iconUrl"
         :userid="userIconInfo.userId"
         size="large"
       ></UserIcon>
@@ -24,7 +24,13 @@
 
       <section class="container">
         <h2 class="title">続きから編集</h2>
-        作りかけの持ち物リストの画像をぼやけさせて写す
+        <div class="thumbnail" @click="onEdit">
+          <div class="coverDiv"></div>
+          <Thumbnail
+            :scale="0.8"
+            :thumbnailJson="userWorkPackageStoreGetter[0]?.thumbnailJson"
+          ></Thumbnail>
+        </div>
       </section>
 
       <section class="container">
@@ -45,6 +51,10 @@ import { ref, watch, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useUserAuthStore } from "@/store/user/userAuthStore";
 import { useUserStore, type UserInfo } from "@/store/user/userIconStore";
+import Thumbnail from "@/features/create/components/Thumbnail.vue";
+const workPackageStore = useWorkPackageStore();
+const { userWorkPackageStoreGetter } = storeToRefs(workPackageStore);
+
 const userAuthStore = useUserAuthStore();
 const userStore = useUserStore();
 const { getUserInfo } = storeToRefs(userStore);
@@ -55,7 +65,13 @@ const userIconInfo = ref<UserInfo>({
   name: "",
 });
 const router = useRouter();
-const workPackageStore = useWorkPackageStore();
+
+const onEdit = () => {
+  workPackageStore.selectedPackageIdStore(
+    userWorkPackageStoreGetter.value[0]?.id,
+  );
+  router?.push("create");
+};
 
 const goCreate = () => {
   workPackageStore.selectedPackageIdStore("");
@@ -155,5 +171,22 @@ const onLogout = async () => {
 }
 .logout-button:hover {
   scale: 1.02;
+}
+.thumbnail {
+  position: relative;
+  width: 100%;
+  height: 520px;
+  border-radius: 10px;
+  background-color: rgb(68, 68, 68);
+  background-repeat: repeat;
+  background-image: radial-gradient(circle, #dfdddd 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+.coverDiv {
+  background-color: rgba(255, 255, 255, 0.557);
+  transition: background-color 0.3s;
+}
+.coverDiv:hover {
+  background-color: rgba(255, 255, 255, 0.281);
 }
 </style>

@@ -12,10 +12,10 @@
   </g>
 </template>
 <script setup lang="ts">
-import { type Pocket } from "@/features/create/type/casetype";
 import { useCreateWork } from "../../composables/useCreateWork";
 import { onMounted, onUnmounted } from "vue";
 import { useCreateStore } from "../../store/createStore";
+import { type previewSvgPocket } from "@/features/create/store/createStore";
 const createStore = useCreateStore();
 const minRemove = 0.5;
 const maxRemove = {
@@ -25,7 +25,7 @@ const maxRemove = {
 let stop = true;
 const createWork = useCreateWork();
 const props = defineProps<{
-  pocket: Pocket;
+  pocket: previewSvgPocket;
   caseId: string;
   pocketId: string;
 }>();

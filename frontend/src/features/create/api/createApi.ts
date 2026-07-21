@@ -2,6 +2,7 @@ import { type UserLuggage_SaveDBData } from "../type/apiType";
 import { type menber } from "../type/infoType";
 import { type editAboutType } from "@/features/workDetailEdit/store/useworkDetail";
 import type { Case } from "../type/casetype";
+import type { BeforeParsingThumbnail } from "@/features/create/type/templateType"
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 const url = `${apiUrl}/work`;
@@ -32,7 +33,7 @@ const useCreateApi = () => {
       name: data.name,
       bio: data.bio,
       tags: data.tags,
-      thumbnailUrl: data.thumbnailUrl,
+      thumbnailJson: data.thumbnailJson,
       public: data.public
     }
     return {
@@ -67,7 +68,7 @@ const useCreateApi = () => {
     return workData
   }
 
-  const getStaticCases = async (ids: string[]): Promise<Record<string, Case>> => {
+  const getStaticCases = async (): Promise<Record<string, Case>> => {
     const data = await fetch(
       `${url}/getStaticCases`,
       {
@@ -75,14 +76,39 @@ const useCreateApi = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          ids: ids
-        })
+
       }
     )
     return await data.json()
   }
 
+  const getTemplateThumbnails = async (): Promise<Record<string, BeforeParsingThumbnail>> => {
+    const data = await fetch(
+      `${url}/getTemplateThumbnails`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    )
+    return await data.json()
+  }
+
+
+  const getTemplate = async (id: string) => {
+    const data = await fetch(
+      `${url}/getTemplate`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id }),
+      }
+    )
+    return await data.json()
+  }
 
 
   const addMenber = async (token: { workId: string, role: string, userId: string }): Promise<string> => {
@@ -116,7 +142,7 @@ const useCreateApi = () => {
     return await data.json()
   }
 
-  return { getWork, createNewWork, addMenber, deleteMenber, getStaticCases }
+  return { getWork, createNewWork, addMenber, deleteMenber, getStaticCases, getTemplateThumbnails, getTemplate }
 }
 export { useCreateApi }
 

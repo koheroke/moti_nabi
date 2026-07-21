@@ -3,7 +3,6 @@ import { useSideBarStore } from "@/features/create/store/sideBarStore";
 import { useCreateStore } from "@/features/create/store/createStore";
 import { usePocketStore } from "@/features/create/store/pocketStore";
 import { useTutorialStore } from "../store/tutorial";
-import { el } from "vuetify/locale";
 
 let onComplete_stopWatch: WatchStopHandle | null = null;
 let inComplete_stopWatch: WatchStopHandle | null = null;

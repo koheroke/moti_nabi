@@ -19,7 +19,7 @@ CREATE TABLE "users" (
 CREATE TABLE "works" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "thumbnailUrl" TEXT NOT NULL,
+    "thumbnailJson" TEXT NOT NULL,
     "data" TEXT NOT NULL,
     "likes" INTEGER NOT NULL DEFAULT 0,
     "tags" TEXT[],

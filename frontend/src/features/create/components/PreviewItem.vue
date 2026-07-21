@@ -108,6 +108,7 @@ const onPlue = (plue: number) => {
 const onDelete = () => {
   const innerItemsToken: addPreviewItemToken[] | undefined = [];
   const items = props.item.innerItems;
+  console.log("data", props.item.id);
   if (items != undefined) {
     const keys = Object.keys(items);
     keys.forEach((item) => {

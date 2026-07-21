@@ -80,22 +80,25 @@ workRouter.post('/getWorkPackages', async (c) => {
 });
 //作成中
 workRouter.post('/getStaticCases', async (c) => {
-  console.log(c)
   const res = createWork.getStaticCases()
   return c.json(res);
 });
 
+workRouter.post('/getTemplateThumbnails', async (c) => {
 
-workRouter.post('/getTemplatePackages', async (c) => {
-  const res = createWork.getTemplatePackages()
+  const res = createWork.getTemplateThumbnails()
   return c.json(res);
 });
-//
 
+workRouter.post('/getTemplate', async (c) => {
+  const data = await c.req.json();
+  const res = createWork.getTemplate(data.id)
+  return c.json(res);
+});
 
 workRouter.post('/getUserWorkPackages', async (c) => {
   const body = await c.req.json();
-  //console.log("body" + body)
+
   const res = await createWork.getUserWorkPackages(body.userId)
   //console.log(res)
   return c.json(res);

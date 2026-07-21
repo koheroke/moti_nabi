@@ -38,6 +38,7 @@
     <div class="selectContent">
       <itemBar v-if="nowSideBarGetter == 'item'"></itemBar>
       <caseSelectBar v-if="nowSideBarGetter == 'case'"></caseSelectBar>
+      <templateBar v-if="nowSideBarGetter == 'template'"></templateBar>
     </div>
   </div>
 </template>
@@ -46,6 +47,7 @@
 import { LayoutTemplate, Luggage, Boxes } from "lucide-vue-next";
 import itemBar from "@/features/create/components/sideBar/itemBar/itemBar.vue";
 import caseSelectBar from "@/features/create/components/sideBar/caseBar/caseSelectBar.vue";
+import templateBar from "./templateBar/components/templateBar.vue";
 import { storeToRefs } from "pinia";
 import { useSideBarStore } from "../../store/sideBarStore";
 import { ref, type Component } from "vue";

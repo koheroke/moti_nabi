@@ -8,13 +8,14 @@ import type { CaseType } from "@/features/create/type/itemType";
 import type { addPreviewPocketToken, pocketLogicalDeleteToken, caseLogicalDeleteToken, changePriorityPocket, provisionalRemovePocket, provisionalResizePocket, addPreviewCaseToken, deletePreviewCaseToken, addPreviewItemToken, addItemCountToken, addBookmarkToken, deletePreviewItemToken, addListItemToken } from "@/features/create/type/tokens";
 import { useSideBarStore } from './sideBarStore';
 import { useSearchStore } from './searchStore';
+import type { thumbnail } from '../type/templateType';
 const sideBarStore = useSideBarStore()
 const searchStore = useSearchStore()
 import { type menber } from '../type/infoType';
 import type { Pocket, part } from '../type/casetype';
 import { usePocketStore } from './pocketStore';
 import { useCaseStore } from './caseStore';
-import type { caseCanvas } from '../type/casetype';
+import type { caseCanvas, pocketSvgData } from '../type/casetype';
 const pocketStore = usePocketStore()
 const caseStore = useCaseStore()
 
@@ -22,18 +23,26 @@ export interface caseArray {
   id: string;
   data: Case
 }
-export interface previewSvgCase {
+
+export type previewSvgPocket = pocketSvgData & {
   id: string;
+  name: string;
+  priority: number
+  logicalDelete: boolean;
+}
+export interface previewSvgCase {
+  id: string
   data: {
-    pockets: Pocket[];
+    id: string
     case: part;
     handle: part;
     name: string;
-    id: string
-    logicalDelete: boolean;
+    pockets: previewSvgPocket[];
     canvas: caseCanvas
+    logicalDelete: boolean;
   }
 }
+
 
 
 
@@ -59,9 +68,11 @@ export const useCreateStore = defineStore("create", {
     role: "viewer" as "owner" | "editor" | "viewer",
     PreviewItemNumberOfChanges: 0,
     ListItemNumberOfChanges: 0,
-    indexChangeCounter: 0
+    indexChangeCounter: 0,
+
   }),
   getters: {
+
     leaveGetter: (state) => state.leave,
     staticCasesGetter: (state) => state.staticCases,
     addItemCounterGetter: (state) => state.addItemCounter,
@@ -133,6 +144,7 @@ export const useCreateStore = defineStore("create", {
     }
   },
   actions: {
+
     leaveWork() {
       this.workId = ""
       this.workName = ""
@@ -398,6 +410,10 @@ export const useCreateStore = defineStore("create", {
     logicalDeleteCase(token: caseLogicalDeleteToken) {
       this.previewCase[token.caseId].logicalDelete = token.type == "cancel" ? false : true
       return token
+    },
+
+    templateSettder(template: Record<string, UserLuggage_SaveDBData>) {
+
     },
 
     hardDeleteCase(token: caseLogicalDeleteToken) {

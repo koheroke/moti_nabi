@@ -5,6 +5,8 @@ import type { ParseSearchQuery, SortType } from "../type"
 import { isSubset } from "@/composables/array/isSubset"
 import { useWorkPackageStore } from "@/features/work/store/workPackageStore"
 import { useWork } from "@/features/work/composables/work"
+import { useThumbnail } from "@/features/create/composables/thumbnail"
+const thumbnail = useThumbnail()
 const workPackageStore = useWorkPackageStore();
 const getWorkPackages = useWork()
 
@@ -14,7 +16,11 @@ export const useGalleryWorks = (step: number) => {
 
   onMounted(async () => {
     const work = await getWorkPackages.getworkPackages()
-    workPackageStore.setWorkPackageStore(work)
+    const newWork = work.map((work) => ({
+      ...work,
+      thumbnailJson: thumbnail.parse(work.thumbnailJson)
+    }))
+    workPackageStore.setWorkPackageStore(newWork)
     const fetchedWorks = workPackageStore.workPackageStoreGetter
     allWorks.value = fetchedWorks
     works.value = fetchedWorks

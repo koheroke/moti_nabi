@@ -2,11 +2,18 @@ import type { workPackage } from "../types/work"
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 import { useWorkPackageStore } from "../store/workPackageStore";
 import { useUserAuthStore } from "@/store/user/userAuthStore";
+import type { BeforeParsingWorkPackage } from "../types/work";
+import { useThumbnail } from "@/features/create/composables/thumbnail";
+import { useApplyCreateAction } from "@/features/create/composables/applyCreateAction";
+const thumbnail = useThumbnail()
 const userAuthStore = useUserAuthStore()
+const applyCreateAction = useApplyCreateAction()
 const workPackageStore = useWorkPackageStore()
 const url = `${apiUrl}/work`;
 const useWork = () => {
-  const getUserworkPackages = async (userId: string): Promise<workPackage[]> => {
+
+  const getUserworkPackages = async (userId: string): Promise<BeforeParsingWorkPackage[]> => {
+    await applyCreateAction.getStaticCases()
     const data = await fetch(
       `${url}/getUserWorkPackages`,
       {
@@ -18,13 +25,19 @@ const useWork = () => {
           userId: userId,
         })
       })
-    const works = await data.json()
-    workPackageStore.setUserWorkPackageStore(works)
+    const works: BeforeParsingWorkPackage[] = await data.json()
+    console.log("BeforeParsingWorkPackage", works)
+    const newWorks = works.map((work) => ({
+      ...work,
+      thumbnailJson: thumbnail.parse(work.thumbnailJson),
+    }));
+    workPackageStore.setUserWorkPackageStore(newWorks)
     return works
   }
 
 
-  const getworkPackages = async (): Promise<workPackage[]> => {
+  const getworkPackages = async (): Promise<BeforeParsingWorkPackage[]> => {
+    await applyCreateAction.getStaticCases()
     const userId = userAuthStore.userIdGetter
     const res = await fetch(
       `${url}/getWorkPackages`,
@@ -38,7 +51,11 @@ const useWork = () => {
         })
       })
     const works = await res.json()
-    workPackageStore.setWorkPackageStore(works)
+    const newWorks = works.map((work: BeforeParsingWorkPackage) => ({
+      ...work,
+      thumbnailJson: thumbnail.parse(work.thumbnailJson),
+    }));
+    workPackageStore.setWorkPackageStore(newWorks)
     return await works
   }
 

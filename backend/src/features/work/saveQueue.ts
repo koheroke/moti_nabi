@@ -28,6 +28,7 @@ export type server_alterationToken = {
   value: any
   createdAt: number;
   path: string[];
+  thumbnailEdit: boolean;
 };
 
 interface pendingTokenType {

@@ -1,7 +1,7 @@
 export interface UserWork {
   id: string
   title: string
-  thumbnailUrl: string
+  thumbnailJson: string
   createdAt: string
   isPublished: boolean
 }

@@ -181,7 +181,7 @@ const workDetailEdit = ref<editAboutType>({
   name: "",
   bio: "",
   tags: [],
-  thumbnailUrl: "",
+  thumbnailJson: "",
   public: false,
 });
 const publish = ref<string>("private");
@@ -226,7 +226,7 @@ watch(
       public: profile.public,
       bio: profile.bio,
       tags: profile.tags,
-      thumbnailUrl: profile.thumbnailUrl,
+      thumbnailJson: profile.thumbnailJson,
     };
     publish.value = workDetailEdit.value.public ? "public" : "private";
   },
@@ -252,11 +252,11 @@ const onPublich = async () => {
   ) {
     return;
   }
-  if (workDetailEdit.value.thumbnailUrl) {
+  if (workDetailEdit.value.thumbnailJson) {
     //メールサーバーに画像を送ってurlをもらう
-    workDetailEdit.value.thumbnailUrl = "";
+    workDetailEdit.value.thumbnailJson = "";
     workDetailEditStore.addEdit({
-      thumbnailUrl: workDetailEdit.value.thumbnailUrl,
+      thumbnailJson: workDetailEdit.value.thumbnailJson,
     });
   }
 

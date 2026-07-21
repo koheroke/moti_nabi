@@ -1,9 +1,8 @@
 <template>
   <div
     :class="['overlay', { close: isClose }, { open: !isClose }]"
-    @drop="onDrop"
-    @drop.stop
-    @dragover.prevent="handleDrop"
+    @drop.stop="emit('onDropPocket', $event)"
+    @dragover.prevent=""
     v-show="show"
   >
     <div class="modal">
@@ -11,7 +10,7 @@
         <div class="name">
           {{ "#" + selectedPocket.name }}
         </div>
-        <div @click="close" class="close-button">
+        <div @click="onClose" class="close-button">
           <X :size="20" color="black" stroke-width="2.5"></X>
         </div>
       </header>
@@ -45,95 +44,47 @@
 
 <script setup lang="ts">
 import { X } from "lucide-vue-next";
-import { ref, watch, onMounted } from "vue";
-import { type addPreviewItemToken } from "@/features/create/type/tokens.ts";
-import { useCreateWork } from "@/features/create/composables/useCreateWork";
-import { useSearchStore } from "../store/searchStore.ts";
+import { ref, onMounted, watch } from "vue";
 import PreviewItem from "./PreviewItem.vue";
 import type { previewItem } from "../type/casetype.ts";
-import { usePocketStore } from "../store/pocketStore.ts";
-const searchStore = useSearchStore();
-const pocketStore = usePocketStore();
-const show = ref(false);
-onMounted(() => {
-  show.value = false;
-});
-const isClose = ref(true);
 export interface selectedPocketType {
   id: string;
   name: string;
   items: Record<string, previewItem>;
   caseId: string;
 }
+const show = ref(false);
 
-import { storeToRefs } from "pinia";
-import { useCreateStore } from "../store/createStore";
+const props = defineProps<{
+  selectedPocket: selectedPocketType;
+  close: boolean;
+}>();
 
-const selectedPocket = ref<selectedPocketType>({
-  id: "",
-  name: "",
-  items: {},
-  caseId: "",
-});
+watch(
+  () => props.close,
+  (newClose) => {
+    isClose.value = newClose;
+    show.value = !newClose;
+  },
+);
 
-const { getSelectedPocketId } = storeToRefs(pocketStore);
-watch(getSelectedPocketId, (ids) => {
-  isClose.value = false;
-  show.value = true;
-  if (ids.id.length != 0 && ids.caseId.length != 0) {
-    const pocket = createStore.previewItemGetter[ids.caseId].pockets[ids.id];
-    selectedPocket.value = {
-      id: pocket.id,
-      name: pocket.name,
-      items: pocket.items,
-      caseId: ids.caseId,
-    };
-  }
-});
-const createStore = useCreateStore();
-
-const createWork = useCreateWork();
 const previewItems = ref<HTMLElement | null>(null);
+onMounted(() => {
+  show.value = false;
+});
+const isClose = ref(true);
 
 const emit = defineEmits<{
-  (e: "close"): void;
+  (e: "onClose"): void;
+  (e: "onDropPocket", event: DragEvent): void;
 }>();
-const close = () => {
+const onClose = () => {
   isClose.value = true;
-  show.value = true;
-  setTimeout(() => {
-    emit("close");
-  }, 300);
+  addEventListener("animationend", (event: AnimationEvent) => {
+    console.log("event.animationName", event.animationName);
+    if (event.animationName == "modalClose-f42593c0") emit("onClose");
+  });
 };
-const onDrop = (event: DragEvent) => {
-  createStore.draggedItemIdSetter("");
-  const dragged_itemId = event.dataTransfer?.getData("itemId");
-  const dragged_id = event.dataTransfer?.getData("positionChangeData");
-  if (!dragged_itemId && !dragged_id) return;
-  if (!selectedPocket.value) return;
-  console.log("caseId", selectedPocket.value.caseId);
-  if (dragged_itemId) {
-    const addPreviewItemToken: addPreviewItemToken = {
-      itemId: dragged_itemId,
-      pocketId: selectedPocket.value.id,
-      caseId: selectedPocket.value.caseId,
-      id: null,
-    };
-    createWork.addItemToPreview(addPreviewItemToken);
-  }
-  // if (dragged_id) {
-  //   const data = JSON.parse(dragged_id);
-  //   const positionChange: positionChangePreviewItemToken = {
-  //     id: data.id,
-  //     pushPocketId: props.pocket.id,
-  //     pushCaseId: props.pocket.caseId,
-  //     popPocketId: data.id,
-  //     popCaseId: data.caseId,
-  //   };
-  //   createWork.positionChangeItemToPreview(positionChange);
-  // }
-};
-const handleDrop = () => {};
 </script>
 <style lang="css" scoped>
 .drop-area {

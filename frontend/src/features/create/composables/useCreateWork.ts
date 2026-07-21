@@ -1,6 +1,7 @@
 import type { UserLuggage_SaveDBData } from "../type/apiType";
 import type { Case, Pocket } from "../type/casetype";
 import type { itemCard, CaseType } from "../type/itemType";
+import { useTemplateBarStore } from "../store/templateBar";
 import type {
   loadResponse, addItemToPreviewResponse,
   addItemCountToken,
@@ -32,7 +33,7 @@ import { useAlertStore } from "@/store/feedback/alertStore";
 import { type editAboutType, useWorkDetailEditStore } from "@/features/workDetailEdit/store/useworkDetail";
 
 
-
+const templateBarStore = useTemplateBarStore()
 const workDetailEditStore = useWorkDetailEditStore()
 const alertStore = useAlertStore();
 const api = useSocketApi()
@@ -82,6 +83,7 @@ export const useCreateWork = () => {
     workPackageStore.selectedPackageIdStore(newWork.workId)
     await api.joinWorkRoom()
     await applyCreateAction.getStaticCases()
+    applyCreateAction.getTemplateThumbnails();
     return "none"
   }
 
@@ -124,6 +126,7 @@ export const useCreateWork = () => {
     createStore.indexChangeCounterSetter(indexChangeCounter)
     const user = menbers.find((menber) => menber.userId == userAuthstore.userId);
     createStore.setRole(user?.role ?? "viewer")
+    applyCreateAction.getTemplateThumbnails();
     return "none"
   }
 
@@ -691,6 +694,20 @@ export const useCreateWork = () => {
     applyCreateAction.alterationData(token)
   }
 
+  const getTemplate = async (id: string) => {
+    const templateData = await createApi.getTemplate(id)
+    console.log("templateData", templateData);
+    console.log("data")
+    const parseData: UserLuggage_SaveDBData = {
+      ...templateData, workId: "",
+      workName: ""
+    }
+    console.log("response", parseData)
+    const response = applyCreateAction.hydrateCreateState(parseData)
+    console.log("response", response)
+    templateBarStore.selectedTemplateDataSetter({ id: id, data: response.vuepreviewData })
+  }
+
   // const positionChangeItemToPreview = (token: positionChangePreviewItemToken) => {
   //   const target_item = createStore.previewCase[token.popCaseId].pockets[token.popPocketId].items.
   //     if(!target_item) return
@@ -698,5 +715,5 @@ export const useCreateWork = () => {
   //   push_target.set(target_item, target_item)
   // }
 
-  return { startRemovePocket, startResizePocket, caseLogicalDelete, pocketLogicalDelete, copyPocket, addPocket, provisionaChangePriorityPocket, confirmedChangePriorityPocket, buildItemPathMap, createNewwork, confirmedRemovePocket, provisionalRemovePocket, provisionalResizePocket, confirmedResizePocket, loadWork, addItemToPreview, addItemCount, addBookmark, deletePreviewItem, addListItem, addCase, deleteCase, setCreatePageWork }
+  return { getTemplate, startRemovePocket, startResizePocket, caseLogicalDelete, pocketLogicalDelete, copyPocket, addPocket, provisionaChangePriorityPocket, confirmedChangePriorityPocket, buildItemPathMap, createNewwork, confirmedRemovePocket, provisionalRemovePocket, provisionalResizePocket, confirmedResizePocket, loadWork, addItemToPreview, addItemCount, addBookmark, deletePreviewItem, addListItem, addCase, deleteCase, setCreatePageWork }
 }

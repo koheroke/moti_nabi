@@ -82,13 +82,13 @@
   </g>
 </template>
 <script setup lang="ts">
-import { type Pocket } from "@/features/create/type/casetype";
 import { useCreateWork } from "@/features/create/composables/useCreateWork";
 import { onMounted, onUnmounted } from "vue";
+import { type previewSvgPocket } from "@/features/create/store/createStore";
 const createWork = useCreateWork();
 let stop = true;
 const props = defineProps<{
-  pocket: Pocket;
+  pocket: previewSvgPocket;
   caseId: string;
   pocketId: string;
 }>();
