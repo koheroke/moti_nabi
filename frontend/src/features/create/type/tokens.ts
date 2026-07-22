@@ -8,6 +8,18 @@ export type createdType = "default" | "userCreated" | "othersUserCreated"
 
 
 
+
+
+
+export interface deletePreviewTemplateToken {
+  templateData: { templateId: string, caseId: string },
+  id: string,
+}
+export interface addPreviewTemplateToken {
+  templateData: { templateId: string, caseId: string },
+  id: string,
+}
+
 export interface addItemCountToken {
   id: string
   caseId: string

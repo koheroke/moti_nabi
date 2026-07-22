@@ -2,6 +2,7 @@ import type { UserLuggage_SaveDBData } from "../type/apiType";
 import type { Case, Pocket } from "../type/casetype";
 import type { itemCard, CaseType } from "../type/itemType";
 import { useTemplateBarStore } from "../store/templateBar";
+
 import type {
   loadResponse, addItemToPreviewResponse,
   addItemCountToken,
@@ -17,7 +18,9 @@ import type {
   confirmedRemovePocketToken,
   changePriorityPocket,
   pocketLogicalDeleteToken,
-  caseLogicalDeleteToken
+  caseLogicalDeleteToken,
+  deletePreviewTemplateToken,
+  addPreviewTemplateToken
 
 } from "@/features/create/type/tokens";
 import { type menber } from "../type/infoType";
@@ -695,7 +698,10 @@ export const useCreateWork = () => {
   }
 
   const getTemplate = async (id: string) => {
+
     const templateData = await createApi.getTemplate(id)
+
+    if (!templateData) return;
     console.log("templateData", templateData);
     console.log("data")
     const parseData: UserLuggage_SaveDBData = {
@@ -715,5 +721,37 @@ export const useCreateWork = () => {
   //   push_target.set(target_item, target_item)
   // }
 
-  return { getTemplate, startRemovePocket, startResizePocket, caseLogicalDelete, pocketLogicalDelete, copyPocket, addPocket, provisionaChangePriorityPocket, confirmedChangePriorityPocket, buildItemPathMap, createNewwork, confirmedRemovePocket, provisionalRemovePocket, provisionalResizePocket, confirmedResizePocket, loadWork, addItemToPreview, addItemCount, addBookmark, deletePreviewItem, addListItem, addCase, deleteCase, setCreatePageWork }
+  const addTemplate = (data: { templateId: string, caseId: string }) => {
+    if (createStore.getBlockEdit) return "blockEdit"
+    const id = crypto.randomUUID()
+    const addToken: addPreviewTemplateToken = {
+      templateData: data,
+      id: id,
+    }
+
+    const forwardToken: alterationToken = {
+      alterationType: "preview_addTemplate",
+      token: addToken,
+      user: userAuthstore.userId
+    }
+
+    const deleteToken: deletePreviewTemplateToken = {
+      id: id,
+      templateData: data
+    }
+
+    const reverseToken: alterationToken = {
+      alterationType: "preview_deleteTemplate",
+      token: deleteToken,
+      user: userAuthstore.userId
+    }
+    applyCreateAction.alterationData(forwardToken)
+    alterationLog.saveState({ forwardToken: forwardToken, reverseToken: reverseToken })
+
+  }
+  const setTemplate = (templateId: string) => {
+
+  }
+
+  return { setTemplate, addTemplate, getTemplate, startRemovePocket, startResizePocket, caseLogicalDelete, pocketLogicalDelete, copyPocket, addPocket, provisionaChangePriorityPocket, confirmedChangePriorityPocket, buildItemPathMap, createNewwork, confirmedRemovePocket, provisionalRemovePocket, provisionalResizePocket, confirmedResizePocket, loadWork, addItemToPreview, addItemCount, addBookmark, deletePreviewItem, addListItem, addCase, deleteCase, setCreatePageWork }
 }

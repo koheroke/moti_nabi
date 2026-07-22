@@ -43,7 +43,7 @@ const props = defineProps<{
 .thumbnail-json {
   width: 100%;
   height: 160px;
-  background-color: beige;
+  background-color: rgb(249, 249, 244);
   border-radius: 5px;
 }
 .tags {

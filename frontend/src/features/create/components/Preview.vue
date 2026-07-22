@@ -2,6 +2,8 @@
   <div class="preview-area">
     <div class="preview">
       <dropCaseArea class="drop-area"></dropCaseArea>
+      <dropTemplateArea></dropTemplateArea>
+
       <div class="cases_previewArea">
         <div v-for="(caseItem, index) in cases">
           <Case
@@ -38,6 +40,7 @@
 </template>
 
 <script setup lang="ts">
+import dropTemplateArea from "./sideBar/templateBar/components/dropTemplateArea.vue";
 import PocketModal from "./PocketModal.vue";
 import dropCaseArea from "./sideBar/caseBar/components/dropCaseArea.vue";
 import Case from "./svgUi/case.vue";

@@ -46,13 +46,13 @@ let firstTimeCreate = true;
 onMounted(async () => {
   createWork.setCreatePageWork();
   if (firstTimeCreate) {
-    dialogStore.showDialog(
-      "チュートリアルを行いますか",
-      "チュートリアルはチュートリアルボタンからいつでも受けることができます",
-      () => {
-        tutorial.start("create");
-      },
-    );
+    // dialogStore.showDialog(
+    //   "チュートリアルを行いますか",
+    //   "チュートリアルはチュートリアルボタンからいつでも受けることができます",
+    //   () => {
+    //     tutorial.start("create");
+    //   },
+    // );
   }
   before = true;
 });

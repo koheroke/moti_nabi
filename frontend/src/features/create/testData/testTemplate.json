@@ -1,0 +1,255 @@
+{
+  "testTemplate": [
+    {
+      "id": "61a8e402-c7d3-4eb7-8051-d750ec7ed5a9",
+      "data": {
+        "id": "61a8e402-c7d3-4eb7-8051-d750ec7ed5a9",
+        "name": "フロントオープンスーツケース",
+        "case": {
+          "x": 40,
+          "y": 40,
+          "width": 320,
+          "height": 480,
+          "radius": 28
+        },
+        "canvas": {
+          "width": 400,
+          "height": 535
+        },
+        "handle": {
+          "x": 145,
+          "y": 15,
+          "width": 110,
+          "height": 35,
+          "radius": 12
+        },
+        "pockets": [
+          {
+            "id": "597be4c0-9d0e-40ba-a690-84aba5bc0d82",
+            "name": "フロント収納",
+            "initialPocketId": "front",
+            "size": {
+              "width": 260,
+              "height": 135
+            },
+            "pos": {
+              "x": 70,
+              "y": 75
+            },
+            "priority": 0,
+            "items": {
+              "22f5f49a-a612-4567-9076-91b985090b7b": {
+                "id": "22f5f49a-a612-4567-9076-91b985090b7b",
+                "name": "Tシャツ",
+                "iconId": "shirt",
+                "category": ["clothes"],
+                "isStorage": false,
+                "createType": "default",
+                "count": 1,
+                "itemId": "item_1"
+              },
+              "439074f6-bcdf-4cf9-9b29-47efc1326311": {
+                "id": "439074f6-bcdf-4cf9-9b29-47efc1326311",
+                "name": "充電器",
+                "iconId": "charger",
+                "category": ["gadget"],
+                "isStorage": false,
+                "createType": "default",
+                "count": 1,
+                "itemId": "item_2"
+              },
+              "d047bbf9-b2d1-4cae-806b-aeb41f99e693": {
+                "id": "d047bbf9-b2d1-4cae-806b-aeb41f99e693",
+                "name": "薬",
+                "iconId": "medicine",
+                "category": ["medicine"],
+                "isStorage": false,
+                "createType": "default",
+                "count": 1,
+                "itemId": "item_3"
+              }
+            },
+            "logicalDelete": false
+          },
+          {
+            "id": "1f3ab9d7-887f-4133-a4fe-bec1285d501a",
+            "name": "メイン収納",
+            "initialPocketId": "main",
+            "size": {
+              "width": 260,
+              "height": 205
+            },
+            "pos": {
+              "x": 70,
+              "y": 230
+            },
+            "priority": 0,
+            "items": {
+              "3ab2f6cf-b3cb-4820-98b0-53338562c561": {
+                "id": "3ab2f6cf-b3cb-4820-98b0-53338562c561",
+                "name": "充電器",
+                "iconId": "charger",
+                "category": ["gadget"],
+                "isStorage": false,
+                "createType": "default",
+                "count": 1,
+                "itemId": "item_2"
+              },
+              "6ff56a9f-7058-4d3e-b3d5-bca821827cb3": {
+                "id": "6ff56a9f-7058-4d3e-b3d5-bca821827cb3",
+                "name": "歯ブラシ",
+                "iconId": "toothbrush",
+                "category": ["toiletry"],
+                "isStorage": false,
+                "createType": "default",
+                "count": 1,
+                "itemId": "item_7"
+              },
+              "d92cba9e-c667-4851-84e3-c76f76d2c9fd": {
+                "id": "d92cba9e-c667-4851-84e3-c76f76d2c9fd",
+                "name": "Tシャツ",
+                "iconId": "shirt",
+                "category": ["clothes"],
+                "isStorage": false,
+                "createType": "default",
+                "count": 1,
+                "itemId": "item_1"
+              }
+            },
+            "logicalDelete": false
+          },
+          {
+            "id": "77c0b6be-da20-4ab6-ae05-abd0b8e35df8",
+            "name": "下部収納",
+            "initialPocketId": "bottom",
+            "size": {
+              "width": 260,
+              "height": 45
+            },
+            "pos": {
+              "x": 70,
+              "y": 455
+            },
+            "priority": 0,
+            "items": {
+              "80832b6a-5368-4868-a010-489449c8b773": {
+                "id": "80832b6a-5368-4868-a010-489449c8b773",
+                "name": "充電器",
+                "iconId": "charger",
+                "category": ["gadget"],
+                "isStorage": false,
+                "createType": "default",
+                "count": 1,
+                "itemId": "item_2"
+              },
+              "fb6f17a3-5703-401f-b4e9-34ef1ea17216": {
+                "id": "fb6f17a3-5703-401f-b4e9-34ef1ea17216",
+                "name": "充電器",
+                "iconId": "charger",
+                "category": ["gadget"],
+                "isStorage": false,
+                "createType": "default",
+                "count": 1,
+                "itemId": "item_2"
+              },
+              "7bbcfe20-2587-41bb-a978-fc76b5e7bcc5": {
+                "id": "7bbcfe20-2587-41bb-a978-fc76b5e7bcc5",
+                "name": "パーカー",
+                "iconId": "hoodie",
+                "category": ["clothes"],
+                "isStorage": false,
+                "createType": "default",
+                "count": 1,
+                "itemId": "item_8"
+              }
+            },
+            "logicalDelete": false
+          }
+        ],
+        "logicalDelete": false
+      }
+    },
+    {
+      "id": "ba082708-597b-44a2-93b3-3174624d7d84",
+      "data": {
+        "id": "ba082708-597b-44a2-93b3-3174624d7d84",
+        "name": "両開きスーツケース",
+        "case": {
+          "x": 40,
+          "y": 40,
+          "width": 320,
+          "height": 480,
+          "radius": 28
+        },
+        "canvas": {
+          "width": 400,
+          "height": 535
+        },
+        "handle": {
+          "x": 145,
+          "y": 15,
+          "width": 110,
+          "height": 35,
+          "radius": 12
+        },
+        "pockets": [
+          {
+            "id": "3fc77360-bb06-4664-a807-5bbf8c1d764c",
+            "name": "左側収納",
+            "initialPocketId": "left",
+            "size": {
+              "width": 125,
+              "height": 410
+            },
+            "pos": {
+              "x": 65,
+              "y": 75
+            },
+            "priority": 0,
+            "items": {
+              "b8fbb8f5-9ff9-4d42-9e04-ab437afcab0b": {
+                "id": "b8fbb8f5-9ff9-4d42-9e04-ab437afcab0b",
+                "name": "充電器",
+                "iconId": "charger",
+                "category": ["gadget"],
+                "isStorage": false,
+                "createType": "default",
+                "count": 1,
+                "itemId": "item_2"
+              }
+            },
+            "logicalDelete": false
+          },
+          {
+            "id": "604a7c51-0806-4b94-bb10-e3e349e44ea8",
+            "name": "右側収納",
+            "initialPocketId": "right",
+            "size": {
+              "width": 125,
+              "height": 410
+            },
+            "pos": {
+              "x": 210,
+              "y": 75
+            },
+            "priority": 0,
+            "items": {
+              "e2004846-de1f-4f48-bd78-2f273593e12b": {
+                "id": "e2004846-de1f-4f48-bd78-2f273593e12b",
+                "name": "パーカー",
+                "iconId": "hoodie",
+                "category": ["clothes"],
+                "isStorage": false,
+                "createType": "default",
+                "count": 1,
+                "itemId": "item_8"
+              }
+            },
+            "logicalDelete": false
+          }
+        ],
+        "logicalDelete": false
+      }
+    }
+  ]
+}

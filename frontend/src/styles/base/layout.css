@@ -26,3 +26,18 @@
   left: 0px;
   z-index: 1;
 }
+
+.noneScrollBar {
+  overflow-y: auto;
+
+  /* Firefox */
+  scrollbar-width: none;
+
+  /* IE・Edge(旧) */
+  -ms-overflow-style: none;
+}
+
+/* Chrome・Safari・Edge */
+.noneScrollBar::-webkit-scrollbar {
+  display: none;
+}

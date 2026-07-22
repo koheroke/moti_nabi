@@ -14,8 +14,9 @@ import { useTemplateBarStore } from "@/features/create/store/templateBar.ts";
 import thumbnailCard from "./thumbnailCard.vue";
 import { storeToRefs } from "pinia";
 const templateBarStore = useTemplateBarStore();
-const { templateThumbnailsGetter } = storeToRefs(templateBarStore);
-
+const { templateThumbnailsGetter } = storeToRefs(templateBarStore); //本番用データ
+import { testthumbnailJson } from "@/features/create/testData/testThum.json"; //テストデータ
+// const testData: Record<string, any> = testthumbnailJson;
 import { useCreateWork } from "@/features/create/composables/useCreateWork";
 const createWork = useCreateWork();
 const onThumbnailCard = (id: string) => {

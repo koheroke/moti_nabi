@@ -1,5 +1,5 @@
 
-import type { addPreviewPocketToken, caseLogicalDeleteToken, pocketLogicalDeleteToken, changePriorityPocket, provisionalResizePocket, confirmedRemovePocketToken, provisionalRemovePocket, confirmedResizePocketToken, deletePreviewCaseToken, addPreviewCaseToken, addPreviewItemToken, addItemCountToken, addBookmarkToken, addListItemToken, deletePreviewItemToken } from "@/features/create/type/tokens";
+import type { addPreviewTemplateToken, deletePreviewTemplateToken, addPreviewPocketToken, caseLogicalDeleteToken, pocketLogicalDeleteToken, changePriorityPocket, provisionalResizePocket, confirmedRemovePocketToken, provisionalRemovePocket, confirmedResizePocketToken, deletePreviewCaseToken, addPreviewCaseToken, addPreviewItemToken, addItemCountToken, addBookmarkToken, addListItemToken, deletePreviewItemToken } from "@/features/create/type/tokens";
 import { useCreateStore } from "../store/createStore";
 import type { server_alterationTokenType } from "../api/createSocketApi"
 import type { Case, pocketSvgData } from "@/features/create/type/casetype";
@@ -15,6 +15,7 @@ const createApi = useCreateApi()
 const userAuthstore = useUserAuthStore()
 const api = useSocketApi()
 const usethumbnail = useThumbnail()
+
 export type alterationType = "previewItems_additem"
   | "previewItems_addcount"
   | "itemlistItems_bookmark"
@@ -30,13 +31,15 @@ export type alterationType = "previewItems_additem"
   | "case_logicalDelete"
   | "case_hardDelete"
   | "pocket_add"
+  | "preview_addTemplate"
+  | "preview_deleteTemplate"
 export type caseIds = "NormalSuitcase" | "HardSuitcase"
 const caseIds = {
   "NormalSuitcase": "NormalSuitcase",
   "HardSuitcase": "HardSuitcase"
 }
 
-type allToken = addPreviewPocketToken | pocketLogicalDeleteToken | caseLogicalDeleteToken | changePriorityPocket | confirmedRemovePocketToken | provisionalRemovePocket | provisionalResizePocket | confirmedResizePocketToken | deletePreviewCaseToken | addPreviewCaseToken | addPreviewItemToken | addItemCountToken | addBookmarkToken | addListItemToken | deletePreviewItemToken
+type allToken = deletePreviewTemplateToken | addPreviewTemplateToken | addPreviewPocketToken | pocketLogicalDeleteToken | caseLogicalDeleteToken | changePriorityPocket | confirmedRemovePocketToken | provisionalRemovePocket | provisionalResizePocket | confirmedResizePocketToken | deletePreviewCaseToken | addPreviewCaseToken | addPreviewItemToken | addItemCountToken | addBookmarkToken | addListItemToken | deletePreviewItemToken
 
 export interface alterationToken {
   token: allToken
@@ -89,7 +92,7 @@ const useApplyCreateAction = () => {
         }]
       }
       ))
-    console.log("TemplateThumbnails", TemplateThumbnails)
+    console.log("TemplateThumbnails", parseTemplateThumbnails)
     templateBarStore.templateThumbnailsSetter(parseTemplateThumbnails)
   }
 

@@ -10,14 +10,15 @@ export const useTemplateBarStore = defineStore("template", {
       id: string, data: Record<string, Case>
     },
     selectedPocket: { caseId: "", id: "" },
-
+    draggedCaseData: { caseId: "" }
   }),
   getters: {
     templateThumbnailsGetter: (state) => state.templateThumbnails,
     selectedTemplateDataGetter: (state) => state.selectedTemplateData,
     getSelectedPocketId: (state) => state.selectedPocket,
+    draggedCaseDataGetter: (state) => state.draggedCaseData,
     selectedTemplateSvgDataGetter: (state): previewSvgCase[] => {
-      return Object.entries(state.selectedTemplateData.data).map(([key, value]) => ({
+      const res = Object.entries(state.selectedTemplateData.data).map(([key, value]) => ({
         id: key,
         data: {
           id: value.id,
@@ -29,6 +30,8 @@ export const useTemplateBarStore = defineStore("template", {
           logicalDelete: value.logicalDelete
         },
       })).filter((thisCase) => !thisCase.data.logicalDelete);
+      console.log("res", res)
+      return res
     },
   },
   actions: {
@@ -43,5 +46,8 @@ export const useTemplateBarStore = defineStore("template", {
     },) {
       this.selectedTemplateData = selectedTemplateData;
     },
+    draggedCaseDataSetter(id: string) {
+      this.draggedCaseData = { caseId: id }
+    }
   }
 })
