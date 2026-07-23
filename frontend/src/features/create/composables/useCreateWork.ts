@@ -2,7 +2,7 @@ import type { UserLuggage_SaveDBData } from "../type/apiType";
 import type { Case, Pocket } from "../type/casetype";
 import type { itemCard, CaseType } from "../type/itemType";
 import { useTemplateBarStore } from "../store/templateBar";
-
+import { type logicalDelete } from "../api/createSocketApi";
 import type {
   loadResponse, addItemToPreviewResponse,
   addItemCountToken,
@@ -19,8 +19,9 @@ import type {
   changePriorityPocket,
   pocketLogicalDeleteToken,
   caseLogicalDeleteToken,
-  deletePreviewTemplateToken,
-  addPreviewTemplateToken
+  addPreviewTemplateToken,
+  pastePocketToken,
+  pocketReNameToken
 
 } from "@/features/create/type/tokens";
 import { type menber } from "../type/infoType";
@@ -135,10 +136,24 @@ export const useCreateWork = () => {
 
 
   const setWorkSocket = async () => {
-    const alterationTokens = await api.joinWorkRoom()
-    if (!alterationTokens) return "noneNameorWorkId";
-    alterationTokens.forEach((token: alterationToken) => {
+    const tokens = await api.joinWorkRoom()
+    if (!tokens) return "noneNameorWorkId";
+    tokens.alterationTokens.forEach((token: alterationToken) => {
       applyCreateAction.alterationData(token)
+    })
+
+    tokens.logicalDelete.caseDeleteInfo.forEach((this_pocket) => {
+      createStore.logicalDeleteCase({
+        caseId: this_pocket.caseId,
+        type: "push"
+      })
+    })
+    tokens.logicalDelete.pocketDeleteInfo.forEach((this_case) => {
+      createStore.logicalDeletePocket({
+        pocketId: this_case.pocketId,
+        caseId: this_case.caseId,
+        type: "push"
+      })
     })
     return "none";
   }
@@ -287,13 +302,25 @@ export const useCreateWork = () => {
   const addCase = (caseType: CaseType) => {
     if (createStore.getBlockEdit) return "blockEdit"
     const id = crypto.randomUUID()
+    const staticCase: Case = JSON.parse(JSON.stringify(createStore.staticCasesGetter[caseType]));
+    if (!staticCase) return
+    const pockets: Record<string, { id: string, initialPocketId: string }> = {}
+    Object.values(staticCase.pockets).forEach((pocket: Pocket) => {
+      const this_id = crypto.randomUUID()
+      pockets[this_id] = {
+        id: this_id,
+        initialPocketId: pocket.id
+      }
+    })
+
+
     const addToken: addPreviewCaseToken = {
       case: {
         caseType: caseType as CaseType,
-        caseId: id,
-        pockets: {}
+        id: id,
+        pockets: pockets
       },
-      reverse: false
+      newCreate: true
     }
 
 
@@ -316,34 +343,6 @@ export const useCreateWork = () => {
     }
     applyCreateAction.alterationData(forwardToken)
     alterationLog.saveState({ forwardToken: forwardToken, reverseToken: reverseToken })
-  }
-  const deleteCase = (id: string) => { //作成途中
-    // if (createStore.getBlockEdit) return "blockEdit"
-
-    // const this_case: Case = createStore.previewItemGetter[id]
-    // const addToken: addPreviewCaseToken = {
-    //   case: this_case,
-    //   reverse: true
-    // }
-
-    // const deleteToken: deletePreviewCaseToken = {
-    //   id: id,
-    //   deletecase: this_case
-    // }
-
-    // const reverseToken: alterationToken = {
-    //   alterationType: "previewCases_deleteCase",
-    //   token: addToken,
-    //   user: userAuthstore.userId
-    // }
-
-    // const forwardToken: alterationToken = {
-    //   alterationType: "previewCases_addCase",
-    //   token: deleteToken,
-    //   user: userAuthstore.userId
-    // }
-    // createStore.addPreviewCase(addToken)
-    // alterationLog.saveState({ forwardToken: forwardToken, reverseToken: reverseToken })
   }
 
   let provisionalpocket = false
@@ -629,7 +628,73 @@ export const useCreateWork = () => {
     applyCreateAction.alterationData(token)
   }
 
+
+  const reNamePocket = (caseId: string, pocketId: string, BeforeName: string, newName: string) => {
+    const confirmedToken: pocketReNameToken = {
+      name: newName,
+      caseId,
+      pocketId,
+    }
+    const reverseConfirmedToken: pocketReNameToken = {
+      name: BeforeName,
+      caseId,
+      pocketId,
+    }
+    const token: alterationToken = {
+      alterationType: "pocket_rename",
+      token: confirmedToken,
+      user: userAuthstore.userId,
+    }
+
+    const reverseToken: alterationToken = {
+      alterationType: "pocket_rename",
+      token: reverseConfirmedToken,
+      user: userAuthstore.userId,
+    }
+
+    alterationLog.saveState({
+      forwardToken: token,
+      reverseToken,
+    })
+
+    applyCreateAction.alterationData(token)
+  }
+
   const copyPocket = (caseId: string, pocketId: string) => {
+    createStore.savePocketSetter({ caseId, id: pocketId })
+  }
+  const pastePocket = (pos: { x: number, y: number }, caseId: string, priority: number) => {
+    const pocketData = createStore.savePocketGetter
+    const size = createStore.previewCase[pocketData.caseId].pockets[pocketData.id].size
+    if (!size) return;
+    const confirmedToken: pastePocketToken = {
+      pocketData: pocketData,
+      pos: { x: pos.x - size.width / 2, y: pos.y - size.height / 2 },
+      newPocketData: { id: crypto.randomUUID(), caseId: caseId, priority: priority }
+    }
+    const reverseConfirmedToken: pocketLogicalDeleteToken = {
+      caseId: confirmedToken.newPocketData.caseId,
+      pocketId: confirmedToken.newPocketData.id,
+      type: "push",
+    }
+
+    const token: alterationToken = {
+      alterationType: "pocket_paste",
+      token: confirmedToken,
+      user: userAuthstore.userId,
+    }
+
+    const reverseToken: alterationToken = {
+      alterationType: "pocket_logicalDelete",
+      token: reverseConfirmedToken,
+      user: userAuthstore.userId,
+    }
+    alterationLog.saveState({
+      forwardToken: token,
+      reverseToken,
+    })
+
+    applyCreateAction.alterationData(token)
 
   }
 
@@ -714,19 +779,24 @@ export const useCreateWork = () => {
     templateBarStore.selectedTemplateDataSetter({ id: id, data: response.vuepreviewData })
   }
 
-  // const positionChangeItemToPreview = (token: positionChangePreviewItemToken) => {
-  //   const target_item = createStore.previewCase[token.popCaseId].pockets[token.popPocketId].items.
-  //     if(!target_item) return
-  //   const push_target = createStore.previewCase[token.pushCaseId].pockets[token.pushCaseId].items
-  //   push_target.set(target_item, target_item)
-  // }
-
   const addTemplate = (data: { templateId: string, caseId: string }) => {
     if (createStore.getBlockEdit) return "blockEdit"
+    const this_casePockets = Object.keys(templateBarStore.selectedTemplateDataGetter.data[data.caseId].pockets)
     const id = crypto.randomUUID()
+
+    const setpocket = () => {
+
+      const res = this_casePockets.map((pocketId) => ({
+        beforeId: pocketId,
+        id: crypto.randomUUID()
+      }))
+      return res
+    }
+
     const addToken: addPreviewTemplateToken = {
       templateData: data,
       id: id,
+      pocketIds: setpocket()
     }
 
     const forwardToken: alterationToken = {
@@ -735,23 +805,20 @@ export const useCreateWork = () => {
       user: userAuthstore.userId
     }
 
-    const deleteToken: deletePreviewTemplateToken = {
-      id: id,
-      templateData: data
+    const deleteToken: caseLogicalDeleteToken = {
+      caseId: id,
+      type: "push"
     }
 
     const reverseToken: alterationToken = {
-      alterationType: "preview_deleteTemplate",
+      alterationType: "case_logicalDelete",
       token: deleteToken,
       user: userAuthstore.userId
     }
     applyCreateAction.alterationData(forwardToken)
     alterationLog.saveState({ forwardToken: forwardToken, reverseToken: reverseToken })
-
-  }
-  const setTemplate = (templateId: string) => {
-
   }
 
-  return { setTemplate, addTemplate, getTemplate, startRemovePocket, startResizePocket, caseLogicalDelete, pocketLogicalDelete, copyPocket, addPocket, provisionaChangePriorityPocket, confirmedChangePriorityPocket, buildItemPathMap, createNewwork, confirmedRemovePocket, provisionalRemovePocket, provisionalResizePocket, confirmedResizePocket, loadWork, addItemToPreview, addItemCount, addBookmark, deletePreviewItem, addListItem, addCase, deleteCase, setCreatePageWork }
+
+  return { reNamePocket, pastePocket, addTemplate, getTemplate, startRemovePocket, startResizePocket, caseLogicalDelete, pocketLogicalDelete, copyPocket, addPocket, provisionaChangePriorityPocket, confirmedChangePriorityPocket, buildItemPathMap, createNewwork, confirmedRemovePocket, provisionalRemovePocket, provisionalResizePocket, confirmedResizePocket, loadWork, addItemToPreview, addItemCount, addBookmark, deletePreviewItem, addListItem, addCase, setCreatePageWork }
 }

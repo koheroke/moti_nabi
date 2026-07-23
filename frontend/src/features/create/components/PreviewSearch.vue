@@ -35,6 +35,8 @@ import { BaseInput } from "@/components/ui/form/BaseInput";
 import { usePocketStore } from "../store/pocketStore.ts";
 import { useSearchStore } from "../store/searchStore.ts";
 import { useSideBarStore } from "../store/sideBarStore";
+import { useTemplateBarStore } from "../store/templateBar.ts";
+const templateBarStore = useTemplateBarStore();
 const suggestClose = ref(true);
 const closeSuggest = () => {
   suggestClose.value = true;
@@ -67,8 +69,16 @@ watch(nowSideBarGetter, (newSideBarId) => {
 const switchAction = (newSideBarId: string) => {
   switch (newSideBarId) {
     case "template":
+      const templates = templateBarStore.templateThumbnailsGetter;
+      const templateList = Object.values(templates).map((template) => ({
+        name: template.name,
+        value: "",
+        id: template.id,
+      }));
+
       placeholder.value = "テンプレートを検索";
-      return [];
+      onUpdateSearch.value = listSearch;
+      return templateList;
       break;
     case "item":
       placeholder.value = "持ち物を検索";
@@ -78,7 +88,14 @@ const switchAction = (newSideBarId: string) => {
       break;
     case "case":
       placeholder.value = "ケースを検索";
-      return [];
+      const cases = createStore.staticCasesGetter;
+      const caseList = Object.values(cases).map((this_case) => ({
+        name: this_case.name,
+        id: this_case.id,
+        value: "",
+      }));
+      onUpdateSearch.value = listSearch;
+      return caseList;
       break;
     case "preview":
       placeholder.value = "プレビュー内を検索";

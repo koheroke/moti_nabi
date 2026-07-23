@@ -74,10 +74,10 @@
             dominant-baseline="middle"
             class="pocket-label"
             :style="{ fontSize: `${Math.max(13 * scale)}px` }"
+            v-if="reNamePocketGetter.id != pocket.id"
           >
             {{ pocket.name }}
           </text>
-
           <SvgRemoveHandle
             v-if="role == 'owner' || role == 'editor'"
             class="svg-removehandle"
@@ -92,16 +92,55 @@
             :pocketId="pocket.id"
             class="svg-resizehandle"
           />
+          <foreignObject
+            v-if="reNamePocketGetter.id == pocket.id"
+            :x="
+              (pocket.pos.x +
+                pocket.size.width / 2 -
+                (pocket.size.width * 0.7) / 2) *
+              scale
+            "
+            :y="(pocket.pos.y + pocket.size.height / 2 - 45 / 2) * scale"
+            :style="{ fontSize: `${Math.max(13 * scale)}px` }"
+            :width="pocket.size.width * 0.7 * scale"
+            :height="45"
+            @click.stop
+            @dblclick.stop
+            @contextmenu.stop
+            @mousedown.stop
+            :class="nameInput"
+          >
+            <div xmlns="http://www.w3.org/1999/xhtml" class="pocket-name-input">
+              <BaseInput
+                v-model="nameInput"
+                @blur="emit('editName', nameInput)"
+                @pointerdown.stop
+                @mousedown.stop
+                @click.stop
+                ref="nameInputRef"
+                @dblclick.stop
+                style="text-align: center"
+                :focus="true"
+              />
+            </div>
+          </foreignObject>
         </g>
       </g>
     </svg>
   </div>
 </template>
 <script setup lang="ts">
+import BaseInput from "@/components/ui/form/BaseInput/BaseInput.vue";
 import SvgResizeHandle from "./svgResizeHandle.vue";
 import { onMounted, onUnmounted } from "vue";
 import SvgRemoveHandle from "./SvgRemoveHandle.vue";
+import { ref, watch, nextTick } from "vue";
+import { storeToRefs } from "pinia";
 import type { previewSvgCase } from "../../store/createStore";
+import { usePocketStore } from "../../store/pocketStore.ts";
+const pocketStore = usePocketStore();
+const { reNamePocketGetter } = storeToRefs(pocketStore);
+const nameInputRef = ref();
 const props = defineProps<{
   caseData: previewSvgCase;
   index: number;
@@ -110,9 +149,17 @@ const props = defineProps<{
   scale: number;
 }>();
 
+const nameInput = ref("");
 const handleContextMenu = (event: MouseEvent) => {
   event.preventDefault();
 };
+watch(reNamePocketGetter, async (data) => {
+  console.log("data", data);
+  if (data.id.length == 0) return;
+  nameInput.value = data.beforeName;
+  await nextTick();
+  nameInputRef.value?.focus();
+});
 
 onMounted(() => {
   document.addEventListener("contextmenu", handleContextMenu);
@@ -137,6 +184,7 @@ const emit = defineEmits<{
 
   (e: "openPocket", pocketId: string, caseId: string): void;
   (e: "setSelectedCase", id: string): void;
+  (e: "editName", newName: string): void;
 }>();
 </script>
 
@@ -205,6 +253,10 @@ const emit = defineEmits<{
   display: block;
   fill: #e0f2fe;
   stroke: #0284c7;
+}
+.nameInput {
+  background-color: transparent !important;
+  border: none !important;
 }
 
 .svg {

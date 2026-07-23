@@ -57,9 +57,26 @@ const menuAction = (id: string) => {
       });
       break;
     case "paste":
+      if (createStore.savePocketGetter.id.length == 0) return;
+      const paste_priority = createStore.indexChangeCounterGetter;
+
+      console.log(
+        "newPocketData.prioritynewPocketData.priority",
+        paste_priority,
+      );
+      createWork.pastePocket(
+        caseStore.relativeMousePositionGetter,
+        this_pocket.id,
+        paste_priority + 1,
+      );
+      createStore.indexChangeCounterSetter(paste_priority + 1);
       break;
     case "create":
       const this_priority = createStore.indexChangeCounterGetter;
+      console.log(
+        "newPocketData.prioritynewPocketData.priority",
+        this_priority,
+      );
       const default_size = 100;
       if (!menuPos) return;
       console.log("this_priority");
@@ -70,7 +87,7 @@ const menuAction = (id: string) => {
         pocketData: {
           id: "",
           name: "新しいポケット",
-          pos: { x: pos.x - default_size, y: pos.y - default_size },
+          pos: { x: pos.x - default_size / 2, y: pos.y - default_size / 2 },
           size: {
             width: default_size,
             height: default_size,

@@ -10,7 +10,8 @@ export const useTemplateBarStore = defineStore("template", {
       id: string, data: Record<string, Case>
     },
     selectedPocket: { caseId: "", id: "" },
-    draggedCaseData: { caseId: "" }
+    draggedCaseData: { caseId: "" },
+
   }),
   getters: {
     templateThumbnailsGetter: (state) => state.templateThumbnails,

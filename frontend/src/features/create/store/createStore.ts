@@ -2,13 +2,12 @@ import { defineStore } from 'pinia'
 import type { Case, previewItem } from '../type/casetype';
 import type { itemCard } from '../type/itemType';
 import type { CategoryId } from "@/features/create/type/categoryType";
-import type { iconInfomation, staticCase, UserLuggage_SaveDBData } from "@/features/create/type/apiType";
+import type { iconInfomation, UserLuggage_SaveDBData } from "@/features/create/type/apiType";
 import { type Category, } from "@/features/create/type/categoryType";
 import type { CaseType } from "@/features/create/type/itemType";
-import type { addPreviewPocketToken, pocketLogicalDeleteToken, caseLogicalDeleteToken, changePriorityPocket, provisionalRemovePocket, provisionalResizePocket, addPreviewCaseToken, deletePreviewCaseToken, addPreviewItemToken, addItemCountToken, addBookmarkToken, deletePreviewItemToken, addListItemToken } from "@/features/create/type/tokens";
+import type { pocketReNameToken, pastePocketToken, addPreviewTemplateToken, addPreviewPocketToken, pocketLogicalDeleteToken, caseLogicalDeleteToken, changePriorityPocket, provisionalRemovePocket, provisionalResizePocket, addPreviewCaseToken, deletePreviewCaseToken, addPreviewItemToken, addItemCountToken, addBookmarkToken, deletePreviewItemToken, addListItemToken } from "@/features/create/type/tokens";
 import { useSideBarStore } from './sideBarStore';
 import { useSearchStore } from './searchStore';
-import type { thumbnail } from '../type/templateType';
 const sideBarStore = useSideBarStore()
 const searchStore = useSearchStore()
 import { type menber } from '../type/infoType';
@@ -69,10 +68,13 @@ export const useCreateStore = defineStore("create", {
     PreviewItemNumberOfChanges: 0,
     ListItemNumberOfChanges: 0,
     indexChangeCounter: 0,
-
+    saveCase: { id: "" },
+    savePocket: { id: "", caseId: "" }
   }),
   getters: {
 
+    saveCaseGetter: (state) => state.saveCase,
+    savePocketGetter: (state) => state.savePocket,
     leaveGetter: (state) => state.leave,
     staticCasesGetter: (state) => state.staticCases,
     addItemCounterGetter: (state) => state.addItemCounter,
@@ -120,6 +122,8 @@ export const useCreateStore = defineStore("create", {
     },
 
 
+
+
     filteredListItem: (state) => {
       if (!state.listItem) return {}
       const keyword = state.searchText.trim().toLowerCase()
@@ -144,8 +148,15 @@ export const useCreateStore = defineStore("create", {
     }
   },
   actions: {
-
+    saveCaseSetter(data: { id: string }) {
+      this.saveCase = data
+    },
+    savePocketSetter(data: { caseId: string, id: string }) {
+      this.savePocket = data
+    },
     leaveWork() {
+      this.savePocket = { id: "", caseId: "" }
+      this.saveCase = { id: "" }
       this.workId = ""
       this.workName = ""
       this.userLuggage_SaveDBData = null
@@ -303,7 +314,26 @@ export const useCreateStore = defineStore("create", {
 
       return token.itemId
     },
-
+    addTemplate(token: addPreviewTemplateToken, temlpateData: Case) {
+      const this_case = temlpateData
+      const oldPockets = this_case.pockets;
+      const newPockets = Object.fromEntries(
+        token.pocketIds.map(({ beforeId, id }) => {
+          const pocket = oldPockets[beforeId];
+          return [
+            id,
+            {
+              ...pocket,
+              id,
+            },
+          ];
+        })
+      );
+      this_case.pockets = newPockets;
+      this_case.id = token.id
+      console.log("addTemplate_case", this_case)
+      return this_case;
+    },
 
     addListItem(token: addListItemToken) {
 
@@ -336,15 +366,17 @@ export const useCreateStore = defineStore("create", {
 
 
 
+
     addPreviewCase(token: addPreviewCaseToken) {
-      if (token.reverse) {
+
+      if (!token.newCreate) {
         const this_case = token.case as Case
         if (!this_case.case) return
         this.previewCase[this_case.id] = this_case
         return this_case
       } else {
         const this_case = token.case as {
-          caseId: string; caseType: CaseType, pockets: Record<string, {
+          id: string; caseType: CaseType, pockets: Record<string, {
             id: string,
             initialPocketId: string
           }>
@@ -352,26 +384,24 @@ export const useCreateStore = defineStore("create", {
         const previewCaseSetPocket: Record<string, Pocket> = {} as Record<string, Pocket>;
         const staticCase: Case = JSON.parse(JSON.stringify(this.staticCasesGetter[this_case.caseType]));
         if (!staticCase) return
-        console.log("staticCase.pockets", staticCase.pockets)
-        Object.values(staticCase.pockets).forEach((pocket: Pocket) => {
-          const this_id = crypto.randomUUID()
-          this_case.pockets[this_id] = {
-            id: this_id,
-            initialPocketId: pocket.id
-          }
-          previewCaseSetPocket[this_id] = {
-            ...pocket,
-            id: this_id,
-            priority: pocket.priority ?? 0
+        Object.values(token.case.pockets).forEach((pocket: {
+          id: string,
+          initialPocketId: string
+        }) => {
+          const this_staticCase = staticCase.pockets[pocket.initialPocketId]
+          previewCaseSetPocket[pocket.id] = {
+            ...this_staticCase,
+            id: pocket.id,
+            priority: this_staticCase.priority ?? 0
           }
         })
 
-
-        this.previewCase[this_case.caseId] = {
+        this.previewCase[this_case.id] = {
           ...staticCase,
-          id: this_case.caseId,
+          id: this_case.id,
           pockets: previewCaseSetPocket
         }
+        console.log("token.token___", this.previewCase[this_case.id])
         return this_case
       }
     },
@@ -387,6 +417,8 @@ export const useCreateStore = defineStore("create", {
       pocket.pos.y = token.resizeData.y
       return pocket.size
     },
+
+
 
 
     reMovePocket(token: provisionalRemovePocket) {
@@ -420,8 +452,18 @@ export const useCreateStore = defineStore("create", {
       delete this.previewCase[token.caseId]
     },
 
+    pastePocket(token: pastePocketToken) {
+      const { pocketData, pos, newPocketData } = token
+      const this_pocketData = JSON.parse(JSON.stringify(this.previewCase[pocketData.caseId].pockets[pocketData.id]))
+      this.previewCase[newPocketData.caseId].pockets[newPocketData.id] = { ...this_pocketData, id: newPocketData.id, pos: pos, priority: newPocketData.priority }//itemIdが一緒になってるので注意
+    },
+
     hardDeletePocket(token: pocketLogicalDeleteToken) {
       delete this.previewCase[token.caseId].pockets[token.pocketId]
+    },
+    pocketReName(token: pocketReNameToken) {
+      const this_case = this.previewCase[token.caseId].pockets[token.pocketId];
+      this_case.name = token.name
     },
     addPreviewPocket(token: addPreviewPocketToken) {
       const data = token.pocketData;

@@ -9,13 +9,18 @@ const createStore = useCreateStore()
 const socket = io(apiUrl);
 
 
-export type server_alterationTokenType = "set" | "delete" | "arrayPush" | "arrayRemove" | "objectPush" | "objectRemove";
+export type server_alterationTokenType = "set" | "delete" | "arrayPush" | "arrayRemove" | "objectPush" | "objectRemove" | "move";
 export type server_alterationToken = {
   type: server_alterationTokenType;
   value: any
   createdAt: number;
   path: string[];
 };
+
+interface pocletDeleteInfo { pocketId: string, caseId: string, userId: string, workId: string }
+interface caseDeleteInfo { pocketId: string, caseId: string, userId: string, workId: string }
+
+export type logicalDelete = { pocketDeleteInfo: pocletDeleteInfo[], caseDeleteInfo: caseDeleteInfo[] }
 
 export const useSocketApi = () => {
   socket.off("work:kicked");
@@ -34,13 +39,14 @@ export const useSocketApi = () => {
     socket.emit("work:kick", { workId: workId, kickedUserId: kickedUserId }
     )
   }
-  const joinWorkRoom = (): Promise<alterationToken[]> | null => {
+  const joinWorkRoom = (): Promise<{ alterationTokens: alterationToken[], logicalDelete: logicalDelete }> | null => {
     const workId = createStore.workIdGetter
-    if (!workId) return null
+    const userId = userAuthstore.userIdGetter
+    if (!workId || !userId) return null
     getAlteration()
     return new Promise((resolve) => {
-      socket.emit("joinRoom", workId, (response: { alterationTokens: alterationToken[] }) => {
-        resolve(response.alterationTokens)
+      socket.emit("joinRoom", workId, userId, (response: { alterationTokens: alterationToken[], logicalDelete: logicalDelete }) => {
+        resolve(response)
       })
     })
   }
@@ -52,6 +58,7 @@ export const getAlteration = () => {
   const applyCreateAction = useApplyCreateAction()
   socket.on("work:alteration", (token: alterationToken) => {
     if (!applyCreateAction) return
+    console.log("applyCreateAction", token)
     applyCreateAction.alterationData(token, true);
   });
   socket.on("work:userJoin", () => {

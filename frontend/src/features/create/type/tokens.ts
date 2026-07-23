@@ -1,12 +1,16 @@
 import type { CategoryId } from "../type/categoryType";
 import type { Case, Pocket } from "../type/casetype";
+import type { BeforeParsingCaseData } from "./apiType";
 import type { CaseType } from "../type/itemType";
-import type { pocket } from "./apiType";
 export type loadResponse = "noneNameorWorkId" | "fallLoadData" | "damagedData" | "none"
 export type addItemToPreviewResponse = "nonePreview" | "addPreview" | "noneItem" | "isRegulatedAction" | "blockEdit"
 export type createdType = "default" | "userCreated" | "othersUserCreated"
 
-
+export interface pastePocketToken {
+  pos: { x: number, y: number }
+  pocketData: { caseId: string, id: string }
+  newPocketData: { caseId: string, id: string, priority: number }
+}
 
 
 
@@ -18,6 +22,15 @@ export interface deletePreviewTemplateToken {
 export interface addPreviewTemplateToken {
   templateData: { templateId: string, caseId: string },
   id: string,
+  pocketIds: {
+    id: string, beforeId: string
+  }[]
+  caseData?: BeforeParsingCaseData
+}
+export interface pocketReNameToken {
+  name: string,
+  caseId: string,
+  pocketId: string,
 }
 
 export interface addItemCountToken {
@@ -61,15 +74,14 @@ export interface positionChangePreviewItemToken {
 
 export interface addPreviewCaseToken {
   case: Case | {
-    caseId: string,
+    id: string,
     caseType: CaseType
-    pockets?: Record<string, {
+    pockets: Record<string, {
       id: string,
       initialPocketId: string
     }>,
   }
-
-  reverse: boolean
+  newCreate: boolean
 }
 export interface deletePreviewCaseToken {
   deletecase: Case,

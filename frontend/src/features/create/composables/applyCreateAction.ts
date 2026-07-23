@@ -1,5 +1,5 @@
 
-import type { addPreviewTemplateToken, deletePreviewTemplateToken, addPreviewPocketToken, caseLogicalDeleteToken, pocketLogicalDeleteToken, changePriorityPocket, provisionalResizePocket, confirmedRemovePocketToken, provisionalRemovePocket, confirmedResizePocketToken, deletePreviewCaseToken, addPreviewCaseToken, addPreviewItemToken, addItemCountToken, addBookmarkToken, addListItemToken, deletePreviewItemToken } from "@/features/create/type/tokens";
+import type { pocketReNameToken, pastePocketToken, addPreviewTemplateToken, deletePreviewTemplateToken, addPreviewPocketToken, caseLogicalDeleteToken, pocketLogicalDeleteToken, changePriorityPocket, provisionalResizePocket, confirmedRemovePocketToken, provisionalRemovePocket, confirmedResizePocketToken, deletePreviewCaseToken, addPreviewCaseToken, addPreviewItemToken, addItemCountToken, addBookmarkToken, addListItemToken, deletePreviewItemToken } from "@/features/create/type/tokens";
 import { useCreateStore } from "../store/createStore";
 import type { server_alterationTokenType } from "../api/createSocketApi"
 import type { Case, pocketSvgData } from "@/features/create/type/casetype";
@@ -8,13 +8,15 @@ import type { previewItem } from "@/features/create/type/casetype";
 import { useSocketApi } from "@/features/create/api/createSocketApi"
 import { useUserAuthStore } from "@/store/user/userAuthStore";
 import { useCreateApi } from "../api/createApi";
-import type { thumbnail, BeforeParsingThumbnail } from "../type/templateType";
+import type { BeforeParsingThumbnail } from "../type/templateType";
 import { useTemplateBarStore } from "../store/templateBar";
 import { useThumbnail } from "./thumbnail";
+import { type itemCard } from "../type/itemType";
 const createApi = useCreateApi()
 const userAuthstore = useUserAuthStore()
 const api = useSocketApi()
 const usethumbnail = useThumbnail()
+
 
 export type alterationType = "previewItems_additem"
   | "previewItems_addcount"
@@ -32,14 +34,15 @@ export type alterationType = "previewItems_additem"
   | "case_hardDelete"
   | "pocket_add"
   | "preview_addTemplate"
-  | "preview_deleteTemplate"
+  | "pocket_paste"
+  | "pocket_rename"
 export type caseIds = "NormalSuitcase" | "HardSuitcase"
 const caseIds = {
   "NormalSuitcase": "NormalSuitcase",
   "HardSuitcase": "HardSuitcase"
 }
 
-type allToken = deletePreviewTemplateToken | addPreviewTemplateToken | addPreviewPocketToken | pocketLogicalDeleteToken | caseLogicalDeleteToken | changePriorityPocket | confirmedRemovePocketToken | provisionalRemovePocket | provisionalResizePocket | confirmedResizePocketToken | deletePreviewCaseToken | addPreviewCaseToken | addPreviewItemToken | addItemCountToken | addBookmarkToken | addListItemToken | deletePreviewItemToken
+type allToken = pocketReNameToken | pastePocketToken | deletePreviewTemplateToken | addPreviewTemplateToken | addPreviewPocketToken | pocketLogicalDeleteToken | caseLogicalDeleteToken | changePriorityPocket | confirmedRemovePocketToken | provisionalRemovePocket | provisionalResizePocket | confirmedResizePocketToken | deletePreviewCaseToken | addPreviewCaseToken | addPreviewItemToken | addItemCountToken | addBookmarkToken | addListItemToken | deletePreviewItemToken
 
 export interface alterationToken {
   token: allToken
@@ -50,8 +53,6 @@ export interface alterationToken {
 const useApplyCreateAction = () => {
   const createStore = useCreateStore()
   const templateBarStore = useTemplateBarStore()
-
-
   const initCreateStaticData = async () => {
     if (createStore.isStaticLoaded) return
     const [itemListRes, categoryRes] = await Promise.all([
@@ -67,16 +68,12 @@ const useApplyCreateAction = () => {
     createStore.setStaticLoaded(true)
   }
 
-  const leaveWork = () => {
-    // api.leaveRoom()
-  }
   const getStaticCases = async () => {
     const cases = createStore.staticCasesGetter
     if (Object.keys(cases).length != 0) return;
     const getCaseDatas = await createApi.getStaticCases()
     createStore.setStaticCases(getCaseDatas)
   }
-
 
   const getTemplateThumbnails = async () => {
     if (Object.keys(templateBarStore.templateThumbnailsGetter).length != 0) {
@@ -92,72 +89,33 @@ const useApplyCreateAction = () => {
         }]
       }
       ))
-    console.log("TemplateThumbnails", parseTemplateThumbnails)
     templateBarStore.templateThumbnailsSetter(parseTemplateThumbnails)
   }
 
+  const useParsers = () => {
+    let indexChangeCounter = 0;
+    let vueItemList: Record<string, itemCard> = {
 
-  const getTemplate = async (id: string) => {
-
-    const tempplate: Record<string, UserLuggage_SaveDBData> = await createApi.getTemplate(id)
-    // createStore.templateSetter(tempplate)
-  }
-
-  const hydrateCreateState = (data: UserLuggage_SaveDBData) => {
-    //console.log("hydrateCreateState_data", data)
-
-    const staticItemData = createStore.staticItemData
-    const caseData = createStore.staticCasesGetter
-    const { previewDatas, itemListDatas } = data
-    console.log("previewDatas", previewDatas)
-    const pocketLogicalDeletes = previewDatas.pocketLogicalDelete
-    const caseLogicalDeletes = previewDatas.caseLogicalDelete
-    console.log("pocketLogicalDeletes", pocketLogicalDeletes)
-    const synthesis = {
-      ...staticItemData,
-      ...itemListDatas.addedItems,
-    }
-    const vueItemList = Object.fromEntries(
-      Object.entries(synthesis).map(([key, item]) => [
-        key,
-        {
-          ...item,
-          bookmark: itemListDatas.bookmarks.includes(item.id),
-        },
-      ]),
-    );
-
-
-
-    const getItemDatra = (
-      pocket: Record<string, saveDBprevieItem>
-    ): Record<string, previewItem> => {
-      return Object.fromEntries(
-        Object.values(pocket).map((item) => {
-          const { bookmark, ...itemData } = vueItemList[item.itemId];
-          const data: previewItem = vueItemList[item.itemId].isStorage
-            ? {
-              ...itemData,
-              innerItems: item.innerItems
-                ? getItemDatra(item.innerItems)
-                : {},
-              count: item.count,
-              id: item.id,
-              itemId: item.itemId,
-            }
-            : {
-              ...itemData,
-              count: item.count,
-              id: item.id,
-              itemId: item.itemId,
-            };
-
-          return [item.id, data];
-        })
-      );
     };
 
-    let indexChangeCounter = 0
+    const setStaticData = (this_vueItemList: Record<string, itemCard>, this_indexChangeCounter: number) => {
+      vueItemList = this_vueItemList;
+      indexChangeCounter = this_indexChangeCounter;
+    }
+
+    const parseCase = (staticCase: Case, luggage: BeforeParsingCaseData) => {
+      const this_staticCase = staticCase;
+      const res = {
+        id: luggage.id,
+        case: this_staticCase.case,
+        handle: this_staticCase.handle,
+        name: this_staticCase.name,
+        pockets: pocketUnion(luggage, staticCase),
+        logicalDelete: false,
+        canvas: staticCase.canvas
+      }
+      return res
+    }
 
     const pocketUnion = (luggage: BeforeParsingCaseData, staticCase: Case) => {
       const pockets = luggage.pockets;
@@ -212,9 +170,7 @@ const useApplyCreateAction = () => {
               ...pocketData,
               ...pocketSvgData,
               items: items,
-              logicalDelete: !!pocketLogicalDeletes?.find(
-                (deleteData) => deleteData.caseId === luggage.id && deleteData.pocketId == pocket.id
-              )
+              logicalDelete: false
             },
           ]
         })
@@ -222,31 +178,70 @@ const useApplyCreateAction = () => {
       const basePockets = buildPockets;
       return basePockets
     }
-    console.log("indexChangeCounter", indexChangeCounter)
 
 
-    //console.log("previewDatas.mainLuggage", previewDatas.mainLuggage)
-    console.log("caseLogicalDeletes", caseLogicalDeletes)
+
+    const getItemDatra = (
+      pocket: Record<string, saveDBprevieItem>,
+    ): Record<string, previewItem> => {
+      return Object.fromEntries(
+        Object.values(pocket).map((item) => {
+          const { bookmark, ...itemData } = vueItemList[item.itemId];
+          const data: previewItem = vueItemList[item.itemId].isStorage
+            ? {
+              ...itemData,
+              innerItems: item.innerItems
+                ? getItemDatra(item.innerItems)
+                : {},
+              count: item.count,
+              id: item.id,
+              itemId: item.itemId,
+            }
+            : {
+              ...itemData,
+              count: item.count,
+              id: item.id,
+              itemId: item.itemId,
+            };
+
+          return [item.id, data];
+        })
+      );
+    };
+    return { getItemDatra, pocketUnion, parseCase, setStaticData, indexChangeCounter }
+  }
+
+  const hydrateCreateState = (data: UserLuggage_SaveDBData) => {
+    const parsers = useParsers()
+    const staticItemData = createStore.staticItemData
+    const caseData = createStore.staticCasesGetter
+    const { previewDatas, itemListDatas } = data
+    const synthesis = {
+      ...staticItemData,
+      ...itemListDatas.addedItems,
+    }
+    const vueItemList: Record<string, itemCard> = Object.fromEntries(
+      Object.entries(synthesis).map(([key, item]) => [
+        key,
+        {
+          ...item,
+          bookmark: itemListDatas.bookmarks.includes(item.id),
+        },
+      ]),
+    );
+    let indexChangeCounter = 0
+    parsers.setStaticData(vueItemList, indexChangeCounter)
     const vuepreviewData: Record<string, Case> = Object.fromEntries(
       Object.entries(previewDatas.mainLuggage).map(([luggageId, luggage]) => {
         const staticCase: Case = caseData[luggage.caseType];
         return [
           luggageId,
-          {
-            id: luggageId,
-            case: staticCase.case,
-            handle: staticCase.handle,
-            name: staticCase.name,
-            pockets: pocketUnion(luggage, staticCase),
-            logicalDelete: !!caseLogicalDeletes?.find(
-              (pocket) => pocket.caseId === luggageId
-            ),
-            canvas: staticCase.canvas
-          }
+          parsers.parseCase(staticCase, luggage)
         ];
       }),
     );
-    console.log("vuepreviewData", vuepreviewData)
+    indexChangeCounter = parsers.indexChangeCounter
+    console.log("indexChangeCounter", indexChangeCounter)
     return { vuepreviewData: vuepreviewData, vueItemList: vueItemList, indexChangeCounter: indexChangeCounter }
   }
 
@@ -283,20 +278,17 @@ const useApplyCreateAction = () => {
         const this_token = token.token as caseLogicalDeleteToken
         if (!this_token) return
         createStore.logicalDeleteCase(this_token)
-        dbpushToken.path = ["previewDatas", "caseLogicalDelete"]
-        dbpushToken.value = this_token
+        dbpushToken.path = []
+        dbpushToken.value = {}
         dbpushToken.type = "arrayPush"
         break
       }
 
       case 'pocket_logicalDelete': {
         const this_token = token.token as pocketLogicalDeleteToken
-        console.log("pocket_logicalDelete", this_token)
-        if (!this_token) return
-
         createStore.logicalDeletePocket(this_token)
-        dbpushToken.path = ["previewDatas", "pocketLogicalDelete"]
-        dbpushToken.value = this_token
+        dbpushToken.path = []
+        dbpushToken.value = {}
         dbpushToken.type = "arrayPush"
         break
       }
@@ -368,17 +360,19 @@ const useApplyCreateAction = () => {
         break
 
       }
-      case 'previewCases_addCase': { //完了
-        //console.log("token.token", token.token)
-        const res = createStore.addPreviewCase(token.token as addPreviewCaseToken) as {
-          caseId: string, caseType: string,
+      case 'previewCases_addCase': {
+        const this_token = token.token as addPreviewCaseToken
+        const res = createStore.addPreviewCase(this_token) as {
+          newCreate: boolean
+          id: string, caseType: string,
           pockets: Record<string, {
             id: string,
             initialPocketId: string
           }>
         }
+
         if (!res) return
-        const data = { id: res.caseId, caseType: res.caseType, pockets: res.pockets }
+        const data = { id: res.id, caseType: res.caseType, pockets: res.pockets }
         dbpushToken.path = ["previewDatas", "mainLuggage"]
         dbpushToken.value = data
         dbpushToken.type = "objectPush"
@@ -406,6 +400,60 @@ const useApplyCreateAction = () => {
         dbpushToken.path = ["previewDatas", "mainLuggage", this_token.caseId, "pockets", this_token.pocketId, "poketSvgEdit"]
         dbpushToken.value = { ...this_token.removeData };
         dbpushToken.type = "set";
+        dbpushToken.thumbnailEdit = true
+        break
+      }
+
+      case 'pocket_rename': {
+        const this_token = token.token as pocketReNameToken
+        createStore.pocketReName(this_token)
+        dbpushToken.path = ["previewDatas", "mainLuggage", this_token.caseId, "pockets", this_token.pocketId, "name"]
+        dbpushToken.value = this_token.name;
+        dbpushToken.type = "set";
+        dbpushToken.thumbnailEdit = true
+        break;
+      }
+
+      case 'preview_addTemplate': {
+        const this_token = token.token as addPreviewTemplateToken
+        const selectedTemplateData = templateBarStore.selectedTemplateDataGetter
+        if (selectedTemplateData.id == this_token.templateData.templateId) {
+          const template_case = selectedTemplateData.data[this_token.templateData.caseId]
+          const this_retentionTemplate = JSON.parse(JSON.stringify(template_case))
+          const this_case = createStore.addTemplate(this_token, this_retentionTemplate)
+          createStore.addPreviewCase({ case: this_case, newCreate: false })
+        } else {
+          if (this_token.caseData) {
+            const parsers = useParsers()
+            const items = createStore.listItemGetter
+            if (!items) return;
+            parsers.setStaticData(items, 0)
+            const this_staticCase = createStore.staticCasesGetter[this_token.caseData.caseType]
+            const res = parsers.parseCase(this_staticCase, this_token.caseData)
+            createStore.addPreviewCase({ case: res, newCreate: false })
+          }
+        }
+        break
+      }
+
+      case 'pocket_paste': {
+        const this_token = token.token as pastePocketToken;
+        createStore.pastePocket(this_token);
+        console.log("this_token", this_token)
+        dbpushToken.path = ["previewDatas", "mainLuggage", this_token.newPocketData.caseId, "pockets", this_token.newPocketData.id]
+        dbpushToken.value = {
+          beforePath: ["previewDatas", "mainLuggage", this_token.pocketData.caseId, "pockets", this_token.pocketData.id],
+          leave: true,
+          reValue: {
+            id: this_token.newPocketData.id,
+            poketSvgEdit: {
+              x: this_token.pos.x,
+              y: this_token.pos.y,
+              priority: this_token.newPocketData.priority
+            }
+          }
+        }
+        dbpushToken.type = "move"
         dbpushToken.thumbnailEdit = true
         break
       }
@@ -457,7 +505,7 @@ const useApplyCreateAction = () => {
     createStore.leaveWork()
   }
 
-  return { getTemplateThumbnails, hydrateCreateState, alterationData, initCreateStaticData, leaveWork, kicked, getStaticCases }
+  return { getTemplateThumbnails, hydrateCreateState, alterationData, initCreateStaticData, kicked, getStaticCases }
 }
 export { useApplyCreateAction }
 

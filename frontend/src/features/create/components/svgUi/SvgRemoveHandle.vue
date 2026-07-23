@@ -78,19 +78,31 @@ const handlePointerMove = (event: PointerEvent) => {
     width: props.pocket.size.width,
     height: props.pocket.size.height,
   };
-  if (
-    endPos.x > maxRemove.x - pocketSize.width ||
-    endPos.y > maxRemove.y - pocketSize.height ||
-    endPos.y < 0 ||
-    endPos.x < 0
-  ) {
-    return;
+
+  if (endPos.x > maxRemove.x - pocketSize.width && diffX > 0) {
+    diffX = 0;
   }
+  if (endPos.y > maxRemove.y - pocketSize.height && diffY > 0) {
+    diffY = 0;
+  }
+  if (endPos.y < 0 && diffY < 0) {
+    diffY = 0;
+  }
+  if (endPos.x < 0 && diffX < 0) {
+    diffX = 0;
+  }
+  if (diffX == 0 && diffY == 0) return;
+
+  const setPos = {
+    x: props.pocket.pos.x + diffX,
+    y: props.pocket.pos.y + diffY,
+  };
+
   createWork.provisionaChangePriorityPocket(props.caseId, props.pocketId);
   createWork.provisionalRemovePocket(
     {
-      x: endPos.x,
-      y: endPos.y,
+      x: setPos.x,
+      y: setPos.y,
       width: props.pocket.size.width,
       height: props.pocket.size.height,
     },

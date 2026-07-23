@@ -1,20 +1,42 @@
 <script setup lang="ts">
-defineProps<{
+import { ref, watch, nextTick } from "vue";
+
+const inputRef = ref<HTMLInputElement | null>(null);
+
+const props = defineProps<{
   modelValue: string;
   type?: string;
   placeholder?: string;
+  focus?: boolean;
 }>();
 
-const emit = defineEmits(["update:modelValue", "handleEnter"]);
+watch(
+  () => props.focus,
+  async (focus) => {
+    await nextTick();
+
+    if (focus) {
+      inputRef.value?.focus();
+    } else {
+      inputRef.value?.blur();
+    }
+  },
+  {
+    immediate: true,
+  },
+);
+const emit = defineEmits(["update:modelValue", "handleEnter", "blur"]);
 </script>
 
 <template>
   <input
     class="c-input"
+    ref="inputRef"
     :placeholder="placeholder || ''"
     :type="type || 'text'"
     :value="modelValue"
     @keydown.enter="emit('handleEnter')"
+    @blur="emit('blur')"
     @input="
       emit('update:modelValue', ($event.target as HTMLInputElement).value)
     "

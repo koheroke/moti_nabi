@@ -13,6 +13,7 @@ export type alterationType = "previewItems_additem"
   | "case_hardDelete"
   | "case_logicalDelete"
   | "pocket_logicalDelete"
+  | "preview_addTemplate"
 
 
 
@@ -22,7 +23,7 @@ export interface alterationToken {
   user: string
 }
 
-export type server_alterationTokenType = "set" | "delete" | "arrayPush" | "arrayRemove" | "objectPush" | "objectRemove";
+export type server_alterationTokenType = "move" | "set" | "delete" | "arrayPush" | "arrayRemove" | "objectPush" | "objectRemove";
 export type server_alterationToken = {
   type: server_alterationTokenType;
   value: any

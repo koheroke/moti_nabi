@@ -55,6 +55,10 @@ import Thumbnail from "@/features/create/components/Thumbnail.vue";
 const workPackageStore = useWorkPackageStore();
 const { userWorkPackageStoreGetter } = storeToRefs(workPackageStore);
 
+window.scrollTo({
+  top: 0,
+  behavior: "smooth", // アニメーション付き
+});
 const userAuthStore = useUserAuthStore();
 const userStore = useUserStore();
 const { getUserInfo } = storeToRefs(userStore);

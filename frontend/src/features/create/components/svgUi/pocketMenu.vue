@@ -13,8 +13,10 @@ import { ref, watch, onMounted, onUnmounted, nextTick } from "vue";
 import { storeToRefs } from "pinia";
 import { usePocketStore } from "@/features/create/store/pocketStore";
 import { useCreateWork } from "@/features/create/composables/useCreateWork";
+import { useCreateStore } from "../../store/createStore";
 const createWork = useCreateWork();
 const close = ref(true);
+const createStore = useCreateStore();
 const pocketStore = usePocketStore();
 const { getOpenMenuPocket } = storeToRefs(pocketStore);
 watch(getOpenMenuPocket, (newValue) => {
@@ -26,7 +28,8 @@ watch(getOpenMenuPocket, (newValue) => {
 
 const pocketMenu = ref([
   { id: "delete", name: "削除" },
-  { id: "cope", name: "複製" },
+  { id: "save", name: "保存" },
+  { id: "reName", name: "名前を変更" },
 ]);
 
 const onSection = (value: { id: string; name: string }) => {
@@ -45,8 +48,18 @@ const menuAction = (id: string) => {
         type: "push",
       });
       break;
-    case "cope":
+    case "save":
       createWork.copyPocket(this_pocket.caseId, this_pocket.id);
+      break;
+    case "reName":
+      pocketStore.reNamePocketSetter(
+        {
+          caseId: this_pocket.caseId,
+          id: this_pocket.id,
+        },
+        createStore.previewCase[this_pocket.caseId].pockets[this_pocket.id]
+          .name,
+      );
       break;
     default:
       break;

@@ -42,6 +42,7 @@ interface BeforeParsingCaseData {
 }
 
 
+
 interface saveDBaddedItem {
   id: string,
   name: string,
@@ -63,8 +64,6 @@ interface UserLuggage_SaveDBData {
   },
   previewDatas: {
     mainLuggage: Record<string, BeforeParsingCaseData>
-    caseLogicalDelete?: caseLogicalDeleteToken[]
-    pocketLogicalDelete: pocketLogicalDeleteToken[]
   }
 };
 

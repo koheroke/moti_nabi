@@ -41,7 +41,14 @@ const { draggedCaseDataGetter } = storeToRefs(templateBarStore);
 
 const handleDrop = () => {};
 const onDrop = () => {
-  if (templateBarStore.draggedCaseDataGetter) {
+  const draggedCaseData = templateBarStore.draggedCaseDataGetter;
+  if (draggedCaseData) {
+    const data = {
+      templateId: templateBarStore.selectedTemplateDataGetter.id,
+      caseId: draggedCaseData.caseId,
+    };
+    console.log("onDropTemplate", data);
+    createWork.addTemplate(data);
     templateBarStore.draggedCaseDataSetter("");
   }
 };

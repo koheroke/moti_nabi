@@ -57,7 +57,6 @@ onMounted(async () => {
   before = true;
 });
 onUnmounted(async () => {
-  applyCreateAction.leaveWork();
   alterationLog.resetStack();
 });
 

@@ -15,7 +15,6 @@ export const useThumbnail = () => {
     const pocketUnion = (luggage: BeforeParsingCaseData, staticCase: Case): previewSvgPocket[] => {
       const pockets = luggage.pockets;
       const buildPockets = Object.values(pockets).map((pocket) => {
-        console.log("pockets_data__", pocket);
 
         const initialPocketId = pocket.initialPocketId;
         const staticcase = initialPocketId
@@ -47,7 +46,7 @@ export const useThumbnail = () => {
         }
         return res
       });
-
+      console.log("buildPockets", buildPockets)
       const basePockets = buildPockets;
       return basePockets
     }
@@ -63,7 +62,7 @@ export const useThumbnail = () => {
             case: staticCase.case,
             handle: staticCase.handle,
             name: staticCase.name,
-            pockets: pocketUnion(luggage, staticCase),
+            pockets: pocketUnion(luggage, staticCase).sort((a, b) => a.priority - b.priority).filter((thisPocket) => !thisPocket.logicalDelete),
             canvas: staticCase.canvas,
             logicalDelete: false
           }
@@ -72,5 +71,6 @@ export const useThumbnail = () => {
     return thumbnailData
   }
   return { parse }
+
 
 }

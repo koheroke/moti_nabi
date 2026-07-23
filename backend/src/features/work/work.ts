@@ -2,10 +2,9 @@ import { prisma } from "@/lib/prisma/prisma"
 import { editWorkPackageApi } from "@/features/work/types"
 import { type server_alterationToken } from "./saveQueue"
 import { publichTokenType } from "./types/index"
+import { templateData } from "./template"
 import jsonCases from "./jsonData/case/case.json";
-import jsonTemplateData from "./jsonData/template/template.json"
 const cases: Record<string, any> = jsonCases
-const templateData: Record<string, any> = jsonTemplateData
 
 const workData = new Map()
 export type setValue = "like" | "commit"
@@ -258,43 +257,59 @@ const useWork = () => {
     }
 
 
-
-
     editDataToken.forEach((token) => {
-      const path = [...token.path];
-      const thumbnailEditPath = path.slice(2);//動かさないで
-      const lastKey = path.pop();
-
-      let parent: any = this_work.data;
-      let thumbnailData: any = this_work.thumbnailJson;
-
-      path.forEach((key) => {
-        if (key == undefined) return;
-        if (parent[key] == undefined) {
-          parent[key] = {};
-        }
-        parent = parent[key];
-      });
+      console.log("token__", token)
 
 
+      const getPoint = (thisPath: string[]) => {
 
-      if (token.thumbnailEdit) {
-        thumbnailEditPath.forEach((key) => {
-          if (key == undefined) return;
-          if (thumbnailData[key] == undefined) {
-            thumbnailData[key] = {}
+        const path = [...thisPath];
+        const thumbnailPath = thisPath.slice(2);
+
+        const lastKey = path.pop();
+        const thumbnailLastKey = thumbnailPath.pop();
+
+        let parent: any = this_work.data;
+        let thumbnailData: any = this_work.thumbnailJson;
+
+        for (const key of path) {
+          if (parent[key] === undefined) {
+            parent[key] = {};
           }
-          thumbnailData = thumbnailData[key];
-        });
-      }
 
+          parent = parent[key];
+        }
+
+        if (token.thumbnailEdit) {
+          for (const key of thumbnailPath) {
+            if (thumbnailData[key] === undefined) {
+              thumbnailData[key] = {};
+            }
+
+            thumbnailData = thumbnailData[key];
+          }
+        }
+
+        return {
+          lastKey,
+          thumbnailLastKey,
+          parent,
+          thumbnailData,
+        };
+      };
+
+      const res = getPoint(token.path)
+      const { lastKey, thumbnailLastKey, parent, thumbnailData } = res
+      console.log("token", token)
       switch (token.type) {
         case "set":
-          //console.log("token.value", token.value)
-          //console.log(lastKey)
-          //console.log(parent)
           if (lastKey == null) return;
           parent[lastKey] = token.value;
+          if (token.thumbnailEdit) {
+            if (thumbnailLastKey) {
+              thumbnailData[thumbnailLastKey] = token.value;
+            }
+          }
           break;
 
         case "delete":
@@ -323,23 +338,31 @@ const useWork = () => {
 
         case "objectPush":
           if (lastKey == null) return;
-
           if (
             typeof parent[lastKey] !== "object" ||
             parent[lastKey] === null ||
             Array.isArray(parent[lastKey])
           ) {
             parent[lastKey] = {};
-          }
+            if (token.thumbnailEdit) {
 
-          parent[lastKey][token.value.id] = token.value;
+              thumbnailData[lastKey] = {}
+            }
+          } else {
+            console.log("parent", parent)
+            parent[lastKey][token.value.id] = token.value;
+            if (token.thumbnailEdit) {
+              if (thumbnailLastKey) {
+                thumbnailData[thumbnailLastKey][token.value.id] = token.value;
+              } else {
+                thumbnailData[token.value.id] = token.value;
+              }
+            }
+          }
           break;
 
         case "objectRemove":
           if (lastKey == null) return;
-          //console.log("lastKey", lastKey)
-          //console.log("token.value.id", token.value.id)
-          //console.log("parent[lastKey]", parent)
 
           if (
             typeof parent[lastKey] !== "object" ||
@@ -349,7 +372,35 @@ const useWork = () => {
             return;
           }
           delete parent[lastKey][token.value.id];
+          if (token.thumbnailEdit) {
+            if (thumbnailLastKey) {
+              delete thumbnailData[thumbnailLastKey][token.value.id];
+            } else {
+              delete thumbnailData[token.value.id];
+            }
+          }
+
           break;
+
+        case 'move':
+          const { beforePath, reValue } = token.value
+          const res = getPoint(beforePath)
+          const { lastKey: this_lastKey, thumbnailLastKey: this_thumbnailLastKey, parent: this_parent, thumbnailData: this_thumbnailData } = res
+          if (!this_lastKey || !lastKey) return;
+          const moveData = this_parent[this_lastKey]
+          const editData = { ...moveData, ...reValue }
+          parent[lastKey] = editData;
+
+
+          if (token.thumbnailEdit) {
+            if (!this_thumbnailLastKey || !this_thumbnailData || !thumbnailLastKey) return;
+            console.log("reValue", reValue)
+            console.log("thumbnailLastKey", thumbnailLastKey)
+            const moveData = this_thumbnailData[this_thumbnailLastKey]
+            const editData = { ...moveData, ...reValue }
+            thumbnailData[thumbnailLastKey] = editData
+          }
+          break
 
         default: {
           const _exhaustiveCheck: never = token.type;
@@ -357,14 +408,12 @@ const useWork = () => {
         }
       }
 
-      if (token.thumbnailEdit) {
-        Object.assign(thumbnailData, parent[lastKey]);
-      }
+
     });
 
 
-
     const jsonData = JSON.stringify(this_work.data);
+
     const thumbnailJson = JSON.stringify(this_work.thumbnailJson);
     //console.log("jsonData", jsonData)
     await prisma.work.update({

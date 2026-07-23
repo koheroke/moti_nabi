@@ -17,6 +17,7 @@
             @addPreviewItem="addPreviewItem"
             @openPocket="openPocket"
             @setSelectedCase="setSelectedCase"
+            @editName="editName"
           />
         </div>
       </div>
@@ -152,6 +153,20 @@ watch(getSelectedPocketId, (ids) => {
     };
   }
 });
+
+const editName = (newName: string) => {
+  const this_pocket = pocketStore.reNamePocketGetter;
+  if (newName.length > 15) {
+    newName = newName.slice(0, 15);
+  }
+  createWork.reNamePocket(
+    this_pocket.caseId,
+    this_pocket.id,
+    this_pocket.beforeName,
+    newName,
+  );
+  pocketStore.reNamePocketClear();
+};
 </script>
 <style lang="css" scoped>
 .pocketModal {

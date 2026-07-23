@@ -93,24 +93,6 @@
             @close="closeSuggest"
           ></suggest>
         </section>
-
-        <section class="thumbnail">
-          <h2 style="padding-bottom: 10px">サムネイル画像を設定</h2>
-          <div class="thumbnailArea">
-            <img :src="thumbnailImage" class="thumbnail_image" />
-            <div class="thumbnail-edit" @click="editThumbnailShow = true">
-              <Camera fill="white" :size="100" color="#1514143d"></Camera>
-            </div>
-            <imageDropTab
-              v-if="editThumbnailShow"
-              @close="editThumbnailShow = false"
-              :aspectRatio="{ x: 7, y: 5 }"
-              :size="'700x500'"
-              :outputType="'png'"
-              @getNewIcon="thumbnailImage = $event"
-            ></imageDropTab>
-          </div>
-        </section>
       </li>
       <div class="buttonBox">
         <BaseButton style="margin-left: auto" @click="onPublich"
@@ -149,7 +131,6 @@ import { BaseTextArea } from "@/components/ui/form/BaseTextArea/index.ts";
 import { BaseButton } from "@/components/ui/form/BaseButton";
 import { Tag } from "lucide-vue-next";
 import suggest from "@/features/suggest/components/suggest.vue";
-import { Camera } from "lucide-vue-next";
 import { storeToRefs } from "pinia";
 import { publicWork } from "./publichAPi/publich";
 import { useAlertStore } from "@/store/feedback/alertStore";
@@ -167,9 +148,8 @@ const work = useWork();
 const router = useRouter();
 const workDetailEditStore = useWorkDetailEditStore();
 const alertStore = useAlertStore();
-const editThumbnailShow = ref(false);
 const tagInput = ref<string>("");
-const thumbnailImage = ref<string>("");
+
 const allTags = ref<{ name: string; value: any; id: string }[]>([]);
 const bioMax = ref(250);
 const nameMax = ref(10);
