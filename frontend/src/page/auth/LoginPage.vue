@@ -24,15 +24,16 @@ import { BaseLabel } from "@/components/ui/form/BaseLabel";
 <style scoped>
 .l-auth {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) 500px;
   min-height: 100vh;
-  min-width: 100vh;
+  width: 100%;
 }
 
 .l-auth__left {
+  min-width: 0;
+  overflow: hidden;
   background: #3b82f6;
   color: white;
-  padding: 40px;
 }
 
 .l-auth__right {
@@ -40,18 +41,7 @@ import { BaseLabel } from "@/components/ui/form/BaseLabel";
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  min-width: 0;
   gap: 20px;
-}
-
-.title {
-  font-weight: 900;
-  font-size: 25px;
-  color: #3b82f6;
-}
-
-.login-link {
-  margin-top: 16px;
-  font-size: 14px;
-  text-align: center;
 }
 </style>

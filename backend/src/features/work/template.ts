@@ -21,7 +21,7 @@ const useTemplate = () => {
       this_case = structuredClone(
         templateData.templates[templateId].previewDatas.mainLuggage[caseId]
       );
-      console.log("getCase__", this_case)
+      //console.log("getCase__", this_case)
     } catch (e) {
       return
     }
@@ -42,7 +42,7 @@ const useTemplate = () => {
     this_case.pockets = newPockets;
     this_case.id = addTemplateToken.id
 
-    console.log("addCase__", this_case)
+    //console.log("addCase__", this_case)
 
     const sendDbToken = {
       type: "set" as server_alterationTokenType,

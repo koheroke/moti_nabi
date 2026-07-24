@@ -8,7 +8,7 @@ export const useThumbnail = () => {
   let indexChangeCounter = 0
 
   const parse = (thumbnail: Record<string, BeforeParsingCaseData>) => {
-    console.log(thumbnail)
+    //console.log(thumbnail)
     const createStore = useCreateStore()
     let caseData = createStore.staticCasesGetter;
 
@@ -46,7 +46,7 @@ export const useThumbnail = () => {
         }
         return res
       });
-      console.log("buildPockets", buildPockets)
+      //console.log("buildPockets", buildPockets)
       const basePockets = buildPockets;
       return basePockets
     }

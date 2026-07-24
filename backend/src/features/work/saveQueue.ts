@@ -44,8 +44,8 @@ export const useSaveQueue = () => {
   const timers = new Map<string, ReturnType<typeof setTimeout>>()
 
   const getQueue = (workId: string) => {
-    console.log("queues", queues)
-    console.log("timers", timers)
+    //console.log("queues", queues)
+    //console.log("timers", timers)
     if (!queues.has(workId)) {
       queues.set(workId, [])
     }

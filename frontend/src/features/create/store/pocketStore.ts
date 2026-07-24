@@ -36,7 +36,7 @@ export const usePocketStore = defineStore("pocket", {
       this.reNamePocket = { caseId: "", id: "", beforeName: "" };
     },
     setOpenMenuPocket(ids: { id: string; caseId: string }) {
-      console.log("setOpenMenuPocket", ids);
+      //console.log("setOpenMenuPocket", ids);
       this.openMenuPocket = { id: ids.id, caseId: ids.caseId };
     },
   },

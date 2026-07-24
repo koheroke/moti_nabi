@@ -20,7 +20,7 @@ const createStore = useCreateStore();
 const pocketStore = usePocketStore();
 const { getOpenMenuPocket } = storeToRefs(pocketStore);
 watch(getOpenMenuPocket, (newValue) => {
-  console.log("getOpemMenuPocket", newValue);
+  //console.log("getOpemMenuPocket", newValue);
   if (newValue.id.length != 0) {
     close.value = false;
   }
@@ -33,7 +33,7 @@ const pocketMenu = ref([
 ]);
 
 const onSection = (value: { id: string; name: string }) => {
-  console.log("value", value);
+  //console.log("value", value);
   menuAction(value.id);
 };
 
@@ -41,7 +41,7 @@ const menuAction = (id: string) => {
   const this_pocket = getOpenMenuPocket.value;
   switch (id) {
     case "delete":
-      console.log("delete");
+      //console.log("delete");
       createWork.pocketLogicalDelete({
         caseId: this_pocket.caseId,
         pocketId: this_pocket.id,

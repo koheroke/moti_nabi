@@ -15,6 +15,12 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { Tag } from "lucide-vue-next";
+export type suggestData = {
+  name: string;
+  value: any;
+  id: string;
+  detail?: string;
+};
 const props = defineProps<{
   suggestDatas: { name: string; value: any; id: string; detail?: string }[];
   search: string;

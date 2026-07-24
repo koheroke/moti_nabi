@@ -68,7 +68,7 @@ const useWork = () => {
   const getTemplate = (id: string) => {
     const data = templateData.templates[id]
 
-    console.log("data", templateData.templates[id])
+    //console.log("data", templateData.templates[id])
     if (data) {
       return data
     }
@@ -158,7 +158,7 @@ const useWork = () => {
         },
       },
     });
-    console.log("setLike")
+    //console.log("setLike")
 
     if (like) {
       await prisma.$transaction(async (tx) => {
@@ -258,7 +258,7 @@ const useWork = () => {
 
 
     editDataToken.forEach((token) => {
-      console.log("token__", token)
+      //console.log("token__", token)
 
 
       const getPoint = (thisPath: string[]) => {
@@ -300,7 +300,7 @@ const useWork = () => {
 
       const res = getPoint(token.path)
       const { lastKey, thumbnailLastKey, parent, thumbnailData } = res
-      console.log("token", token)
+      //console.log("token", token)
       switch (token.type) {
         case "set":
           if (lastKey == null) return;
@@ -349,7 +349,7 @@ const useWork = () => {
               thumbnailData[lastKey] = {}
             }
           } else {
-            console.log("parent", parent)
+            //console.log("parent", parent)
             parent[lastKey][token.value.id] = token.value;
             if (token.thumbnailEdit) {
               if (thumbnailLastKey) {
@@ -394,8 +394,8 @@ const useWork = () => {
 
           if (token.thumbnailEdit) {
             if (!this_thumbnailLastKey || !this_thumbnailData || !thumbnailLastKey) return;
-            console.log("reValue", reValue)
-            console.log("thumbnailLastKey", thumbnailLastKey)
+            //console.log("reValue", reValue)
+            //console.log("thumbnailLastKey", thumbnailLastKey)
             const moveData = this_thumbnailData[this_thumbnailLastKey]
             const editData = { ...moveData, ...reValue }
             thumbnailData[thumbnailLastKey] = editData
@@ -430,7 +430,7 @@ const useWork = () => {
   };
 
   const getWorkPackages = async (userId: string) => {
-    console.log("userId", userId)
+    //console.log("userId", userId)
     const packages = await prisma.work.findMany({
       where: {
         public: true,
@@ -459,7 +459,7 @@ const useWork = () => {
         likes: "desc",
       },
     });
-    console.log("packages", packages)
+    //console.log("packages", packages)
     const res = packages.map((work) => ({
       ...work,
       liked: userId ? work.likedUsers.length > 0 : false,

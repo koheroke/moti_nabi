@@ -72,7 +72,6 @@ onBeforeRouteLeave((to) => {
     if (to.name !== "publishReady") {
       before = false;
       const res = createStore.leaveWork();
-      console.log("leave");
     }
     return true;
   }

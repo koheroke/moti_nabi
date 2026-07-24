@@ -36,7 +36,7 @@ let lastY = 0;
 
 const startReMove = (event: PointerEvent) => {
   stop = false;
-  console.log("startReMove");
+  //console.log("startReMove");
   isRemoveing = true;
   lastX = event.clientX;
   lastY = event.clientY;
@@ -50,7 +50,7 @@ const startReMove = (event: PointerEvent) => {
 
 const stopResize = () => {
   if (!stop) {
-    console.log("stopResize");
+    //console.log("stopResize");
     const res = createWork.confirmedRemovePocket(props.caseId, props.pocketId);
     isRemoveing = false;
     stop = true;

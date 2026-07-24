@@ -70,6 +70,7 @@ onBeforeUnmount(() => {
   min-width: 100vw;
   display: grid;
   place-items: center;
+
   padding: 24px;
   background-color: aliceblue;
 }

@@ -96,7 +96,7 @@ export const useCreateWork = () => {
   const loadWork = async (): Promise<loadResponse> => {
     const theWorkId: string = workPackageStore.selectedPackageIdGetter
     const staticCases = await applyCreateAction.getStaticCases()
-    console.log("staticCases", staticCases)
+    //console.log("staticCases", staticCases)
     if (!theWorkId) return "noneNameorWorkId"
     let data = null as { parseData: UserLuggage_SaveDBData, menbers: menber[], about: editAboutType } | null
     let vuepreviewData = {} as Record<string, Case>
@@ -374,10 +374,10 @@ export const useCreateWork = () => {
       pockets[pocketId].size
 
     if (width == saveResizePocket.width && height == saveResizePocket.height) {
-      console.log("blockEdit")
+      //console.log("blockEdit")
       return "blockEdit";
     }
-    console.log("confirmed")
+    //console.log("confirmed")
     const confirmedToken: confirmedResizePocketToken = {
       resizeData: { x: x, y: y, width: width, height: height },
       caseId: caseid,
@@ -514,13 +514,13 @@ export const useCreateWork = () => {
     const nowpos =
       { ...pockets[pocketId].pos, ...pockets[pocketId].size }
 
-    console.log("nowpos__", nowpos)
-    console.log("saveRemovePocket__", saveRemovePocket)
+    //console.log("nowpos__", nowpos)
+    //console.log("saveRemovePocket__", saveRemovePocket)
     if (nowpos.x == saveRemovePocket.x && nowpos.y == saveRemovePocket.y) {
-      console.log("blockEdit")
+      //console.log("blockEdit")
       return "blockEdit"
     }
-    console.log("confirmed")
+    //console.log("confirmed")
 
 
 
@@ -623,7 +623,7 @@ export const useCreateWork = () => {
       forwardToken: token,
       reverseToken,
     })
-    console.log("pocketLogicalDelete", token)
+    //console.log("pocketLogicalDelete", token)
 
     applyCreateAction.alterationData(token)
   }
@@ -767,15 +767,15 @@ export const useCreateWork = () => {
     const templateData = await createApi.getTemplate(id)
 
     if (!templateData) return;
-    console.log("templateData", templateData);
-    console.log("data")
+    //console.log("templateData", templateData);
+    //console.log("data")
     const parseData: UserLuggage_SaveDBData = {
       ...templateData, workId: "",
       workName: ""
     }
-    console.log("response", parseData)
+    //console.log("response", parseData)
     const response = applyCreateAction.hydrateCreateState(parseData)
-    console.log("response", response)
+    //console.log("response", response)
     templateBarStore.selectedTemplateDataSetter({ id: id, data: response.vuepreviewData })
   }
 

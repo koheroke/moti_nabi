@@ -22,7 +22,7 @@
             文字数制限 : {{ nameMax }}/{{ workDetailEdit.name.length }}
           </p>
         </section>
-        <section>
+        <section class="publish-section">
           <h2>公開設定＊</h2>
           <div class="brief">
             <p>
@@ -100,7 +100,7 @@
         </BaseButton>
       </div>
 
-      <section style="margin-top: 20px">
+      <section style="margin-top: 20px" class="delete-section">
         <h2 style="color: red">削除</h2>
         <div class="brief" style="border: red 1px solid">
           <p style="color: red">この操作は取り消すことができません</p>
@@ -342,35 +342,6 @@ p {
   color: red !important;
 }
 
-.thumbnail-edit {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  top: 50%;
-  left: 50%;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 10px;
-  opacity: 0;
-  transition:
-    opacity 0.2s ease,
-    background-color 0.2s ease;
-  height: 100%;
-}
-.thumbnail {
-  position: relative;
-  height: 500px;
-  box-sizing: border-box;
-}
-.thumbnail_image {
-  border-radius: 10px;
-  width: 100%;
-  height: 100%;
-  aspect-ratio: 1/1;
-}
 .thumbnail-edit:hover {
   opacity: 1;
   background-color: rgba(0, 0, 0, 0.145);
@@ -379,8 +350,21 @@ p {
   background-color: red;
   color: white;
 }
-.thumbnailArea {
-  position: relative;
-  height: 500px;
+
+@media screen and (max-width: 800px) {
+  .publish-section .brief {
+    display: flex;
+    flex-direction: column;
+  }
+  .delete-section .brief {
+    display: flex;
+    flex-direction: column;
+  }
+  .form {
+    width: 80%;
+  }
+  .titlle {
+    width: 80%;
+  }
 }
 </style>

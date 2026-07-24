@@ -35,7 +35,7 @@ const emit = defineEmits<{
 }>();
 
 const handleClose = () => {
-  console.log("handleClose");
+  //console.log("handleClose");
   emit("close");
 };
 
@@ -44,11 +44,11 @@ const MenuBoxDom = ref<HTMLDivElement | null>(null);
 const moveMenu = async () => {
   await nextTick();
   if (!MenuBoxDom.value) return;
-  console.log("mousePos", mousePos);
+  //console.log("mousePos", mousePos);
   MenuBoxDom.value.style.top = `${mousePos.y}px`;
   MenuBoxDom.value.style.left = `${mousePos.x}px`;
   menuPos = mousePos;
-  console.log("style", MenuBoxDom.value.style);
+  //console.log("style", MenuBoxDom.value.style);
 };
 
 watch(

@@ -81,7 +81,7 @@ const emit = defineEmits<{
 const onClose = () => {
   isClose.value = true;
   addEventListener("animationend", (event: AnimationEvent) => {
-    console.log("event.animationName", event.animationName);
+    //console.log("event.animationName", event.animationName);
     if (event.animationName == "modalClose-f42593c0") emit("onClose");
   });
 };

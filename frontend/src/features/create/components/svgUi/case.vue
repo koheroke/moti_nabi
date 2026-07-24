@@ -154,7 +154,7 @@ const handleContextMenu = (event: MouseEvent) => {
   event.preventDefault();
 };
 watch(reNamePocketGetter, async (data) => {
-  console.log("data", data);
+  //console.log("data", data);
   if (data.id.length == 0) return;
   nameInput.value = data.beforeName;
   await nextTick();

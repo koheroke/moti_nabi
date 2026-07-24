@@ -1,62 +1,55 @@
 <template>
   <div v-if="getUserProfile" class="profile">
-    <div class="header">
-      <section class="right">
-        <img :src="getUserProfile.iconUrl" class="icon" />
+    <section class="right">
+      <img :src="getUserProfile.iconUrl" class="icon" />
 
-        <div class="user-info">
-          <div class="name">{{ getUserProfile.name }}</div>
-          <div class="user-id">@{{ getUserProfile.userId }}</div>
-        </div>
-      </section>
-      <section class="left">
-        <div
-          style="display: flex; justify-content: center; margin-bottom: 10px"
-        >
-          <h1 style="font-size: 20px; margin: 0; margin-right: auto">
-            プロフィール
-          </h1>
-          <section
-            style="margin-left: auto; gap: 10px; display: flex"
-            v-if="editbool"
-          >
+      <div class="user-info">
+        <div class="name">{{ getUserProfile.name }}</div>
+        <div class="user-id">@{{ getUserProfile.userId }}</div>
+      </div>
+    </section>
+    <section class="left">
+      <div class="top">
+        <h1>プロフィール</h1>
+        <section v-if="editbool">
+          <div class="bottons">
             <BaseButton @click="onEdit" variant="ghost">編集 </BaseButton>
             <BaseButton @click="deleteAcount" variant="danger"
               >アカウントを削除</BaseButton
             >
-            <popInput
-              v-if="showRePassward"
-              @text="rePassward"
-              @close="showRePassward = false"
-              text="パスワードを入力してください"
-            ></popInput>
-          </section>
-        </div>
-        <div class="profile-description">
-          {{ "自己紹介 :" }}
-          <div class="bio">
-            {{ getUserProfile.bio }}
           </div>
+          <popInput
+            v-if="showRePassward"
+            @text="rePassward"
+            @close="showRePassward = false"
+            text="パスワードを入力してください"
+          ></popInput>
+        </section>
+      </div>
+      <div class="profile-description">
+        {{ "自己紹介" }}
+        <div class="bio">
+          {{ getUserProfile.bio }}
+        </div>
 
-          <div class="sns">
-            <a
-              v-for="sns in getUserProfile.snsAccounts"
-              :key="sns.link"
-              :href="sns.link"
-              target="_blank"
-              class="sns"
-            >
-              <img
-                :src="`/svgicons/sns/${sns.type}.svg`"
-                alt="icon"
-                class="snsicon"
-              />
-            </a>
-          </div>
-          <div class="meta"></div>
+        <div class="sns">
+          <a
+            v-for="sns in getUserProfile.snsAccounts"
+            :key="sns.link"
+            :href="sns.link"
+            target="_blank"
+            class="sns"
+          >
+            <img
+              :src="`/svgicons/sns/${sns.type}.svg`"
+              alt="icon"
+              class="snsicon"
+            />
+          </a>
         </div>
-      </section>
-    </div>
+        <div class="meta"></div>
+      </div>
+    </section>
   </div>
 
   <div v-else class="profile">読み込み中...</div>
@@ -104,11 +97,10 @@ const rePassward = async (text: string) => {
 .name {
   text-align: center;
 }
-.icon_image {
+.icon {
   border-radius: 100%;
-  width: 100%;
   aspect-ratio: 1/1;
-  border: 2px solid black;
+  border: 1px solid rgb(221, 219, 219);
 }
 
 .snsicon {
@@ -117,5 +109,53 @@ const rePassward = async (text: string) => {
 }
 .snsicon:hover {
   opacity: 0.5;
+}
+.bottons {
+  display: flex;
+  gap: 5px;
+}
+.profile {
+  display: flex;
+  width: 100%;
+  height: 400px;
+}
+
+.left {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 10px;
+}
+.left .top {
+  height: auto;
+  gap: 5px;
+}
+
+.left .top h1 {
+  margin: 14px 0px;
+  padding: 0px;
+  font-size: 28px;
+  font-weight: 500;
+}
+.right {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  aspect-ratio: 1/1;
+}
+
+@media screen and (max-width: 800px) {
+  .top {
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+  }
+  .user-introduction {
+    height: 100%;
+  }
+  .left {
+    flex-direction: column;
+  }
 }
 </style>

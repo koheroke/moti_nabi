@@ -122,7 +122,7 @@ const useApplyCreateAction = () => {
       if (!pockets) return {}
       const buildPockets = Object.fromEntries(
         Object.entries(pockets).map(([id, pocket]) => {
-          console.log("pockets_data__", pocket)
+          //console.log("pockets_data__", pocket)
           let pocketSvgData = {
           } as pocketSvgData
           const initialPocketId = pocket.initialPocketId;
@@ -145,7 +145,7 @@ const useApplyCreateAction = () => {
             priority: pocket?.poketSvgEdit?.priority ?? 0
 
           }
-          console.log("pocketSvgData__", pocketSvgData)
+          //console.log("pocketSvgData__", pocketSvgData)
           const pocketData = {
             id: pocket.id,
             name: pocket.name ?? staticcase?.name,
@@ -163,7 +163,7 @@ const useApplyCreateAction = () => {
 
 
 
-          console.log(" pocket.id,__", pocket.id)
+          //console.log(" pocket.id,__", pocket.id)
           return [
             pocket.id,
             {
@@ -241,7 +241,7 @@ const useApplyCreateAction = () => {
       }),
     );
     indexChangeCounter = parsers.indexChangeCounter
-    console.log("indexChangeCounter", indexChangeCounter)
+    //console.log("indexChangeCounter", indexChangeCounter)
     return { vuepreviewData: vuepreviewData, vueItemList: vueItemList, indexChangeCounter: indexChangeCounter }
   }
 
@@ -396,7 +396,7 @@ const useApplyCreateAction = () => {
       case 'confirmed_removePocket': {
         createStore.reMovePocket(token.token as provisionalRemovePocket)
         const this_token = token.token as provisionalRemovePocket
-        console.log("this_token.pocketId", this_token.removeData)
+        //console.log("this_token.pocketId", this_token.removeData)
         dbpushToken.path = ["previewDatas", "mainLuggage", this_token.caseId, "pockets", this_token.pocketId, "poketSvgEdit"]
         dbpushToken.value = { ...this_token.removeData };
         dbpushToken.type = "set";
@@ -439,7 +439,7 @@ const useApplyCreateAction = () => {
       case 'pocket_paste': {
         const this_token = token.token as pastePocketToken;
         createStore.pastePocket(this_token);
-        console.log("this_token", this_token)
+        //console.log("this_token", this_token)
         dbpushToken.path = ["previewDatas", "mainLuggage", this_token.newPocketData.caseId, "pockets", this_token.newPocketData.id]
         dbpushToken.value = {
           beforePath: ["previewDatas", "mainLuggage", this_token.pocketData.caseId, "pockets", this_token.pocketData.id],
@@ -473,7 +473,7 @@ const useApplyCreateAction = () => {
       case 'confirmed_resizePocket': {
         const this_token = token.token as provisionalResizePocket
         createStore.reSizePocket(token.token as provisionalResizePocket)
-        console.log("this_token.pocketId", this_token.pocketId)
+        //console.log("this_token.pocketId", this_token.pocketId)
         dbpushToken.path = ["previewDatas", "mainLuggage", this_token.caseId, "pockets", this_token.pocketId, "poketSvgEdit"]
         dbpushToken.value = { ...this_token.resizeData }
         //console.log(this_token.resizeData)

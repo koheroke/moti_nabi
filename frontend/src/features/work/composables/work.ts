@@ -1,4 +1,5 @@
 import type { workPackage } from "../types/work"
+import type { previewSvgCase } from "@/features/create/store/createStore";
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 import { useWorkPackageStore } from "../store/workPackageStore";
 import { useUserAuthStore } from "@/store/user/userAuthStore";
@@ -25,13 +26,19 @@ const useWork = () => {
           userId: userId,
         })
       })
+
     const works: BeforeParsingWorkPackage[] = await data.json()
-    console.log("BeforeParsingWorkPackage", works)
-    const newWorks = works.map((work) => ({
-      ...work,
-      thumbnailJson: thumbnail.parse(work.thumbnailJson),
-    }));
-    workPackageStore.setUserWorkPackageStore(newWorks)
+    const newWork: workPackage[] = works.map((work) => {
+      let parseThumbnail: previewSvgCase[] = []
+      try { parseThumbnail = thumbnail.parse(work.thumbnailJson) } catch {
+        parseThumbnail = []
+      }
+      return {
+        ...work,
+        thumbnailJson: parseThumbnail
+      }
+    })
+    workPackageStore.setUserWorkPackageStore(newWork)
     return works
   }
 

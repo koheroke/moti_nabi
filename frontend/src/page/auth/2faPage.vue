@@ -1,5 +1,5 @@
 <template>
-  <div class="page">
+  <div class="basePage">
     <SplitQr2fa :otpauthUrl="use2faResponse?.otpauthUrl"></SplitQr2fa>
     <AuthProcedureScreen
       v-model="otp"
@@ -49,14 +49,35 @@ onMounted(async () => {
 const userAuthstore = useUserAuthStore();
 </script>
 <style lang="css" scoped>
-.page {
+.basePage {
+  box-sizing: border-box;
   display: flex;
   align-items: center;
-  justify-content: center;
   height: 100vh;
   width: 100vw;
 }
 
+@media screen and (min-width: 800px) {
+  .basePage {
+    justify-content: center;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .basePage {
+    flex-direction: column;
+    gap: 40px;
+  }
+  .right {
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+    width: 100%;
+  }
+  .left {
+    width: 100%;
+    padding-top: 0%;
+    margin: 0;
+  }
+}
 .custom-otp {
   width: 100%;
   padding: 24px;

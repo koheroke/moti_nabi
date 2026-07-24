@@ -13,7 +13,7 @@ const watchSideBarStore = (onComplete: () => void, sideBarName: string) => {
   onComplete_stopWatch = watch(
     () => sideBarStore.nowSideBarGetter,
     (newName) => {
-      console.log("newName", newName)
+      //console.log("newName", newName)
       if (newName == sideBarName) {
         onComplete_stopWatch?.();
         onComplete_stopWatch = null;
@@ -30,7 +30,7 @@ const watchCaseLength = (onComplete: () => void) => {
   onComplete_stopWatch = watch(
     () => Object.keys(createStore.previewCase).length,
     (newLength) => {
-      console.log("newName", newLength)
+      //console.log("newName", newLength)
       if (caselength < newLength) {
         onComplete_stopWatch?.();
         onComplete_stopWatch = null;
@@ -48,7 +48,7 @@ const watchPocketStore = (onComplete: () => void) => {
   onComplete_stopWatch = watch(
     () => pocketStore.getSelectedPocketId.id,
     (id) => {
-      console.log("newName", id)
+      //console.log("newName", id)
       if (id.length != 0) {
         onComplete_stopWatch?.();
         onComplete_stopWatch = null;
@@ -77,7 +77,7 @@ const watchItemCounter = (onComplete: () => void, incomplete: () => void) => {
   const createStore = useCreateStore()
   onComplete_stopWatch?.();
   const counter = createStore.addItemCounterGetter
-  console.log("counter", counter)
+  //console.log("counter", counter)
   onComplete_stopWatch = watch(
     () => createStore.draggedItemIdGetter,
     (id) => {
@@ -105,7 +105,6 @@ const watchNext = (onComplete: () => void) => {
   onComplete_stopWatch = watch(
     () => tutorialStore.onNextBotton,
     (on) => {
-      console.log("on", on)
       if (on == true) {
         onComplete_stopWatch?.();
         onComplete_stopWatch = null;

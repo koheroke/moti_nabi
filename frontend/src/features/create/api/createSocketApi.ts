@@ -58,7 +58,7 @@ export const getAlteration = () => {
   const applyCreateAction = useApplyCreateAction()
   socket.on("work:alteration", (token: alterationToken) => {
     if (!applyCreateAction) return
-    console.log("applyCreateAction", token)
+    //console.log("applyCreateAction", token)
     applyCreateAction.alterationData(token, true);
   });
   socket.on("work:userJoin", () => {

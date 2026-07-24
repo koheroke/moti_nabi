@@ -6,5 +6,6 @@
 .hero {
   overflow-y: auto;
   overflow-x: hidden;
+  min-width: 0px;
 }
 </style>

@@ -1,6 +1,9 @@
 <template>
   <div class="caseView">
-    <div v-for="(caseItem, index) in allcase" :key="caseItem.id">
+    <div
+      v-for="(caseItem, index) in getFilteredAllCasesArray"
+      :key="caseItem.id"
+    >
       <div class="case">
         <Casecard
           :pockets="caseItem.data.pockets"
@@ -21,10 +24,12 @@
 <script setup lang="ts">
 import Casecard from "./Casecard.vue";
 import { ref } from "vue";
+import { storeToRefs } from "pinia";
 import type { Pocket } from "@/features/create/type/casetype";
 import { useCreateStore } from "@/features/create/store/createStore";
 const createStore = useCreateStore();
-const allcase = createStore.getAllCasesArray;
+const { getFilteredAllCasesArray } = storeToRefs(createStore);
+
 const cases = ref<Pocket[]>();
 </script>
 <style lang="css" scoped>

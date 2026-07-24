@@ -14,7 +14,7 @@ const useLogicalDelete = () => {
     if (!logicalDelete.get(deleteInfo.workId)) {
       logicalDelete.set(deleteInfo.workId, { pocketDeleteInfo: [], caseDeleteInfo: [] })
     }
-    console.log("ogicalDelete.get(deleteInfo.workId)", logicalDelete.get(deleteInfo.workId))
+    //console.log("ogicalDelete.get(deleteInfo.workId)", logicalDelete.get(deleteInfo.workId))
     const this_logicalDeletes = logicalDelete.get(deleteInfo.workId)
     if (!this_logicalDeletes) return;
     switch (type) {
@@ -56,7 +56,7 @@ const useLogicalDelete = () => {
 
   const leaveWork = (workId: string) => {
     const this_logicalDelete = logicalDelete.get(workId)
-    console.log("leaveWork", this_logicalDelete)
+    //console.log("leaveWork", this_logicalDelete)
     this_logicalDelete?.caseDeleteInfo.forEach((this_case) => {
       hardDelete(this_case, "case_logicalDelete")
     })
@@ -120,7 +120,7 @@ const useLogicalDelete = () => {
         break
     }
     if (!token || !alterationToken) return null;
-    console.log("deleteInfo.workId", { sendDbToken: token, alterationToken: alterationToken })
+    //console.log("deleteInfo.workId", { sendDbToken: token, alterationToken: alterationToken })
     saveQueue.push(deleteInfo.workId, { sendDbToken: token, alterationToken: alterationToken })
     return alterationToken
   }

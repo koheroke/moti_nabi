@@ -70,6 +70,7 @@ export const useCreateStore = defineStore("create", {
     indexChangeCounter: 0,
     saveCase: { id: "" },
     savePocket: { id: "", caseId: "" }
+
   }),
   getters: {
 
@@ -77,6 +78,22 @@ export const useCreateStore = defineStore("create", {
     savePocketGetter: (state) => state.savePocket,
     leaveGetter: (state) => state.leave,
     staticCasesGetter: (state) => state.staticCases,
+    filteredStaticCasesGetter: (state) => {
+      const res: Record<string, Case> = {}
+      const test = caseStore.searchTextGetter
+      //console.log("test__", test)
+      if (test.length == 0) {
+        return state.staticCases
+      }
+      Object.values(state.staticCases).forEach((this_case) => {
+        if (this_case.name.includes(test))
+          res[this_case.id] = this_case
+      })
+      return res
+    },
+
+
+
     addItemCounterGetter: (state) => state.addItemCounter,
     workNameGetter: (state) => state.workName,
     indexChangeCounterGetter: (state) => state.indexChangeCounter,
@@ -98,7 +115,14 @@ export const useCreateStore = defineStore("create", {
         id: key,
         data: value,
       })),
-
+    getFilteredAllCasesArray(): caseArray[] {
+      return Object.entries(this.filteredStaticCasesGetter).map(
+        ([id, data]) => ({
+          id,
+          data,
+        }),
+      );
+    },
     getPreviewCasesArray: (state): previewSvgCase[] => {
       return Object.entries(state.previewCase).map(([key, value]) => ({
         id: key,
@@ -204,7 +228,7 @@ export const useCreateStore = defineStore("create", {
       this.PreviewItemNumberOfChanges++
       this.ListItemNumberOfChanges++
 
-      console.log("vuepreviewData__", vuepreviewData)
+      //console.log("vuepreviewData__", vuepreviewData)
     },
     setleave(state: boolean) {
       this.leave = state
@@ -291,9 +315,9 @@ export const useCreateStore = defineStore("create", {
         pocket.items[cardItem.id] = cardItem
       } else {
         const innnerItem = pocket.items[token.parentId]?.innerItems
-        console.log("innnerItems__", innnerItem)
+        //console.log("innnerItems__", innnerItem)
         if (innnerItem) {
-          console.log("cardItem__", cardItem)
+          //console.log("cardItem__", cardItem)
           innnerItem[cardItem.id] = cardItem
           return { item: innnerItem[cardItem.id], parent: token.parentId }
         }
@@ -331,7 +355,7 @@ export const useCreateStore = defineStore("create", {
       );
       this_case.pockets = newPockets;
       this_case.id = token.id
-      console.log("addTemplate_case", this_case)
+      //console.log("addTemplate_case", this_case)
       return this_case;
     },
 
@@ -401,7 +425,7 @@ export const useCreateStore = defineStore("create", {
           id: this_case.id,
           pockets: previewCaseSetPocket
         }
-        console.log("token.token___", this.previewCase[this_case.id])
+        //console.log("token.token___", this.previewCase[this_case.id])
         return this_case
       }
     },
@@ -436,7 +460,7 @@ export const useCreateStore = defineStore("create", {
     logicalDeletePocket(token: pocketLogicalDeleteToken) {
 
       this.previewCase[token.caseId].pockets[token.pocketId].logicalDelete = token.type == "cancel" ? false : true
-      console.log("logicalDeletePocket", this.previewCase[token.caseId].pockets[token.pocketId])
+      //console.log("logicalDeletePocket", this.previewCase[token.caseId].pockets[token.pocketId])
       return token
     },
     logicalDeleteCase(token: caseLogicalDeleteToken) {

@@ -99,7 +99,7 @@ const pocketClick = (
   event: MouseEvent,
   value: { pocketId: string; caseId: string },
 ) => {
-  console.log("button" + event.button);
+  //console.log("button" + event.button);
 
   if (event.button === 2) {
     pocketStore.setOpenMenuPocket({

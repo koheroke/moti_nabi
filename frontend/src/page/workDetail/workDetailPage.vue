@@ -30,7 +30,6 @@ onUnmounted(() => {
 });
 
 onMounted(async () => {
-  console.log("leave2");
   await previewWork.get();
 });
 </script>

@@ -73,13 +73,13 @@ export const useUser = () => {
   }
 
   const getProfile = async (userid: string) => {
-    console.log("userid", userid)
+    //console.log("userid", userid)
     const userResponse = await prisma.userProfile.findUnique({
       where: {
         userId: userid
       },
     });
-    console.log("userResponse", userResponse)
+    //console.log("userResponse", userResponse)
     return userResponse
   }
 

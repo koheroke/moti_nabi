@@ -24,7 +24,7 @@ export const setupCollaborationSocket = (io: Server, socket: Socket) => {
       return
     }
     if (token.alterationToken.alterationType == "preview_addTemplate") {
-      console.log("token.alterationToken.token", token.alterationToken.token)
+      //console.log("token.alterationToken.token", token.alterationToken.token)
       const this_saveDbToken = template.addTemplate(token.alterationToken.token)
 
       if (this_saveDbToken) {
@@ -72,7 +72,7 @@ export const setupCollaborationSocket = (io: Server, socket: Socket) => {
       clearTimeout(existingTimer);
     }
     const timer = setTimeout(() => {
-      console.log("disconnectTimers", userId)
+      //console.log("disconnectTimers", userId)
       logicalDelete.leaveWork(workId);
       disconnectTimers.delete(key);
     }, 5000);

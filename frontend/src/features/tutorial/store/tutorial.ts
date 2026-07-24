@@ -35,7 +35,7 @@ const useTutorialStore = defineStore('tutorial', {
       const data = await fetch(`/json/tutorial/${type}.json`);
       if (!data) return;
       this.tutorialData = await data.json()
-      console.log("tutorialData", this.tutorialData)
+
       this.tutorialType = type;
       this.tutorialShow = true
       return this.tutorialData;
@@ -57,7 +57,6 @@ const useTutorialStore = defineStore('tutorial', {
         width: rect.width,
         height: rect.height
       }
-      console.log(this.targetData)
       this.index++;
       return { id: data.id, action: data.action }
     },

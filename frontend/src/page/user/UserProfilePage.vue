@@ -37,4 +37,16 @@ onMounted(() => {
   gap: 16px;
   padding: 16px;
 }
+
+@media screen and (max-width: 800px) {
+  .profile {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .icon_image {
+    width: 400px;
+    background-color: antiquewhite;
+  }
+}
 </style>

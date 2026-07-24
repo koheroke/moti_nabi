@@ -20,7 +20,7 @@ const close = ref(true);
 const caseStore = useCaseStore();
 const { getSelectedCase } = storeToRefs(caseStore);
 watch(getSelectedCase, (newValue) => {
-  console.log("newValue", newValue);
+  //console.log("newValue", newValue);
   if (newValue.id.length != 0) {
     close.value = false;
   }
@@ -28,7 +28,7 @@ watch(getSelectedCase, (newValue) => {
 
 const handleClose = () => {
   close.value = true;
-  console.log("close", close.value);
+  //console.log("close", close.value);
   caseStore.setSelectedCase("");
 };
 const pocketMenu = ref([
@@ -41,7 +41,7 @@ const onSection = (
   value: { id: string; name: string },
   pos: { x: number; y: number },
 ) => {
-  console.log("value", value);
+  //console.log("value", value);
   menuPos = pos;
   menuAction(value.id);
 };
@@ -50,7 +50,7 @@ const menuAction = (id: string) => {
   const this_pocket = getSelectedCase.value;
   switch (id) {
     case "delete":
-      console.log("delete");
+      //console.log("delete");
       createWork.caseLogicalDelete({
         caseId: this_pocket.id,
         type: "push",
@@ -60,10 +60,6 @@ const menuAction = (id: string) => {
       if (createStore.savePocketGetter.id.length == 0) return;
       const paste_priority = createStore.indexChangeCounterGetter;
 
-      console.log(
-        "newPocketData.prioritynewPocketData.priority",
-        paste_priority,
-      );
       createWork.pastePocket(
         caseStore.relativeMousePositionGetter,
         this_pocket.id,
@@ -73,13 +69,10 @@ const menuAction = (id: string) => {
       break;
     case "create":
       const this_priority = createStore.indexChangeCounterGetter;
-      console.log(
-        "newPocketData.prioritynewPocketData.priority",
-        this_priority,
-      );
+
       const default_size = 100;
       if (!menuPos) return;
-      console.log("this_priority");
+      //console.log("this_priority");
       const pos = caseStore.relativeMousePositionGetter;
 
       createWork.addPocket({

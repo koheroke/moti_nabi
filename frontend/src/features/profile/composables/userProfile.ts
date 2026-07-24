@@ -44,7 +44,7 @@ export const useUserProfile = () => {
   const getUserProfile = async () => {
 
     const id = userProfileStore.selectedUserId;
-    console.log("selectedUserId", id)
+    //console.log("selectedUserId", id)
     if (id == '') return null;
     const res = await fetch(
       `${url}/getProfile`,

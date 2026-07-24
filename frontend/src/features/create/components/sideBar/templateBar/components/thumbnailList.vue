@@ -1,6 +1,9 @@
 <template>
   <div class="list">
-    <div v-for="thumbnail in templateThumbnailsGetter" :key="thumbnail.id">
+    <div
+      v-for="thumbnail in filteredTemplateThumbnailsGetter"
+      :key="thumbnail.id"
+    >
       <thumbnailCard
         :thumbnail="thumbnail"
         @onThumbnail="onThumbnailCard(thumbnail.id)"
@@ -14,7 +17,7 @@ import { useTemplateBarStore } from "@/features/create/store/templateBar.ts";
 import thumbnailCard from "./thumbnailCard.vue";
 import { storeToRefs } from "pinia";
 const templateBarStore = useTemplateBarStore();
-const { templateThumbnailsGetter } = storeToRefs(templateBarStore); //本番用データ
+const { filteredTemplateThumbnailsGetter } = storeToRefs(templateBarStore); //本番用データ
 import { testthumbnailJson } from "@/features/create/testData/testThum.json"; //テストデータ
 // const testData: Record<string, any> = testthumbnailJson;
 import { useCreateWork } from "@/features/create/composables/useCreateWork";

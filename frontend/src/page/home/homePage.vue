@@ -22,7 +22,7 @@
         <MyWorksSection :userId="userIconInfo.userId" class="content" />
       </section>
 
-      <section class="container">
+      <section class="container" v-if="resumeEditing">
         <h2 class="title">続きから編集</h2>
         <div class="thumbnail" @click="onEdit">
           <div class="coverDiv"></div>
@@ -52,8 +52,15 @@ import { storeToRefs } from "pinia";
 import { useUserAuthStore } from "@/store/user/userAuthStore";
 import { useUserStore, type UserInfo } from "@/store/user/userIconStore";
 import Thumbnail from "@/features/create/components/Thumbnail.vue";
+import type { workPackage } from "@/features/work/types/work";
 const workPackageStore = useWorkPackageStore();
 const { userWorkPackageStoreGetter } = storeToRefs(workPackageStore);
+const resumeEditing = ref(true);
+watch(userWorkPackageStoreGetter, (workPackage: workPackage[]) => {
+  if (workPackage.length == 0) {
+    resumeEditing.value = false;
+  }
+});
 
 window.scrollTo({
   top: 0,
@@ -111,8 +118,10 @@ const onLogout = async () => {
 }
 
 .hero h1 {
-  font-size: 50px;
   font-weight: bold;
+  margin: 0;
+  font-size: clamp(28px, 8vw, 50px);
+  line-height: 1.2;
 }
 
 .hero h1 {
@@ -142,9 +151,10 @@ const onLogout = async () => {
   align-items: center;
 }
 .top h1 {
-  font-size: 50px;
+  margin: 0 auto 0 0;
+  font-size: clamp(24px, 7vw, 50px);
   font-weight: bold;
-  margin-right: auto;
+  line-height: 1.2;
 }
 
 .hero p {
