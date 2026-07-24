@@ -46,7 +46,7 @@ const useWork = () => {
   const getworkPackages = async (): Promise<BeforeParsingWorkPackage[]> => {
     await applyCreateAction.getStaticCases()
     const userId = userAuthStore.userIdGetter
-    const res = await fetch(
+    const data = await fetch(
       `${url}/getWorkPackages`,
       {
         method: 'POST',
@@ -57,13 +57,20 @@ const useWork = () => {
           userId: userId
         })
       })
-    const works = await res.json()
-    const newWorks = works.map((work: BeforeParsingWorkPackage) => ({
-      ...work,
-      thumbnailJson: thumbnail.parse(work.thumbnailJson),
-    }));
-    workPackageStore.setWorkPackageStore(newWorks)
-    return await works
+    const works: BeforeParsingWorkPackage[] = await data.json()
+    const newWork: workPackage[] = works.map((work) => {
+      console.log("work", work)
+      let parseThumbnail: previewSvgCase[] = []
+      try { parseThumbnail = thumbnail.parse(work.thumbnailJson) } catch {
+        parseThumbnail = []
+      }
+      return {
+        ...work,
+        thumbnailJson: parseThumbnail
+      }
+    })
+    workPackageStore.setWorkPackageStore(newWork)
+    return works
   }
 
   const deleteWork = async (id: string) => {

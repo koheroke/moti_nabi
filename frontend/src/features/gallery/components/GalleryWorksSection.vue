@@ -14,7 +14,6 @@
 <script setup lang="ts">
 import WorksSection from "@/features/work/components/WorksSection.vue";
 import { useGalleryWorks } from "../composables/GalleryWork";
-import { useWorkPackageStore } from "@/features/work/store/workPackageStore";
 import type { ParseSearchQuery, SortType } from "../type";
 import { watch } from "vue";
 import { useRouter } from "vue-router";

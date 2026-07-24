@@ -464,8 +464,8 @@ const useWork = () => {
       ...work,
       liked: userId ? work.likedUsers.length > 0 : false,
       likedUsers: undefined,
+      thumbnailJson: JSON.parse(work.thumbnailJson),
     }));
-
     return res;
   };
 

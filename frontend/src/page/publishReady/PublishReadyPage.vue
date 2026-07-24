@@ -91,6 +91,7 @@
             :suggestDatas="allTags"
             @onsuggest="workDetailEdit.tags.push($event)"
             @close="closeSuggest"
+            style="z-index: 10"
           ></suggest>
         </section>
       </li>
@@ -161,7 +162,6 @@ const workDetailEdit = ref<editAboutType>({
   name: "",
   bio: "",
   tags: [],
-  thumbnailJson: "",
   public: false,
 });
 const publish = ref<string>("private");
@@ -206,7 +206,6 @@ watch(
       public: profile.public,
       bio: profile.bio,
       tags: profile.tags,
-      thumbnailJson: profile.thumbnailJson,
     };
     publish.value = workDetailEdit.value.public ? "public" : "private";
   },
@@ -231,13 +230,6 @@ const onPublich = async () => {
     workDetailEdit.value.name.length > nameMax.value
   ) {
     return;
-  }
-  if (workDetailEdit.value.thumbnailJson) {
-    //メールサーバーに画像を送ってurlをもらう
-    workDetailEdit.value.thumbnailJson = "";
-    workDetailEditStore.addEdit({
-      thumbnailJson: workDetailEdit.value.thumbnailJson,
-    });
   }
 
   const editData = workDetailEditStore.EditGetter;

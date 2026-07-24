@@ -22,7 +22,7 @@
       @close="closeSuggest"
       name="name"
       value="path"
-    ></suggest>
+    />
   </div>
 </template>
 <script setup lang="ts">
@@ -38,7 +38,7 @@ import { useSearchStore } from "../store/searchStore.ts";
 import { useSideBarStore } from "../store/sideBarStore";
 import { useTemplateBarStore } from "../store/templateBar.ts";
 import { useCaseStore } from "../store/caseStore.ts";
-const suggestModelValue = ref();
+
 const caseStore = useCaseStore();
 const templateBarStore = useTemplateBarStore();
 const suggestClose = ref(true);
@@ -54,6 +54,7 @@ const createStore = useCreateStore();
 const { PreviewItemNumberOfChanges, ListItemNumberOfChanges, listItemGetter } =
   storeToRefs(createStore);
 const createWork = useCreateWork();
+const suggestModelValue = ref("");
 const selectedSideBarId = ref("");
 const modelValue = ref("");
 const candidate = ref();
@@ -73,7 +74,6 @@ watch(nowSideBarGetter, async (newSideBarId) => {
 
 const switchAction = async (newSideBarId: string) => {
   onSearch.value = () => {};
-  suggestModelValue.value = modelValue.value;
   switch (newSideBarId) {
     case "template":
       const templates = templateBarStore.templateThumbnailsGetter;
@@ -130,6 +130,14 @@ const onSuggest = ref((value: any) => {});
 const onSearch = ref((value: any) => {});
 
 watch(modelValue, (newValue) => {
+  if (selectedSideBarId.value === "template") {
+    // テンプレートでは末尾の単語だけをサジェスト検索に使用
+    suggestModelValue.value = newValue.split(" ").at(-1) ?? "";
+  } else {
+    // それ以外は入力内容をそのまま使用
+    suggestModelValue.value = newValue;
+  }
+
   onSearch.value(newValue);
 });
 
@@ -206,10 +214,8 @@ const tagSearch = (text: string, tests: suggestData[], tags: suggestData[]) => {
   const word = result[result.length - 1];
   //console.log("word", word);
   if (word[0] == "#") {
-    suggestModelValue.value = tagModelValue.value;
     candidate.value = tags;
   } else {
-    suggestModelValue.value = tagModelValue.value;
     candidate.value = tests;
   }
 };

@@ -6,7 +6,6 @@ export interface editAboutType {
   name: string;
   bio: string;
   tags: string[];
-  thumbnailJson: string;
   public: boolean;
 }
 
@@ -32,7 +31,6 @@ export const useWorkDetailEditStore = defineStore("workDetailEdit", {
     addEdit(edit: RequireAtLeastOne<editAboutType>) {
       this.about = { ...this.about, ...edit }
       this.edit = { ...this.edit, ...edit }
-
     }
   }
 })

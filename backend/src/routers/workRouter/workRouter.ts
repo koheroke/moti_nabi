@@ -73,11 +73,6 @@ workRouter.post('/getWorkDetail', async (c) => {
   return c.json(res);
 });
 
-workRouter.post('/getWorkPackages', async (c) => {
-  const data = await c.req.json();
-  const res = await createWork.getWorkPackages(data.userId)
-  return c.json(res);
-});
 //作成中
 workRouter.post('/getStaticCases', async (c) => {
   const res = createWork.getStaticCases()
@@ -105,3 +100,9 @@ workRouter.post('/getUserWorkPackages', async (c) => {
 });
 
 
+
+workRouter.post('/getWorkPackages', async (c) => {
+  const data = await c.req.json();
+  const res = await createWork.getWorkPackages(data.userId)
+  return c.json(res);
+});
