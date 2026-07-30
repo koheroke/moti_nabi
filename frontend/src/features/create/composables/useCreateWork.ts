@@ -444,7 +444,6 @@ export const useCreateWork = () => {
   }
   const buildItemPathMap = () => {
     const cases = createStore.previewItemGetter;
-
     const itemPathMap: Record<
       string,
       {
@@ -460,42 +459,51 @@ export const useCreateWork = () => {
       }
     > = {};
     //console.log("cases", cases)
+
+
     Object.entries(cases).forEach(([caseId, caseData]) => {
       //console.log("caseId", caseData)
       if (!caseData.pockets) return
-      Object.entries(caseData.pockets).forEach(([pocketId, pocketData]) => {
-        //console.log("pocketId", pocketData)
-        Object.entries(pocketData.items).forEach(([parentItemId, parentItem]) => {
-          //console.log("parentItemId", parentItem)
-          itemPathMap[parentItemId] = {
-            id: parentItemId,
-            pathData: {
-              pocketId,
-              caseId,
-              itemId: parentItemId,
-            },
-            detail: `/${caseData.name}/${pocketData.name}/${parentItem.name}`,
-            name: parentItem.name,
-          };
-          // //console.log("itemPathMap", itemPathMap)
+      if (!caseData.logicalDelete) {
 
-          if (parentItem.innerItems) {
-            Object.entries(parentItem.innerItems).forEach(([itemId, item]) => {
-              itemPathMap[itemId] = {
-                id: itemId,
+        Object.entries(caseData.pockets).forEach(([pocketId, pocketData]) => {
+          //console.log("pocketId", pocketData)
+          if (!caseData.pockets) return
+          if (!pocketData.logicalDelete) {
+            Object.entries(pocketData.items).forEach(([parentItemId, parentItem]) => {
+              //console.log("parentItemId", parentItem)
+
+              itemPathMap[parentItemId] = {
+                id: parentItemId,
                 pathData: {
                   pocketId,
                   caseId,
-                  itemId,
-                  parentId: parentItemId,
+                  itemId: parentItemId,
                 },
-                name: item.name,
-                detail: `/${caseData.name}/${pocketData.name}/${parentItem.name}/${item.name}`
+                detail: `/${caseData.name}/${pocketData.name}/${parentItem.name}`,
+                name: parentItem.name,
               };
+              // //console.log("itemPathMap", itemPathMap)
+
+              if (parentItem.innerItems) {
+                Object.entries(parentItem.innerItems).forEach(([itemId, item]) => {
+                  itemPathMap[itemId] = {
+                    id: itemId,
+                    pathData: {
+                      pocketId,
+                      caseId,
+                      itemId,
+                      parentId: parentItemId,
+                    },
+                    name: item.name,
+                    detail: `/${caseData.name}/${pocketData.name}/${parentItem.name}/${item.name}`
+                  };
+                });
+              }
             });
           }
         });
-      });
+      }
     });
     //console.log("itemPathMap__", itemPathMap)
     return itemPathMap;

@@ -28,10 +28,12 @@ export const useWorkPackageStore = defineStore("package", {
       work.liked = !work.liked
     },
 
+
     findPackage(id: string) {
-      const allPackage = [... this.userWorkPackageStore, ...this.WorkPackageStore]
-      const index = allPackage.findIndex((item) => { item.id == id })
-      return allPackage[index]
+      return [
+        ...this.userWorkPackageStore,
+        ...this.WorkPackageStore,
+      ].find((item) => item.id === id)
     }
   }
 })

@@ -294,17 +294,6 @@ const useApplyCreateAction = () => {
       }
 
 
-      case 'case_hardDelete': {
-        const this_token = token.token as caseLogicalDeleteToken
-        createStore.hardDeleteCase(this_token)
-        break
-      }
-
-      case 'pocket_hardDelete': {
-        const this_token = token.token as pocketLogicalDeleteToken
-        createStore.hardDeletePocket(this_token)
-        break
-      }
 
       case 'previewItems_addcount': { //完了
 

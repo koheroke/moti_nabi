@@ -5,7 +5,7 @@
       <div class="previewArea">
         <viewTopBar style="margin-bottom: 10px"></viewTopBar>
         <div class="work-preview">
-          <Preview></Preview>
+          <Preview style="border-radius: 10px"></Preview>
         </div>
       </div>
       <div class="right">
@@ -31,6 +31,10 @@ onUnmounted(() => {
 
 onMounted(async () => {
   await previewWork.get();
+});
+window.scrollTo({
+  top: 0,
+  behavior: "smooth",
 });
 </script>
 <style lang="css" scoped>
@@ -75,12 +79,36 @@ onMounted(async () => {
   border-radius: 15px;
   min-width: 0;
   min-height: 0;
-  border-radius: 10px;
+  border-radius: 40px;
 }
 
 .right {
   width: 400px;
   flex-shrink: 0;
   margin: 10px 0;
+}
+@media screen and (max-width: 800px) {
+  .page {
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+
+  .container {
+    flex-direction: column;
+    flex: none;
+    height: auto;
+  }
+
+  .previewArea {
+    width: 100%;
+    min-height: 500px;
+    padding: 10px;
+  }
+
+  .right {
+    width: 100%;
+    margin: 10px 0;
+  }
 }
 </style>

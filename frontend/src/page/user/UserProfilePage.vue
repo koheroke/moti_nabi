@@ -6,7 +6,10 @@
     <div v-else>
       <ProfileSection></ProfileSection>
     </div>
-    <UserWorksPanel></UserWorksPanel>
+
+    <section class="workArea">
+      <UserWorksPanel></UserWorksPanel>
+    </section>
   </div>
 </template>
 <script setup lang="ts">

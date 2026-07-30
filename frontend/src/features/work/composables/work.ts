@@ -6,6 +6,8 @@ import { useUserAuthStore } from "@/store/user/userAuthStore";
 import type { BeforeParsingWorkPackage } from "../types/work";
 import { useThumbnail } from "@/features/create/composables/thumbnail";
 import { useApplyCreateAction } from "@/features/create/composables/applyCreateAction";
+import { useGalleryWorksStore } from "@/features/gallery/composables/useGalleryWorksStore";
+const galleryWorksStore = useGalleryWorksStore()
 const thumbnail = useThumbnail()
 const userAuthStore = useUserAuthStore()
 const applyCreateAction = useApplyCreateAction()
@@ -41,9 +43,7 @@ const useWork = () => {
     workPackageStore.setUserWorkPackageStore(newWork)
     return works
   }
-
-
-  const getworkPackages = async (): Promise<BeforeParsingWorkPackage[]> => {
+  const getworkPackages = async (number?: number): Promise<BeforeParsingWorkPackage[]> => {
     await applyCreateAction.getStaticCases()
     const userId = userAuthStore.userIdGetter
     const data = await fetch(
@@ -54,10 +54,12 @@ const useWork = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userId: userId
+          userId: userId,
+          number: number ? number : "all",
         })
       })
     const works: BeforeParsingWorkPackage[] = await data.json()
+    console.log("works", works)
     const newWork: workPackage[] = works.map((work) => {
       console.log("work", work)
       let parseThumbnail: previewSvgCase[] = []
@@ -69,6 +71,7 @@ const useWork = () => {
         thumbnailJson: parseThumbnail
       }
     })
+    galleryWorksStore.setAllWorks(newWork)
     workPackageStore.setWorkPackageStore(newWork)
     return works
   }

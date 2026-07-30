@@ -8,21 +8,19 @@
     </section>
     <section class="work-about">
       <div class="counts">
-        <ThumbsUp :stroke-width="2" fill="yellowgreen" color="yellowgreen" />
-        <p style="color: yellowgreen">likes {{ AboutGetter.copies }}</p>
-      </div>
-      <div class="counts">
-        <Copy fill="#BEA82E" color="#BEA82E" />
-        <p style="color: #bea82e">commits {{ AboutGetter.copies }}</p>
+        <likeBotton
+          :liked="AboutGetter.userLike"
+          :workId="AboutGetter.id"
+          class="likeBotton"
+        ></likeBotton>
+        <p class="likes">❤️ {{ AboutGetter.likes }}</p>
       </div>
     </section>
   </div>
 </template>
 <script setup lang="ts">
 import { Tag } from "lucide-vue-next";
-import { ThumbsUp } from "lucide-vue-next";
-import { Copy } from "lucide-vue-next";
-
+import likeBotton from "@/features/work/components/likeBotton.vue";
 import { storeToRefs } from "pinia";
 import { useworkDetailStore } from "@/features/workDetail/store/useworkDetail";
 const workDetailStore = useworkDetailStore();
@@ -60,5 +58,10 @@ const { AboutGetter } = storeToRefs(workDetailStore);
 .counts {
   display: flex;
   gap: 5px;
+  align-items: center;
+}
+
+.likeBotton {
+  height: 34px;
 }
 </style>

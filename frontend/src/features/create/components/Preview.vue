@@ -189,10 +189,7 @@ const editName = (newName: string) => {
   width: 100%;
   height: 100%;
   min-width: 0;
-  background-color: rgb(68, 68, 68);
-  background-repeat: repeat;
-  background-image: radial-gradient(circle, #dfdddd 1px, transparent 1px);
-  background-size: 20px 20px;
+
   scrollbar-width: none;
   -ms-overflow-style: none;
   align-content: start;
@@ -201,6 +198,10 @@ const editName = (newName: string) => {
 }
 .preview-area {
   position: relative;
+  background-color: rgb(68, 68, 68);
+  background-repeat: repeat;
+  background-image: radial-gradient(circle, #dfdddd 1px, transparent 1px);
+  background-size: 20px 20px;
   width: 100%;
   height: 100%;
 }

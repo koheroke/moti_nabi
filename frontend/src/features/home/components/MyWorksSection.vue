@@ -1,6 +1,6 @@
 <template>
   <HomeWorksSection
-    :works="visibleItems"
+    :works="userWorkPackageStoreGetter"
     :onWorkCard="onWorkCard"
     :onMoreClick="more"
   ></HomeWorksSection>
@@ -21,6 +21,7 @@ import { storeToRefs } from "pinia";
 const { userWorkPackageStoreGetter } = storeToRefs(workPackageStore);
 import { useRouter } from "vue-router";
 const router = useRouter();
+
 const { visibleItems, more } = useIncrementalList(
   userWorkPackageStoreGetter,
   4,

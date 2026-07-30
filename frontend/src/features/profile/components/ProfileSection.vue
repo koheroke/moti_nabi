@@ -11,7 +11,7 @@
     <section class="left">
       <div class="top">
         <h1>プロフィール</h1>
-        <section v-if="editbool">
+        <section v-if="editbool" class="edit">
           <div class="bottons">
             <BaseButton @click="onEdit" variant="ghost">編集 </BaseButton>
             <BaseButton @click="deleteAcount" variant="danger"
@@ -97,11 +97,6 @@ const rePassward = async (text: string) => {
 .name {
   text-align: center;
 }
-.icon {
-  border-radius: 100%;
-  aspect-ratio: 1/1;
-  border: 1px solid rgb(221, 219, 219);
-}
 
 .snsicon {
   width: 40px;
@@ -110,14 +105,11 @@ const rePassward = async (text: string) => {
 .snsicon:hover {
   opacity: 0.5;
 }
-.bottons {
-  display: flex;
-  gap: 5px;
-}
+
 .profile {
   display: flex;
   width: 100%;
-  height: 400px;
+  height: 100%;
 }
 
 .left {
@@ -127,34 +119,60 @@ const rePassward = async (text: string) => {
   gap: 10px;
 }
 .left .top {
+  display: flex;
   height: auto;
+
   gap: 5px;
 }
 
+.bottons {
+  display: flex;
+  gap: 5px;
+  margin-left: auto;
+}
+
 .left .top h1 {
-  margin: 14px 0px;
+  margin: 0px;
+  text-wrap: nowrap;
   padding: 0px;
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  margin-right: auto;
 }
 .right {
   display: flex;
   flex-direction: column;
   height: 100%;
+}
+.edit {
+  margin-left: auto;
+}
+
+.icon {
+  flex: 1;
+  padding: 20px;
+  border-radius: 100%;
   aspect-ratio: 1/1;
+  border: 1px solid rgb(221, 219, 219);
 }
 
 @media screen and (max-width: 800px) {
-  .top {
-    flex-direction: column;
-    width: 100%;
-    align-items: center;
-    justify-content: center;
-  }
   .user-introduction {
     height: 100%;
   }
+  .left .top h1 {
+    display: none;
+  }
   .left {
+    flex-direction: column;
+    width: 100%;
+  }
+  .right {
+    width: 100%;
+  }
+  .profile {
     flex-direction: column;
   }
 }

@@ -8,12 +8,12 @@
       },
       "previewDatas": {
         "mainLuggage": {
-          "61a8e402-c7d3-4eb7-8051-d750ec7ed5a9": {
-            "id": "61a8e402-c7d3-4eb7-8051-d750ec7ed5a9",
+          "onePerson_long_case_1": {
+            "id": "onePerson_long_case_1",
             "caseType": "FrontOpenSuitcase",
             "pockets": {
-              "597be4c0-9d0e-40ba-a690-84aba5bc0d82": {
-                "id": "597be4c0-9d0e-40ba-a690-84aba5bc0d82",
+              "onePerson_long_front": {
+                "id": "onePerson_long_front",
                 "initialPocketId": "front",
                 "items": {
                   "22f5f49a-a612-4567-9076-91b985090b7b": {
@@ -54,8 +54,8 @@
                   }
                 }
               },
-              "1f3ab9d7-887f-4133-a4fe-bec1285d501a": {
-                "id": "1f3ab9d7-887f-4133-a4fe-bec1285d501a",
+              "onePerson_long_main": {
+                "id": "onePerson_long_main",
                 "initialPocketId": "main",
                 "items": {
                   "3ab2f6cf-b3cb-4820-98b0-53338562c561": {
@@ -96,8 +96,8 @@
                   }
                 }
               },
-              "77c0b6be-da20-4ab6-ae05-abd0b8e35df8": {
-                "id": "77c0b6be-da20-4ab6-ae05-abd0b8e35df8",
+              "onePerson_long_bottom": {
+                "id": "onePerson_long_bottom",
                 "initialPocketId": "bottom",
                 "items": {
                   "80832b6a-5368-4868-a010-489449c8b773": {
@@ -140,12 +140,12 @@
               }
             }
           },
-          "ba082708-597b-44a2-93b3-3174624d7d84": {
-            "id": "ba082708-597b-44a2-93b3-3174624d7d84",
+          "onePerson_long_case_2": {
+            "id": "onePerson_long_case_2",
             "caseType": "DoubleSideSuitcase",
             "pockets": {
-              "3fc77360-bb06-4664-a807-5bbf8c1d764c": {
-                "id": "3fc77360-bb06-4664-a807-5bbf8c1d764c",
+              "onePerson_long_left": {
+                "id": "onePerson_long_left",
                 "initialPocketId": "left",
                 "items": {
                   "b8fbb8f5-9ff9-4d42-9e04-ab437afcab0b": {
@@ -162,8 +162,8 @@
                   }
                 }
               },
-              "604a7c51-0806-4b94-bb10-e3e349e44ea8": {
-                "id": "604a7c51-0806-4b94-bb10-e3e349e44ea8",
+              "onePerson_long_right": {
+                "id": "onePerson_long_right",
                 "initialPocketId": "right",
                 "items": {
                   "e2004846-de1f-4f48-bd78-2f273593e12b": {
@@ -209,6 +209,20 @@
             "onePerson_long_bottom": {
               "id": "onePerson_long_bottom",
               "initialPocketId": "bottom"
+            }
+          }
+        },
+        "onePerson_long_case_2": {
+          "id": "onePerson_long_case_2",
+          "caseType": "DoubleSideSuitcase",
+          "pockets": {
+            "onePerson_long_left": {
+              "id": "onePerson_long_left",
+              "initialPocketId": "left"
+            },
+            "onePerson_long_right": {
+              "id": "onePerson_long_right",
+              "initialPocketId": "right"
             }
           }
         }

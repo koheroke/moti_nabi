@@ -32,7 +32,11 @@ import GalleryTags from "./GalleryTags.vue";
 import suggest from "@/features/suggest/components/suggest.vue";
 import { useWorkPackageStore } from "@/features/work/store/workPackageStore";
 import { Search } from "lucide-vue-next";
-const emit = defineEmits(["update:modelValue"]);
+
+import { useGalleryWorksStore } from "../composables/useGalleryWorksStore.ts";
+import { el } from "vuetify/locale";
+const galleryWorkstore = useGalleryWorksStore();
+
 const suggestClose = ref(true);
 const closeSuggest = () => {
   suggestClose.value = true;
@@ -93,19 +97,23 @@ onMounted(async () => {
       allNames.value.push(work.name);
   });
 });
+
 const onUpdateSearch = (newSearch: string) => {
   modelValue.value += newSearch;
 };
 watch(modelValue, (newValue) => {
-  emit("update:modelValue", newValue);
+  galleryWorkstore.GalleryWorksSearch(newValue);
 });
 const onsuggest = (word: string) => {
-  const arr = modelValue.value.split(" ");
-  const now = arr.pop();
-  if (!now) return;
-  const hash = now[0] == "#" ? "#" : "";
-  arr.push(hash + word);
-  modelValue.value = arr.join(" ");
+  const res = modelValue.value.split(" ");
+  res.pop();
+  const this_word = res.join(" ");
+  modelValue.value = this_word;
+  if (this_word.length == 0) {
+    modelValue.value += "#" + word;
+  } else {
+    modelValue.value += " #" + word;
+  }
 };
 </script>
 <style lang="css" scoped>
@@ -132,6 +140,8 @@ const onsuggest = (word: string) => {
 .suggest {
   width: 100%;
   z-index: 2;
+  overflow-y: auto;
+  max-height: 300px;
 }
 .search-area {
   width: 100%;

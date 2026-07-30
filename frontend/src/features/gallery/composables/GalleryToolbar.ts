@@ -1,6 +1,6 @@
 import { type ParseSearchQuery } from "../type";
 
-export const parseSearchQuery = (search:string):ParseSearchQuery =>{
+export const parseSearchQuery = (search: string): ParseSearchQuery => {
   const tokens = search.trim().split(/\s+/)
   const tag: string[] = []
   const words: string[] = []

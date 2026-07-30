@@ -2,51 +2,50 @@
   <div class="topBar">
     <div class="left">
       <h2 style="margin-right: 20px">{{ createStore.workNameGetter }}</h2>
-      <div style="gap: 10px; display: flex; margin-left: auto">
+
+      <div class="historyButtons historyButtonsLeft">
         <CornerUpLeft @click="back" />
         <CornerUpRight @click="forward" />
       </div>
       <PreviewSearch style="margin-left: 10px; flex: 1"></PreviewSearch>
     </div>
     <div class="right">
-      <div
-        class="buttons"
-        style="margin-left: auto; display: flex; align-items: center; gap: 10px"
-      >
-        <CircleQuestionMark
-          data-tutorial="start-tutorial-botton"
-          style="margin-right: 20px"
-          @click="startTutorial"
-        ></CircleQuestionMark>
-        <div class="wrapper">
-          <BaseButton
-            variant="ghost"
-            @click="leaveMenber"
-            v-if="createStore.roleGetter != 'owner'"
-          >
-            脱退
-          </BaseButton>
-          <BaseButton
-            variant="ghost"
-            @click="addMenberShow = !addMenberShow"
-            v-if="createStore.roleGetter == 'owner'"
-          >
-            招待
-          </BaseButton>
-
-          <addMenber
-            v-if="addMenberShow"
-            class="popup"
-            @close="addMenberShow = false"
-          />
-        </div>
-        <BaseButton
-          @click="onpublich"
-          data-tutorial="setting-botton"
-          :class="{ blockBotton: createStore.roleGetter != 'owner' }"
-          >設定</BaseButton
-        >
+      <div class="historyButtons historyButtonsRight">
+        <CornerUpLeft @click="back" />
+        <CornerUpRight @click="forward" />
       </div>
+      <CircleQuestionMark
+        data-tutorial="start-tutorial-botton"
+        @click="startTutorial"
+      ></CircleQuestionMark>
+      <div class="wrapper">
+        <BaseButton
+          variant="ghost"
+          @click="leaveMenber"
+          v-if="createStore.roleGetter != 'owner'"
+        >
+          脱退
+        </BaseButton>
+        <BaseButton
+          variant="ghost"
+          @click="addMenberShow = !addMenberShow"
+          v-if="createStore.roleGetter == 'owner'"
+        >
+          招待
+        </BaseButton>
+
+        <addMenber
+          v-if="addMenberShow"
+          class="popup"
+          @close="addMenberShow = false"
+        />
+      </div>
+      <BaseButton
+        @click="onpublich"
+        data-tutorial="setting-botton"
+        :class="{ blockBotton: createStore.roleGetter != 'owner' }"
+        >設定</BaseButton
+      >
     </div>
   </div>
 </template>
@@ -124,13 +123,14 @@ onMounted(() => {
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid rgb(212, 210, 210);
+  gap: 20px;
 }
 .right {
   display: flex;
   align-items: center;
   min-width: 0;
   width: auto;
-  margin-left: 20px;
+  gap: 10px;
 }
 
 .left {
@@ -151,5 +151,38 @@ onMounted(() => {
   top: calc(100% + 8px);
   right: 0;
   z-index: 1000;
+}
+.historyButtons {
+  gap: 10px;
+  display: flex;
+  margin-left: auto;
+}
+.historyButtonsLeft {
+  display: flex;
+}
+.historyButtonsRight {
+  display: none;
+  margin-left: auto;
+}
+
+@media screen and (max-width: 800px) {
+  .topBar {
+    flex-direction: column;
+    min-height: 100px;
+    gap: 0px;
+  }
+  .historyButtonsLeft {
+    display: none;
+  }
+  .historyButtonsRight {
+    display: flex;
+    margin-right: auto;
+  }
+  .right {
+    min-width: 100%;
+  }
+  .left {
+    min-width: 100%;
+  }
 }
 </style>

@@ -1,5 +1,6 @@
 import { type UserLuggage_SaveDBData } from "@/features/create/type/apiType";
-
+import { useUserAuthStore } from "@/store/user/userAuthStore";
+const userAuthStore = useUserAuthStore()
 export type WorkPreviewResponse = {
   data: UserLuggage_SaveDBData;
   id: string;
@@ -13,12 +14,13 @@ export type WorkPreviewResponse = {
 };
 
 export type parseWorkPreviewData = {
-  id: string,
   about: workAbout,
   data: UserLuggage_SaveDBData;
 }
 
 export type workAbout = {
+  userLike: boolean,
+  id: string,
   name: string;
   bio: string;
   likes: number;
@@ -53,13 +55,20 @@ const useworkDetailApi = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          theWorkId: theWorkId
+          theWorkId: theWorkId,
+          userId: userAuthStore.userIdGetter
         })
       })
     const response = await res.json()
     response.data = JSON.parse(response.data)
-    const { data, id, createdAt, ...about } = response
-    return { id: id, data: data, about: about }
+    const { data, createdAt, likedUsers, ...about } = response
+    let userLike = false
+    console.log("likedUsers", likedUsers)
+    if (likedUsers) {
+      userLike = true
+    }
+    const res_about = { ...about, userLike: userLike }
+    return { data: data, about: res_about }
   }
 
 

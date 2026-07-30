@@ -4,7 +4,16 @@ import { type workAbout } from '../api/useworkDetailApi'
 
 export const useworkDetailStore = defineStore("workDetail", {
   state: () => ({
-    about: {} as workAbout,
+    about: {
+      userLike: false,
+      id: "",
+      name: "",
+      bio: "",
+      likes: 0,
+      tags: [],
+      copies: 0,
+      members: [],
+    } as workAbout,
   }),
   getters: {
     AboutGetter: (state) => state.about,

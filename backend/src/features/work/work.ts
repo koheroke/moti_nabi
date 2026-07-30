@@ -74,7 +74,7 @@ const useWork = () => {
     }
     return "none"
   }
-  const getWorkDetail = async (workId: string) => {
+  const getWorkDetail = async (workId: string, userId: string) => {
     const work = await prisma.work.findFirst({
       where: {
         id: workId,
@@ -87,6 +87,15 @@ const useWork = () => {
         likes: true,
         tags: true,
         createdAt: true,
+        likedUsers: {
+          where: {
+            userId,
+          },
+          select: {
+            userId: true,
+          },
+        },
+
         members: {
           select: {
             role: true,
@@ -107,6 +116,7 @@ const useWork = () => {
         },
       }
     });
+    console.log("work", work)
     return work
   }
 
@@ -245,6 +255,7 @@ const useWork = () => {
   }
 
 
+
   const editWork = async (workId: string, editDataToken: server_alterationToken[]) => {
     let this_work = workData.get(workId);
     if (!this_work) {
@@ -258,9 +269,9 @@ const useWork = () => {
 
 
     editDataToken.forEach((token) => {
-      //console.log("token__", token)
 
 
+      const thumbnailValue = token.thumbnailValue ? token.thumbnailValue : token.value;
       const getPoint = (thisPath: string[]) => {
 
         const path = [...thisPath];
@@ -307,11 +318,10 @@ const useWork = () => {
           parent[lastKey] = token.value;
           if (token.thumbnailEdit) {
             if (thumbnailLastKey) {
-              thumbnailData[thumbnailLastKey] = token.value;
+              thumbnailData[thumbnailLastKey] = thumbnailValue
             }
           }
           break;
-
         case "delete":
           if (lastKey == null) return;
           delete parent[lastKey];
@@ -353,9 +363,9 @@ const useWork = () => {
             parent[lastKey][token.value.id] = token.value;
             if (token.thumbnailEdit) {
               if (thumbnailLastKey) {
-                thumbnailData[thumbnailLastKey][token.value.id] = token.value;
+                thumbnailData[thumbnailLastKey][token.value.id] = thumbnailValue
               } else {
-                thumbnailData[token.value.id] = token.value;
+                thumbnailData[token.value.id] = thumbnailValue
               }
             }
           }
@@ -415,7 +425,7 @@ const useWork = () => {
     const jsonData = JSON.stringify(this_work.data);
 
     const thumbnailJson = JSON.stringify(this_work.thumbnailJson);
-    //console.log("jsonData", jsonData)
+
     await prisma.work.update({
       where: {
         id: workId,
@@ -429,9 +439,10 @@ const useWork = () => {
     return { success: true };
   };
 
-  const getWorkPackages = async (userId: string) => {
-    //console.log("userId", userId)
+  const getWorkPackages = async (userId: string, number: string | number) => {
+
     const packages = await prisma.work.findMany({
+      ...(number !== "all" && { take: number as number }),
       where: {
         public: true,
       },
@@ -459,7 +470,6 @@ const useWork = () => {
         likes: "desc",
       },
     });
-    //console.log("packages", packages)
     const res = packages.map((work) => ({
       ...work,
       liked: userId ? work.likedUsers.length > 0 : false,

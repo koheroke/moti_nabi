@@ -15,8 +15,6 @@ import { computed } from "vue";
 import { useWork } from "@/features/work/composables/work.ts";
 import { onMounted } from "vue";
 import { storeToRefs } from "pinia";
-import { useUserAuthStore } from "@/store/user/userAuthStore.ts";
-const userAuthstore = useUserAuthStore();
 const getWorkPackages = useWork();
 const workPackageStore = useWorkPackageStore();
 const { workPackageStoreGetter } = storeToRefs(workPackageStore);
@@ -33,6 +31,6 @@ const onWorkCard = (cardId: string) => {
   router?.push({ path: "/detail", query: { cardId: cardId } });
 };
 onMounted(() => {
-  getWorkPackages.getworkPackages();
+  getWorkPackages.getworkPackages(5);
 });
 </script>

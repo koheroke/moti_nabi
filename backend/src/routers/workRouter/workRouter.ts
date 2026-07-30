@@ -69,7 +69,7 @@ workRouter.post('/publicWork', async (c) => {
 
 workRouter.post('/getWorkDetail', async (c) => {
   const body = await c.req.json();
-  const res = await createWork.getWorkDetail(body.theWorkId)
+  const res = await createWork.getWorkDetail(body.theWorkId, body.userId)
   return c.json(res);
 });
 
@@ -103,6 +103,6 @@ workRouter.post('/getUserWorkPackages', async (c) => {
 
 workRouter.post('/getWorkPackages', async (c) => {
   const data = await c.req.json();
-  const res = await createWork.getWorkPackages(data.userId)
+  const res = await createWork.getWorkPackages(data.userId, data.number)
   return c.json(res);
 });

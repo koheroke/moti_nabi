@@ -1,79 +1,73 @@
 <template>
   <div v-if="getUserProfile" class="profile">
-    <div class="header">
-      <section class="right">
-        <div class="icon">
-          <img :src="getUserProfile.iconUrl" class="icon_image" />
-          <div class="icon-edit" @click="onIconEdit">
-            <Camera fill="white" :size="100" color="#1514143d"></Camera>
-          </div>
-          <imageDropTab
-            v-if="editUserIconShow"
-            @close="editUserIconShow = false"
-            :aspectRatio="{ x: 1, y: 1 }"
-            :size="'500x500'"
-            :outputType="'png'"
-            :image="getUserProfile.iconUrl"
-            @getNewIcon="
-              userProfileStore.editPrepareProfile({ iconUrl: $event })
-            "
-          ></imageDropTab>
+    <section class="right">
+      <div class="icon">
+        <img :src="getUserProfile.iconUrl" class="icon_image" />
+        <div class="icon-edit" @click="onIconEdit">
+          <Camera fill="white" :size="100" color="#1514143d"></Camera>
         </div>
-        <div class="user-info">
-          <BaseInput
-            v-model="editProfile.name"
-            class="name"
+        <imageDropTab
+          v-if="editUserIconShow"
+          @close="editUserIconShow = false"
+          :aspectRatio="{ x: 1, y: 1 }"
+          :size="'500x500'"
+          :outputType="'png'"
+          :image="getUserProfile.iconUrl"
+          @getNewIcon="userProfileStore.editPrepareProfile({ iconUrl: $event })"
+        ></imageDropTab>
+      </div>
+      <div class="user-info">
+        <BaseInput
+          v-model="editProfile.name"
+          class="name"
+          @update:modelValue="
+            userProfileStore.editPrepareProfile({ bio: editProfile.bio })
+          "
+        ></BaseInput>
+        <div class="user-id">@{{ getUserProfile.userId }}</div>
+      </div>
+    </section>
+    <section class="left">
+      <div class="top">
+        <h1 style="font-size: 20px; margin: 0">プロフィール</h1>
+        <BaseButton style="margin-left: auto" @click="pushEdit"
+          >変更を保存
+        </BaseButton>
+      </div>
+      <div class="profile-description">
+        {{ "自己紹介" }}
+        <div class="bio">
+          <BaseTextArea
+            v-model="editProfile.bio"
             @update:modelValue="
               userProfileStore.editPrepareProfile({ bio: editProfile.bio })
             "
-          ></BaseInput>
-          <div class="user-id">@{{ getUserProfile.userId }}</div>
+          >
+          </BaseTextArea>
         </div>
-      </section>
-      <section class="left">
-        <div
-          style="display: flex; justify-content: center; margin-bottom: 10px"
-        >
-          <h1 style="font-size: 20px; margin: 0">プロフィール</h1>
-          <BaseButton style="margin-left: auto" @click="pushEdit"
-            >変更を保存
-          </BaseButton>
-        </div>
-        <div class="profile-description">
-          {{ "自己紹介" }}
-          <div class="bio">
-            <BaseTextArea
-              v-model="editProfile.bio"
-              @update:modelValue="
-                userProfileStore.editPrepareProfile({ bio: editProfile.bio })
-              "
-            >
-            </BaseTextArea>
+        <div class="sns">
+          <div
+            v-for="sns in getUserProfile.snsAccounts"
+            :key="sns.link"
+            :href="sns.link"
+            class="sns"
+          >
+            <img
+              :src="`/svgicons/sns/${sns.type}.svg`"
+              alt="icon"
+              class="snsicon"
+              @click="onIcon(sns.type)"
+            />
           </div>
-          <div class="sns">
-            <div
-              v-for="sns in getUserProfile.snsAccounts"
-              :key="sns.link"
-              :href="sns.link"
-              class="sns"
-            >
-              <img
-                :src="`/svgicons/sns/${sns.type}.svg`"
-                alt="icon"
-                class="snsicon"
-                @click="onIcon(sns.type)"
-              />
-            </div>
-            <EditSnsurlTab
-              :iconType="iconType"
-              v-if="iconUrlTabShow"
-              @close="iconUrlTabShow = false"
-            ></EditSnsurlTab>
-          </div>
-          <div class="meta"></div>
+          <EditSnsurlTab
+            :iconType="iconType"
+            v-if="iconUrlTabShow"
+            @close="iconUrlTabShow = false"
+          ></EditSnsurlTab>
         </div>
-      </section>
-    </div>
+        <div class="meta"></div>
+      </div>
+    </section>
   </div>
 
   <div v-else class="profile">読み込み中...</div>
@@ -165,5 +159,66 @@ watch(
 }
 .snsicon:hover {
   opacity: 0.5;
+}
+
+.profile {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.left {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 10px;
+}
+.left .top {
+  display: flex;
+  height: auto;
+
+  gap: 5px;
+}
+
+.bottons {
+  display: flex;
+  gap: 5px;
+  margin-left: auto;
+}
+
+.left .top h1 {
+  margin: 0px;
+  text-wrap: nowrap;
+  padding: 0px;
+  font-size: 30px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  margin-right: auto;
+}
+.right {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.edit {
+  margin-left: auto;
+}
+
+@media screen and (max-width: 800px) {
+  .user-introduction {
+    height: 100%;
+  }
+
+  .left {
+    flex-direction: column;
+    width: 100%;
+  }
+  .right {
+    width: 100%;
+  }
+  .profile {
+    flex-direction: column;
+  }
 }
 </style>

@@ -12,7 +12,7 @@
     <div class="body">
       <h3 class="title">{{ work.name }}</h3>
       <div class="meta">
-        <span>{{ work.createdAt }}</span>
+        <span>{{ work.public ? "公開中" : "非公開" }}</span>
         <likeBotton
           v-if="publicWork"
           :liked="work.liked"

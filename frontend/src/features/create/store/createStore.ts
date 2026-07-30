@@ -353,6 +353,7 @@ export const useCreateStore = defineStore("create", {
           ];
         })
       );
+      this.PreviewItemNumberOfChanges++
       this_case.pockets = newPockets;
       this_case.id = token.id
       //console.log("addTemplate_case", this_case)
@@ -405,6 +406,7 @@ export const useCreateStore = defineStore("create", {
             initialPocketId: string
           }>
         }
+
         const previewCaseSetPocket: Record<string, Pocket> = {} as Record<string, Pocket>;
         const staticCase: Case = JSON.parse(JSON.stringify(this.staticCasesGetter[this_case.caseType]));
         if (!staticCase) return
@@ -426,11 +428,14 @@ export const useCreateStore = defineStore("create", {
           pockets: previewCaseSetPocket
         }
         //console.log("token.token___", this.previewCase[this_case.id])
+        this.PreviewItemNumberOfChanges++
         return this_case
       }
     },
     deleteCase(token: deletePreviewCaseToken) {
+
       delete this.previewItemGetter[token.id]
+      this.PreviewItemNumberOfChanges++
       return token.id
     },
     reSizePocket(token: provisionalResizePocket) {
@@ -461,19 +466,13 @@ export const useCreateStore = defineStore("create", {
 
       this.previewCase[token.caseId].pockets[token.pocketId].logicalDelete = token.type == "cancel" ? false : true
       //console.log("logicalDeletePocket", this.previewCase[token.caseId].pockets[token.pocketId])
+      this.PreviewItemNumberOfChanges++
       return token
     },
     logicalDeleteCase(token: caseLogicalDeleteToken) {
       this.previewCase[token.caseId].logicalDelete = token.type == "cancel" ? false : true
+      this.PreviewItemNumberOfChanges++
       return token
-    },
-
-    templateSettder(template: Record<string, UserLuggage_SaveDBData>) {
-
-    },
-
-    hardDeleteCase(token: caseLogicalDeleteToken) {
-      delete this.previewCase[token.caseId]
     },
 
     pastePocket(token: pastePocketToken) {
@@ -482,9 +481,6 @@ export const useCreateStore = defineStore("create", {
       this.previewCase[newPocketData.caseId].pockets[newPocketData.id] = { ...this_pocketData, id: newPocketData.id, pos: pos, priority: newPocketData.priority }//itemIdが一緒になってるので注意
     },
 
-    hardDeletePocket(token: pocketLogicalDeleteToken) {
-      delete this.previewCase[token.caseId].pockets[token.pocketId]
-    },
     pocketReName(token: pocketReNameToken) {
       const this_case = this.previewCase[token.caseId].pockets[token.pocketId];
       this_case.name = token.name
@@ -492,6 +488,7 @@ export const useCreateStore = defineStore("create", {
     addPreviewPocket(token: addPreviewPocketToken) {
       const data = token.pocketData;
       const this_case = this.previewCase[token.caseId].pockets;
+      this.PreviewItemNumberOfChanges++
       if (!this_case[token.pocketId]) {
         this_case[token.pocketId] = token.pocketData;
 

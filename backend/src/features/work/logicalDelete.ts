@@ -120,7 +120,6 @@ const useLogicalDelete = () => {
         break
     }
     if (!token || !alterationToken) return null;
-    //console.log("deleteInfo.workId", { sendDbToken: token, alterationToken: alterationToken })
     saveQueue.push(deleteInfo.workId, { sendDbToken: token, alterationToken: alterationToken })
     return alterationToken
   }

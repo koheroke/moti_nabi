@@ -75,10 +75,7 @@
             v-model="tagInput"
             class="tagInput"
             @focus="suggestClose = false"
-            @handleEnter="
-              workDetailEdit.tags.push(tagInput);
-              workDetailEditStore.addEdit({ tags: workDetailEdit.tags });
-            "
+            @handleEnter="onTagpush(workDetailEdit.tags)"
           ></BaseInput>
           <div
             class="coverWindow"
@@ -89,7 +86,7 @@
             v-if="!suggestClose"
             v-model:search="tagInput"
             :suggestDatas="allTags"
-            @onsuggest="workDetailEdit.tags.push($event)"
+            @onsuggest="onTagSuggest($event)"
             @close="closeSuggest"
             style="z-index: 10"
           ></suggest>
@@ -153,9 +150,18 @@ const tagInput = ref<string>("");
 
 const allTags = ref<{ name: string; value: any; id: string }[]>([]);
 const bioMax = ref(250);
-const nameMax = ref(10);
+const nameMax = ref(20);
 const tagMax = ref(10);
 const { AboutGetter } = storeToRefs(workDetailEditStore);
+const onTagpush = (tags: string[]) => {
+  if (tags.includes(tagInput.value)) return;
+  tags.push(tagInput.value);
+  workDetailEditStore.addEdit({ tags: tags });
+};
+const onTagSuggest = (tag: string) => {
+  if (workDetailEdit.value.tags.includes(tag)) return;
+  workDetailEdit.value.tags.push(tag);
+};
 const deleteConfirmation = ref(false);
 import confirmation from "@/components/feedback/confirmation/baseConfirmation/confirmation.vue";
 const workDetailEdit = ref<editAboutType>({
