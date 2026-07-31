@@ -3,6 +3,7 @@
     :works="userWorkPackageStoreGetter"
     :onWorkCard="onWorkCard"
     :onMoreClick="more"
+    :publicWork="false"
   ></HomeWorksSection>
 </template>
 

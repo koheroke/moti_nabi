@@ -1,28 +1,29 @@
 <template>
-  <div class="closeArea" @click="emit('close')">
+  <div
+    class="closeArea"
+    v-if="getConfirmation.show"
+    @click="confirmationStore.close()"
+  >
     <div class="tab">
-      {{ text }}
+      {{ getConfirmation.text }}
 
-      <BaseButton @click="onMessage" style="width: 100%">はい</BaseButton>
+      <BaseButton
+        @click="
+          getConfirmation.onfunction();
+          confirmationStore.close();
+        "
+        style="width: 100%"
+        >はい</BaseButton
+      >
     </div>
   </div>
 </template>
 <script setup lang="ts">
-import { BaseInput } from "@/components/ui/form/BaseInput";
-import { ref } from "vue";
 import { BaseButton } from "@/components/ui/form/BaseButton";
-const message = ref("");
-const onMessage = () => {
-  emit("yes");
-  emit("close");
-};
-const props = defineProps<{
-  text: string;
-}>();
-const emit = defineEmits<{
-  (e: "close"): void;
-  (e: "yes"): void;
-}>();
+import { useConfirmationStore } from "@/store/feedback/confirmationStore";
+import { storeToRefs } from "pinia";
+const confirmationStore = useConfirmationStore();
+const { getConfirmation } = storeToRefs(confirmationStore);
 </script>
 <style lang="css" scoped>
 .tab {

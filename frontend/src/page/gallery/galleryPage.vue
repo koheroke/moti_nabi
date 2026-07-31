@@ -18,6 +18,10 @@ const onUpdateSearch = (value: ParseSearchQuery) => {
 const onUpdateSort = (value: SortType) => {
   sortType.value = value;
 };
+window.scrollTo({
+  top: 0,
+  behavior: "smooth",
+});
 </script>
 
 <template>

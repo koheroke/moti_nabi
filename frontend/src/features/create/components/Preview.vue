@@ -202,6 +202,7 @@ const editName = (newName: string) => {
   background-repeat: repeat;
   background-image: radial-gradient(circle, #dfdddd 1px, transparent 1px);
   background-size: 20px 20px;
+
   width: 100%;
   height: 100%;
 }

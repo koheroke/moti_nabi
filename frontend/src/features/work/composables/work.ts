@@ -77,6 +77,7 @@ const useWork = () => {
   }
 
   const deleteWork = async (id: string) => {
+    const userId = userAuthStore.userIdGetter
     const res = await fetch(
       `${url}/deleteWork`,
       {
@@ -86,6 +87,7 @@ const useWork = () => {
         },
         body: JSON.stringify({
           workId: id,
+          userId: userId
         })
       })
     const deleteRes = await res.json()

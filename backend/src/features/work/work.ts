@@ -521,9 +521,21 @@ const useWork = () => {
     }
 
   }
-  const deleteWork = async (workId: string) => {
+  const deleteWork = async (workId: string, userId: string) => {
+    console.log("workID", userId)
+    const owner = await prisma.siteMember.findFirst({
+      where: {
+        workId,
+        userId,
+        role: "owner",
+      },
+    });
+
+    if (!owner) {
+      return { success: false }
+    }
     try {
-      await prisma.work.delete({
+      await prisma.work.deleteMany({
         where: {
           id: workId,
         },

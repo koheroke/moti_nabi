@@ -13,7 +13,7 @@
           :workId="AboutGetter.id"
           class="likeBotton"
         ></likeBotton>
-        <p class="likes">❤️ {{ AboutGetter.likes }}</p>
+        <p class="likes">{{ AboutGetter.likes }}</p>
       </div>
     </section>
   </div>
@@ -36,6 +36,11 @@ const { AboutGetter } = storeToRefs(workDetailStore);
   margin-right: auto;
   align-items: center;
   gap: 10px;
+}
+.likes {
+  font-size: 21px !important;
+  font-weight: 400 !important;
+  margin-right: 5px;
 }
 .tag {
   border-radius: 5px;

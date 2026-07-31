@@ -3,6 +3,7 @@
     :works="visibleItems"
     :onMoreClick="onMoreClick"
     :onWorkCard="onWorkCard"
+    :publicWork="true"
   ></HomeWorksSection>
 </template>
 
@@ -31,6 +32,6 @@ const onWorkCard = (cardId: string) => {
   router?.push({ path: "/detail", query: { cardId: cardId } });
 };
 onMounted(() => {
-  getWorkPackages.getworkPackages(5);
+  getWorkPackages.getworkPackages();
 });
 </script>

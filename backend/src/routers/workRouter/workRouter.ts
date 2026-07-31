@@ -56,8 +56,9 @@ workRouter.post('/getWork', async (c) => {
 });
 
 workRouter.post('/deleteWork', async (c) => {
+  console.log("deleteWork")
   const body = await c.req.json();
-  const res = await createWork.deleteWork(body.workId)
+  const res = await createWork.deleteWork(body.workId, body.userId)
   return c.json(res);
 });
 

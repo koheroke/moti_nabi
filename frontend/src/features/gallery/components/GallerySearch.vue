@@ -34,7 +34,6 @@ import { useWorkPackageStore } from "@/features/work/store/workPackageStore";
 import { Search } from "lucide-vue-next";
 
 import { useGalleryWorksStore } from "../composables/useGalleryWorksStore.ts";
-import { el } from "vuetify/locale";
 const galleryWorkstore = useGalleryWorksStore();
 
 const suggestClose = ref(true);

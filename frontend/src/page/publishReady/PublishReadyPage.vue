@@ -105,17 +105,17 @@
           <BaseButton
             style="margin-left: auto"
             class="deleteButton"
-            @click="deleteConfirmation = true"
+            @click="
+              confirmationStore.open({
+                text: '作品を削除しますか',
+                onfunction: onDeleteWork,
+                show: true,
+              })
+            "
             variant="ghost"
             >作品を削除</BaseButton
           >
         </div>
-        <confirmation
-          @close="deleteConfirmation = false"
-          v-if="deleteConfirmation"
-          text="作品を削除しますか？"
-          @yes="onDeleteWork"
-        ></confirmation>
       </section>
     </div>
   </div>
@@ -123,7 +123,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
-import { imageDropTab } from "@/components/ui/form/imageDropTab/index.ts";
+import { useConfirmationStore } from "@/store/feedback/confirmationStore";
 import { BaseInput } from "@/components/ui/form/BaseInput";
 import { BaseTextArea } from "@/components/ui/form/BaseTextArea/index.ts";
 import { BaseButton } from "@/components/ui/form/BaseButton";
@@ -138,6 +138,7 @@ import { Delete } from "lucide-vue-next";
 import BaseDropdown from "@/components/ui/form/BaseDropdown/BaseDropdown.vue";
 import { useRouter } from "vue-router";
 import { useWork } from "@/features/work/composables/work";
+const confirmationStore = useConfirmationStore();
 const suggestClose = ref(true);
 const closeSuggest = () => {
   suggestClose.value = true;
@@ -163,7 +164,6 @@ const onTagSuggest = (tag: string) => {
   workDetailEdit.value.tags.push(tag);
 };
 const deleteConfirmation = ref(false);
-import confirmation from "@/components/feedback/confirmation/baseConfirmation/confirmation.vue";
 const workDetailEdit = ref<editAboutType>({
   name: "",
   bio: "",
@@ -253,6 +253,7 @@ const onPublich = async () => {
   }
 };
 const onDeleteWork = async () => {
+  console.log("onDeleteWork");
   const id = selectedPackageIdGetter.value;
   const res = await work.deleteWork(id);
   if (res.success == false) {

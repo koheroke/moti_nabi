@@ -39,6 +39,12 @@ export const useSocketApi = () => {
     socket.emit("work:kick", { workId: workId, kickedUserId: kickedUserId }
     )
   }
+
+  const reName = (newName: string) => {
+    const workId = createStore.workIdGetter
+    if (!workId) return
+    socket.emit("work:reName", { workId: workId, newName })
+  }
   const joinWorkRoom = (): Promise<{ alterationTokens: alterationToken[], logicalDelete: logicalDelete }> | null => {
     const workId = createStore.workIdGetter
     const userId = userAuthstore.userIdGetter
@@ -50,7 +56,7 @@ export const useSocketApi = () => {
       })
     })
   }
-  return { sendAlteration, joinWorkRoom, leaveRoom, kick };
+  return { sendAlteration, reName, joinWorkRoom, leaveRoom, kick };
 };
 
 

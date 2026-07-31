@@ -124,6 +124,8 @@ export const useCreateWork = () => {
     } catch (e) {
       return "damagedData"
     }
+    console.log("vuepreviewData", vuepreviewData)
+    console.log("vueItemList", vueItemList)
     createStore.setWork(parseData, vuepreviewData, vueItemList)
     createStore.setMenbersSetter(menbers)
     workDetailEditStore.setAbout(about)
@@ -826,7 +828,6 @@ export const useCreateWork = () => {
     applyCreateAction.alterationData(forwardToken)
     alterationLog.saveState({ forwardToken: forwardToken, reverseToken: reverseToken })
   }
-
 
   return { reNamePocket, pastePocket, addTemplate, getTemplate, startRemovePocket, startResizePocket, caseLogicalDelete, pocketLogicalDelete, copyPocket, addPocket, provisionaChangePriorityPocket, confirmedChangePriorityPocket, buildItemPathMap, createNewwork, confirmedRemovePocket, provisionalRemovePocket, provisionalResizePocket, confirmedResizePocket, loadWork, addItemToPreview, addItemCount, addBookmark, deletePreviewItem, addListItem, addCase, setCreatePageWork }
 }

@@ -269,8 +269,9 @@ const useApplyCreateAction = () => {
           dbpushToken.path.push(res.parent)
           dbpushToken.path.push("innerItems")
         }
+        dbpushToken.path.push(res.item.id)
         dbpushToken.value = res.item
-        dbpushToken.type = "objectPush"
+        dbpushToken.type = "set"
         break
       }
 

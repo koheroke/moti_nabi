@@ -52,7 +52,7 @@ onMounted(async () => {
     //   () => {
     //     tutorial.start("create");
     //   },
-    // );
+    // ); //開発用
   }
   before = true;
 });

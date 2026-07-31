@@ -1,7 +1,11 @@
 <template>
   <section class="works-section">
     <div class="box">
-      <WorksSection :works="works" :onWorkCard="onWorkCard"></WorksSection>
+      <WorksSection
+        :works="works"
+        :publicWork="publicWork"
+        :onWorkCard="onWorkCard"
+      ></WorksSection>
     </div>
     <BaseButton variant="text" @click="onMoreClick?.()" class="see-all">
       すべて見る →
@@ -17,6 +21,7 @@ defineProps<{
   works: workPackage[];
   onMoreClick: () => void;
   onWorkCard: (cardId: string) => void;
+  publicWork: boolean;
 }>();
 </script>
 

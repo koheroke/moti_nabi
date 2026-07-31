@@ -3,6 +3,7 @@ import BaseAlert from "@components/feedback/alert/baseAlert/BaseAlert.vue";
 import baseDialog from "./components/feedback/dialog/baseDialog/baseDialog.vue";
 import tutorialDialog from "./features/tutorial/components/tutorialDialog.vue";
 import target from "./features/tutorial/components/target.vue";
+import confirmation from "./components/feedback/confirmation/baseConfirmation/confirmation.vue";
 </script>
 <template>
   <v-app>
@@ -11,6 +12,7 @@ import target from "./features/tutorial/components/target.vue";
     <router-view />
     <target></target>
     <tutorialDialog></tutorialDialog>
+    <confirmation></confirmation>
   </v-app>
 </template>
 

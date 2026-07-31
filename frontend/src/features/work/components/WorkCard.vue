@@ -18,6 +18,12 @@
           :liked="work.liked"
           :workId="work.id"
         ></likeBotton>
+
+        <deleteBotton
+          style="z-index: 200"
+          :workId="work.id"
+          v-if="!publicWork"
+        ></deleteBotton>
       </div>
     </div>
   </article>
@@ -27,6 +33,7 @@
 import type { workPackage } from "@/features/work/types/work";
 import { useWorkPackageStore } from "../store/workPackageStore";
 import Thumbnail from "@/features/create/components/Thumbnail.vue";
+import deleteBotton from "./deleteBotton.vue";
 import likeBotton from "./likeBotton.vue";
 const workPackageStore = useWorkPackageStore();
 

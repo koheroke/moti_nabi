@@ -13,6 +13,17 @@ export const useWorkPackageStore = defineStore("package", {
 
   },
   actions: {
+    deleteWork(id: string) {
+      this.WorkPackageStore = this.WorkPackageStore.filter((work) =>
+        work.id != id
+      )
+      this.userWorkPackageStore = this.userWorkPackageStore.filter((work) =>
+        work.id != id
+      )
+      if (this.selectedPackageId == id) {
+        this.selectedPackageId = ""
+      }
+    },
     setWorkPackageStore(data: workPackage[]) {
       this.WorkPackageStore = data
     },
