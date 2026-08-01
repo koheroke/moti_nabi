@@ -24,6 +24,7 @@ model User {
   auth      UserAuth?
   likedUsers WorkLike[]
   @@map("users")
+  tutorialProgress Json @default("{}")
 }
 
 
@@ -81,9 +82,10 @@ enum SiteRole {
 model Work {
   id            String   @id @default(cuid())
   createdAt    DateTime @default(now())
+  lastAccessAt　DateTime?
   name          String
   bio           String
-  thumbnailJson  String
+  thumbnailJson String
   data          String
   public        Boolean
   tags          String[]

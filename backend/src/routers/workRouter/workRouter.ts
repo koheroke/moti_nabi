@@ -5,13 +5,6 @@ import { useLogicalDelete } from "@/features/work/logicalDelete"
 const logicalDelete = useLogicalDelete()
 const createWork = useWork()
 export const workRouter = new Hono();
-
-workRouter.post('/editWorkPackage', async (c) => {
-  const body = await c.req.json();
-  const res = await createWork.editWorkPackage(body.workId, body.data)
-  return c.json(res);
-});
-
 workRouter.post('/create', async (c) => {
   const body = await c.req.json();
   const res = await createWork.createNewWork(body.userId)

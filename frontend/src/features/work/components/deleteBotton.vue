@@ -95,7 +95,4 @@ const stateHover = () => {
   height: 100%;
   transform: scale(150%);
 }
-.window {
-  z-index: 200;
-}
 </style>

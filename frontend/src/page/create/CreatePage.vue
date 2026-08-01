@@ -30,6 +30,11 @@ import { useRouter } from "vue-router";
 import { useAlterationLogStore } from "@/features/create/store/useAlterationLogStore";
 import { useTutorial } from "@/features/tutorial/composables/tutorial";
 import { useDialogStore } from "@/store/feedback/dialogStore";
+import { useUserStore } from "@/store/user/userIconStore";
+import { useUserAuthStore } from "@/store/user/userAuthStore";
+
+const userAuthStore = useUserAuthStore();
+const userStore = useUserStore();
 const dialogStore = useDialogStore();
 const tutorial = useTutorial();
 const alterationLog = useAlterationLogStore();
@@ -38,21 +43,21 @@ const applyCreateAction = useApplyCreateAction();
 const createStore = useCreateStore();
 const { leaveGetter } = storeToRefs(createStore);
 const createWork = useCreateWork();
+
 createStore.setleave(false);
 
 let before = false;
-let firstTimeCreate = true;
-
+//チュートリアルが完了した時prismaのtutorialProgressにcreate:true　を追加するコードを追加して
 onMounted(async () => {
   createWork.setCreatePageWork();
-  if (firstTimeCreate) {
-    // dialogStore.showDialog(
-    //   "チュートリアルを行いますか",
-    //   "チュートリアルはチュートリアルボタンからいつでも受けることができます",
-    //   () => {
-    //     tutorial.start("create");
-    //   },
-    // ); //開発用
+  if (!userStore.getUserInfo(userAuthStore.userIdGetter).tutorialProgress) {
+    dialogStore.showDialog(
+      "チュートリアルを行いますか",
+      "チュートリアルはチュートリアルボタンからいつでも受けることができます",
+      () => {
+        tutorial.start("create");
+      },
+    );
   }
   before = true;
 });

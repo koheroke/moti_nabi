@@ -2,14 +2,13 @@
 import { RequireAtLeastOne } from "@/types/atLeastOne"
 import { SiteMember } from "@/generated/prisma/client"
 export type editWorkPackageApi = RequireAtLeastOne<{
-  name?: String,
-  thumbnailJson?: String,
-  data?: String,
-  public?: Boolean,
+  name?: string,
+  thumbnailJson?: string,
+  data?: string,
+  public?: boolean,
   likes?: number,
-  tags?: String[],
+  tags?: string[],
   copies?: number,
-  members?: SiteMember[]
 }>
 
 export type publichTokenType = RequireAtLeastOne<editAboutType> & {

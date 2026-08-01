@@ -21,9 +21,21 @@ onMounted(async () => {
     router.push("/login");
     return;
   }
-  const { userId, iconUrl, authData, secoundfaEnabled, name } = userData;
+  const {
+    userId,
+    iconUrl,
+    authData,
+    secoundfaEnabled,
+    tutorialProgress,
+    name,
+  } = userData;
   userAuthstore.login(userId, authData.email, token);
-  userStore.setUserInfo({ userId: userId, iconUrl: iconUrl, name: name });
+  userStore.setUserInfo({
+    userId: userId,
+    iconUrl: iconUrl,
+    name: name,
+    tutorialProgress: tutorialProgress,
+  });
   if (secoundfaEnabled == true) {
     userAuthstore.set2fa();
   }

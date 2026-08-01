@@ -25,6 +25,7 @@ export const useSession = () => {
         },
         select: {
           id: true,
+          tutorialProgress: true,
           email: true,
           auth: {
             select: {

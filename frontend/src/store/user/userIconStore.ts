@@ -1,8 +1,11 @@
 import { defineStore } from 'pinia'
 
+
+type TutorialProgress = Record<string, boolean>
 export interface UserInfo {
   userId: string
   name: string
+  tutorialProgress: TutorialProgress;
   iconUrl: string
 }
 

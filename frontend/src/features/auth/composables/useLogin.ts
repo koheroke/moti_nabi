@@ -34,10 +34,10 @@ export const useLogin = () => {
       const user = await singup_res.json()
       if (user == null) return null
 
-      const { userId, iconUrl, authData, secoundfaEnabled, name } = user;
+      const { userId, iconUrl, authData, secoundfaEnabled, name, tutorialProgress } = user;
       //console.log("secoundfaEnabled", secoundfaEnabled);
       userAuthstore.login(userId, authData.email, token);
-      userStore.setUserInfo({ userId: userId, iconUrl: iconUrl, name: name });
+      userStore.setUserInfo({ userId: userId, iconUrl: iconUrl, name: name, tutorialProgress: tutorialProgress });
       if (secoundfaEnabled == true) {
         userAuthstore.set2fa();
       }

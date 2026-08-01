@@ -8,9 +8,9 @@ export const useWorkPackageStore = defineStore("package", {
   }),
   getters: {
     workPackageStoreGetter: (state) => state.WorkPackageStore,
+    sortWorkPackageStoreGetter: (state) => state.WorkPackageStore.sort((a, b) => b.lastAccessAt.getTime() - a.lastAccessAt.getTime()),
     userWorkPackageStoreGetter: (state) => state.userWorkPackageStore,
     selectedPackageIdGetter: (state) => state.selectedPackageId
-
   },
   actions: {
     deleteWork(id: string) {

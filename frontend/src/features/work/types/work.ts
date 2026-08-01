@@ -8,6 +8,7 @@ export interface baseWorkPackage {
   tags: string[],
   copies: number,
   createdAt: string,
+  lastAccessAt: Date,
   liked: boolean
 }
 export interface workPackage extends baseWorkPackage {

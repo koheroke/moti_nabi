@@ -19,11 +19,7 @@
           :workId="work.id"
         ></likeBotton>
 
-        <deleteBotton
-          style="z-index: 200"
-          :workId="work.id"
-          v-if="!publicWork"
-        ></deleteBotton>
+        <deleteBotton :workId="work.id" v-if="!publicWork"></deleteBotton>
       </div>
     </div>
   </article>

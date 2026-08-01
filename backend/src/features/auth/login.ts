@@ -28,6 +28,7 @@ export const useLogin = () => {
         email: user.email
       },
       include: {
+        tutorialProgress: true,
         auth: {
           select: {
             passwordHash: true,

@@ -242,19 +242,6 @@ const useWork = () => {
 
 
 
-  const editWorkPackage = async (workId: string, editData: editWorkPackageApi) => {
-    const work = await prisma.work.update({
-      where: {
-        id: workId,
-      },
-      data: {
-        ...editData
-      },
-    });
-    return work
-  }
-
-
 
   const editWork = async (workId: string, editDataToken: server_alterationToken[]) => {
     let this_work = workData.get(workId);
@@ -432,7 +419,8 @@ const useWork = () => {
       },
       data: {
         data: jsonData,
-        thumbnailJson: thumbnailJson
+        thumbnailJson: thumbnailJson,
+        lastAccessAt: new Date(),
       },
     });
 
@@ -454,7 +442,7 @@ const useWork = () => {
         likes: true,
         tags: true,
         createdAt: true,
-
+        lastAccessAt: true,
         likedUsers: userId
           ? {
             where: {
@@ -493,6 +481,7 @@ const useWork = () => {
         name: true,
         thumbnailJson: true,
         public: true,
+        lastAccessAt: true,
         likes: true,
         tags: true,
         createdAt: true,
@@ -512,7 +501,8 @@ const useWork = () => {
           id: token.id,
         },
         data: {
-          ...token
+          ...token,
+          lastAccessAt: new Date(),
         },
       });
       return { success: true };
@@ -548,7 +538,7 @@ const useWork = () => {
 
 
   return {
-    createNewWork, getWork, editWorkPackage, editWork, getTemplateThumbnails, getTemplate, getStaticCases
+    createNewWork, getWork, editWork, getTemplateThumbnails, getTemplate, getStaticCases
     , getWorkPackages, getUserWorkPackages
     , getWorkDetail, addMenber, deleteMenber, publicWork, deleteWork, setLike
   }
