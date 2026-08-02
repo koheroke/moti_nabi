@@ -16,6 +16,16 @@ userRouter.post('/getProfile', async (c) => {
   return c.json(res);
 });
 
+userRouter.post('/finishTutorial', async (c) => {
+  //console.log("/user/getProfile")
+  const body = await c.req.json();
+  console.log("body", body)
+  const res = await user.finishTutorial(body.tutorialId, body.userId)
+  //console.log("res", res)
+  return c.json(res);
+});
+
+
 
 userRouter.post('/deleteUser', async (c) => {
   //console.log("/user/getProfile")

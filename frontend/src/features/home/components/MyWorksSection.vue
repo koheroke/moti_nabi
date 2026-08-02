@@ -1,6 +1,6 @@
 <template>
   <HomeWorksSection
-    :works="sortWorkPackageStoreGetter"
+    :works="sortUserWorkPackageStoreGetter"
     :onWorkCard="onWorkCard"
     :onMoreClick="() => {}"
     :publicWork="false"
@@ -18,7 +18,7 @@ import { useWork } from "@/features/work/composables/work.ts";
 const getWorkPackages = useWork();
 import { storeToRefs } from "pinia";
 
-const { sortWorkPackageStoreGetter } = storeToRefs(workPackageStore);
+const { sortUserWorkPackageStoreGetter } = storeToRefs(workPackageStore);
 import { useRouter } from "vue-router";
 const router = useRouter();
 

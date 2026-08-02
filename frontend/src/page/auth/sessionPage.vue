@@ -5,6 +5,8 @@ import { onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useUserAuthStore } from "@/store/user/userAuthStore";
 import { useUserStore } from "@/store/user/userIconStore";
+import { useTutorialStore } from "@/features/tutorial/store/tutorial";
+const tutorialStore = useTutorialStore();
 const userStore = useUserStore();
 const router = useRouter();
 const session = useSession();
@@ -29,13 +31,15 @@ onMounted(async () => {
     tutorialProgress,
     name,
   } = userData;
+  console.log("tutorialProgress", tutorialProgress);
   userAuthstore.login(userId, authData.email, token);
   userStore.setUserInfo({
     userId: userId,
     iconUrl: iconUrl,
     name: name,
-    tutorialProgress: tutorialProgress,
   });
+
+  tutorialStore.tutorialProgressSetter(tutorialProgress);
   if (secoundfaEnabled == true) {
     userAuthstore.set2fa();
   }

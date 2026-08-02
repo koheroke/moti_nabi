@@ -19,13 +19,37 @@ type editdata = RequireAtLeastOne<edit>
 
 export const useUser = () => {
 
+  const finishTutorial = async (tutorialId: string, userId: string) => {
+
+    console.log("tutorialId", tutorialId)
+    if (!tutorialId || !userId) return;
+    const userInfo = await prisma.user.findFirst({
+      where: {
+        id: userId,
+      },
+      select: {
+        tutorialProgress: true,
+      }
+    })
+    if (!userInfo) return;
+    const newTutorialProgress =
+      (userInfo?.tutorialProgress as Record<string, boolean>) ?? {};
+    newTutorialProgress[tutorialId] = true
+    await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        tutorialProgress: newTutorialProgress
+      }
+    })
+  }
+
   const deleteUser = async (c: Context, userId: string, password: string) => {
     //console.log("deleteUser", userId)
     //console.log("password", password)
     const user = await prisma.userAuth.findFirst({
-      where: {
-        userId: userId,
-      },
+
       select: {
         passwordHash: true,
       }
@@ -85,7 +109,7 @@ export const useUser = () => {
 
 
 
-  return { setProfileEdit, getProfile, deleteUser }
+  return { setProfileEdit, getProfile, deleteUser, finishTutorial }
 
 
 

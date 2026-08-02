@@ -25,21 +25,20 @@ import { useCreateStore } from "@/features/create/store/createStore";
 import { watch } from "vue";
 import { storeToRefs } from "pinia";
 import { onBeforeRouteLeave } from "vue-router";
-import { useApplyCreateAction } from "@/features/create/composables/applyCreateAction";
 import { useRouter } from "vue-router";
 import { useAlterationLogStore } from "@/features/create/store/useAlterationLogStore";
 import { useTutorial } from "@/features/tutorial/composables/tutorial";
 import { useDialogStore } from "@/store/feedback/dialogStore";
-import { useUserStore } from "@/store/user/userIconStore";
-import { useUserAuthStore } from "@/store/user/userAuthStore";
-
-const userAuthStore = useUserAuthStore();
-const userStore = useUserStore();
+import { useTutorialStore } from "@/features/tutorial/store/tutorial";
+import { useWorkPackageStore } from "@/features/work/store/workPackageStore";
+import { useAlertStore } from "@/store/feedback/alertStore";
+const alertStore = useAlertStore();
+const workPackageStore = useWorkPackageStore();
+const tutorialStore = useTutorialStore();
 const dialogStore = useDialogStore();
 const tutorial = useTutorial();
 const alterationLog = useAlterationLogStore();
 const router = useRouter();
-const applyCreateAction = useApplyCreateAction();
 const createStore = useCreateStore();
 const { leaveGetter } = storeToRefs(createStore);
 const createWork = useCreateWork();
@@ -47,15 +46,24 @@ const createWork = useCreateWork();
 createStore.setleave(false);
 
 let before = false;
-//チュートリアルが完了した時prismaのtutorialProgressにcreate:true　を追加するコードを追加して
+
 onMounted(async () => {
+  if (
+    workPackageStore.userWorkPackageStoreGetter.length >=
+    createStore.maxWorkNumber
+  ) {
+    router.push("/home");
+    alertStore.showAlert("すでにユーザーが作成できるリストの最大数です", true);
+    return;
+  }
   createWork.setCreatePageWork();
-  if (!userStore.getUserInfo(userAuthStore.userIdGetter).tutorialProgress) {
+  if (!tutorialStore.tutorialProgressGetter?.create) {
     dialogStore.showDialog(
       "チュートリアルを行いますか",
       "チュートリアルはチュートリアルボタンからいつでも受けることができます",
       () => {
         tutorial.start("create");
+        tutorial.finishTutorial("create");
       },
     );
   }

@@ -18,7 +18,26 @@
         </section>
       </section>
       <section class="container">
-        <h2 class="title">あなたの作品</h2>
+        <div style="display: flex; width: 100%">
+          <h2 class="title" style="margin-right: auto; font-weight: 400">
+            あなたの作品
+          </h2>
+          <p
+            style="color: red"
+            v-if="
+              workPackageStore.userWorkPackageStoreGetter.length >=
+              createStore.maxWorkNumber
+            "
+          >
+            {{ createStore.maxWorkNumber }} /
+            {{ workPackageStore.userWorkPackageStoreGetter.length }}
+          </p>
+          <p v-else style="color: black; font-weight: 400">
+            {{ createStore.maxWorkNumber }}/{{
+              workPackageStore.userWorkPackageStoreGetter.length
+            }}
+          </p>
+        </div>
         <MyWorksSection :userId="userIconInfo.userId" class="content" />
       </section>
 
@@ -52,9 +71,12 @@ import { storeToRefs } from "pinia";
 import { useUserAuthStore } from "@/store/user/userAuthStore";
 import { useUserStore, type UserInfo } from "@/store/user/userIconStore";
 import Thumbnail from "@/features/create/components/Thumbnail.vue";
+import { useCreateStore } from "@/features/create/store/createStore";
 import type { workPackage } from "@/features/work/types/work";
 const workPackageStore = useWorkPackageStore();
+const createStore = useCreateStore();
 const { userWorkPackageStoreGetter } = storeToRefs(workPackageStore);
+
 const resumeEditing = ref(true);
 watch(userWorkPackageStoreGetter, (workPackage: workPackage[]) => {
   if (workPackage.length == 0) {

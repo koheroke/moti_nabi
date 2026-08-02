@@ -215,6 +215,7 @@ const useWork = () => {
 
 
   const getWork = async (workId: string) => {
+
     const work = await prisma.work.findUnique({
       where: {
         id: workId,
@@ -235,7 +236,20 @@ const useWork = () => {
         },
       }
     });
+
+
     if (!work) return
+
+
+
+    await prisma.work.update({
+      where: {
+        id: workId,
+      },
+      data: {
+        lastAccessAt: new Date(),
+      },
+    });
     if (work)
       return work
   }
@@ -420,7 +434,6 @@ const useWork = () => {
       data: {
         data: jsonData,
         thumbnailJson: thumbnailJson,
-        lastAccessAt: new Date(),
       },
     });
 

@@ -51,6 +51,7 @@ export const useCreateStore = defineStore("create", {
     workName: "" as string,
     userLuggage_SaveDBData: null as UserLuggage_SaveDBData | null,
     draggedItemId: "" as string,
+    maxWorkNumber: 10,
     listItem: null as Record<string, itemCard> | null,
     previewCase: {} as Record<string, Case>,
     searchText: "",
@@ -81,7 +82,7 @@ export const useCreateStore = defineStore("create", {
     filteredStaticCasesGetter: (state) => {
       const res: Record<string, Case> = {}
       const test = caseStore.searchTextGetter
-      //console.log("test__", test)
+
       if (test.length == 0) {
         return state.staticCases
       }

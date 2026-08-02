@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import type { tutorialType, tutorialData, targetData, action } from '../type/tutorial'
-
+type TutorialProgress = Record<string, boolean>
 
 const useTutorialStore = defineStore('tutorial', {
   state: () => ({
@@ -11,7 +11,8 @@ const useTutorialStore = defineStore('tutorial', {
     onNextBotton: false,
     index: 0,
     tutorialShow: false,
-    id: ""
+    id: "",
+    tutorialProgress: {} as TutorialProgress
   }),
 
   getters: {
@@ -21,11 +22,20 @@ const useTutorialStore = defineStore('tutorial', {
     targetDataGetter: (state) => state.targetData,
     onNextBottonGetter: (state) => state.onNextBotton,
     tutorialShowGetter: (state) => state.tutorialShow,
-    tutorialIdGetter: (state) => state.id
+    tutorialIdGetter: (state) => state.id,
+    tutorialProgressGetter: (state) => state.tutorialProgress
   },
   actions: {
     tutorialShowSetter(show: boolean) {
       this.tutorialShow = show;
+    },
+
+    finishedTutorial(tutorialName: string) {
+      this.tutorialProgress[tutorialName] = true
+    },
+
+    tutorialProgressSetter(tutorialProgress: TutorialProgress) {
+      this.tutorialProgress = tutorialProgress
     },
 
     onNextBottonSetter(on: boolean) {

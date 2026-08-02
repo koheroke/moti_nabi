@@ -5,6 +5,9 @@ const url = `${apiUrl}/auth/login`;
 import { useUserAuthStore } from "@/store/user/userAuthStore"
 const userAuthstore = useUserAuthStore()
 import { useUserStore } from "@/store/user/userIconStore"
+
+import { useTutorialStore } from "@/features/tutorial/store/tutorial";
+const tutorialStore = useTutorialStore()
 const userStore = useUserStore()
 
 
@@ -37,7 +40,8 @@ export const useLogin = () => {
       const { userId, iconUrl, authData, secoundfaEnabled, name, tutorialProgress } = user;
       //console.log("secoundfaEnabled", secoundfaEnabled);
       userAuthstore.login(userId, authData.email, token);
-      userStore.setUserInfo({ userId: userId, iconUrl: iconUrl, name: name, tutorialProgress: tutorialProgress });
+      userStore.setUserInfo({ userId: userId, iconUrl: iconUrl, name: name });
+      tutorialStore.tutorialProgressSetter(tutorialProgress)
       if (secoundfaEnabled == true) {
         userAuthstore.set2fa();
       }

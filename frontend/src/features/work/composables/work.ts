@@ -35,9 +35,11 @@ const useWork = () => {
       try { parseThumbnail = thumbnail.parse(work.thumbnailJson) } catch {
         parseThumbnail = []
       }
+      console.log("work.lastAccessAt", work.lastAccessAt)
       return {
         ...work,
-        thumbnailJson: parseThumbnail
+        thumbnailJson: parseThumbnail,
+        lastAccessAt: work.lastAccessAt ? new Date(work.lastAccessAt).getTime() : 0
       }
     })
     workPackageStore.setUserWorkPackageStore(newWork)
@@ -68,7 +70,8 @@ const useWork = () => {
       }
       return {
         ...work,
-        thumbnailJson: parseThumbnail
+        thumbnailJson: parseThumbnail,
+        lastAccessAt: work.lastAccessAt ? new Date(work.lastAccessAt).getTime() : 0
       }
     })
     galleryWorksStore.setAllWorks(newWork)

@@ -11,13 +11,12 @@ export interface baseWorkPackage {
   lastAccessAt: Date,
   liked: boolean
 }
-export interface workPackage extends baseWorkPackage {
+export interface workPackage extends Omit<baseWorkPackage, "lastAccessAt"> {
   thumbnailJson: previewSvgCase[],
+  lastAccessAt: number,
 }
 export interface BeforeParsingWorkPackage extends baseWorkPackage {
   thumbnailJson: Record<string, BeforeParsingCaseData>,
 }
-
-
 
 

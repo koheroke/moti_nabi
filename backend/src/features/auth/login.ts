@@ -68,7 +68,8 @@ export const useLogin = () => {
       authData: { email: userResponse?.email },
       iconUrl: userResponse?.profile?.iconUrl ?? "",
       name: userResponse?.profile?.name ?? "",
-      secoundfaEnabled: userResponse?.auth?.secoundfaEnabled ?? false
+      secoundfaEnabled: userResponse?.auth?.secoundfaEnabled ?? false,
+      tutorialProgress: userResponse?.tutorialProgress
     }
   }
   return { login }
