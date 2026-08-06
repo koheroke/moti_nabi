@@ -87,11 +87,20 @@ workRouter.post('/getTemplate', async (c) => {
 
 workRouter.post('/getUserWorkPackages', async (c) => {
   const body = await c.req.json();
-
   const res = await createWork.getUserWorkPackages(body.userId)
   //console.log(res)
   return c.json(res);
 });
+
+
+workRouter.post('/getUserworkCount', async (c) => {
+  const body = await c.req.json();
+  const res = await createWork.getUserworkCount(body.userId)
+  //console.log(res)
+  return c.json(res);
+});
+
+
 
 
 

@@ -11,18 +11,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { DotLottieVue, type DotLottie } from "@lottiefiles/dotlottie-vue";
-import { useWorkPackageStore } from "../store/workPackageStore";
-import { useWork } from "../composables/work";
-import { useUserAuthStore } from "@/store/user/userAuthStore";
-const userAuthStore = useUserAuthStore();
-const work = useWork();
 const playerRef = ref<any>(null);
-const workPackageStore = useWorkPackageStore();
-let set = 0;
 const props = defineProps<{
-  liked: boolean;
+  liked: boolean | undefined;
   workId: string;
 }>();
 
@@ -31,6 +24,7 @@ onMounted(() => {
   dotLottie = playerRef.value?.getDotLottieInstance?.();
   if (!dotLottie) return;
   dotLottie.addEventListener("load", () => {
+    if (props.liked == undefined) return;
     if (props.liked) {
       stateLike();
     } else {
@@ -39,15 +33,31 @@ onMounted(() => {
   });
 });
 
+watch(
+  () => props.liked,
+  (newValue, oldValue) => {
+    if (oldValue != undefined) return;
+    if (props.liked) {
+      stateLike();
+    } else {
+      stateDilike();
+    }
+  },
+);
+
+const emit = defineEmits<{
+  (e: "like", workId: string): void;
+  (e: "disLike", workId: string): void;
+}>();
+
 const onLike = () => {
   if (props.liked) {
+    emit("disLike", props.workId);
     playDislike();
   } else {
+    emit("like", props.workId);
     playLike();
   }
-  const userId = userAuthStore.userIdGetter;
-  work.setLike(props.workId, userId);
-  workPackageStore.setLike(props.workId);
 };
 const playLike = () => {
   if (!dotLottie) return;

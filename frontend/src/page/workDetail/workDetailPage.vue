@@ -15,6 +15,7 @@
   </div>
 </template>
 <script setup lang="ts">
+import { onBeforeRouteLeave } from "vue-router";
 import About from "@/features/workDetail/components/About.vue";
 import viewTopBar from "@/features/workDetail/components/ViewTopBar.vue";
 import { onMounted, onUnmounted } from "vue";
@@ -22,6 +23,7 @@ import { usePreviewWork } from "@/features/workDetail/composables/useworkDetail"
 import Preview from "@/features/create/components/Preview.vue";
 const previewWork = usePreviewWork();
 import { useworkDetailStore } from "@/features/workDetail/store/useworkDetail";
+
 const workDetailStore = useworkDetailStore();
 import { useCreateStore } from "@/features/create/store/createStore";
 const createStore = useCreateStore();
@@ -35,6 +37,9 @@ onMounted(async () => {
 window.scrollTo({
   top: 0,
   behavior: "smooth",
+});
+onBeforeRouteLeave(() => {
+  workDetailStore.leave();
 });
 </script>
 <style lang="css" scoped>

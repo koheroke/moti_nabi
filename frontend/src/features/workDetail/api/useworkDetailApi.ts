@@ -19,7 +19,7 @@ export type parseWorkPreviewData = {
 }
 
 export type workAbout = {
-  userLike: boolean,
+  userLike: boolean | undefined,
   id: string,
   name: string;
   bio: string;
@@ -61,14 +61,9 @@ const useworkDetailApi = () => {
       })
     const response = await res.json()
     response.data = JSON.parse(response.data)
-    const { data, createdAt, likedUsers, ...about } = response
-    let userLike = false
-    console.log("likedUsers", likedUsers)
-    if (likedUsers) {
-      userLike = true
-    }
-    const res_about = { ...about, userLike: userLike }
-    return { data: data, about: res_about }
+    const { data, createdAt, ...about } = response
+    console.log("about", about)
+    return { data: data, about: about }
   }
 
 

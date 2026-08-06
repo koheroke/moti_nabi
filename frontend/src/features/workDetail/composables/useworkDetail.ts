@@ -24,7 +24,6 @@ const usePreviewWork = () => {
     let vueItemList = {} as Record<string, itemCard>
     let parseData = {} as UserLuggage_SaveDBData
     let about = {} as workAbout
-    data = await workDetailApi.get(theWorkId)
     try {
       data = await workDetailApi.get(theWorkId)
     } catch (e) {
@@ -45,6 +44,7 @@ const usePreviewWork = () => {
     }
     createStore.setWork(parseData, vuepreviewData, vueItemList)
     createStore.setRole("viewer")
+    console.log("about", about)
     workDetailStore.setAbout(about)
     return "none"
   }

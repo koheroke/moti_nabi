@@ -1,28 +1,35 @@
 <template></template>
+
 <script setup lang="ts">
 import { useSession } from "@/features/auth/composables/session";
 import { onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useUserAuthStore } from "@/store/user/userAuthStore";
 import { useUserStore } from "@/store/user/userIconStore";
 import { useTutorialStore } from "@/features/tutorial/store/tutorial";
+
 const tutorialStore = useTutorialStore();
 const userStore = useUserStore();
 const router = useRouter();
+const route = useRoute();
 const session = useSession();
-const userAuthstore = useUserAuthStore();
+const userAuthStore = useUserAuthStore();
+
 onMounted(async () => {
   const token = await session.getSessionToken();
-  if (token == null) {
-    router.push("/login");
+
+  if (!token) {
+    await router.replace("/login");
     return;
   }
 
   const userData = await session.verificationSessionToken(token);
-  if (userData == false) {
-    router.push("/login");
+
+  if (!userData) {
+    await router.replace("/login");
     return;
   }
+
   const {
     userId,
     iconUrl,
@@ -31,18 +38,24 @@ onMounted(async () => {
     tutorialProgress,
     name,
   } = userData;
-  console.log("tutorialProgress", tutorialProgress);
-  userAuthstore.login(userId, authData.email, token);
+
+  userAuthStore.login(userId, authData.email, token);
+
   userStore.setUserInfo({
-    userId: userId,
-    iconUrl: iconUrl,
-    name: name,
+    userId,
+    iconUrl,
+    name,
   });
 
   tutorialStore.tutorialProgressSetter(tutorialProgress);
-  if (secoundfaEnabled == true) {
-    userAuthstore.set2fa();
+
+  if (secoundfaEnabled) {
+    userAuthStore.set2fa();
   }
-  router.push("/home");
+
+  const redirect =
+    typeof route.query.redirect === "string" ? route.query.redirect : "/home";
+
+  router.push(redirect);
 });
 </script>

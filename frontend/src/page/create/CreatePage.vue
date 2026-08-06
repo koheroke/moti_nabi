@@ -32,6 +32,8 @@ import { useDialogStore } from "@/store/feedback/dialogStore";
 import { useTutorialStore } from "@/features/tutorial/store/tutorial";
 import { useWorkPackageStore } from "@/features/work/store/workPackageStore";
 import { useAlertStore } from "@/store/feedback/alertStore";
+import { useUserAuthStore } from "@/store/user/userAuthStore";
+const userAuthStore = useUserAuthStore();
 const alertStore = useAlertStore();
 const workPackageStore = useWorkPackageStore();
 const tutorialStore = useTutorialStore();
@@ -42,15 +44,20 @@ const router = useRouter();
 const createStore = useCreateStore();
 const { leaveGetter } = storeToRefs(createStore);
 const createWork = useCreateWork();
+import { useWork } from "@/features/work/composables/work";
+const work = useWork();
 
 createStore.setleave(false);
 
 let before = false;
 
 onMounted(async () => {
+  const workCount = await work.getUserworkCount(userAuthStore.userIdGetter);
+  console.log("workCount", workCount);
   if (
-    workPackageStore.userWorkPackageStoreGetter.length >=
-    createStore.maxWorkNumber
+    workCount >= createStore.maxWorkNumber &&
+    (workPackageStore.selectedPackageIdGetter ?? "").replaceAll(/\s+/g, "")
+      .length === 0
   ) {
     router.push("/home");
     alertStore.showAlert("すでにユーザーが作成できるリストの最大数です", true);

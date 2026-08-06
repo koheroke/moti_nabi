@@ -124,6 +124,7 @@ export const useCreateStore = defineStore("create", {
         }),
       );
     },
+    previewCaseGetter: (state) => state.previewCase,
     getPreviewCasesArray: (state): previewSvgCase[] => {
       return Object.entries(state.previewCase).map(([key, value]) => ({
         id: key,

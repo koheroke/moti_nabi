@@ -23,24 +23,23 @@ export type LoginInput = {
 export const useLogin = () => {
   const login = async (user: LoginInput, c: Context) => {
     //console.log(user)
-    const userResponse = await prisma.user.findFirst({
+    const userResponse = await prisma.user.findUnique({
       where: {
-        email: user.email
+        email: user.email,
       },
       include: {
-        tutorialProgress: true,
         auth: {
           select: {
             passwordHash: true,
             secoundfaEnabled: true,
-          }
+          },
         },
         profile: {
           select: {
             name: true,
             iconUrl: true,
-          }
-        }
+          },
+        },
       },
     });
 

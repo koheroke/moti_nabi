@@ -4,6 +4,7 @@ import { type server_alterationToken } from "./saveQueue"
 import { publichTokenType } from "./types/index"
 import { templateData } from "./template"
 import jsonCases from "./jsonData/case/case.json";
+import { some } from "hono/combine"
 const cases: Record<string, any> = jsonCases
 
 const workData = new Map()
@@ -13,7 +14,7 @@ const useWork = () => {
 
   const createNewWork = async (userId: string) => {
     if (!userId) return "error"
-
+    const defaultName = "新しいリスト"
     const newWork = JSON.stringify({
       "itemListDatas": {
         "addedItems": {},
@@ -26,10 +27,35 @@ const useWork = () => {
       }
     });
 
+    const userWorks = await prisma.work.findMany({
+      where: {
+        members: {
+          some: {
+            userId,
+            role: "owner",
+          }
+        }
+      },
+      select: {
+        name: true
+      }
+    })
+    let count: any = 0;
+    userWorks.forEach((work) => {
+      if (work.name.includes(defaultName)) {
+        count++
+      }
+    })
+    if (count == 0) {
+      count = ""
+    }
 
+    console.log("count", count)
+
+    console.log("defaultName", defaultName)
     const work = await prisma.work.create({
       data: {
-        name: "新しいリスト",
+        name: `${defaultName}${count}`,
         thumbnailJson: "{}",
         data: newWork,
         public: false,
@@ -116,8 +142,10 @@ const useWork = () => {
         },
       }
     });
-    console.log("work", work)
-    return work
+    if (!work) return;
+    const { likedUsers, ...workData } = work
+    const res = { ...workData, userLike: likedUsers.length == 0 ? false : true }
+    return res
   }
 
   const addMenber = async (token: { workId: string, role: string, userId: string }) => {
@@ -159,7 +187,7 @@ const useWork = () => {
   }
 
   const setLike = async (workId: string, userId: string) => {
-
+    console.log("setLike", "workId", workId, "userId", userId)
     const like = await prisma.workLike.findUnique({
       where: {
         userId_workId: {
@@ -168,7 +196,7 @@ const useWork = () => {
         },
       },
     });
-    //console.log("setLike")
+
 
     if (like) {
       await prisma.$transaction(async (tx) => {
@@ -441,8 +469,8 @@ const useWork = () => {
   };
 
   const getWorkPackages = async (userId: string, number: string | number) => {
-
     const packages = await prisma.work.findMany({
+
       ...(number !== "all" && { take: number as number }),
       where: {
         public: true,
@@ -456,27 +484,37 @@ const useWork = () => {
         tags: true,
         createdAt: true,
         lastAccessAt: true,
-        likedUsers: userId
-          ? {
-            where: {
-              userId,
-            },
-            select: {
-              userId: true,
-            },
-          }
-          : false,
+        likedUsers: {
+          where: {
+            userId,
+          },
+          select: {
+            userId: true,
+          },
+        },
       },
       orderBy: {
         likes: "desc",
       },
     });
-    const res = packages.map((work) => ({
-      ...work,
-      liked: userId ? work.likedUsers.length > 0 : false,
-      likedUsers: undefined,
-      thumbnailJson: JSON.parse(work.thumbnailJson),
-    }));
+    console.log(
+      "fresh packages",
+      packages.map((work) => ({
+        id: work.id,
+        likes: work.likes,
+        likedUsers: JSON.stringify(work.likedUsers),
+      })),
+    );
+
+
+    const res = packages.map((work) => (
+      {
+        ...work,
+        liked: userId ? work.likedUsers.length > 0 : false,
+        likedUsers: work.likedUsers.length == 0 ? false : true,
+        thumbnailJson: JSON.parse(work.thumbnailJson),
+      }));
+
     return res;
   };
 
@@ -549,11 +587,24 @@ const useWork = () => {
     }
   }
 
+  const getUserworkCount = async (userId: string) => {
+    const count = await prisma.work.count({
+      where: {
+        members: {
+          some: {
+            userId,
+            role: "owner",
+          },
+        },
+      },
+    });
+    return count
+  }
 
   return {
     createNewWork, getWork, editWork, getTemplateThumbnails, getTemplate, getStaticCases
     , getWorkPackages, getUserWorkPackages
-    , getWorkDetail, addMenber, deleteMenber, publicWork, deleteWork, setLike
+    , getWorkDetail, addMenber, deleteMenber, publicWork, deleteWork, setLike, getUserworkCount
   }
 }
 

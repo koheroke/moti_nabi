@@ -162,8 +162,8 @@ const onTagpush = (tags: string[]) => {
 const onTagSuggest = (tag: string) => {
   if (workDetailEdit.value.tags.includes(tag)) return;
   workDetailEdit.value.tags.push(tag);
+  workDetailEditStore.addEdit({ tags: workDetailEdit.value.tags });
 };
-const deleteConfirmation = ref(false);
 const workDetailEdit = ref<editAboutType>({
   name: "",
   bio: "",
@@ -230,6 +230,7 @@ watch(
   },
 );
 const onPublich = async () => {
+  console.log("onPublich", workDetailEdit.value.tags);
   if (
     workDetailEdit.value.tags.length > tagMax.value ||
     workDetailEdit.value.bio.length > bioMax.value ||
@@ -239,6 +240,7 @@ const onPublich = async () => {
   }
 
   const editData = workDetailEditStore.EditGetter;
+  console.log("editData", editData);
   if (Object.keys(editData).length == 0) {
     return;
   }

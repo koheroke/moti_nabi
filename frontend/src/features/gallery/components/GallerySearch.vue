@@ -21,7 +21,7 @@
       ></suggest>
     </div>
     <section class="tags">
-      <GalleryTags :tags="popularityTag" @addtag="onUpdateSearch"></GalleryTags>
+      <GalleryTags :tags="popularityTag" @addtag="onsuggest"></GalleryTags>
     </section>
   </div>
 </template>
@@ -32,15 +32,16 @@ import GalleryTags from "./GalleryTags.vue";
 import suggest from "@/features/suggest/components/suggest.vue";
 import { useWorkPackageStore } from "@/features/work/store/workPackageStore";
 import { Search } from "lucide-vue-next";
-
+import { storeToRefs } from "pinia";
 import { useGalleryWorksStore } from "../composables/useGalleryWorksStore.ts";
+const workPackageStore = useWorkPackageStore();
 const galleryWorkstore = useGalleryWorksStore();
-
+const { workPackageStoreGetter } = storeToRefs(workPackageStore);
 const suggestClose = ref(true);
 const closeSuggest = () => {
   suggestClose.value = true;
 };
-const workPackageStore = useWorkPackageStore();
+
 const allNames = ref<string[]>([]);
 const candidate = ref<{ name: string; value: any; id: string }[]>([]);
 const modelValue = ref("");
@@ -70,7 +71,8 @@ const nowInput = computed(() => {
 });
 const allTags = ref<string[]>([]);
 
-onMounted(async () => {
+watch(workPackageStoreGetter, async () => {
+  console.log("workPackageStore", workPackageStore.workPackageStoreGetter);
   const tagMap = {} as Record<string, number>;
   const baseTag = await fetch("/json/work/baseTags.json");
   allTags.value = await baseTag.json();
@@ -97,9 +99,6 @@ onMounted(async () => {
   });
 });
 
-const onUpdateSearch = (newSearch: string) => {
-  modelValue.value += newSearch;
-};
 watch(modelValue, (newValue) => {
   galleryWorkstore.GalleryWorksSearch(newValue);
 });

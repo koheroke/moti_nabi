@@ -19,6 +19,7 @@ authRouter.post('/signup', async (c) => {
 });
 
 authRouter.post('/login', async (c) => {
+  console.log("login")
   const body = await c.req.json();
   const user = await this_login.login(body, c)
   return c.json(user)

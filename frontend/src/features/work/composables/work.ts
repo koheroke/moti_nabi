@@ -15,6 +15,21 @@ const workPackageStore = useWorkPackageStore()
 const url = `${apiUrl}/work`;
 const useWork = () => {
 
+  const getUserworkCount = async (userId: string): Promise<number> => {
+    const count = await fetch(
+      `${url}/getUserworkCount`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: userId,
+        })
+      })
+    return count.json()
+  }
+
   const getUserworkPackages = async (userId: string): Promise<BeforeParsingWorkPackage[]> => {
     await applyCreateAction.getStaticCases()
     const data = await fetch(
@@ -112,7 +127,7 @@ const useWork = () => {
       })
   }
 
-  return { getworkPackages, getUserworkPackages, deleteWork, setLike }
+  return { getworkPackages, getUserworkCount, getUserworkPackages, deleteWork, setLike }
 }
 export { useWork }
 

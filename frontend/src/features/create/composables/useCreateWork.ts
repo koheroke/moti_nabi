@@ -82,6 +82,7 @@ export const useCreateWork = () => {
     } catch (e) {
       return "damagedData"
     }
+    workDetailEditStore.setAbout({ ...workDetailEditStore.AboutGetter, name: newWork.workName })
     createStore.setRole("owner")
     createStore.setWork(newWork, vuepreviewData, vueItemList)
     workPackageStore.selectedPackageIdStore(newWork.workId)

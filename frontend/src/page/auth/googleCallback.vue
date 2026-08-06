@@ -19,7 +19,14 @@ onMounted(async () => {
     return;
   }
   if (res == "nonerror") {
-    router.push("/session");
+    router.beforeEach((to) => {
+      router.push({
+        path: "/session",
+        query: {
+          redirect: "/home",
+        },
+      });
+    });
     return;
   }
   fall();

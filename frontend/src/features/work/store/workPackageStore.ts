@@ -4,7 +4,7 @@ export const useWorkPackageStore = defineStore("package", {
   state: () => ({
     WorkPackageStore: [] as workPackage[],
     userWorkPackageStore: [] as workPackage[],
-    selectedPackageId: {} as string
+    selectedPackageId: "" as string
   }),
   getters: {
     workPackageStoreGetter: (state) => state.WorkPackageStore,
@@ -13,6 +13,10 @@ export const useWorkPackageStore = defineStore("package", {
     selectedPackageIdGetter: (state) => state.selectedPackageId
   },
   actions: {
+    leave() {
+      this.WorkPackageStore = []
+      this.userWorkPackageStore = []
+    },
     deleteWork(id: string) {
       this.WorkPackageStore = this.WorkPackageStore.filter((work) =>
         work.id != id
@@ -34,8 +38,15 @@ export const useWorkPackageStore = defineStore("package", {
       this.selectedPackageId = id
     },
     setLike(id: string) {
+
       const work = this.WorkPackageStore.find((work) => work.id == id)
+      console.log("work", work)
       if (!work) return
+      if (work?.liked) {
+        work.likes--
+      } else {
+        work.likes++
+      }
       work.liked = !work.liked
     },
 

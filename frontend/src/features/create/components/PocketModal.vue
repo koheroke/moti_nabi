@@ -1,9 +1,16 @@
 <template>
   <div
-    :class="['overlay', { close: isClose }, { open: !isClose }]"
+    :class="[
+      'overlay',
+      'pocketModel',
+      { popdown: isClose },
+      { popup: !isClose },
+    ]"
     @drop.stop="emit('onDropPocket', $event)"
     @dragover.prevent=""
     v-show="show"
+    @animationend="onAnimationEnd"
+    ref="pocketModel"
   >
     <div class="modal">
       <header class="header">
@@ -44,15 +51,21 @@
 
 <script setup lang="ts">
 import { X } from "lucide-vue-next";
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, nextTick } from "vue";
 import PreviewItem from "./PreviewItem.vue";
 import type { previewItem } from "../type/casetype.ts";
+import { useCreateStore } from "../store/createStore.ts";
+
+import { usePocketStore } from "../store/pocketStore.ts";
+const pocketStore = usePocketStore();
+const createStore = useCreateStore();
 export interface selectedPocketType {
   id: string;
   name: string;
   items: Record<string, previewItem>;
   caseId: string;
 }
+const pocketModel = ref<HTMLElement | null>(null);
 const show = ref(false);
 
 const props = defineProps<{
@@ -60,11 +73,31 @@ const props = defineProps<{
   close: boolean;
 }>();
 
+const move = async () => {
+  if (!pocketModel.value) return;
+  await nextTick();
+  const this_previewCase =
+    createStore.previewCaseGetter[props.selectedPocket.caseId];
+  const padding = 5;
+  const pocketPos = this_previewCase.pockets[props.selectedPocket.id].pos;
+  const pocketSize = this_previewCase.pockets[props.selectedPocket.id].size;
+  pocketModel.value.style.top = `${pocketPos.y}px`;
+  pocketModel.value.style.left = `${pocketPos.x + pocketSize.width + padding}px`;
+};
+watch(
+  () => props.selectedPocket.id,
+  () => {
+    move();
+  },
+);
 watch(
   () => props.close,
   (newClose) => {
     isClose.value = newClose;
     show.value = !newClose;
+    if (show.value) {
+      move();
+    }
   },
 );
 
@@ -80,10 +113,13 @@ const emit = defineEmits<{
 }>();
 const onClose = () => {
   isClose.value = true;
-  addEventListener("animationend", (event: AnimationEvent) => {
-    //console.log("event.animationName", event.animationName);
-    if (event.animationName == "modalClose-f42593c0") emit("onClose");
-  });
+};
+
+const onAnimationEnd = (event: AnimationEvent) => {
+  if (event.animationName.includes("popdown")) {
+    show.value = false;
+    pocketStore.setSelectedPocketId({ id: "", caseId: "" });
+  }
 };
 </script>
 <style lang="css" scoped>
@@ -102,6 +138,14 @@ const onClose = () => {
 .modal {
   position: relative;
   height: 100%;
+}
+.pocketModel {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  min-height: 200px;
+  max-height: 400px;
+  max-width: 300px;
 }
 .overlay {
   border: 3px dotted rgba(29, 29, 29, 0.376);

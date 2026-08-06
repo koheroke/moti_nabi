@@ -15,7 +15,15 @@ export const useRouterBlock = (router: Router, pinia: Pinia) => {
         userAuthStore.isTempAuthenticatedGetter == false
       ) {
         //console.log("login")
-        router.push("/login")
+        const blockPaths = ["create", "home", "gallery", "detail", "user"];
+        if (blockPaths.includes(path)) {
+          return {
+            path: "/session",
+            query: {
+              redirect: to.fullPath,
+            },
+          };
+        }
       }
     }
     if (to.name == "create" || to.name == "user") {
@@ -39,3 +47,5 @@ export const useRouterBlock = (router: Router, pinia: Pinia) => {
     return true
   })
 }
+
+

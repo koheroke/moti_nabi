@@ -3,7 +3,7 @@
     <section class="pocketModal">
       <PocketModal
         :selectedPocket="selectedPocket"
-        :close="close"
+        :close="pocketClose"
         @onClose="onClose"
       ></PocketModal>
     </section>
@@ -21,6 +21,8 @@
           draggable="true"
           @dragend="onDragEnd"
           class="templateCase"
+          :pocketClose="pocketClose"
+          :selectedPocket="selectedPocket"
         />
       </div>
     </div>
@@ -33,10 +35,11 @@ import Case from "../../../svgUi/case.vue";
 import BaseButton from "@/components/ui/form/BaseButton/BaseButton.vue";
 import PocketModal from "../../../PocketModal.vue";
 import { type previewSvgCase } from "@/features/create/store/createStore.ts";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { type selectedPocketType } from "../../../PocketModal.vue";
 import { useTemplateBarStore } from "@/features/create/store/templateBar.ts";
 import { storeToRefs } from "pinia";
+const pocketClose = ref(true);
 
 const templateBarStore = useTemplateBarStore();
 const { getSelectedPocketId } = storeToRefs(templateBarStore);
@@ -52,7 +55,7 @@ const openPocket = (pocketId: string, caseId: string) => {
     name: this_pocket.name,
     id: this_pocket.id,
   };
-  close.value = false;
+  pocketClose.value = false;
 };
 const role = ref("viewer");
 const props = defineProps<{
@@ -65,7 +68,7 @@ const onClose = () => {
     items: {},
     caseId: "",
   };
-  close.value = true;
+  pocketClose.value = true;
 };
 const selectedPocket = ref<selectedPocketType>({
   id: "",
@@ -73,7 +76,6 @@ const selectedPocket = ref<selectedPocketType>({
   items: {},
   caseId: "",
 });
-const close = ref(true);
 
 const onDragStart = (id: string) => {
   templateBarStore.draggedCaseDataSetter(id);

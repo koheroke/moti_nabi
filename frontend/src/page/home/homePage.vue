@@ -66,7 +66,7 @@ import BaseButton from "@/components/ui/form/BaseButton/BaseButton.vue";
 import { useRouter } from "vue-router";
 import UserIcon from "@/features/profile/components/UserIcon.vue";
 import { useWorkPackageStore } from "@/features/work/store/workPackageStore";
-import { ref, watch, onMounted } from "vue";
+import { ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useUserAuthStore } from "@/store/user/userAuthStore";
 import { useUserStore, type UserInfo } from "@/store/user/userIconStore";

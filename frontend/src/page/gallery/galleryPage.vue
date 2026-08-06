@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import type { ParseSearchQuery } from "@/features/gallery/type";
 import GalleryToolbar from "@/features/gallery/components/GalleryToolbar.vue";
 import GalleryWorksSection from "@/features/gallery/components/GalleryWorksSection.vue";
 import { type SortType } from "@/features/gallery/type";
+import { useWork } from "@/features/work/composables/work.ts";
+const getWorkPackages = useWork();
 
 const searchQuery = ref<ParseSearchQuery>({
   tag: [],
@@ -21,6 +23,9 @@ const onUpdateSort = (value: SortType) => {
 window.scrollTo({
   top: 0,
   behavior: "smooth",
+});
+onMounted(() => {
+  getWorkPackages.getworkPackages();
 });
 </script>
 

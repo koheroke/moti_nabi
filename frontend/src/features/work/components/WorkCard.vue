@@ -12,13 +12,27 @@
     <div class="body">
       <h3 class="title">{{ work.name }}</h3>
       <div class="meta">
-        <span>{{ work.public ? "公開中" : "非公開" }}</span>
-        <likeBotton
-          v-if="publicWork"
-          :liked="work.liked"
-          :workId="work.id"
-        ></likeBotton>
-
+        <span v-if="!publicWork">{{ work.public ? "公開中" : "非公開" }}</span>
+        <span v-if="publicWork" class="tags">
+          <div v-for="tag in work.tags" class="tag">
+            {{ tag }}
+          </div>
+        </span>
+        <div class="likes" v-if="publicWork">
+          <p>{{ work.likes }}</p>
+          <likeBotton
+            :liked="work.liked"
+            :workId="work.id"
+            @disLike="
+              workPackageStore.setLike($event);
+              usework.setLike($event, userId);
+            "
+            @like="
+              workPackageStore.setLike($event);
+              usework.setLike($event, userId);
+            "
+          ></likeBotton>
+        </div>
         <deleteBotton :workId="work.id" v-if="!publicWork"></deleteBotton>
       </div>
     </div>
@@ -31,6 +45,14 @@ import { useWorkPackageStore } from "../store/workPackageStore";
 import Thumbnail from "@/features/create/components/Thumbnail.vue";
 import deleteBotton from "./deleteBotton.vue";
 import likeBotton from "./likeBotton.vue";
+
+import { useWork } from "../composables/work";
+import { useUserAuthStore } from "@/store/user/userAuthStore";
+const userAuthStore = useUserAuthStore();
+const usework = useWork();
+
+const userId = userAuthStore.userIdGetter;
+
 const workPackageStore = useWorkPackageStore();
 
 const emit = defineEmits<{
@@ -95,5 +117,25 @@ const setSelectPackage = () => {
   font-size: 12px;
   color: #666;
   height: 30px;
+}
+.tags {
+  display: flex;
+  gap: 3px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  display: flex;
+  height: 30px;
+}
+.tag {
+  border-radius: 5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 0px 5px;
+  text-wrap: nowrap;
+}
+.likes {
+  display: flex;
+  height: 30px;
+  align-items: center;
+  gap: 3px;
 }
 </style>

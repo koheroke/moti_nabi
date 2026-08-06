@@ -6,11 +6,9 @@
   </div>
 </template>
 <script setup lang="ts">
-const testTag = ["旅行", "キャンプ", "料理", "ゲーム", "映画"];
-const tags = testTag;
 const emit = defineEmits(["addtag"]);
 const onTag = (tag: string) => {
-  emit("addtag", " #" + tag);
+  emit("addtag", tag);
 };
 const props = defineProps<{ tags: string[] }>();
 </script>

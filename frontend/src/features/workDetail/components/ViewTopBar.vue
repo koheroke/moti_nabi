@@ -12,6 +12,16 @@
           :liked="AboutGetter.userLike"
           :workId="AboutGetter.id"
           class="likeBotton"
+          @disLike="
+            workDetailStore.setLike();
+            workPackageStore.setLike($event);
+            usework.setLike($event, userId);
+          "
+          @like="
+            workDetailStore.setLike();
+            workPackageStore.setLike($event);
+            usework.setLike($event, userId);
+          "
         ></likeBotton>
         <p class="likes">{{ AboutGetter.likes }}</p>
       </div>
@@ -23,6 +33,14 @@ import { Tag } from "lucide-vue-next";
 import likeBotton from "@/features/work/components/likeBotton.vue";
 import { storeToRefs } from "pinia";
 import { useworkDetailStore } from "@/features/workDetail/store/useworkDetail";
+
+import { useWork } from "@/features/work/composables/work";
+import { useUserAuthStore } from "@/store/user/userAuthStore";
+import { useWorkPackageStore } from "@/features/work/store/workPackageStore";
+const workPackageStore = useWorkPackageStore();
+const userAuthStore = useUserAuthStore();
+const userId = userAuthStore.userIdGetter;
+const usework = useWork();
 const workDetailStore = useworkDetailStore();
 const { AboutGetter } = storeToRefs(workDetailStore);
 </script>

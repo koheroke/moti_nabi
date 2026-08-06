@@ -6,35 +6,31 @@
 
       <div class="cases_previewArea">
         <div v-for="(caseItem, index) in cases">
-          <Case
-            :caseData="caseItem"
-            :index="index"
-            :role="role"
-            :scale="1"
-            :selectedPocketId="getSelectedPocketId"
-            @onMouseMove="onMouseMove"
-            @pocketClick="pocketClick"
-            @addPreviewItem="addPreviewItem"
-            @openPocket="openPocket"
-            @setSelectedCase="setSelectedCase"
-            @editName="editName"
-          />
+          <div style="position: relative">
+            <Case
+              :caseData="caseItem"
+              :index="index"
+              :role="role"
+              :scale="1"
+              :selectedPocketId="getSelectedPocketId"
+              @onMouseMove="onMouseMove"
+              @pocketClick="pocketClick"
+              @addPreviewItem="addPreviewItem"
+              @openPocket="openPocket"
+              @setSelectedCase="setSelectedCase"
+              @editName="editName"
+            />
+            <PocketModal
+              class="pocket-modal"
+              :selectedPocket="selectedPocket"
+              :close="getSelectedPocketId.caseId != caseItem.id ? true : false"
+              @onDropPocket="onDropPocket"
+              style="z-index: 100"
+            />
+          </div>
         </div>
       </div>
     </div>
-    <section class="pocketModal">
-      <PocketModal
-        @onDropPocket="onDropPocket"
-        :selectedPocket="selectedPocket"
-        :close="close"
-        @onClose="
-          {
-            close = true;
-          }
-        "
-      />
-    </section>
-
     <pocketMenu v-if="role == 'owner' || role == 'editor'"></pocketMenu>
     <caseMenu v-if="role == 'owner' || role == 'editor'"></caseMenu>
   </div>
