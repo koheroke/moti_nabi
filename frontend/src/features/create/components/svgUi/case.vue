@@ -220,7 +220,7 @@ const emit = defineEmits<{
 }
 
 .pocket {
-  fill: #ffffff;
+  fill: #ffffff63;
   stroke: #94a3b8;
   stroke-dasharray: 6;
 }

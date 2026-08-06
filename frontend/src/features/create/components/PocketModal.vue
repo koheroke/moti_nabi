@@ -54,16 +54,14 @@ import { X } from "lucide-vue-next";
 import { ref, onMounted, watch, nextTick } from "vue";
 import PreviewItem from "./PreviewItem.vue";
 import type { previewItem } from "../type/casetype.ts";
-import { useCreateStore } from "../store/createStore.ts";
-
-import { usePocketStore } from "../store/pocketStore.ts";
-const pocketStore = usePocketStore();
-const createStore = useCreateStore();
 export interface selectedPocketType {
   id: string;
   name: string;
   items: Record<string, previewItem>;
   caseId: string;
+  pos: { x: number; y: number };
+  size: { width: number; height: number };
+  scale?: number;
 }
 const pocketModel = ref<HTMLElement | null>(null);
 const show = ref(false);
@@ -76,11 +74,16 @@ const props = defineProps<{
 const move = async () => {
   if (!pocketModel.value) return;
   await nextTick();
-  const this_previewCase =
-    createStore.previewCaseGetter[props.selectedPocket.caseId];
+  const scale = props.selectedPocket.scale ? props.selectedPocket.scale : 1;
   const padding = 5;
-  const pocketPos = this_previewCase.pockets[props.selectedPocket.id].pos;
-  const pocketSize = this_previewCase.pockets[props.selectedPocket.id].size;
+  const pocketPos = {
+    x: props.selectedPocket.pos.x * scale,
+    y: props.selectedPocket.pos.x * scale,
+  };
+  const pocketSize = {
+    width: props.selectedPocket.size.width * scale,
+    height: props.selectedPocket.size.height * scale,
+  };
   pocketModel.value.style.top = `${pocketPos.y}px`;
   pocketModel.value.style.left = `${pocketPos.x + pocketSize.width + padding}px`;
 };
@@ -118,7 +121,7 @@ const onClose = () => {
 const onAnimationEnd = (event: AnimationEvent) => {
   if (event.animationName.includes("popdown")) {
     show.value = false;
-    pocketStore.setSelectedPocketId({ id: "", caseId: "" });
+    emit("onClose");
   }
 };
 </script>

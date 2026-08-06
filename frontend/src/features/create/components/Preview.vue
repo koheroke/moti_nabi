@@ -25,6 +25,7 @@
               :selectedPocket="selectedPocket"
               :close="getSelectedPocketId.caseId != caseItem.id ? true : false"
               @onDropPocket="onDropPocket"
+              @onClose="onClose"
               style="z-index: 100"
             />
           </div>
@@ -51,13 +52,19 @@ import { useCaseStore } from "../store/caseStore.ts";
 import { useCreateWork } from "../composables/useCreateWork.ts";
 import { usePocketStore } from "../store/pocketStore.ts";
 import { type selectedPocketType } from "./PocketModal.vue";
-const close = ref(true);
+
 const selectedPocket = ref<selectedPocketType>({
   id: "",
   name: "",
   items: {},
   caseId: "",
+  pos: { x: 0, y: 0 },
+  size: { width: 0, height: 0 },
 });
+
+const onClose = () => {
+  pocketStore.setSelectedPocketId({ id: "", caseId: "" });
+};
 
 const caseStore = useCaseStore();
 const createWork = useCreateWork();
@@ -140,12 +147,13 @@ const onDropPocket = (event: DragEvent) => {
 watch(getSelectedPocketId, (ids) => {
   if (ids.id.length != 0 && ids.caseId.length != 0) {
     const pocket = createStore.previewItemGetter[ids.caseId].pockets[ids.id];
-    close.value = false;
     selectedPocket.value = {
       id: pocket.id,
       name: pocket.name,
       items: pocket.items,
       caseId: ids.caseId,
+      pos: pocket.pos,
+      size: pocket.size,
     };
   }
 });

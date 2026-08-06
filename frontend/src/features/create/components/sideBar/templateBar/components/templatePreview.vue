@@ -9,21 +9,38 @@
     </section>
     <div class="caseItemList noneScrollBar">
       <div v-for="(caseData, index) in cases">
-        <Case
-          :caseData="caseData"
-          :index="index"
-          :role="role"
-          :scale="0.8"
-          :selectedPocketId="getSelectedPocketId"
-          @openPocket="openPocket"
-          @setSelectedCase="setSelectedCase"
-          @dragstart="onDragStart(caseData.id)"
-          draggable="true"
-          @dragend="onDragEnd"
-          class="templateCase"
-          :pocketClose="pocketClose"
-          :selectedPocket="selectedPocket"
-        />
+        <div class="caseArea">
+          <Case
+            :caseData="caseData"
+            :index="index"
+            :role="role"
+            :scale="scale"
+            :selectedPocketId="getSelectedPocketId"
+            @openPocket="openPocket"
+            @setSelectedCase="setSelectedCase"
+            @dragstart="onDragStart(caseData.id)"
+            draggable="true"
+            @dragend="onDragEnd"
+            class="templateCase"
+            :pocketClose="pocketClose"
+            :selectedPocket="selectedPocket"
+          />
+          <div class="itemList">
+            <div
+              v-if="getSelectedPocketId.caseId === caseData.id"
+              v-for="item in selectedPocket.items"
+              :key="item.id"
+              class="item-card"
+            >
+              <PreviewItem
+                :caseId="selectedPocket.caseId"
+                :item="item"
+                :pocketId="selectedPocket.id"
+                :previewItemsDom="null"
+              />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <BaseButton class="adaptationBotton floating">全て適応</BaseButton>
@@ -39,7 +56,9 @@ import { ref, watch } from "vue";
 import { type selectedPocketType } from "../../../PocketModal.vue";
 import { useTemplateBarStore } from "@/features/create/store/templateBar.ts";
 import { storeToRefs } from "pinia";
+import PreviewItem from "../../../PreviewItem.vue";
 const pocketClose = ref(true);
+const scale = ref(0.8);
 
 const templateBarStore = useTemplateBarStore();
 const { getSelectedPocketId } = storeToRefs(templateBarStore);
@@ -54,6 +73,8 @@ const openPocket = (pocketId: string, caseId: string) => {
     caseId: caseId,
     name: this_pocket.name,
     id: this_pocket.id,
+    pos: this_pocket.pos,
+    size: this_pocket.size,
   };
   pocketClose.value = false;
 };
@@ -67,14 +88,19 @@ const onClose = () => {
     name: "",
     items: {},
     caseId: "",
+    pos: { x: 0, y: 0 },
+    size: { width: 0, height: 0 },
   };
-  pocketClose.value = true;
+  templateBarStore.setSelectedPocketId({ id: "", caseId: "" });
+  console.log("getSelectedPocketId", getSelectedPocketId);
 };
 const selectedPocket = ref<selectedPocketType>({
   id: "",
   name: "",
   items: {},
   caseId: "",
+  pos: { x: 0, y: 0 },
+  size: { width: 0, height: 0 },
 });
 
 const onDragStart = (id: string) => {
@@ -102,8 +128,22 @@ const onDragEnd = () => {
   padding: 20px;
   display: flex;
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: auto;
   flex-direction: column;
+}
+.caseArea {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.itemList {
+  background-color: white;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 .templateCase {
   width: auto;

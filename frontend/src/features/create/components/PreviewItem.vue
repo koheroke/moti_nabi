@@ -64,23 +64,13 @@ import type {
 } from "@/features/create/type/tokens.ts";
 import { useCreateStore } from "../store/createStore";
 import { storeToRefs } from "pinia";
-import { usePocketStore } from "../store/pocketStore.ts";
 
-const pocketStore = usePocketStore();
 const createStore = useCreateStore();
 const createWork = useCreateWork();
 const itemDom = ref<HTMLElement | null>(null);
 const iconMap = createStore.iconMap;
 const block = ref(createStore.roleGetter == "owner" || "editor" ? false : true);
 
-function onDragStart(event: DragEvent) {
-  const token = {
-    id: props.item.id,
-    popCaseId: props.caseId,
-    popPocketId: props.pocketId,
-  };
-  event.dataTransfer?.setData("id", JSON.stringify(token));
-}
 const onDrop = (event: DragEvent) => {
   const draggedId = event.dataTransfer?.getData("itemId");
   if (!draggedId) return;
