@@ -16,8 +16,8 @@ const workDetailApi = useworkDetailApi()
 
 
 const usePreviewWork = () => {
-  const get = async () => {
-    const theWorkId: string = workPackageStore.selectedPackageIdGetter
+  const get = async (workId: string) => {
+    const theWorkId: string = workId ? workId : workPackageStore.selectedPackageIdGetter
     if (!theWorkId) return "noneNameorWorkId"
     let data = null as parseWorkPreviewData | null
     let vuepreviewData = {} as Record<string, Case>

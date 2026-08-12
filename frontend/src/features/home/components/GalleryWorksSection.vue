@@ -31,7 +31,7 @@ onMounted(() => {
   work.getworkPackages(5);
 });
 
-const onWorkCard = (cardId: string) => {
-  router?.push({ path: "/detail", query: { cardId: cardId } });
+const onWorkCard = (workId: string) => {
+  router?.push({ path: "/detail", query: { workId: workId } });
 };
 </script>

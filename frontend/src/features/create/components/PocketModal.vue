@@ -74,16 +74,20 @@ const props = defineProps<{
 const move = async () => {
   if (!pocketModel.value) return;
   await nextTick();
+
   const scale = props.selectedPocket.scale ? props.selectedPocket.scale : 1;
   const padding = 5;
   const pocketPos = {
     x: props.selectedPocket.pos.x * scale,
-    y: props.selectedPocket.pos.x * scale,
+    y: props.selectedPocket.pos.y * scale,
   };
   const pocketSize = {
     width: props.selectedPocket.size.width * scale,
     height: props.selectedPocket.size.height * scale,
   };
+  console.log("pocket", props.selectedPocket);
+  console.log("selectedPocketPos", props.selectedPocket.pos);
+  console.log("pocketPos", pocketPos);
   pocketModel.value.style.top = `${pocketPos.y}px`;
   pocketModel.value.style.left = `${pocketPos.x + pocketSize.width + padding}px`;
 };

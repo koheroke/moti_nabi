@@ -33,19 +33,43 @@ const props = defineProps<{
 let isRemoveing = false;
 let lastX = 0;
 let lastY = 0;
+let saveIndex = 0;
 
 const startReMove = (event: PointerEvent) => {
+  if (event.button == 2) return;
   stop = false;
-  //console.log("startReMove");
   isRemoveing = true;
   lastX = event.clientX;
   lastY = event.clientY;
   const target = event.currentTarget as SVGCircleElement;
+
   target.setPointerCapture(event.pointerId);
   createWork.startRemovePocket({
     x: props.pocket.pos.x,
     y: props.pocket.pos.y,
   });
+  console.log(
+    "indexs",
+    Object.values(createStore.previewCase[props.caseId].pockets).map(
+      (pocket) => {
+        return pocket.priority;
+      },
+    ),
+  );
+
+  const maxPriority = Math.max(
+    ...Object.values(createStore.previewCase[props.caseId].pockets)
+      .filter((pockets) => pockets.id != props.pocketId)
+      .map((pocket) => pocket.priority),
+  );
+  saveIndex =
+    createStore.previewCase[props.caseId].pockets[props.pocketId].priority;
+
+  createWork.provisionaChangePriorityPocket(
+    props.caseId,
+    props.pocketId,
+    maxPriority + 1,
+  );
 };
 
 const stopResize = () => {
@@ -55,7 +79,13 @@ const stopResize = () => {
     isRemoveing = false;
     stop = true;
     if (res == "blockEdit") return;
-    createWork.confirmedChangePriorityPocket(props.caseId, props.pocketId);
+
+    createWork.confirmedChangePriorityPocket(
+      props.caseId,
+      props.pocketId,
+      createStore.previewCase[props.caseId].pockets[props.pocketId].priority,
+      saveIndex,
+    );
   }
 };
 
@@ -98,7 +128,6 @@ const handlePointerMove = (event: PointerEvent) => {
     y: props.pocket.pos.y + diffY,
   };
 
-  createWork.provisionaChangePriorityPocket(props.caseId, props.pocketId);
   createWork.provisionalRemovePocket(
     {
       x: setPos.x,

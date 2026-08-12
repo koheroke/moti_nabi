@@ -567,17 +567,14 @@ export const useCreateWork = () => {
     applyCreateAction.alterationData(token)
   }
 
-  const confirmedChangePriorityPocket = (caseId: string, pocketId: string) => {
-    const pockets = createStore.previewItemGetter[caseId].pockets
-    if (!pockets) return
-    const this_priority = pockets[pocketId].priority
+  const confirmedChangePriorityPocket = (caseId: string, pocketId: string, index: number, beforIndex: number) => {
     const confirmedToken: changePriorityPocket = {
-      priority: this_priority,
+      priority: index,
       caseId: caseId,
       pocketId: pocketId,
     }
     const reverseConfirmedToken: changePriorityPocket = {
-      priority: this_priority - 1,
+      priority: beforIndex,
       caseId,
       pocketId,
     }
@@ -602,14 +599,14 @@ export const useCreateWork = () => {
   }
 
 
-  const provisionaChangePriorityPocket = (caseId: string, pocketId: string) => {
-    const indexChangeCounter = createStore.indexChangeCounterGetter;
+  const provisionaChangePriorityPocket = (caseId: string, pocketId: string, index: number) => {
 
     const confirmedToken: changePriorityPocket = {
-      priority: indexChangeCounter + 1,
+      priority: index,
       caseId: caseId,
       pocketId: pocketId,
     }
+    console.log("confirmedToken", confirmedToken)
     createStore.changePriorityPocket(confirmedToken)
   }
 

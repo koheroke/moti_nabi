@@ -23,7 +23,8 @@ import { usePreviewWork } from "@/features/workDetail/composables/useworkDetail"
 import Preview from "@/features/create/components/Preview.vue";
 const previewWork = usePreviewWork();
 import { useworkDetailStore } from "@/features/workDetail/store/useworkDetail";
-
+import { useRoute } from "vuetify/lib/composables/router.mjs";
+const route = useRoute();
 const workDetailStore = useworkDetailStore();
 import { useCreateStore } from "@/features/create/store/createStore";
 const createStore = useCreateStore();
@@ -32,7 +33,10 @@ onUnmounted(() => {
 });
 
 onMounted(async () => {
-  await previewWork.get();
+  const workId = route.value?.query.workId;
+  if (!workId || typeof workId != "string") return;
+  console.log("workId", workId);
+  await previewWork.get(workId);
 });
 window.scrollTo({
   top: 0,

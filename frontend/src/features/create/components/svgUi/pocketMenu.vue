@@ -14,6 +14,7 @@ import { storeToRefs } from "pinia";
 import { usePocketStore } from "@/features/create/store/pocketStore";
 import { useCreateWork } from "@/features/create/composables/useCreateWork";
 import { useCreateStore } from "../../store/createStore";
+import type { Pocket } from "../../type/casetype";
 const createWork = useCreateWork();
 const close = ref(true);
 const createStore = useCreateStore();
@@ -30,6 +31,8 @@ const pocketMenu = ref([
   { id: "delete", name: "削除" },
   { id: "save", name: "保存" },
   { id: "reName", name: "名前を変更" },
+  { id: "upIndex", name: "一段上に" },
+  { id: "downIndex", name: "一段下に" },
 ]);
 
 const onSection = (value: { id: string; name: string }) => {
@@ -37,8 +40,28 @@ const onSection = (value: { id: string; name: string }) => {
   menuAction(value.id);
 };
 
+const getPriority = (caseId: string, pocketid: string, addIndex: number) => {
+  const sortPockets = Object.values(
+    createStore.previewCase[caseId].pockets,
+  ).sort((a, b) => a.priority - b.priority);
+  console.log("sortPockets", sortPockets);
+
+  const index = sortPockets.findIndex((pocket) => pocket.id === pocketid);
+  console.log("index", index);
+  console.log("sortPockets", sortPockets.length);
+  console.log("sortPockets", sortPockets[index + addIndex].priority);
+
+  const this_priority =
+    index == sortPockets.length
+      ? index
+      : sortPockets[index + addIndex].priority;
+  console.log("this_priority", this_priority);
+  return this_priority;
+};
+
 const menuAction = (id: string) => {
   const this_pocket = getOpenMenuPocket.value;
+
   switch (id) {
     case "delete":
       //console.log("delete");
@@ -60,6 +83,48 @@ const menuAction = (id: string) => {
         createStore.previewCase[this_pocket.caseId].pockets[this_pocket.id]
           .name,
       );
+      break;
+    case "upIndex":
+      {
+        const priority = getPriority(this_pocket.caseId, this_pocket.id, 1);
+        const this_priority = getPriority(
+          this_pocket.caseId,
+          this_pocket.id,
+          0,
+        );
+        createWork.provisionaChangePriorityPocket(
+          this_pocket.caseId,
+          this_pocket.id,
+          priority + 1,
+        );
+        createWork.confirmedChangePriorityPocket(
+          this_pocket.caseId,
+          this_pocket.id,
+          priority + 1,
+          this_priority,
+        );
+      }
+      break;
+    case "downIndex":
+      {
+        const priority = getPriority(this_pocket.caseId, this_pocket.id, -1);
+        const this_priority = getPriority(
+          this_pocket.caseId,
+          this_pocket.id,
+          0,
+        );
+        createWork.provisionaChangePriorityPocket(
+          this_pocket.caseId,
+          this_pocket.id,
+          priority - 1,
+        );
+        createWork.confirmedChangePriorityPocket(
+          this_pocket.caseId,
+          this_pocket.id,
+          priority - 1,
+          this_priority,
+        );
+      }
       break;
     default:
       break;
