@@ -3,9 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const index_1 = require("@/lib/socket/index");
+const index_1 = require("../lib/socket/index.js");
 const node_server_1 = require("@hono/node-server");
-const app_1 = __importDefault(require("@/app/app"));
+const app_1 = __importDefault(require("./app.js"));
 const server = (0, node_server_1.serve)({
     fetch: app_1.default.fetch,
     port: 3000,

@@ -2,9 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.userRouter = void 0;
 const hono_1 = require("hono");
-const session_1 = require("@/features/auth/session");
+const session_1 = require("../../features/auth/session.js");
 const this_useSession = (0, session_1.useSession)();
-const user_1 = require("@/features/user/user");
+const user_1 = require("../../features/user/user.js");
 const user = (0, user_1.useUser)();
 exports.userRouter = new hono_1.Hono();
 exports.userRouter.post('/setProfileEdit', async (c) => {

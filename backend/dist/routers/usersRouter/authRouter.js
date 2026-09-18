@@ -2,11 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authRouter = void 0;
 const hono_1 = require("hono");
-const _2fa_1 = require("@/features/auth/2fa");
-const signup_1 = require("@/features/auth/signup");
-const login_1 = require("@/features/auth/login");
-const session_1 = require("@/features/auth/session");
-const login_2 = require("@/features/auth/login");
+const _2fa_1 = require("../../features/auth/2fa.js");
+const signup_1 = require("../../features/auth/signup.js");
+const login_1 = require("../../features/auth/login.js");
+const session_1 = require("../../features/auth/session.js");
+const login_2 = require("../../features/auth/login.js");
 const authRouter = new hono_1.Hono();
 exports.authRouter = authRouter;
 const googleLogin = (0, login_2.useGoogleLogin)();
@@ -53,7 +53,7 @@ authRouter.get("/google/callback", async (c) => {
     await googleLogin.callback(c);
     return c.redirect(`http://localhost:3000`);
 });
-const recaptcha_1 = require("@/shared/security/recaptcha");
+const recaptcha_1 = require("../../shared/security/recaptcha.js");
 authRouter.post('/recaptcha', async (c) => {
     const body = await c.req.json();
     const recaptchaToken = body;

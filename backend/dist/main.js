@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const hono_1 = require("hono");
-const static_1 = require("@/shared/middlewares/static");
+const static_1 = require("./shared/middlewares/static.js");
 const serve_static_1 = require("@hono/node-server/serve-static");
 const node_server_1 = require("@hono/node-server");
-const router_1 = require("@/routers/router");
-const index_1 = require("@/lib/socket/index");
+const router_1 = require("./routers/router.js");
+const index_1 = require("./lib/socket/index.js");
 const app = new hono_1.Hono();
 app.route("/", router_1.routers);
 app.use('/*', static_1.staticMiddleware);

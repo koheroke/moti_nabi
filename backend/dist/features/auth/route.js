@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const hono_1 = require("hono");
-const recaptcha_1 = require("@/shared/security/recaptcha");
+const recaptcha_1 = require("../../shared/security/recaptcha.js");
 const auth = new hono_1.Hono();
 auth.post('/signup', async (c) => {
     const body = await c.req.json();

@@ -3,9 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.useSession = void 0;
 const cookie_1 = require("hono/cookie");
 const cookie_2 = require("hono/cookie");
-const env_1 = require("@/constants/env/env");
+const env_1 = require("../../constants/env/env.js");
 const jwt_1 = require("hono/jwt");
-const prisma_1 = require("@/lib/prisma/prisma");
+const prisma_1 = require("../../lib/prisma/prisma.js");
 const jwt_2 = require("hono/jwt");
 const useSession = () => {
     const getLoginSession = async (c) => {

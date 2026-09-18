@@ -5,9 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.use2fa = void 0;
 const speakeasy_1 = __importDefault(require("speakeasy"));
-const prisma_1 = require("@/lib/prisma/prisma");
+const prisma_1 = require("../../lib/prisma/prisma.js");
 const preset_default_1 = require("@otplib/preset-default");
-const session_1 = require("@/features/auth/session");
+const session_1 = require("./session.js");
 const this_session = (0, session_1.useSession)();
 const use2fa = () => {
     const setUp = async (user) => {

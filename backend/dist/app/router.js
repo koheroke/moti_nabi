@@ -2,9 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.routers = void 0;
 const hono_1 = require("hono");
-const authRouter_1 = require("@/routers/usersRouter/authRouter");
-const workRouter_1 = require("@/routers/workRouter/workRouter");
-const userRouter_1 = require("@/routers/usersRouter/userRouter");
+const authRouter_1 = require("../routers/usersRouter/authRouter.js");
+const workRouter_1 = require("../routers/workRouter/workRouter.js");
+const userRouter_1 = require("../routers/usersRouter/userRouter.js");
 const routers = new hono_1.Hono();
 exports.routers = routers;
 routers.route("/auth", authRouter_1.authRouter);

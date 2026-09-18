@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useUserWork = void 0;
-const prisma_1 = require("@/lib/prisma/prisma");
-const client_1 = require("@/generated/prisma/client");
+const prisma_1 = require("../../lib/prisma/prisma.js");
+const client_1 = require("../../generated/prisma/client.js");
 const useUserWork = () => {
     const setProfileEdit = async (userId, data) => {
         try {

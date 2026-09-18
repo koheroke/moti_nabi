@@ -4,11 +4,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useGoogleLogin = exports.useLogin = void 0;
-const env_1 = require("@/constants/env/env");
+const env_1 = require("../../constants/env/env.js");
 const jwt_decode_1 = require("jwt-decode");
-const prisma_1 = require("@/lib/prisma/prisma");
+const prisma_1 = require("../../lib/prisma/prisma.js");
 const argon2_1 = __importDefault(require("argon2"));
-const session_1 = require("@/features/auth/session");
+const session_1 = require("./session.js");
 const this_session = (0, session_1.useSession)();
 if (!env_1.env.JWT_SECRET) {
     throw new Error("JWT_SECRET is not set");

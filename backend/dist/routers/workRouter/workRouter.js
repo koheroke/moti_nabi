@@ -2,9 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.workRouter = void 0;
 const hono_1 = require("hono");
-const work_1 = require("@/features/work/work");
-const logicalDelete_1 = require("@/features/work/logicalDelete");
-const session_1 = require("@/features/auth/session");
+const work_1 = require("../../features/work/work.js");
+const logicalDelete_1 = require("../../features/work/logicalDelete.js");
+const session_1 = require("../../features/auth/session.js");
 const this_session = (0, session_1.useSession)();
 const logicalDelete = (0, logicalDelete_1.useLogicalDelete)();
 const createWork = (0, work_1.useWork)();

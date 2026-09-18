@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.usesignup = void 0;
-const prisma_1 = require("@/lib/prisma/prisma");
+const prisma_1 = require("../../lib/prisma/prisma.js");
 const argon2_1 = __importDefault(require("argon2"));
 const session_1 = require("./session");
 const this_session = (0, session_1.useSession)();

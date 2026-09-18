@@ -5,8 +5,8 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password  # テスト環境用
+      POSTGRES_USER: koheroke
+      POSTGRES_PASSWORD: azumax1000
       POSTGRES_DB: app
     volumes:
         - postgres_data:/var/lib/postgresql

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useCreateWork = void 0;
-const prisma_1 = require("@/lib/prisma/prisma");
+const prisma_1 = require("../../lib/prisma/prisma.js");
 const useCreateWork = () => {
     const createNewWork = async (createApi) => {
         const work = await prisma_1.prisma.work.create({
