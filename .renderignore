@@ -10,4 +10,3 @@ frontend/tsconfig.app.json
 frontend/README.md
 frontend/package.json
 frontend/package-lock.json
-frontend/index.html
