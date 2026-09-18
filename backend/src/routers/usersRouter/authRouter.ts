@@ -19,15 +19,18 @@ authRouter.post('/signup', async (c) => {
 });
 
 authRouter.post('/login', async (c) => {
-  console.log("login")
   const body = await c.req.json();
   const user = await this_login.login(body, c)
   return c.json(user)
 });
 
 authRouter.post('/logout', async (c) => {
-  const user = this_session.discardToken(c)
-  return c.json(user)
+  try {
+    this_session.discardToken(c, "auth_token")
+    this_session.discardToken(c, "provisional_auth_token")
+  } finally {
+    return c.json("success")
+  }
 });
 
 authRouter.post('/2fa/setup', async (c) => {
@@ -38,25 +41,15 @@ authRouter.post('/2fa/setup', async (c) => {
 
 authRouter.post('/2fa/verification', async (c) => {
   const body = await c.req.json();
-  const verificationRes = await this_2fa.verification2fa(body);
+  const verificationRes = await this_2fa.verification2fa(body, c);
   return c.json(verificationRes);
 });
 
 
 authRouter.post('/session/getToken', async (c) => {
   const loginResult = await this_session.getLoginSession(c);
-  const session = loginResult ? loginResult : "noneToken";
+  const session = loginResult ? loginResult : "";
   return c.json(session);
-});
-
-
-
-authRouter.post('/session/verificationToken', async (c) => {
-  const body = await c.req.json();
-  //console.log("verificationToken", body)
-  const userData = await this_session.verificationSessionToken(c, body.token);
-  const res = userData ? userData : false
-  return c.json(res);
 });
 
 

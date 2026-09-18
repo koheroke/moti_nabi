@@ -65,7 +65,8 @@ export const useUser = () => {
     if (!this_password) {
       return { success: false }
     }
-    this_session.discardToken(c)
+    this_session.discardToken(c, "auth_token")
+    this_session.discardToken(c, "provisional_auth_token")
 
     await prisma.user.delete({
       where: {

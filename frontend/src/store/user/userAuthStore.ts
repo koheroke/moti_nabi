@@ -4,7 +4,6 @@ import { defineStore } from 'pinia'
 interface UserAuth {
   userId: string
   userEmail: string
-  token: string | null
   isLoading: boolean,
   isAuthenticated: boolean,
   isTempAuthenticated: boolean
@@ -16,19 +15,16 @@ export const useUserAuthStore = defineStore('userAuth', {
   state: (): UserAuth => ({
     userId: "",
     userEmail: "",
-    token: localStorage.getItem('token'),
     isLoading: false,
     isAuthenticated: false,
     isTempAuthenticated: false
   }),
 
   getters: {
-    isLoggedInGetter: (state) => !!state.userId && !!state.token,
     userEmailGetter: (state) => state.userEmail ?? '',
     userIdGetter: (state) => state.userId ?? '',
     isAuthenticatedGetter: (state) => state.isAuthenticated,
     isTempAuthenticatedGetter: (state) => state.isTempAuthenticated,
-
   },
 
   actions: {
@@ -41,30 +37,26 @@ export const useUserAuthStore = defineStore('userAuth', {
     },
 
     setToken(token: string) {
-      this.token = token
       localStorage.setItem('token', token)
     },
 
     set(token: string) {
-      this.token = token
       localStorage.setItem('token', token)
     },
 
-    login(userId: string, email: string, token: string) {
+    login(userId: string, email: string) {
       this.setUserId(userId)
       this.setUserEmail(email)
-      this.setToken(token)
-      this.isAuthenticated = true
+      this.isTempAuthenticated = true
     },
 
     set2fa() {
-      this.isTempAuthenticated = true
-      this.isAuthenticated = false
+      this.isTempAuthenticated = false
+      this.isAuthenticated = true
     },
 
     logout() {
       this.userId = ""
-      this.token = null
       localStorage.removeItem('token')
       this.isAuthenticated = false
       this.isTempAuthenticated = false

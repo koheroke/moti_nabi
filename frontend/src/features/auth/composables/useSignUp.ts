@@ -9,7 +9,7 @@ const url = `${apiUrl}/auth/signup`;
 export const useSignup = () => {
   const loading = ref(false)
   const error = ref<string | null>(null)
-  const signup = async (signupInput: SignupInput, token: string) => {
+  const signup = async (signupInput: SignupInput) => {
     loading.value = true
     error.value = null
     try {
@@ -17,6 +17,7 @@ export const useSignup = () => {
         url,
         {
           method: 'POST',
+          credentials: "include",
           headers: {
             'Content-Type': 'application/json',
           },
@@ -33,7 +34,7 @@ export const useSignup = () => {
       }
       //console.log(user,)
       userStore.setUserInfo(user)
-      userAuthstore.login(userId, signupInput.email, token)
+      userAuthstore.login(userId, signupInput.email)
       return res
     } catch (e) {
       error.value = '登録失敗'

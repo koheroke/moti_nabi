@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import type { tutorialType, tutorialData, targetData, action } from '../type/tutorial'
-type TutorialProgress = Record<string, boolean>
+export type TutorialProgress = Record<string, boolean>
 
 const useTutorialStore = defineStore('tutorial', {
   state: () => ({

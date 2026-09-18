@@ -1,10 +1,8 @@
 import { prisma } from "@/lib/prisma/prisma"
-import { editWorkPackageApi } from "@/features/work/types"
 import { type server_alterationToken } from "./saveQueue"
 import { publichTokenType } from "./types/index"
 import { templateData } from "./template"
 import jsonCases from "./jsonData/case/case.json";
-import { some } from "hono/combine"
 const cases: Record<string, any> = jsonCases
 
 const workData = new Map()
@@ -41,6 +39,9 @@ const useWork = () => {
       }
     })
     let count: any = 0;
+    if (userWorks.length > 10) {
+      return undefined;
+    }
     userWorks.forEach((work) => {
       if (work.name.includes(defaultName)) {
         count++

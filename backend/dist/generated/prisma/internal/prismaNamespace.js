@@ -48,7 +48,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.defineExtension = exports.NullsOrder = exports.JsonNullValueFilter = exports.QueryMode = exports.JsonNullValueInput = exports.SortOrder = exports.WorkScalarFieldEnum = exports.SiteMemberScalarFieldEnum = exports.AccountScalarFieldEnum = exports.UserAuthScalarFieldEnum = exports.UserProfileScalarFieldEnum = exports.UserScalarFieldEnum = exports.TransactionIsolationLevel = exports.ModelName = exports.AnyNull = exports.JsonNull = exports.DbNull = exports.NullTypes = exports.prismaVersion = exports.getExtensionContext = exports.Decimal = exports.Sql = exports.raw = exports.join = exports.empty = exports.sql = exports.PrismaClientValidationError = exports.PrismaClientInitializationError = exports.PrismaClientRustPanicError = exports.PrismaClientUnknownRequestError = exports.PrismaClientKnownRequestError = void 0;
+exports.defineExtension = exports.NullsOrder = exports.JsonNullValueFilter = exports.QueryMode = exports.JsonNullValueInput = exports.SortOrder = exports.WorkLikeScalarFieldEnum = exports.WorkScalarFieldEnum = exports.SiteMemberScalarFieldEnum = exports.AccountScalarFieldEnum = exports.UserAuthScalarFieldEnum = exports.UserProfileScalarFieldEnum = exports.UserScalarFieldEnum = exports.TransactionIsolationLevel = exports.ModelName = exports.AnyNull = exports.JsonNull = exports.DbNull = exports.NullTypes = exports.prismaVersion = exports.getExtensionContext = exports.Decimal = exports.Sql = exports.raw = exports.join = exports.empty = exports.sql = exports.PrismaClientValidationError = exports.PrismaClientInitializationError = exports.PrismaClientRustPanicError = exports.PrismaClientUnknownRequestError = exports.PrismaClientKnownRequestError = void 0;
 const runtime = __importStar(require("@prisma/client/runtime/client"));
 /**
  * Prisma Errors
@@ -108,7 +108,8 @@ exports.ModelName = {
     UserAuth: 'UserAuth',
     Account: 'Account',
     SiteMember: 'SiteMember',
-    Work: 'Work'
+    Work: 'Work',
+    WorkLike: 'WorkLike'
 };
 /**
  * Enums
@@ -123,7 +124,8 @@ exports.UserScalarFieldEnum = {
     id: 'id',
     email: 'email',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    tutorialProgress: 'tutorialProgress'
 };
 exports.UserProfileScalarFieldEnum = {
     id: 'id',
@@ -139,6 +141,7 @@ exports.UserAuthScalarFieldEnum = {
     id: 'id',
     userId: 'userId',
     twoFactorSecret: 'twoFactorSecret',
+    secoundfaEnabled: 'secoundfaEnabled',
     passwordHash: 'passwordHash'
 };
 exports.AccountScalarFieldEnum = {
@@ -156,15 +159,20 @@ exports.SiteMemberScalarFieldEnum = {
 };
 exports.WorkScalarFieldEnum = {
     id: 'id',
+    createdAt: 'createdAt',
+    lastAccessAt: 'lastAccessAt',
     name: 'name',
     bio: 'bio',
-    snsAcounts: 'snsAcounts',
-    thumbnailUrl: 'thumbnailUrl',
+    thumbnailJson: 'thumbnailJson',
     data: 'data',
     public: 'public',
-    likes: 'likes',
     tags: 'tags',
-    copies: 'copies'
+    likes: 'likes'
+};
+exports.WorkLikeScalarFieldEnum = {
+    userId: 'userId',
+    workId: 'workId',
+    createdAt: 'createdAt'
 };
 exports.SortOrder = {
     asc: 'asc',

@@ -33,10 +33,10 @@ onUnmounted(() => {
 });
 
 onMounted(async () => {
-  const workId = route.value?.query.workId;
-  if (!workId || typeof workId != "string") return;
-  console.log("workId", workId);
-  await previewWork.get(workId);
+  const cardId = route.value?.query.cardId;
+  if (!cardId || typeof cardId != "string") return;
+  console.log("workId", cardId);
+  await previewWork.get(cardId);
 });
 window.scrollTo({
   top: 0,

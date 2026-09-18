@@ -1,8 +1,5 @@
 import { prisma } from "@/lib/prisma/prisma"
 import argon2 from "argon2";
-import { sign } from "hono/jwt"
-import { setCookie } from "hono/cookie"
-import { env } from "@/constants/env/env"
 import type { Context } from "hono"
 import { useSession } from "./session";
 const this_session = useSession()
@@ -21,7 +18,7 @@ export const usesignup = () => {
       { type: "instagram", link: "" },
     ]
     try {
-      const users = await prisma.user.create({
+      const userData = await prisma.user.create({
         data: {
           email: user.email,
           profile: {
@@ -44,19 +41,10 @@ export const usesignup = () => {
         },
       });
 
-
-      const token = await sign(
-        {
-          userId: users.id,
-          email: user.email,
-          iconUrl: users.profile?.iconUrl ?? "",
-        },
-        env.JWT_SECRET
-      )
-      this_session.setLoginSession(c, token)
-      return { userId: users.id, res: "users", }
+      await this_session.setProvisionalSession(c, userData.id, "user")
+      return { res: "users", }
     } catch (e) {
-      return { userId: null, res: "error", }
+      return { res: "error", }
     }
   }
   return { singup }

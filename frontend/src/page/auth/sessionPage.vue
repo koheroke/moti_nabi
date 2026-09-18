@@ -4,7 +4,6 @@
 import { useSession } from "@/features/auth/composables/session";
 import { onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useUserAuthStore } from "@/store/user/userAuthStore";
 import { useUserStore } from "@/store/user/userIconStore";
 import { useTutorialStore } from "@/features/tutorial/store/tutorial";
 
@@ -13,19 +12,13 @@ const userStore = useUserStore();
 const router = useRouter();
 const route = useRoute();
 const session = useSession();
+import { useUserAuthStore } from "@/store/user/userAuthStore";
 const userAuthStore = useUserAuthStore();
 
 onMounted(async () => {
-  const token = await session.getSessionToken();
-
-  if (!token) {
-    await router.replace("/login");
-    return;
-  }
-
-  const userData = await session.verificationSessionToken(token);
-
-  if (!userData) {
+  const res = await session.getSessionToken();
+  console.log("session", res);
+  if (!res) {
     await router.replace("/login");
     return;
   }
@@ -37,9 +30,11 @@ onMounted(async () => {
     secoundfaEnabled,
     tutorialProgress,
     name,
-  } = userData;
+  } = res;
+  console.log("authData", authData);
 
-  userAuthStore.login(userId, authData.email, token);
+  userAuthStore.login(userId, authData.email);
+  console.log("userAuthStore", userAuthStore.isAuthenticatedGetter);
 
   userStore.setUserInfo({
     userId,

@@ -39,7 +39,7 @@ const sendOtp = async (otp: string) => {
 };
 
 onMounted(async () => {
-  if (!userAuthstore.isAuthenticated) {
+  if (!userAuthstore.isTempAuthenticated) {
     router.push("/login");
     alertStore.showAlert("ログイン情報の取得に失敗しました", true);
     return;

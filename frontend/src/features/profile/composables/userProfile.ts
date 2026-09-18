@@ -18,6 +18,7 @@ export const useUserProfile = () => {
         `${url}/setProfileEdit`,
         {
           method: 'POST',
+          credentials: "include",
           headers: {
             'Content-Type': 'application/json',
           },
@@ -26,6 +27,9 @@ export const useUserProfile = () => {
             userId: userId
           })
         })
+      if (!data) {
+        return undefined
+      }
       return await data.json()
     }
 

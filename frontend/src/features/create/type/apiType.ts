@@ -2,7 +2,6 @@ import type { CaseType } from "./itemType";
 import type { CategoryId } from "./categoryType";
 import type { Bookmarks } from "./itemType";
 import type { pocketEdit, part } from "./casetype";
-import type { pocketLogicalDeleteToken, caseLogicalDeleteToken } from "./tokens"
 interface innerItems {
   itemId: string,
   count: number;

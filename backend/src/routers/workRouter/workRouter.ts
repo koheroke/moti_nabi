@@ -1,18 +1,30 @@
 import { Hono } from 'hono';
 import { useWork } from '@/features/work/work';
 import { useLogicalDelete } from "@/features/work/logicalDelete"
-
+import { useSession } from '@/features/auth/session';
+const this_session = useSession()
 const logicalDelete = useLogicalDelete()
 const createWork = useWork()
 export const workRouter = new Hono();
 workRouter.post('/create', async (c) => {
+
   const body = await c.req.json();
+  const verification = await this_session.verificationLoginToken(c, body.userId)
+  if (!verification) {
+    return c.json({ error: "Forbidden" }, 403);
+  }
   const res = await createWork.createNewWork(body.userId)
+  if (res == undefined) {
+    return c.json({ error: "Forbidden" }, 403);
+  }
   return c.json(res);
 });
 
 workRouter.post('/addMenber', async (c) => {
+
   const token = await c.req.json();
+  const verification = await this_session.verificationLoginToken(c, token.userId)
+  if (verification) c.json("error")
   //console.log("token", token)
   const res = await createWork.addMenber(token)
   return c.json(res);
@@ -20,8 +32,11 @@ workRouter.post('/addMenber', async (c) => {
 
 
 workRouter.post('/deleteMenber', async (c) => {
+
   const token = await c.req.json();
   //console.log("token", token)
+  const verification = await this_session.verificationLoginToken(c, token.userId)
+  if (verification) c.json("error")
   const res = await createWork.deleteMenber(token)
   return c.json(res);
 });
@@ -50,7 +65,10 @@ workRouter.post('/getWork', async (c) => {
 
 workRouter.post('/deleteWork', async (c) => {
   console.log("deleteWork")
+
   const body = await c.req.json();
+  const verification = await this_session.verificationLoginToken(c, body.userId)
+  if (verification) c.json({ success: false })
   const res = await createWork.deleteWork(body.workId, body.userId)
   return c.json(res);
 });

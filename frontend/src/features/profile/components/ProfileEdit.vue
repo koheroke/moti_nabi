@@ -7,6 +7,7 @@
           <Camera fill="white" :size="100" color="#1514143d"></Camera>
         </div>
         <imageDropTab
+          class="imageDropTab"
           v-if="editUserIconShow"
           @close="editUserIconShow = false"
           :aspectRatio="{ x: 1, y: 1 }"
@@ -74,7 +75,7 @@
 </template>
 <style src="../Profile.css"></style>
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { BaseTextArea } from "@/components/ui/form/BaseTextArea/index.ts";
 import { BaseInput } from "@/components/ui/form/BaseInput";
 import { Camera } from "lucide-vue-next";
@@ -84,8 +85,27 @@ import EditSnsurlTab from "./EditSnsurlTab.vue";
 import { useUserProfileStore } from "../store/userProfileStore.ts";
 import { useUserProfile } from "../composables/userProfile.ts";
 import { storeToRefs } from "pinia";
+import { useAlertStore } from "@/store/feedback/alertStore.ts";
+const alertStore = useAlertStore();
+import { useUserAuthStore } from "@/store/user/userAuthStore";
+import { useDialogStore } from "@/store/feedback/dialogStore";
 import { useRouter } from "vue-router";
+const dialogStore = useDialogStore();
+const userAuthStore = useUserAuthStore();
 const router = useRouter();
+
+onMounted(() => {
+  if (!userAuthStore.isAuthenticated) {
+    dialogStore.showDialog(
+      "2段階認証を行いますか",
+      "この機能の使用には2段階認証が必要です",
+      () => {
+        router.push("/2fa");
+      },
+    );
+  }
+});
+
 const editProfile = ref({
   name: "",
   bio: "",
@@ -105,9 +125,16 @@ const onIcon = (type: string) => {
 const iconType = ref("");
 
 const pushEdit = async () => {
+  if (!userAuthStore.isAuthenticated) {
+    return;
+  }
   const res = await userProfile.pushUserProfileEdit();
   if (res == "success") {
     userProfileStore.setEditBool(false);
+    alertStore.showAlert("変更が保存されました", false);
+  } else {
+    alertStore.showAlert("認証がありません", true);
+    return;
   }
 };
 watch(
@@ -124,6 +151,9 @@ watch(
 );
 </script>
 <style lang="css" scoped>
+.imageDropTab {
+  z-index: 100;
+}
 .icon-edit {
   position: absolute;
   transform: translate(-50%, -50%);

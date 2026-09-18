@@ -55,7 +55,7 @@ const useCreateApi = () => {
       })
     const newWorkData = await data.json();
 
-    if (newWorkData == "error") {
+    if (newWorkData.error == "Forbidden") {
       return null
     };
 

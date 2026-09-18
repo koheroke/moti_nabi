@@ -20,6 +20,7 @@ onMounted(async () => {
   }
   if (res == "nonerror") {
     router.beforeEach((to) => {
+      console.log("session");
       router.push({
         path: "/session",
         query: {

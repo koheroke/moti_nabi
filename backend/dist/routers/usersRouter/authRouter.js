@@ -16,7 +16,7 @@ const this_signup = (0, signup_1.usesignup)();
 const this_session = (0, session_1.useSession)();
 authRouter.post('/signup', async (c) => {
     const body = await c.req.json();
-    const user = await this_signup.singup(body);
+    const user = await this_signup.singup(body, c);
     return c.json(user);
 });
 authRouter.post('/login', async (c) => {
@@ -24,33 +24,35 @@ authRouter.post('/login', async (c) => {
     const user = await this_login.login(body, c);
     return c.json(user);
 });
+authRouter.post('/logout', async (c) => {
+    try {
+        this_session.discardToken(c, "auth_token");
+        this_session.discardToken(c, "provisional_auth_token");
+    }
+    finally {
+        return c.json("success");
+    }
+});
 authRouter.post('/2fa/setup', async (c) => {
     const body = await c.req.json();
     const user2faRes = await this_2fa.setUp(body);
-    const loginInfo = {
-        email: body.email,
-        password: body.password
-    };
-    await this_login.login(loginInfo, c);
     return c.json(user2faRes);
 });
 authRouter.post('/2fa/verification', async (c) => {
     const body = await c.req.json();
-    const verificationRes = await this_2fa.verification2fa(body);
+    const verificationRes = await this_2fa.verification2fa(body, c);
     return c.json(verificationRes);
 });
 authRouter.post('/session/getToken', async (c) => {
     const loginResult = await this_session.getLoginSession(c);
-    const session = loginResult ? loginResult : "noneToken";
+    const session = loginResult ? loginResult : "";
     return c.json(session);
 });
-authRouter.post('/session/verificationToken', async (c) => {
-    const body = await c.req.json();
-    const userData = await this_session.verificationSessionToken(body.token);
-    return c.json(userData);
-});
 authRouter.get("/googleLogin", googleLogin.login);
-authRouter.get("/google/callback", googleLogin.callback);
+authRouter.get("/google/callback", async (c) => {
+    await googleLogin.callback(c);
+    return c.redirect(`http://localhost:3000`);
+});
 const recaptcha_1 = require("@/shared/security/recaptcha");
 authRouter.post('/recaptcha', async (c) => {
     const body = await c.req.json();

@@ -26,23 +26,6 @@ export const useRouterBlock = (router: Router, pinia: Pinia) => {
         }
       }
     }
-    if (to.name == "create" || to.name == "user") {
-      //console.log("userAuthStore.isAuthenticatedGetter", userAuthStore.isAuthenticatedGetter)
-      //console.log("userAuthStore.isTempAuthenticatedGetter", userAuthStore.isTempAuthenticatedGetter)
-      if (
-        userAuthStore.isAuthenticatedGetter &&
-        !userAuthStore.isTempAuthenticatedGetter
-      ) {
-        dialogStore.showDialog(
-          "2段階認証を行いますか",
-          "この機能の使用には2段階認証が必要です",
-          () => {
-            router.push("/2fa")
-          },
-        )
-        return false
-      }
-    }
 
     return true
   })

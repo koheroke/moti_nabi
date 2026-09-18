@@ -26,7 +26,7 @@
               :close="getSelectedPocketId.caseId != caseItem.id ? true : false"
               @onDropPocket="onDropPocket"
               @onClose="onClose"
-              style="z-index: 100"
+              style="z-index: 50"
             />
           </div>
         </div>

@@ -4,15 +4,15 @@
       <h2 style="margin-right: 20px">{{ createStore.workNameGetter }}</h2>
 
       <div class="historyButtons historyButtonsLeft">
-        <CornerUpLeft @click="back" />
-        <CornerUpRight @click="forward" />
+        <CornerUpLeft @click="back" class="historyArrow" />
+        <CornerUpRight @click="forward" class="historyArrow" />
       </div>
       <PreviewSearch style="margin-left: 10px; flex: 1"></PreviewSearch>
     </div>
     <div class="right">
       <div class="historyButtons historyButtonsRight">
-        <CornerUpLeft @click="back" />
-        <CornerUpRight @click="forward" />
+        <CornerUpLeft @click="back" class="historyArrow" />
+        <CornerUpRight @click="forward" class="historyArrow" />
       </div>
       <CircleQuestionMark
         data-tutorial="start-tutorial-botton"
@@ -184,5 +184,13 @@ onMounted(() => {
   .left {
     min-width: 100%;
   }
+}
+
+.historyArrow {
+  background-color: white;
+  border-radius: 10px;
+}
+.historyArrow:hover {
+  background-color: rgb(241, 240, 240);
 }
 </style>

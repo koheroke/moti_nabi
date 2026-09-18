@@ -6,8 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.usesignup = void 0;
 const prisma_1 = require("@/lib/prisma/prisma");
 const argon2_1 = __importDefault(require("argon2"));
+const session_1 = require("./session");
+const this_session = (0, session_1.useSession)();
 const usesignup = () => {
-    const singup = async (user) => {
+    const singup = async (user, c) => {
         const passwordhash = await argon2_1.default.hash(user.password);
         const snsAccounts = [
             { type: "x", link: "" },
@@ -15,7 +17,7 @@ const usesignup = () => {
             { type: "instagram", link: "" },
         ];
         try {
-            const users = await prisma_1.prisma.user.create({
+            const userData = await prisma_1.prisma.user.create({
                 data: {
                     email: user.email,
                     profile: {
@@ -32,11 +34,16 @@ const usesignup = () => {
                         },
                     },
                 },
+                include: {
+                    profile: true,
+                    auth: true,
+                },
             });
-            return { userId: users.id, res: "users", };
+            await this_session.setProvisionalSession(c, userData.id, "user");
+            return { res: "users", };
         }
         catch (e) {
-            return { userId: null, res: "error", };
+            return { res: "error", };
         }
     };
     return { singup };

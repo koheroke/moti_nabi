@@ -1,0 +1,13 @@
+.gitignore
+frontend/.vscode/
+frontend/node_modules/
+frontend/public/
+frontend/src/
+frontend/vite.config.ts
+frontend/tsconfig.node.json
+frontend/tsconfig.json
+frontend/tsconfig.app.json
+frontend/README.md
+frontend/package.json
+frontend/package-lock.json
+frontend/index.html

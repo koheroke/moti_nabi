@@ -30,11 +30,11 @@ watch(tutorialIdGetter, () => {
 <style scoped>
 .tutorial-highlight {
   position: fixed;
-  z-index: 10001;
+  z-index: 100;
   border: 3px solid #42b883;
   border-radius: 10px;
   pointer-events: none;
-  z-index: 10;
+
   box-shadow: 0 0 0 9999px rgb(0 0 0 / 55%);
   transition:
     top 0.25s,
@@ -46,6 +46,6 @@ watch(tutorialIdGetter, () => {
   position: fixed;
   bottom: 10px;
   right: 10px;
-  z-index: 100;
+  z-index: 101;
 }
 </style>

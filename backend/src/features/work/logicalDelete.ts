@@ -57,12 +57,13 @@ const useLogicalDelete = () => {
   const leaveWork = (workId: string) => {
     const this_logicalDelete = logicalDelete.get(workId)
     //console.log("leaveWork", this_logicalDelete)
-    this_logicalDelete?.caseDeleteInfo.forEach((this_case) => {
-      hardDelete(this_case, "case_logicalDelete")
-    })
     this_logicalDelete?.pocketDeleteInfo.forEach((this_pocket) => {
       hardDelete(this_pocket, "pocket_logicalDelete")
     })
+    this_logicalDelete?.caseDeleteInfo.forEach((this_case) => {
+      hardDelete(this_case, "case_logicalDelete")
+    })
+
     logicalDelete.delete(workId)
   }
 

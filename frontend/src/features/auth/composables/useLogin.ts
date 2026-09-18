@@ -28,6 +28,7 @@ export const useLogin = () => {
         url,
         {
           method: 'POST',
+          credentials: "include",
           headers: {
             'Content-Type': 'application/json',
           },
@@ -39,7 +40,7 @@ export const useLogin = () => {
 
       const { userId, iconUrl, authData, secoundfaEnabled, name, tutorialProgress } = user;
       //console.log("secoundfaEnabled", secoundfaEnabled);
-      userAuthstore.login(userId, authData.email, token);
+      userAuthstore.login(userId, authData.email);
       userStore.setUserInfo({ userId: userId, iconUrl: iconUrl, name: name });
       tutorialStore.tutorialProgressSetter(tutorialProgress)
       if (secoundfaEnabled == true) {

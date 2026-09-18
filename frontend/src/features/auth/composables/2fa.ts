@@ -35,6 +35,7 @@ export const use2fa = () => {
       `${url}/verification`,
       {
         method: 'POST',
+        credentials: "include",
         headers: {
           'Content-Type': 'application/json',
         },

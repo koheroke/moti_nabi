@@ -4,8 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useGoogleLogin = exports.useLogin = void 0;
-const cookie_1 = require("hono/cookie");
-const jwt_1 = require("hono/jwt");
 const env_1 = require("@/constants/env/env");
 const jwt_decode_1 = require("jwt-decode");
 const prisma_1 = require("@/lib/prisma/prisma");
@@ -17,14 +15,24 @@ if (!env_1.env.JWT_SECRET) {
 }
 const useLogin = () => {
     const login = async (user, c) => {
-        console.log(user);
-        const userResponse = await prisma_1.prisma.user.findFirst({
+        //console.log(user)
+        const userResponse = await prisma_1.prisma.user.findUnique({
             where: {
-                email: user.email
+                email: user.email,
             },
             include: {
-                auth: true,
-                profile: true
+                auth: {
+                    select: {
+                        passwordHash: true,
+                        secoundfaEnabled: true,
+                    },
+                },
+                profile: {
+                    select: {
+                        name: true,
+                        iconUrl: true,
+                    },
+                },
             },
         });
         if (!userResponse)
@@ -37,13 +45,17 @@ const useLogin = () => {
             return null;
         const this_user = userResponse;
         const userId = this_user.id;
-        const token = await (0, jwt_1.sign)({
-            userId,
-            email: user.email,
-            iconUrl: this_user.profile?.iconUrl ?? "",
-        }, env_1.env.JWT_SECRET);
-        this_session.setLoginSession(c, token);
-        return this_user;
+        await this_session.setProvisionalSession(c, userId, "user");
+        return {
+            userData: {
+                userId: userResponse?.id,
+                authData: { email: userResponse?.email },
+                iconUrl: userResponse?.profile?.iconUrl ?? "",
+                name: userResponse?.profile?.name ?? "",
+                secoundfaEnabled: userResponse?.auth?.secoundfaEnabled ?? false,
+                tutorialProgress: userResponse?.tutorialProgress
+            }
+        };
     };
     return { login };
 };
@@ -61,8 +73,9 @@ const useGoogleLogin = () => {
     };
     const callback = async (c) => {
         const code = c.req.query("code");
+        //console.log("code", code)
         if (!code) {
-            return c.json({ error: "code not found" }, 400);
+            return { error: "codeNotFount" };
         }
         const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
             method: "POST",
@@ -79,28 +92,24 @@ const useGoogleLogin = () => {
         });
         if (!tokenRes.ok) {
             const error = await tokenRes.text();
-            return c.json({ error: "token exchange failed", detail: error }, 400);
+            return { error: "tokenNotFount" };
         }
         const tokenData = await tokenRes.json();
         const payload = (0, jwt_decode_1.jwtDecode)(tokenData.id_token);
         const email = payload.email;
         const sub = payload.sub;
-        let account = await prisma_1.prisma.account.findUnique({
-            where: {
-                provider_providerAccountId: {
-                    provider: "google",
-                    providerAccountId: sub,
-                },
-            },
-        });
+        let account;
         if (!account) {
             const userResponse = await prisma_1.prisma.user.findFirst({
                 where: {
                     email: email
+                },
+                select: {
+                    id: true
                 }
             });
             if (!userResponse)
-                return c.json({ error: "token exchange failed", detail: "userNotFound" }, 400);
+                return { error: "userNotFount" };
             account = await prisma_1.prisma.account.findUnique({
                 where: {
                     provider_providerAccountId: {
@@ -108,6 +117,9 @@ const useGoogleLogin = () => {
                         providerAccountId: sub,
                     },
                 },
+                select: {
+                    userId: true,
+                }
             });
             if (!account) {
                 account = await prisma_1.prisma.account.create({
@@ -119,17 +131,8 @@ const useGoogleLogin = () => {
                 });
             }
         }
-        const token = await (0, jwt_1.sign)({
-            userId: account.userId,
-            email: email,
-        }, env_1.env.JWT_SECRET);
-        (0, cookie_1.setCookie)(c, "auth_token", token, {
-            httpOnly: true,
-            secure: env_1.env.NODE_ENV === "production",
-            sameSite: "Lax",
-            maxAge: 60 * 60 * 24,
-            path: "/",
-        });
+        await this_session.setProvisionalSession(c, account.userId, "user");
+        return { error: "nonerror" };
     };
     return {
         login,

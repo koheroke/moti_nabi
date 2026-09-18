@@ -21,6 +21,7 @@ export const useworkDetailStore = defineStore("workDetail", {
   actions: {
     setAbout(about: workAbout) {
       this.about = about
+      console.log("about", about)
     },
 
     leave() {

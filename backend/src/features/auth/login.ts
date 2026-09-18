@@ -1,9 +1,7 @@
 import type { Context } from "hono"
-import { sign } from "hono/jwt"
 import { env } from "@/constants/env/env"
 import { jwtDecode } from "jwt-decode";
 import { prisma } from "@/lib/prisma/prisma"
-import { User } from "@/lib/prisma/prismaType"
 import argon2 from "argon2";
 import { useSession } from '@/features/auth/session';
 
@@ -51,24 +49,19 @@ export const useLogin = () => {
     if (!passward) return null
     const this_user = userResponse
     const userId = this_user.id
-    const token = await sign(
-      {
-        userId,
-        email: user.email,
-        iconUrl: this_user.profile?.iconUrl ?? "",
-      },
-      env.JWT_SECRET
-    )
 
-    this_session.setLoginSession(c, token)
+
+    await this_session.setProvisionalSession(c, userId, "user")
 
     return {
-      userId: userResponse?.id,
-      authData: { email: userResponse?.email },
-      iconUrl: userResponse?.profile?.iconUrl ?? "",
-      name: userResponse?.profile?.name ?? "",
-      secoundfaEnabled: userResponse?.auth?.secoundfaEnabled ?? false,
-      tutorialProgress: userResponse?.tutorialProgress
+      userData: {
+        userId: userResponse?.id,
+        authData: { email: userResponse?.email },
+        iconUrl: userResponse?.profile?.iconUrl ?? "",
+        name: userResponse?.profile?.name ?? "",
+        secoundfaEnabled: userResponse?.auth?.secoundfaEnabled ?? false,
+        tutorialProgress: userResponse?.tutorialProgress
+      }
     }
   }
   return { login }
@@ -164,18 +157,7 @@ export const useGoogleLogin = () => {
         });
       }
     }
-
-
-    const token = await sign(
-      {
-        userId: account.userId,
-        email: email,
-      },
-      env.JWT_SECRET
-    )
-    //console.log("token", account.userId, email)
-    this_session.setLoginSession(c, token)
-    //console.log("token", token)
+    await this_session.setProvisionalSession(c, account.userId, "user")
     return { error: "nonerror" }
   };
   return {

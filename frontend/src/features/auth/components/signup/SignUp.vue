@@ -45,14 +45,11 @@ const onSubmit = async () => {
     return;
   }
   const token = await recaptchaToken.get("SIGNUP");
-  const { error, loading } = await signup(
-    {
-      email: email.value,
-      password: password.value,
-      name: name.value,
-    },
-    token,
-  );
+  const { error, loading } = await signup({
+    email: email.value,
+    password: password.value,
+    name: name.value,
+  });
 
   if (error) {
     alertStore.showAlert("登録に失敗しました", true); //errorBool
@@ -69,7 +66,7 @@ const onSubmit = async () => {
         router.push("/2fa");
       },
     );
-    router.push("/home"); //onboardingに後でかえる
+    router.push("/session");
   }
 };
 </script>

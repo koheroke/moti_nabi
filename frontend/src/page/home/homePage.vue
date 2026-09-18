@@ -73,6 +73,8 @@ import { useUserStore, type UserInfo } from "@/store/user/userIconStore";
 import Thumbnail from "@/features/create/components/Thumbnail.vue";
 import { useCreateStore } from "@/features/create/store/createStore";
 import type { workPackage } from "@/features/work/types/work";
+import { useDialogStore } from "@/store/feedback/dialogStore";
+const dialogStore = useDialogStore();
 const workPackageStore = useWorkPackageStore();
 const createStore = useCreateStore();
 const { userWorkPackageStoreGetter } = storeToRefs(workPackageStore);
@@ -107,6 +109,16 @@ const onEdit = () => {
 };
 
 const goCreate = () => {
+  if (!userAuthStore.isAuthenticated) {
+    dialogStore.showDialog(
+      "2段階認証を行いますか",
+      "この機能の使用には2段階認証が必要です",
+      () => {
+        router.push("/2fa");
+      },
+    );
+    return;
+  }
   workPackageStore.selectedPackageIdStore("");
   router.push("/create");
 };

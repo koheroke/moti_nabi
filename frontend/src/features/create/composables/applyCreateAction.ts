@@ -2,6 +2,7 @@
 import type { pocketReNameToken, pastePocketToken, addPreviewTemplateToken, deletePreviewTemplateToken, addPreviewPocketToken, caseLogicalDeleteToken, pocketLogicalDeleteToken, changePriorityPocket, provisionalResizePocket, confirmedRemovePocketToken, provisionalRemovePocket, confirmedResizePocketToken, deletePreviewCaseToken, addPreviewCaseToken, addPreviewItemToken, addItemCountToken, addBookmarkToken, addListItemToken, deletePreviewItemToken } from "@/features/create/type/tokens";
 import { useCreateStore } from "../store/createStore";
 import type { server_alterationTokenType } from "../api/createSocketApi"
+import { usePocketStore } from "../store/pocketStore";
 import type { Case, pocketSvgData } from "@/features/create/type/casetype";
 import type { UserLuggage_SaveDBData, BeforeParsingCaseData, saveDBprevieItem } from "@/features/create/type/apiType";
 import type { previewItem } from "@/features/create/type/casetype";
@@ -13,6 +14,7 @@ import { useTemplateBarStore } from "../store/templateBar";
 import { useThumbnail } from "./thumbnail";
 import { type itemCard } from "../type/itemType";
 const createApi = useCreateApi()
+const pocketStore = usePocketStore()
 const userAuthstore = useUserAuthStore()
 const api = useSocketApi()
 const usethumbnail = useThumbnail()
@@ -278,6 +280,9 @@ const useApplyCreateAction = () => {
       case 'case_logicalDelete': {
         const this_token = token.token as caseLogicalDeleteToken
         if (!this_token) return
+        if (pocketStore.getSelectedPocketId.caseId == this_token.caseId) {
+          pocketStore.setSelectedPocketId({ id: "", caseId: "" })
+        }
         createStore.logicalDeleteCase(this_token)
         dbpushToken.path = []
         dbpushToken.value = {}
@@ -287,6 +292,9 @@ const useApplyCreateAction = () => {
 
       case 'pocket_logicalDelete': {
         const this_token = token.token as pocketLogicalDeleteToken
+        if (pocketStore.getSelectedPocketId.id == this_token.pocketId) {
+          pocketStore.setSelectedPocketId({ id: "", caseId: "" })
+        }
         createStore.logicalDeletePocket(this_token)
         dbpushToken.path = []
         dbpushToken.value = {}

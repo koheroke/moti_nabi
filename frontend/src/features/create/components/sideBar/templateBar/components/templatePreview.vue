@@ -78,6 +78,12 @@ const openPocket = (pocketId: string, caseId: string) => {
   };
   pocketClose.value = false;
 };
+watch(getSelectedPocketId.value, (newValue) => {
+  if (newValue.caseId == "" && newValue.id == "") {
+    onClose();
+  }
+});
+
 const role = ref("viewer");
 const props = defineProps<{
   cases: previewSvgCase[];
@@ -92,7 +98,6 @@ const onClose = () => {
     size: { width: 0, height: 0 },
   };
   templateBarStore.setSelectedPocketId({ id: "", caseId: "" });
-  console.log("getSelectedPocketId", getSelectedPocketId);
 };
 const selectedPocket = ref<selectedPocketType>({
   id: "",
