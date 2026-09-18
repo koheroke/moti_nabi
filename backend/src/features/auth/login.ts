@@ -76,7 +76,7 @@ export const useGoogleLogin = () => {
       "https://accounts.google.com/o/oauth2/v2/auth?" +
       new URLSearchParams({
         client_id: env.GOOGLE_CLIENT_ID,
-        redirect_uri: "http://localhost:3000/auth/google/callback",
+        redirect_uri: `${env.VITE_API_BASE_URL}/auth/google/callback`,
         response_type: "code",
         scope: "openid email profile",
       });
@@ -105,7 +105,7 @@ export const useGoogleLogin = () => {
           code,
           client_id: env.GOOGLE_CLIENT_ID,
           client_secret: env.GOOGLE_CECRET,
-          redirect_uri: "http://localhost:3000/auth/google/callback",
+          redirect_uri: `${env.VITE_API_BASE_URL}/auth/google/callback`,
           grant_type: "authorization_code",
         }),
       }

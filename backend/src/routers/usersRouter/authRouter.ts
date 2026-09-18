@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { use2fa } from '@/features/auth/2fa';
 import { usesignup } from '@/features/auth/signup';
 import { useLogin } from '@/features/auth/login';
+import { env } from "@/constants/env/env"
 import { useSession } from '@/features/auth/session';
 import { useGoogleLogin } from '@/features/auth/login';
 
@@ -57,7 +58,7 @@ authRouter.get("/googleLogin", googleLogin.login);
 authRouter.get("/google/callback", async (c) => {
   await googleLogin.callback(c)
   return c.redirect(
-    `http://localhost:3000`
+    `${env.VITE_API_BASE_URL}`
   );
 });
 
